@@ -7,7 +7,7 @@ show a nifti image in a webgl 2.0 canvas within a jupyter notebook cell
 
 ## Installation
 ```sh
-git clone https://github.com/niivue/ipyniivue_ts
+git clone https://github.com/niivue/ipyniivue
 cd ipyniivue_ts
 pip install -e .
 jupyter nbextension install --py --symlink --sys-prefix ipyniivue
