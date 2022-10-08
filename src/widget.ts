@@ -18,8 +18,9 @@ export class NiivueModel extends DOMWidgetModel {
       _view_name: NiivueModel.view_name,
       _view_module: NiivueModel.view_module,
       _view_module_version: NiivueModel.view_module_version,
-      volumes: [],
-      height: 300,
+      
+      volumes: null,
+      height: null,
 
       textHeight : null,
       colorbarHeight : null,
@@ -79,15 +80,17 @@ export class NiivueModel extends DOMWidgetModel {
 export class NiivueView extends DOMWidgetView {
   private _canvas: HTMLCanvasElement;
   private _nv: any;
+  private _uniqueId: string;
 
   render() {
+    this._uniqueId = this.model.model_id;
+    console.log('unique id', this._uniqueId);
     this._canvas = document.createElement('canvas');
+    this._canvas.id = this._uniqueId;
     this.el.appendChild(this._canvas);
     this.el.classList.add('custom-widget');
 
     this._nv = new Niivue();
-    this._nv.attachToCanvas(this._canvas);
-    this._nv.updateGLVolume();;
 
     //NiivueOptions
     this.textHeight_changed();
@@ -171,9 +174,11 @@ export class NiivueView extends DOMWidgetView {
     this.model.on('change:thumbnail', this.thumbnail_changed, this);
 
     //other
+    this.canvasId_changed();
     this.volumes_changed();
     this.height_changed();
 
+    this.model.on('change:canvas_id', this.canvasId_changed, this);
     this.model.on('change:volumes', this.volumes_changed, this);
     this.model.on('change:height', this.height_changed, this);
   }
@@ -337,8 +342,13 @@ export class NiivueView extends DOMWidgetView {
   }
 
   //other
-  volumes_changed() {
-    this._nv.loadVolumes(this.model.get('volumes'));
+  async canvasId_changed() {
+    await this._nv.attachToCanvas(this._canvas);
+    this.height_changed();
+  }
+
+  async volumes_changed() {
+    await this._nv.loadVolumes(this.model.get('volumes'));
   }
 
   height_changed() {
