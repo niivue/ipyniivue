@@ -7,6 +7,91 @@ from ._frontend import module_name, module_version
 
 @register
 class Niivue(DOMWidget, ValueWidget):
+    """Niivue class.
+
+    Attributes
+    ----------
+    text_height: float, default 0.06
+        the text height for orientation labels (0 to 1). Zero for no text labels
+    colorbar_height: float, default 0.05
+        size of colorbar. 0 for no colorbars, fraction of Nifti j dimension
+    colorbar_margin: float, default 0.05
+        padding around colorbar when displayed
+    crosshair_width: float, default 1
+        crosshair size. Zero for no crosshair
+    ruler_width: float, default 4
+        ruler size. 0 for no ruler
+    back_color: list, default [0,0,0,1]
+        the background color. RGBA values from 0 to 1. Default is black
+    crosshair_color: list, default [1,0,0,1]
+        the crosshair color. RGBA values from 0 to 1. Default is red
+    selection_box_color: list, default [1,1,1,0.5]
+        the selection box color when the intensty selection box is shown (right click and drag). RGBA values from 0 to 1. Default is transparent white
+    clip_plane_color: list, default [1,1,1,0.5]
+        the color of the visible clip plane. RGBA values from 0 to 1. Default is white
+    ruler_color: list, default [1, 0, 0, 0.8]
+        the color of the ruler. RGBA values from 0 to 1. Default is translucent red
+    show_3D_crosshair: bool, default False
+        True/False whether crosshairs are shown on 3D rendering
+    trust_cal_min_max: bool, default True
+        True/False whether to trust the nifti header values for cal_min and cal_max. Trusting them results in faster loading because we skip computing these values from the data
+    clip_plane_hot_key: str, default "KeyC"
+        the keyboard key used to cycle through clip plane orientations
+    view_mode_hot_key: str, default "KeyV"
+        the keyboard key used to cycle through view modes
+    key_debounce_time: float, default 50
+        the keyUp debounce time in milliseconds. The default is 50 ms. You must wait this long before a new hot-key keystroke will be registered by the event listener
+    double_touch_timeout: float, default 500
+        the maximum time in milliseconds for a double touch to be detected. The default is 500 ms
+    long_touch_timeout: float, default 1000
+        the minimum time in milliseconds for a touch to count as long touch. The default is 1000 ms
+    is_radiological_convention: bool, default False
+        whether or not to use radiological convention in the display
+    logging: Bool, default False
+        turn on logging or not (True/False)
+    loading_text: str, default "waiting on images..."
+        the loading text to display when there is a blank canvas and no images
+    drag_and_drop_enabled: bool, default True
+        whether or not to allow file and url drag and drop on the canvas
+    is_nearest_interpolation: bool, default False
+        whether nearest neighbor interpolation is used, else linear interpolation
+    is_atlas_outline: bool, default False
+        whether atlas maps are only visible at the boundary of regions
+    is_ruler: bool, default False
+        whether a 10cm ruler is displayed
+    is_colorbar: bool, default False
+        whether colorbar(s) are shown illustrating values for color maps
+    is_orient_cube: bool, default False
+        whether orientation cube is shown for 3D renderings
+    multiplanar_pad_pixels: int, default 0
+        spacing between tiles of a multiplanar view
+    mesh_thickness_on_2D: float, default Infinity
+        2D slice views can show meshes within this range. Meshes only visible in sliceMM (world space) mode
+    drag_mode: str/int, default "contrast"/1
+        behavior for dragging
+        string ("none", "contrast", "measurement", "pan") or int (0, 1, 2, 3)
+    is_depth_pick_mesh: bool, default False
+        when both voxel-based image and mesh is loaded, will depth picking be able to detect mesh or only voxels
+    is_corner_orientation_text: bool, default False
+        should slice text be shown in the upper right corner instead of the center of left and top axes?
+    sagittal_nose_left: bool, default False
+        should 2D sagittal slices show the anterior direction toward the left or right?
+    is_slice_MM: bool, default False
+        are images aligned to voxel space (False) or world space (True)
+    is_high_resolution_capable: bool, default True
+        demand that high-dot-per-inch displays use native voxel size
+    drawing_enabled: bool, default False
+        allow user to create and edit voxel-based drawings
+    pen_value: float, default Infinity
+        color of drawing when user drags mouse (if drawing_enabled)
+    is_filled_pen: bool, default False
+        create filled drawings when user drags mouse (if drawing_enabled)
+    max_draw_undo_bitmaps: int, default 8
+        number of possible undo steps (if drawing_enabled)
+    thumbnail: str, default ""
+        optional 2D png bitmap that can be rapidly loaded to defer slow loading of 3D image
+    """
+
     _model_name = Unicode('NiivueModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
@@ -16,14 +101,14 @@ class Niivue(DOMWidget, ValueWidget):
     _view_module_version = Unicode(module_version).tag(sync=True)
 
     volumes = List(trait=Volume, default_value=[]).tag(sync=True)
-    height = Int(default_value=300).tag(sync=True)
+    height = Float(default_value=300).tag(sync=True)
 
     #NiivueOptions
     text_height = Float(default_value = 0.06, help="the text height for orientation labels (0 to 1). Zero for no text labels").tag(sync=True)
     colorbar_height = Float(default_value = 0.05, help="size of colorbar. 0 for no colorbars, fraction of Nifti j dimension").tag(sync=True)
     colorbar_margin = Float(default_value = 0.05, help="padding around colorbar when displayed").tag(sync=True)
-    crosshair_width = Int(default_value = 1, help="crosshair size. Zero for no crosshair").tag(sync=True)
-    ruler_width = Int(default_value = 4, help="ruler size. Zero (or isRuler is False) for no ruler").tag(sync=True)
+    crosshair_width = Float(default_value = 1, help="crosshair size. Zero for no crosshair").tag(sync=True)
+    ruler_width = Float(default_value = 4, help="ruler size. 0 for no ruler").tag(sync=True)
     back_color = List(trait=Float, min_len=4, max_len=4, default_value = [0, 0, 0, 1], help="the background color. RGBA values from 0 to 1. Default is black").tag(sync=True)
     crosshair_color = List(trait=Float, min_len=4, max_len=4, default_value = [1, 0, 0, 1], help="the crosshair color. RGBA values from 0 to 1. Default is red").tag(sync=True)
     selection_box_color = List(trait=Float, min_len=4, max_len=4, default_value = [1, 1, 1, 0.5], help="the selection box color when the intensty selection box is shown (right click and drag). RGBA values from 0 to 1. Default is transparent white").tag(sync=True)
@@ -31,11 +116,11 @@ class Niivue(DOMWidget, ValueWidget):
     ruler_color = List(trait=Float, min_len=4, max_len=4, default_value = [1, 0, 0, 0.8], help="the color of the ruler. RGBA values from 0 to 1. Default is translucent red").tag(sync=True)
     show_3D_crosshair = Bool(default_value = False, help="True/False whether crosshairs are shown on 3D rendering").tag(sync=True)
     trust_cal_min_max = Bool(default_value = True, help="True/False whether to trust the nifti header values for cal_min and cal_max. Trusting them results in faster loading because we skip computing these values from the data").tag(sync=True)
-    clip_plane_hot_key = CaselessStrEnum(keycodes, default_value="KeyC", help="the keyboard key used to cycle through clip plane orientations. The default is \"c\"").tag(sync=True)
-    view_mode_hot_key = CaselessStrEnum(keycodes, default_value="KeyV", help="the keyboard key used to cycle through view modes. The default is \"v\"").tag(sync=True)
-    key_debounce_time = Int(default_value = 50, help="the keyUp debounce time in milliseconds. The default is 50 ms. You must wait this long before a new hot-key keystroke will be registered by the event listener").tag(sync=True)
-    double_touch_timeout = Int(default_value = 500, help="the maximum time in milliseconds for a double touch to be detected. The default is 500 ms").tag(sync=True)
-    long_touch_timeout = Int(default_value = 1000, help="the minimum time in milliseconds for a touch to count as long touch. The default is 1000 ms").tag(sync=True)
+    clip_plane_hot_key = CaselessStrEnum(keycodes, default_value="KeyC", help="the keyboard key used to cycle through clip plane orientations").tag(sync=True)
+    view_mode_hot_key = CaselessStrEnum(keycodes, default_value="KeyV", help="the keyboard key used to cycle through view modes").tag(sync=True)
+    key_debounce_time = Float(default_value = 50, help="the keyUp debounce time in milliseconds. The default is 50 ms. You must wait this long before a new hot-key keystroke will be registered by the event listener").tag(sync=True)
+    double_touch_timeout = Float(default_value = 500, help="the maximum time in milliseconds for a double touch to be detected. The default is 500 ms").tag(sync=True)
+    long_touch_timeout = Float(default_value = 1000, help="the minimum time in milliseconds for a touch to count as long touch. The default is 1000 ms").tag(sync=True)
     is_radiological_convention = Bool(default_value = False, help="whether or not to use radiological convention in the display").tag(sync=True)
     logging = Bool(default_value = False, help="turn on logging or not (True/False)").tag(sync=True)
     loading_text = Unicode(default_value = "waiting on images...", help="the loading text to display when there is a blank canvas and no images").tag(sync=True)
