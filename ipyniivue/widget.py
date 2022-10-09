@@ -8,7 +8,7 @@ from ._frontend import module_name, module_version
 @register
 class Niivue(DOMWidget, ValueWidget):
     """Niivue class.
-
+    
     Attributes
     ----------
     text_height: float, default 0.06
@@ -101,8 +101,7 @@ class Niivue(DOMWidget, ValueWidget):
     _view_module_version = Unicode(module_version).tag(sync=True)
 
     volumes = List(trait=Volume, default_value=[]).tag(sync=True)
-    height = Float(default_value=300).tag(sync=True)
-    canvas_id = Unicode(read_only=True).tag(sync=True)
+    height = Int(default_value=300).tag(sync=True)
 
     #NiivueOptions
     text_height = Float(default_value = 0.06, help="the text height for orientation labels (0 to 1). Zero for no text labels").tag(sync=True)
@@ -227,7 +226,6 @@ class Niivue(DOMWidget, ValueWidget):
         self.is_filled_pen = is_filled_pen
         self.max_draw_undo_bitmaps = max_draw_undo_bitmaps
         self.thumbnail = thumbnail
-        self.set_trait('canvas_id', self.model_id)
 
     def load_volumes(self, volumes):
         self.volumes = volumes
