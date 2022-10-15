@@ -1483,10 +1483,10 @@
     "@lumino/signaling" "^1.10.2"
     "@lumino/virtualdom" "^1.14.2"
 
-"@niivue/niivue@^0.24.2":
-  version "0.24.3"
-  resolved "https://registry.yarnpkg.com/@niivue/niivue/-/niivue-0.24.3.tgz#913aca6acead93fc0468055a2384c0c903e6851a"
-  integrity sha512-B/OEDrNJGRUgO5h4H/VV9InYuDYL1mK6Hnw8r8+i4tmseKnAzzfFp2M4wjsp2sZhAwQh8s4SHvPEvcdldR7eaA==
+"@niivue/niivue@latest":
+  version "0.30.0"
+  resolved "https://registry.yarnpkg.com/@niivue/niivue/-/niivue-0.30.0.tgz#55dd87c40e7149cb22cad828516a9cba59d9d9ba"
+  integrity sha512-eQhbd01f61ekgIsVdcRuceEaOL3pcAXHFpI5A0HNM3CIWVXLRVWMQY6bYwemNqXegTO56BLj77CIIhJNLgQg3g==
   dependencies:
     daikon "^1.2.42"
     fflate "^0.7.3"
