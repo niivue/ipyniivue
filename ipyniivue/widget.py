@@ -100,7 +100,7 @@ class Niivue(DOMWidget, ValueWidget):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    volumes = List(trait=Volume, default_value=[]).tag(sync=True)
+    volumes = List(trait=Volume(), default_value=[]).tag(sync=True)
 
     #NiivueOptions
     text_height = Float(default_value = 0.06, help="the text height for orientation labels (0 to 1). Zero for no text labels").tag(sync=True)
@@ -108,11 +108,11 @@ class Niivue(DOMWidget, ValueWidget):
     colorbar_margin = Float(default_value = 0.05, help="padding around colorbar when displayed").tag(sync=True)
     crosshair_width = Float(default_value = 1, help="crosshair size. Zero for no crosshair").tag(sync=True)
     ruler_width = Float(default_value = 4, help="ruler size. 0 for no ruler").tag(sync=True)
-    back_color = List(trait=Float, min_len=4, max_len=4, default_value = [0, 0, 0, 1], help="the background color. RGBA values from 0 to 1. Default is black").tag(sync=True)
-    crosshair_color = List(trait=Float, min_len=4, max_len=4, default_value = [1, 0, 0, 1], help="the crosshair color. RGBA values from 0 to 1. Default is red").tag(sync=True)
-    selection_box_color = List(trait=Float, min_len=4, max_len=4, default_value = [1, 1, 1, 0.5], help="the selection box color when the intensty selection box is shown (right click and drag). RGBA values from 0 to 1. Default is transparent white").tag(sync=True)
-    clip_plane_color = List(trait=Float, min_len=4, max_len=4, default_value = [1, 1, 1, 0.5], help="the color of the visible clip plane. RGBA values from 0 to 1. Default is white").tag(sync=True)
-    ruler_color = List(trait=Float, min_len=4, max_len=4, default_value = [1, 0, 0, 0.8], help="the color of the ruler. RGBA values from 0 to 1. Default is translucent red").tag(sync=True)
+    back_color = List(trait=Float(), default_value = [0, 0, 0, 1], help="the background color. RGBA values from 0 to 1. Default is black").tag(sync=True, min_len=4, max_len=4)
+    crosshair_color = List(trait=Float(), default_value = [1, 0, 0, 1], help="the crosshair color. RGBA values from 0 to 1. Default is red").tag(sync=True, min_len=4, max_len=4)
+    selection_box_color = List(trait=Float(), default_value = [1, 1, 1, 0.5], help="the selection box color when the intensty selection box is shown (right click and drag). RGBA values from 0 to 1. Default is transparent white").tag(sync=True, min_len=4, max_len=4)
+    clip_plane_color = List(trait=Float(), default_value = [1, 1, 1, 0.5], help="the color of the visible clip plane. RGBA values from 0 to 1. Default is white").tag(sync=True, min_len=4, max_len=4)
+    ruler_color = List(trait=Float(), default_value = [1, 0, 0, 0.8], help="the color of the ruler. RGBA values from 0 to 1. Default is translucent red").tag(sync=True, min_len=4, max_len=4)
     show_3D_crosshair = Bool(default_value = False, help="True/False whether crosshairs are shown on 3D rendering").tag(sync=True)
     trust_cal_min_max = Bool(default_value = True, help="True/False whether to trust the nifti header values for cal_min and cal_max. Trusting them results in faster loading because we skip computing these values from the data").tag(sync=True)
     clip_plane_hot_key = CaselessStrEnum(keycodes, default_value="KeyC", help="the keyboard key used to cycle through clip plane orientations").tag(sync=True)

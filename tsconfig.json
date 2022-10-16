@@ -3,7 +3,7 @@
     "declaration": true,
     "esModuleInterop":true,
     "lib": ["es2015", "dom"],
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "noEmitOnError": true,
     "noUnusedLocals": true,

@@ -4,7 +4,7 @@ ipyniivue
 
 Version: |release|
 
-niivue for jupyter test
+niivue in jupyter
 
 
 Quickstart

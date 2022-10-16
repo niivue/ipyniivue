@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright (c) anthony.
+# Copyright (c) Niivue.
 # Distributed under the terms of the Modified BSD License.
 
 import pytest
 
-from ipyniivue import Niivue
+from ..widget import Niivue
 
 
 def test_example_creation_blank():
     w = Niivue()
-    assert w.value == None
+    assert w.text_height == 0.06

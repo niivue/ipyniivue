@@ -1,1 +1,1 @@
-declare module '@niivue/niivue';
+declare module "@niivue/niivue";

@@ -6,7 +6,7 @@ Developer install
 To install a developer version of ipyniivue, you will first need to clone
 the repository::
 
-    git clone https://github.com//ipyniivue
+    git clone https://github.com/niivue/ipyniivue
     cd ipyniivue
 
 Next, install it with a develop install using pip::
