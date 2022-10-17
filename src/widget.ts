@@ -22,7 +22,7 @@ export class NiivueModel extends DOMWidgetModel {
 
       textHeight: null,
       colorbarHeight: null,
-      colorBarMargin: null,
+      colorbarMargin: null,
       crosshairWidth: null,
       rulerWidth: null,
       backColor: null,
@@ -87,54 +87,53 @@ export class NiivueView extends DOMWidgetView {
     this.el.appendChild(divEl);
     this.el.classList.add('custom-widget');
 
-    this._nv = new niivue.Niivue({ logging: true });
+    this._nv = new niivue.Niivue({
+      textHeight: this.model.get('text_height'),
+      colorbarHeight: this.model.get('colorbar_height'),
+      colorbarMargin: this.model.get('colorbar_margin'),
+      crosshairWidth: this.model.get('crosshair_width'),
+      rulerWidth: this.model.get('ruler_width'),
+      backColor: this.model.get('back_color'),
+      crosshairColor: this.model.get('crosshair_color'),
+      selectionBoxColor: this.model.get('selection_box_color'),
+      clipPlaneColor: this.model.get('clip_plane_color'),
+      rulerColor: this.model.get('ruler_color'),
+      show3Dcrosshair: this.model.get('show_3D_crosshair'),
+      trustCalMinMax: this.model.get('trust_cal_min_max'),
+      clipPlaneHotKey: this.model.get('clip_plane_hot_key'),
+      viewModeHotKey: this.model.get('view_mode_hot_key'),
+      keyDebounceTime: this.model.get('key_debounce_time'),
+      doubleTouchTimeout: this.model.get('double_touch_timeout'),
+      longTouchTimeout: this.model.get('long_touch_timeout'),
+      isRadiologicalConvention: this.model.get('is_radiological_convention'),
+      logging: this.model.get('logging'),
+      loadingText: this.model.get('loading_text'),
+      dragAndDropEnabled: this.model.get('drag_and_drop_enabled'),
+      isNearestInterpolation: this.model.get('is_nearest_interpolation'),
+      isAtlasOutline: this.model.get('is_atlas_outline'),
+      isRuler: this.model.get('is_ruler'),
+      isColorbar: this.model.get('is_colorbar'),
+      isOrientCube: this.model.get('is_orient_cube'),
+      multiplanarPadPixels: this.model.get('multiplanar_pad_pixels'),
+      meshThicknessOn2D: this.model.get('mesh_thickness_on_2D'),
+      dragMode: this.model.get('drag_mode'),
+      isDepthPickMesh: this.model.get('is_depth_pick_mesh'),
+      isCornerOrientationText: this.model.get('is_corner_orientation_text'),
+      sagittalNoseLeft: this.model.get('sagittal_nose_left'),
+      isSliceMM: this.model.get('is_slice_MM'),
+      isHighResolutionCapable: this.model.get('is_high_resolution_capable'),
+      drawingEnabled: this.model.get('drawing_enabled'),
+      penValue: this.model.get('pen_value'),
+      isFilledPen: this.model.get('is_filled_pen'),
+      maxDrawUndoBitmaps: this.model.get('max_draw_undo_bitmaps'),
+      thumbnail: this.model.get('thumbnail'),
+    });
     this._nv.attachToCanvas(this._canvas);
-    this._nv.updateGLVolume();
 
     //NiivueOptions
-    this.textHeight_changed();
-    this.colorbarHeight_changed();
-    this.colorBarMargin_changed();
-    this.crosshairWidth_changed();
-    this.rulerWidth_changed();
-    this.backColor_changed();
-    this.crosshairColor_changed();
-    this.selectionBoxColor_changed();
-    this.clipPlaneColor_changed();
-    this.rulerColor_changed();
-    this.show3Dcrosshair_changed();
-    this.trustCalMinMax_changed();
-    this.clipPlaneHotKey_changed();
-    this.viewModeHotKey_changed();
-    this.keyDebounceTime_changed();
-    this.doubleTouchTimeout_changed();
-    this.longTouchTimeout_changed();
-    this.isRadiologicalConvention_changed();
-    this.logging_changed();
-    this.loadingText_changed();
-    this.dragAndDropEnabled_changed();
-    this.isNearestInterpolation_changed();
-    this.isAtlasOutline_changed();
-    this.isRuler_changed();
-    this.isColorbar_changed();
-    this.isOrientCube_changed();
-    this.multiplanarPadPixels_changed();
-    this.meshThicknessOn2D_changed();
-    this.dragMode_changed();
-    this.isDepthPickMesh_changed();
-    this.isCornerOrientationText_changed();
-    this.sagittalNoseLeft_changed();
-    this.isSliceMM_changed();
-    this.isHighResolutionCapable_changed();
-    this.drawingEnabled_changed();
-    this.penValue_changed();
-    this.isFilledPen_changed();
-    this.maxDrawUndoBitmaps_changed();
-    this.thumbnail_changed();
-
     this.model.on('change:text_height', this.textHeight_changed, this);
     this.model.on('change:colorbar_height', this.colorbarHeight_changed, this);
-    this.model.on('change:colorbar_margin', this.colorBarMargin_changed, this);
+    this.model.on('change:colorbar_margin', this.colorbarMargin_changed, this);
     this.model.on('change:crosshair_width', this.crosshairWidth_changed, this);
     this.model.on('change:ruler_width', this.rulerWidth_changed, this);
     this.model.on('change:back_color', this.backColor_changed, this);
@@ -258,8 +257,8 @@ export class NiivueView extends DOMWidgetView {
     this._nv.opts.colorbarHeight = this.model.get('colorbar_height');
     this._nv.updateGLVolume();
   }
-  colorBarMargin_changed() {
-    this._nv.opts.colorBarMargin = this.model.get('colorbar_margin');
+  colorbarMargin_changed() {
+    this._nv.opts.colorbarMargin = this.model.get('colorbar_margin');
     this._nv.updateGLVolume();
   }
   crosshairWidth_changed() {
