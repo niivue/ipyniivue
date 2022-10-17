@@ -1,9 +1,7 @@
-
-# ipyniivue
-show a nifti image in a webgl 2.0 canvas within a jupyter notebook cell
-
 ![example](docs/example.png)
-[Niivue](https://github.com/niivue/niivue) in Jupyter
+
+# ipyNiiVue
+display and interact with a NIfTI image in a WebGl 2.0 canvas within a Jupyter notebook cell
 
 ## Installation
 ```sh
@@ -22,7 +20,7 @@ example usage
 ```py
 from ipyniivue import Niivue
 
-nv = ipyniivue.Niivue()
+nv = ipyniivue.Niivue(logging=True)
 volumes = [
     {
         'url': 'https://niivue.github.io/niivue/images/mni152.nii.gz',
