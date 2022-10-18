@@ -1,5 +1,3 @@
-![example](docs/example.png)
-
 # ipyNiiVue
 Try out in mybinder: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/niivue/ipyniivue/HEAD)       
 display and interact with a NIfTI image in a WebGl 2.0 canvas within a Jupyter notebook cell
@@ -32,3 +30,4 @@ volumes = [
 nv.load_volumes(volumes)
 nv
 ```
+![example](docs/example.png)
