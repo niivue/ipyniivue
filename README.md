@@ -1,7 +1,7 @@
 ![example](docs/example.png)
 
 # ipyNiiVue
-Try out in mybinder: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AnthonyAndroulakis/ipyniivue/HEAD)       
+Try out in mybinder: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/niivue/ipyniivue/HEAD)       
 display and interact with a NIfTI image in a WebGl 2.0 canvas within a Jupyter notebook cell
 
 ## Installation
