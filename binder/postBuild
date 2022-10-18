@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -ex
+
+pip install .
+
+jupyter labextension install @jupyter-widgets/jupyterlab-manager js --no-build
+jupyter lab build
