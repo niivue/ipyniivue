@@ -19,7 +19,7 @@ example usage
 ```py
 from ipyniivue import Niivue
 
-nv = ipyniivue.Niivue(logging=True)
+nv = Niivue(logging=True)
 volumes = [
     {
         'url': 'https://niivue.github.io/niivue/images/mni152.nii.gz',
