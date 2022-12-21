@@ -12,7 +12,7 @@ readme = "README.md"
 license = { file = "LICENSE.txt" }
 requires-python = ">=3.7"
 authors = [
-    { name = "anthony", email = "me@me.com" },
+    { name = "NiiVue", email = "me@me.com" },
 ]
 keywords = [
     "IPython",

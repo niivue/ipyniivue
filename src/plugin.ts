@@ -1,4 +1,4 @@
-// Copyright (c) anthony
+// Copyright (c) NiiVue
 // Distributed under the terms of the Modified BSD License.
 
 import { Application, IPlugin } from '@phosphor/application';
