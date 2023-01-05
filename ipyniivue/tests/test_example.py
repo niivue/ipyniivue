@@ -11,4 +11,4 @@ from ..example import NiiVue
 
 def test_example_creation_blank():
     w = NiiVue()
-    assert w.value == 'Hello World'
+    assert w.width == 350
