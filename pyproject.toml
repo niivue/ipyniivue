@@ -7,12 +7,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ipyniivue"
-description = "niivue in jupyter"
+description = "NiiVue Jupyter Library"
 readme = "README.md"
 license = { file = "LICENSE.txt" }
 requires-python = ">=3.7"
 authors = [
-    { name = "NiiVue", email = "me@me.com" },
+    { name = "NiiVue", email = "niivue@niivue.niivue" },
 ]
 keywords = [
     "IPython",

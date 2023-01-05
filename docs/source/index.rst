@@ -4,7 +4,7 @@ ipyniivue
 
 Version: |release|
 
-niivue in jupyter
+NiiVue Jupyter Library
 
 
 Quickstart

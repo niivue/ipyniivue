@@ -59,7 +59,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'ipyniivue'
-copyright = '2022, NiiVue'
+copyright = '2023, NiiVue'
 author = 'NiiVue'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -175,7 +175,7 @@ texinfo_documents = [
      'ipyniivue Documentation',
      author,
      'ipyniivue',
-     'niivue in jupyter',
+     'NiiVue Jupyter Library',
      'Miscellaneous'),
 ]
 
