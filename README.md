@@ -7,27 +7,22 @@ display and interact with a NIfTI image in a WebGl 2.0 canvas within a Jupyter n
 git clone https://github.com/niivue/ipyniivue
 cd ipyniivue
 yarn
-yarn run build
 pip install -e .
+yarn run watch
 ```
+Then, in a separate command line
 ```
 jupyter lab
 ```
+
+To view changes made in the typescript, reload the jupyter page. To view changes made in the python, restart the kernel.
 
 ## Usage
 example usage
 ```py
 from ipyniivue import Niivue
 
-nv = Niivue(logging=True)
-volumes = [
-    {
-        'url': 'https://niivue.github.io/niivue/images/mni152.nii.gz',
-        'opacity': 1,
-        'visible': True,
-    }
-]
-nv.load_volumes(volumes)
+nv = Niivue()
 nv
 ```
 ![example](docs/example.png)
