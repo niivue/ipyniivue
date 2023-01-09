@@ -7,7 +7,6 @@ display and interact with a NIfTI image in a WebGl 2.0 canvas within a Jupyter n
 git clone https://github.com/niivue/ipyniivue
 cd ipyniivue
 yarn
-pip install -e .
 yarn run watch
 ```
 Then, in a separate command line
