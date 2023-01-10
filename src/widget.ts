@@ -2,8 +2,7 @@
 // Distributed under the terms of the Modified BSD License.
 
 //Much of the structure and many of the functions/classes in this file
-//are from https://github.com/martinRenou/ipycanvas. NiivueModel comes from CanvasModel and NiivueView comes from CanvasView.
-//The main difference is the use of NiiVue and setting NiivueView's tagname to be a div.
+//are from https://github.com/martinRenou/ipycanvas. NiivueModel is based off of  CanvasModel and NiivueView is based off of CanvasView.
 
 import {
   WidgetModel,

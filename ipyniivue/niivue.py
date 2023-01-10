@@ -5,7 +5,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 #Much of the structure and many of the functions/classes in this file
-#are from https://github.com/martinRenou/ipycanvas. The Niivue class comes from Canvas class.
+#are from https://github.com/martinRenou/ipycanvas. The Niivue class is based off of Canvas class.
 
 """
 TODO: Add module docstring
