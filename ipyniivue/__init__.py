@@ -4,7 +4,7 @@
 # Copyright (c) NiiVue.
 # Distributed under the terms of the Modified BSD License.
 
-from .example import NiiVue
+from .niivue import Niivue
 from ._version import __version__, version_info
 
 def _jupyter_labextension_paths():

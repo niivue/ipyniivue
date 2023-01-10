@@ -19,8 +19,7 @@
   },
   "license": "BSD-3-Clause",
   "author": {
-    "name": "NiiVue",
-    "email": "niivue@niivue.niivue"
+    "name": "NiiVue"
   },
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
@@ -49,8 +48,7 @@
     "watch:labextension": "jupyter labextension watch ."
   },
   "dependencies": {
-    "@jupyter-widgets/base": "^1.1.10 || ^2 || ^3 || ^4 || ^5 || ^6",
-    "@niivue/niivue": "latest"
+    "@jupyter-widgets/base": "^1.1.10 || ^2 || ^3 || ^4 || ^5 || ^6"
   },
   "devDependencies": {
     "@babel/core": "^7.5.0",

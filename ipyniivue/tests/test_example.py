@@ -6,9 +6,9 @@
 
 import pytest
 
-from ..example import NiiVue
+from ..example import Niivue
 
 
 def test_example_creation_blank():
-    w = NiiVue()
-    assert w.width == 350
+    w = Niivue()
+    assert w.value == 'Hello World'

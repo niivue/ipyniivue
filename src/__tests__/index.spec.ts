@@ -6,21 +6,21 @@
 
 import { createTestModel } from './utils';
 
-import { NiiVueModel } from '..';
+import { NiivueModel } from '..';
 
-describe('Example', () => {
-  describe('NiiVueModel', () => {
+describe('NiiVue', () => {
+  describe('NiivueModel', () => {
     it('should be createable', () => {
-      const model = createTestModel(NiiVueModel);
-      expect(model).toBeInstanceOf(NiiVueModel);
-      expect(model.get('value')).toEqual('Hello World');
+      const model = createTestModel(NiivueModel);
+      expect(model).toBeInstanceOf(NiivueModel);
+      expect(model.get('height')).toEqual(480);
     });
 
     it('should be createable with a value', () => {
-      const state = { value: 'Foo Bar!' };
-      const model = createTestModel(NiiVueModel, state);
-      expect(model).toBeInstanceOf(NiiVueModel);
-      expect(model.get('value')).toEqual('Foo Bar!');
+      const state = { height: 600 };
+      const model = createTestModel(NiivueModel, state);
+      expect(model).toBeInstanceOf(NiivueModel);
+      expect(model.get('height')).toEqual(600);
     });
   });
 });
