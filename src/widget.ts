@@ -15,6 +15,8 @@ import {
 
 import { MODULE_NAME, MODULE_VERSION } from './version';
 
+import "../css/styles.css";
+
 import * as niivue from '@niivue/niivue';
 
 function getContext(canvas: HTMLCanvasElement) {
@@ -112,7 +114,49 @@ export class NiivueModel extends DOMWidgetModel {
   }
 
   private async drawImageData() {
-    this.nv = new niivue.Niivue({ isResizeCanvas: false, logging: true });
+    this.nv = new niivue.Niivue({ 
+      isResizeCanvas: false, 
+      logging: true,
+
+      textHeight: this.get('text_height'),
+      colorbarHeight: this.get('colorbar_height'),
+      colorbarMargin: this.get('colorbar_margin'),
+      crosshairWidth: this.get('crosshair_width'),
+      rulerWidth: this.get('ruler_width'),
+      backColor: this.get('back_color'),
+      crosshairColor: this.get('crosshair_color'),
+      selectionBoxColor: this.get('selection_box_color'),
+      clipPlaneColor: this.get('clip_plane_color'),
+      rulerColor: this.get('ruler_color'),
+      show3Dcrosshair: this.get('show_3D_crosshair'),
+      trustCalMinMax: this.get('trust_cal_min_max'),
+      clipPlaneHotKey: this.get('clip_plane_hot_key'),
+      viewModeHotKey: this.get('view_mode_hot_key'),
+      keyDebounceTime: this.get('key_debounce_time'),
+      doubleTouchTimeout: this.get('double_touch_timeout'),
+      longTouchTimeout: this.get('long_touch_timeout'),
+      isRadiologicalConvention: this.get('is_radiological_convention'),
+      loadingText: this.get('loading_text'),
+      dragAndDropEnabled: this.get('drag_and_drop_enabled'),
+      isNearestInterpolation: this.get('is_nearest_interpolation'),
+      isAtlasOutline: this.get('is_atlas_outline'),
+      isRuler: this.get('is_ruler'),
+      isColorbar: this.get('is_colorbar'),
+      isOrientCube: this.get('is_orient_cube'),
+      multiplanarPadPixels: this.get('multiplanar_pad_pixels'),
+      meshThicknessOn2D: this.get('mesh_thickness_on_2D') == 1.7976931348623157e+308 ? undefined : this.get('mesh_thickness_on_2D'),
+      dragMode: this.get('drag_mode'),
+      isDepthPickMesh: this.get('is_depth_pick_mesh'),
+      isCornerOrientationText: this.get('is_corner_orientation_text'),
+      sagittalNoseLeft: this.get('sagittal_nose_left'),
+      isSliceMM: this.get('is_slice_MM'),
+      isHighResolutionCapable: this.get('is_high_resolution_capable'),
+      drawingEnabled: this.get('drawing_enabled'),
+      penValue: this.get('pen_value') == 1.7976931348623157e+308 ? undefined : this.get('pen_value'),
+      isFilledPen: this.get('is_filled_pen'),
+      maxDrawUndoBitmaps: this.get('max_draw_undo_bitmaps'),
+      thumbnail: this.get('thumbnail')
+    });
   }
 
   static model_name = 'NiivueModel';
