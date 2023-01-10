@@ -25,13 +25,6 @@ The `npm i anthonyandroulakis/niivue#thresholding` step is temporary and will on
 To view changes made in the typescript, reload the jupyter page. To view changes made in the python, restart the kernel.
 
 ## Usage
-example usage
-```py
-from ipyniivue import Niivue
-
-nv = Niivue()
-nv
-```
 ![example](docs/example.png)
 
 
