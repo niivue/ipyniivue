@@ -11,8 +11,8 @@ NiiVue Jupyter Library
 ```sh
 git clone https://github.com/niivue/ipyniivue
 cd ipyniivue
-npm i anthonyandroulakis/niivue#thresholding
 yarn
+yarn add https://github.com/AnthonyAndroulakis/niivue#thresholding
 yarn run watch
 ```
 Then, in a separate command line
@@ -25,6 +25,10 @@ The `npm i anthonyandroulakis/niivue#thresholding` step is temporary and will on
 To view changes made in the typescript, reload the jupyter page. To view changes made in the python, restart the kernel.
 
 ## Usage
+<<<<<<< Updated upstream
 ![example](docs/example.png)
+=======
+![example](docs/example.gif)
+>>>>>>> Stashed changes
 
 
