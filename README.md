@@ -20,7 +20,7 @@ Then, in a separate command line
 jupyter lab
 ```
 
-The `npm i anthonyandroulakis/niivue#thresholding` step is temporary and will only exist until the thresholding branch of niivue gets published onto npmjs.org       
+The `yarn add https://github.com/AnthonyAndroulakis/niivue#thresholding` step is temporary and will only exist until the thresholding branch of niivue gets published onto npmjs.org       
       
 To view changes made in the typescript, reload the jupyter page. To view changes made in the python, restart the kernel.
 
