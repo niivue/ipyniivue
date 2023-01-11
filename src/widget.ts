@@ -29,14 +29,6 @@ const COMMANDS = [
   'setClipPlane'
 ];
 
-function getContext(canvas: HTMLCanvasElement) {
-  const context = canvas.getContext('webgl2');
-  if (context === null) {
-    throw 'Unable to get webgl2 context.';
-  }
-  return context;
-}
-
 function serializeImageData(array: Uint8ClampedArray) {
   return new DataView(array.buffer.slice(0));
 }
@@ -132,23 +124,11 @@ export class NiivueModel extends DOMWidgetModel {
 
   initialize(attributes: any, options: any) {
     super.initialize(attributes, options);
-
-    this.canvas = document.createElement('canvas');
-    this.gl = getContext(this.canvas);
-
-    this.drawImageData();
-    this.resizeCanvas();
-
-    this.on_some_change(['width', 'height'], this.resizeCanvas, this);
+    
+    this.createNV();
   }
 
-  private resizeCanvas() {
-    this.canvas.setAttribute('width', this.get('width'));
-    this.canvas.setAttribute('height', this.get('height'));
-    this.canvas.setAttribute('style', `width: ${this.get('width')}px; height: ${this.get('height')};`);
-  }
-
-  private async drawImageData() {
+  private async createNV() {
     this.nv = new niivue.Niivue({ 
       isResizeCanvas: false, 
       logging: true,
@@ -203,37 +183,49 @@ export class NiivueModel extends DOMWidgetModel {
   static view_module = MODULE_NAME; // Set to null if no view
   static view_module_version = MODULE_VERSION;
 
-  canvas: HTMLCanvasElement;
-  gl: WebGL2RenderingContext;
   nv: any;
 }
 
 export class NiivueView extends DOMWidgetView {
   //for changing things / listening to callbacks
   render() {
-    this.updateCanvas();
-    this.resizeDiv();
+    //reason for canvas creation being in here is 2-fold
+    //1) NiivueVIEW
+    //2) https://ipywidgets.readthedocs.io/en/7.7.0/examples/Widget%20Low%20Level.html#Models-and-Views
+    //   "Multiple WidgetViews can be linked to a single WidgetModel. This is how you can redisplay the same Widget multiple times and it still works."
+    this.canvas = document.createElement('canvas');
 
+    this.resize();
+    this.updateCanvas();
     this.value_changed();
+
+    this.model.on_some_change(['width', 'height'], this.resize, this);
     this.model.on('change:value', this.value_changed, this);
   }
 
-  protected resizeDiv() {
+  protected resize() {
+    //resize div
     this.el.setAttribute('width', this.model.get('width'));
     this.el.setAttribute('height', this.model.get('height'));
     this.el.setAttribute('style', `width: ${this.model.get('width')}px; height: ${this.model.get('height')}px;`);
+    //resize canvas
+    this.canvas.setAttribute('width', this.model.get('width'));
+    this.canvas.setAttribute('height', this.model.get('height'));
+    this.canvas.setAttribute('style', `width: ${this.model.get('width')}px; height: ${this.model.get('height')};`);
+    //redraw
+    this.model.nv.drawScene();
   }
 
   updateCanvas() {
-    this.el.appendChild(this.model.canvas);
-    this.model.nv.attachToCanvas(this.model.canvas);
+    this.el.appendChild(this.canvas);
+    this.model.nv.attachToCanvas(this.canvas);
   }
 
   value_changed() {
     this.model.nv.loadVolumes([{url: this.model.get("value")}]);
   }
 
-  //this makes this.el become a custom tag
+  //this makes this.el become a custom tag (div in this case)
   preinitialize() {
     this.tagName = 'div';
   }

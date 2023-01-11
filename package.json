@@ -28,6 +28,7 @@
     "url": "https://github.com/niivue/ipyniivue"
   },
   "scripts": {
+    "install": "npm install --prefix ./niivue && npm run --prefix ./niivue build && npm install ./niivue",
     "build": "yarn run build:lib && yarn run build:nbextension && yarn run build:labextension:dev",
     "build:prod": "yarn run build:lib && yarn run build:nbextension && yarn run build:labextension",
     "build:labextension": "jupyter labextension build .",
