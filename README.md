@@ -11,7 +11,7 @@ ipyNiiVue is a Python / [Niivue](https://github.com/niivue/niivue) bridge for [J
 
 ### Installation
 ```sh
-git clone https://github.com/niivue/ipyniivue
+git clone --recurse-submodules -j8 git://github.com/niivue/ipyniivue.git
 cd ipyniivue
 yarn
 yarn run watch
