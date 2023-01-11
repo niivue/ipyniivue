@@ -4,6 +4,8 @@
 //Much of the structure and many of the functions/classes in this file
 //are from https://github.com/martinRenou/ipycanvas. NiivueModel is based off of  CanvasModel and NiivueView is based off of CanvasView.
 
+import { Buffer } from 'buffer';
+
 import {
   WidgetModel,
   DOMWidgetModel,
@@ -14,9 +16,18 @@ import {
 
 import { MODULE_NAME, MODULE_VERSION } from './version';
 
+import {
+  getTypedArray
+} from './utils';
+
 import "../css/styles.css";
 
 import * as niivue from '@niivue/niivue';
+
+const COMMANDS = [
+  'setNiivue',
+  'setClipPlane'
+];
 
 function getContext(canvas: HTMLCanvasElement) {
   const context = canvas.getContext('webgl2');
@@ -59,9 +70,34 @@ export class CanvasManagerModel extends WidgetModel {
   }
 
   private async onCommand(command: any, buffers: any) {
-    console.log('onCommand CanvasManagerModel', command, buffers);
+    const cmd = JSON.parse(
+      Buffer.from(getTypedArray(buffers[0], command)).toString('utf-8')
+    );
+    console.log('onCommand CanvasManagerModel', cmd);
+    await this.processCommand(cmd, buffers.slice(1, buffers.length));
   }
 
+  private async processCommand(command: any, buffers: any) {
+    const name: string = COMMANDS[command[0]];
+    const args: any[] = command[1];
+    switch(name) {
+      case "setNiivue":
+        console.log('await this.setNiivue(', args, ')');
+      case "setClipPlane":
+        console.log('this.currentNiivue.nv.setClipPlane(', args, ')');
+    }
+  }
+
+  /*
+  private async setNiivue(serializedNiivue: any) {
+    this.currentNiivue = await unpack_models(
+      serializedNiivue,
+      this.widget_manager
+    );
+  }
+  */
+
+  //private currentNiivue: NiivueModel;
   private currentProcessing: Promise<void> = Promise.resolve();
 
   static model_name = 'CanvasManagerModel';
@@ -124,6 +160,7 @@ export class NiivueModel extends DOMWidgetModel {
       rulerWidth: this.get('ruler_width'),
       backColor: this.get('back_color'),
       crosshairColor: this.get('crosshair_color'),
+      fontColor: this.get('font_color'),
       selectionBoxColor: this.get('selection_box_color'),
       clipPlaneColor: this.get('clip_plane_color'),
       rulerColor: this.get('ruler_color'),
@@ -143,6 +180,7 @@ export class NiivueModel extends DOMWidgetModel {
       isColorbar: this.get('is_colorbar'),
       isOrientCube: this.get('is_orient_cube'),
       multiplanarPadPixels: this.get('multiplanar_pad_pixels'),
+      multiplanarForceRender: this.get('multiplanar_force_render'),
       meshThicknessOn2D: this.get('mesh_thickness_on_2D') == 1.7976931348623157e+308 ? undefined : this.get('mesh_thickness_on_2D'),
       dragMode: this.get('drag_mode'),
       isDepthPickMesh: this.get('is_depth_pick_mesh'),

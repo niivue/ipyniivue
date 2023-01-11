@@ -32,6 +32,13 @@ from ipywidgets import (
     Widget,
     widget_serialization
 )
+from .utils import commands_to_buffer
+
+_CMD_LIST = [
+  "setNiivue",
+  "setClipPlane"
+]
+COMMANDS = {v: i for i, v in enumerate(_CMD_LIST)}
 
 class _CanvasManager(Widget):
     """Private Canvas manager."""
@@ -48,7 +55,7 @@ class _CanvasManager(Widget):
 
         super(_CanvasManager, self).__init__()
 
-    def send_draw_command(self, name, args=[], buffers=[]):
+    def send_niivue_command(self, name, args=[], buffers=[]):
         while len(args) and args[len(args) - 1] is None:
             args.pop()
         self.send_command([name, args, len(buffers)], buffers)
@@ -197,6 +204,7 @@ class Niivue(_CanvasBase):
     ruler_width = CFloat(default_value = 4, help="ruler size. 0 for no ruler").tag(sync=True)
     back_color = List(trait=CFloat(), default_value = [0, 0, 0, 1], help="the background color. RGBA values from 0 to 1. Default is black").tag(sync=True, min_len=4, max_len=4)
     crosshair_color = List(trait=CFloat(), default_value = [1, 0, 0, 1], help="the crosshair color. RGBA values from 0 to 1. Default is red").tag(sync=True, min_len=4, max_len=4)
+    font_color = List(trait=CFloat(), default_value = [0.5, 0.5, 0.5, 1], help="the font color. RGBA values from 0 to 1. Default is gray").tag(sync=True, min_len=4, max_len=4)
     selection_box_color = List(trait=CFloat(), default_value = [1, 1, 1, 0.5], help="the selection box color when the intensty selection box is shown (right click and drag). RGBA values from 0 to 1. Default is transparent white").tag(sync=True, min_len=4, max_len=4)
     clip_plane_color = List(trait=CFloat(), default_value = [1, 1, 1, 0.5], help="the color of the visible clip plane. RGBA values from 0 to 1. Default is white").tag(sync=True, min_len=4, max_len=4)
     ruler_color = List(trait=CFloat(), default_value = [1, 0, 0, 0.8], help="the color of the ruler. RGBA values from 0 to 1. Default is translucent red").tag(sync=True, min_len=4, max_len=4)
@@ -216,6 +224,7 @@ class Niivue(_CanvasBase):
     is_colorbar = Bool(default_value = False, help="whether colorbar(s) are shown illustrating values for color maps").tag(sync=True)
     is_orient_cube = Bool(default_value = False, help="whether orientation cube is shown for 3D renderings").tag(sync=True)
     multiplanar_pad_pixels = CInt(default_value = 0, help="spacing between tiles of a multiplanar view").tag(sync=True)
+    multiplanar_force_render = Bool(default_value = False, help="always show rendering in multiplanar view").tag(sync=True)
     mesh_thickness_on_2D = CFloat(default_value = 1.7976931348623157e+308, help="2D slice views can show meshes within this range. Meshes only visible in slice_MM (world space) mode").tag(sync=True)
     drag_mode = UseEnum(DragModes, default_value=DragModes.contrast, help="behavior for dragging (\"none\", \"contrast\", \"measurement\", \"pan\")").tag(sync=True)
     is_depth_pick_mesh = Bool(default_value = False, help="when both voxel-based image and mesh is loaded, will depth picking be able to detect mesh or only voxels").tag(sync=True)
@@ -241,5 +250,66 @@ class Niivue(_CanvasBase):
     def _handle_frontend_event(self, _, content, buffers):
         print("_handle_frontend_event:", content, buffers)
 
+    #setters
+    def set_clip_plane(self, azimuth_elevation_depth):
+        self._canvas_manager.send_niivue_command(COMMANDS["setClipPlane"], azimuth_elevation_depth)
+
+    '''
+    def set_clip_plane_color(data):
+
+    def set_color_map(data):
+
+    def set_color_map_negative(data):
+
+    def set_corner_orientation_text(data):
+
+    def set_crosshair_color(data):
+
+    def set_crosshair_width(data):
+
+    def set_custom_mesh_shader(data):
+
+    def set_drawing_enabled(data):
+
+    def set_draw_opacity(data):
+
+    def set_frame_4D(data):
+
+    def set_high_resolution_capable(data):
+
+    def set_interpolation(data):
+
+    def set_mesh_layer_property(data):
+
+    def set_mesh_property(data):
+
+    def set_mesh_shader(data):
+
+    def set_mesh_thickness_on_2D(data):
+
+    def set_modulation_image(data):
+
+    def set_opacity(data):
+
+    def set_pan_2D_xyzmm(data):
+
+    def set_pen_value(data):
+
+    def set_radiological_convention(data):
+
+    def set_render_azimuth_elevation(data):
+
+    def set_scale(data):
+
+    def set_selection_box_color(data):
+
+    def set_slice_MM(data):
+
+    def set_slice_mosaic_string(data):
+
+    def set_slice_type(data):      
+    '''  
+
+    #temporary function
     def set_volume(self, url):
         self.value = url
