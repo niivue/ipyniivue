@@ -33,6 +33,7 @@ classifiers = [
 ]
 dependencies = [
     "ipywidgets>=7.0.0",
+    "numpy"
 ]
 version = "0.1.0.dev0"
 
