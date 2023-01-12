@@ -7,7 +7,6 @@
 import { Buffer } from 'buffer';
 
 import {
-  WidgetModel,
   DOMWidgetModel,
   DOMWidgetView,
   ISerializers,
@@ -25,8 +24,64 @@ import "../css/styles.css";
 import * as niivue from '@niivue/niivue';
 
 const COMMANDS = [
-  'setNiivue',
-  'setClipPlane'
+  'saveScene', 
+  'addVolumeFromUrl', 
+  'removeVolumeByUrl', 
+  'setCornerOrientationText', 
+  'setRadiologicalConvention', 
+  'setMeshThicknessOn2D', 
+  'setSliceMosaicString', 
+  'setSliceMM', 
+  'setHighResolutionCapable', 
+  'addVolume', 
+  'addMesh', 
+  'drawUndo', 
+  'loadDrawingFromUrl', 
+  'drawOtsu', 
+  'removeHaze', 
+  'saveImage', 
+  'setMeshProperty', 
+  'reverseFaces', 
+  'setMeshLayerProperty', 
+  'setPan2Dxyzmm', 
+  'setRenderAzimuthElevation', 
+  'setVolume', 
+  'removeVolume', 
+  'removeVolumeByIndex', 
+  'removeMesh', 
+  'removeMeshByUrl', 
+  'moveVolumeToBottom', 
+  'moveVolumeUp', 
+  'moveVolumeDown', 
+  'moveVolumeToTop', 
+  'setClipPlane', 
+  'setCrosshairColor', 
+  'setCrosshairWidth', 
+  'setDrawingEnabled', 
+  'setPenValue', 
+  'setDrawOpacity', 
+  'setSelectionBoxColor', 
+  'setSliceType', 
+  'setOpacity', 
+  'setScale', 
+  'setClipPlaneColor', 
+  'loadDocumentFromUrl', 
+  'loadVolumes', 
+  'addMeshFromUrl', 
+  'loadMeshes', 
+  'loadConnectome', 
+  'createEmptyDrawing', 
+  'drawGrowCut', 
+  'setMeshShader', 
+  'setCustomMeshShader', 
+  'updateGLVolume', 
+  'setColorMap', 
+  'setColorMapNegative', 
+  'setModulationImage', 
+  'setFrame4D', 
+  'setInterpolation', 
+  'moveCrosshairInVox', 
+  'drawMosaic'
 ];
 
 function serializeImageData(array: Uint8ClampedArray) {
@@ -39,62 +94,6 @@ function deserializeImageData(dataview: DataView | null) {
   }
 
   return new Uint8ClampedArray(dataview.buffer);
-}
-
-export class CanvasManagerModel extends WidgetModel {
-  defaults() {
-    return {
-      ...super.defaults(),
-      _model_name: CanvasManagerModel.model_name,
-      _model_module: CanvasManagerModel.model_module,
-      _model_module_version: CanvasManagerModel.model_module_version
-    };
-  }
-
-  initialize(attributes: any, options: any) {
-    super.initialize(attributes, options);
-
-    this.on('msg:custom', (command: any, buffers: any) => {
-      this.currentProcessing = this.currentProcessing.then(async () => {
-        await this.onCommand(command, buffers);
-      });
-    });
-  }
-
-  private async onCommand(command: any, buffers: any) {
-    const cmd = JSON.parse(
-      Buffer.from(getTypedArray(buffers[0], command)).toString('utf-8')
-    );
-    console.log('onCommand CanvasManagerModel', cmd);
-    await this.processCommand(cmd, buffers.slice(1, buffers.length));
-  }
-
-  private async processCommand(command: any, buffers: any) {
-    const name: string = COMMANDS[command[0]];
-    const args: any[] = command[1];
-    switch(name) {
-      case "setNiivue":
-        console.log('await this.setNiivue(', args, ')');
-      case "setClipPlane":
-        console.log('this.currentNiivue.nv.setClipPlane(', args, ')');
-    }
-  }
-
-  /*
-  private async setNiivue(serializedNiivue: any) {
-    this.currentNiivue = await unpack_models(
-      serializedNiivue,
-      this.widget_manager
-    );
-  }
-  */
-
-  //private currentNiivue: NiivueModel;
-  private currentProcessing: Promise<void> = Promise.resolve();
-
-  static model_name = 'CanvasManagerModel';
-  static model_module = MODULE_NAME;
-  static model_module_version = MODULE_VERSION;
 }
 
 export class NiivueModel extends DOMWidgetModel {
@@ -124,8 +123,204 @@ export class NiivueModel extends DOMWidgetModel {
 
   initialize(attributes: any, options: any) {
     super.initialize(attributes, options);
+  
+    this.on('msg:custom', (command: any, buffers: any) => {
+      this.currentProcessing = this.currentProcessing.then(async () => {
+        await this.onCommand(command, buffers);
+      });
+    });
     
     this.createNV();
+  }
+
+  private async onCommand(command: any, buffers: any) {
+    const cmd = JSON.parse(
+      Buffer.from(getTypedArray(buffers[0], command)).toString('utf-8')
+    );
+    await this.processCommand(cmd, buffers.slice(1, buffers.length));
+  }
+
+  private async processCommand(command: any, buffers: any) {
+    const name: string = COMMANDS[command[0]];
+    const args: any[] = command[1];
+    console.log('DEBUG: processCommand', name, args);
+    switch(name) {
+      case 'saveScene':
+        this.nv.saveScene(args[0]);
+        break;
+      case 'addVolumeFromUrl':
+        let image = await niivue.NVImage.loadFromUrl({url:args[0]})
+        this.nv.addVolume(image);
+        break;
+      case 'removeVolumeByUrl':
+        this.nv.removeVolumeByUrl(args[0]);
+        break;
+      case 'setCornerOrientationText':
+        this.nv.setCornerOrientationText(args[0]);
+        break;
+      case 'setRadiologicalConvention':
+        this.nv.setRadiologicalConvention(args[0]);
+        break;
+      case 'setMeshThicknessOn2D':
+        this.nv.setMeshThicknessOn2D(args[0]);
+        break;
+      case 'setSliceMosaicString':
+        this.nv.setSliceMosaicString(args[0]);
+        break;
+      case 'setSliceMM':
+        this.nv.setSliceMM(args[0]);
+        break;
+      case 'setHighResolutionCapable':
+        this.nv.setHighResolutionCapable(args[0]);
+        break;
+      case 'addVolume':
+        this.nv.addVolume(args[0]);
+        break;
+      case 'addMesh':
+        this.nv.addMesh(args[0]);
+        break;
+      case 'drawUndo':
+        this.nv.drawUndo();
+        break;
+      case 'loadDrawingFromUrl':
+        this.nv.loadDrawingFromUrl(args[0]);
+        break;
+      case 'drawOtsu':
+        this.nv.drawOtsu(args[0]);
+        break;
+      case 'removeHaze':
+        this.nv.removeHaze(args[0], args[1]);
+        break;
+      case 'saveImage':
+        this.nv.saveImage(args[0], args[1]);
+        break;
+      case 'setMeshProperty':
+        this.nv.setMeshProperty(args[0], args[1], args[2]);
+        break;
+      case 'reverseFaces':
+        this.nv.reverseFaces(args[0]);
+        break;
+      case 'setMeshLayerProperty':
+        this.nv.setMeshLayerProperty(args[0], args[1], args[2], args[3]);
+        break;
+      case 'setPan2Dxyzmm':
+        this.nv.setPan2Dxyzmm(args[0]);
+        break;
+      case 'setRenderAzimuthElevation':
+        this.nv.setRenderAzimuthElevation(args[0], args[1]);
+        break;
+      case 'setVolume':
+        this.nv.setVolume(args[0], args[1]);
+        break;
+      case 'removeVolume':
+        this.nv.removeVolume(args[0]);
+        break;
+      case 'removeVolumeByIndex':
+        this.nv.removeVolumeByIndex(args[0]);
+        break;
+      case 'removeMesh':
+        this.nv.removeMesh(args[0]);
+        break;
+      case 'removeMeshByUrl':
+        this.nv.removeMeshByUrl(args[0]);
+        break;
+      case 'moveVolumeToBottom':
+        this.nv.moveVolumeToBottom(args[0]);
+        break;
+      case 'moveVolumeUp':
+        this.nv.moveVolumeUp(args[0]);
+        break;
+      case 'moveVolumeDown':
+        this.nv.moveVolumeDown(args[0]);
+        break;
+      case 'moveVolumeToTop':
+        this.nv.moveVolumeToTop(args[0]);
+        break;
+      case 'setClipPlane':
+        this.nv.setClipPlane(args[0]);
+        break;
+      case 'setCrosshairColor':
+        this.nv.setCrosshairColor(args[0]);
+        break;
+      case 'setCrosshairWidth':
+        this.nv.setCrosshairWidth(args[0]);
+        break;
+      case 'setDrawingEnabled':
+        this.nv.setDrawingEnabled(args[0]);
+        break;
+      case 'setPenValue':
+        this.nv.setPenValue(args[0], args[1]);
+        break;
+      case 'setDrawOpacity':
+        this.nv.setDrawOpacity(args[0]);
+        break;
+      case 'setSelectionBoxColor':
+        this.nv.setSelectionBoxColor(args[0]);
+        break;
+      case 'setSliceType':
+        this.nv.setSliceType(args[0]);
+        break;
+      case 'setOpacity':
+        this.nv.setOpacity(args[0], args[1]);
+        break;
+      case 'setScale':
+        this.nv.setScale(args[0]);
+        break;
+      case 'setClipPlaneColor':
+        this.nv.setClipPlaneColor(args[0]);
+        break;
+      case 'loadDocumentFromUrl':
+        this.nv.loadDocumentFromUrl(args[0]);
+        break;
+      case 'loadVolumes':
+        this.nv.loadVolumes(args[0]);
+        break;
+      case 'addMeshFromUrl':
+        this.nv.addMeshFromUrl(args[0]);
+        break;
+      case 'loadMeshes':
+        this.nv.loadMeshes(args[0]);
+        break;
+      case 'loadConnectome':
+        this.nv.loadConnectome(args[0]);
+        break;
+      case 'createEmptyDrawing':
+        this.nv.createEmptyDrawing();
+        break;
+      case 'drawGrowCut':
+        this.nv.drawGrowCut();
+        break;
+      case 'setMeshShader':
+        this.nv.setMeshShader(args[0], args[1]);
+        break;
+      case 'setCustomMeshShader':
+        this.nv.setCustomMeshShader(args[0], args[1]);
+        break;
+      case 'updateGLVolume':
+        this.nv.updateGLVolume();
+        break;
+      case 'setColorMap':
+        this.nv.setColorMap(args[0], args[1]);
+        break;
+      case 'setColorMapNegative':
+        this.nv.setColorMapNegative(args[0], args[1]);
+        break;
+      case 'setModulationImage':
+        this.nv.setModulationImage(args[0], args[1], args[2]);
+        break;
+      case 'setFrame4D':
+        this.nv.setFrame4D(args[0], args[1]);
+        break;
+      case 'setInterpolation':
+        this.nv.setInterpolation(args[0]);
+        break;
+      case 'moveCrosshairInVox':
+        this.nv.moveCrosshairInVox(args[0], args[1], args[2]);
+        break;
+      case 'drawMosaic':
+        this.nv.drawMosaic(args[0]);
+        break;
+    }
   }
 
   private async createNV() {
@@ -183,6 +378,7 @@ export class NiivueModel extends DOMWidgetModel {
   static view_module = MODULE_NAME; // Set to null if no view
   static view_module_version = MODULE_VERSION;
 
+  private currentProcessing: Promise<void> = Promise.resolve();
   nv: any;
 }
 

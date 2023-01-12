@@ -11,13 +11,13 @@ ipyNiiVue is a Python / [Niivue](https://github.com/niivue/niivue) bridge for [J
 
 ### Installation
 ```sh
-git clone --recurse-submodules -j8 git://github.com/niivue/ipyniivue.git
+conda create -n ipyniivue-dev -c conda-forge nodejs yarn python jupyterlab
+conda activate ipyniivue-dev
+git clone --recurse-submodules git://github.com/niivue/ipyniivue.git
 cd ipyniivue
 yarn
-yarn run watch
-```
-Then, in a separate command line
-```
+pip install -e .
+yarn run build
 jupyter lab
 ```
 

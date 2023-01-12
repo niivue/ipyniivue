@@ -35,54 +35,66 @@ from ipywidgets import (
 from .utils import commands_to_buffer
 
 _CMD_LIST = [
-  "setNiivue",
-  "setClipPlane"
+    "saveScene", 
+    "addVolumeFromUrl", 
+    "removeVolumeByUrl", 
+    "setCornerOrientationText", 
+    "setRadiologicalConvention", 
+    "setMeshThicknessOn2D", 
+    "setSliceMosaicString", 
+    "setSliceMM", 
+    "setHighResolutionCapable", 
+    "addVolume", 
+    "addMesh", 
+    "drawUndo", 
+    "loadDrawingFromUrl", 
+    "drawOtsu", 
+    "removeHaze", 
+    "saveImage", 
+    "setMeshProperty", 
+    "reverseFaces", 
+    "setMeshLayerProperty", 
+    "setPan2Dxyzmm", 
+    "setRenderAzimuthElevation", 
+    "setVolume", 
+    "removeVolume", 
+    "removeVolumeByIndex", 
+    "removeMesh", 
+    "removeMeshByUrl", 
+    "moveVolumeToBottom", 
+    "moveVolumeUp", 
+    "moveVolumeDown", 
+    "moveVolumeToTop", 
+    "setClipPlane", 
+    "setCrosshairColor", 
+    "setCrosshairWidth", 
+    "setDrawingEnabled", 
+    "setPenValue", 
+    "setDrawOpacity", 
+    "setSelectionBoxColor", 
+    "setSliceType", 
+    "setOpacity", 
+    "setScale", 
+    "setClipPlaneColor", 
+    "loadDocumentFromUrl", 
+    "loadVolumes", 
+    "addMeshFromUrl", 
+    "loadMeshes", 
+    "loadConnectome", 
+    "createEmptyDrawing", 
+    "drawGrowCut", 
+    "setMeshShader", 
+    "setCustomMeshShader", 
+    "updateGLVolume", 
+    "setColorMap", 
+    "setColorMapNegative", 
+    "setModulationImage", 
+    "setFrame4D", 
+    "setInterpolation", 
+    "moveCrosshairInVox", 
+    "drawMosaic"
 ]
 COMMANDS = {v: i for i, v in enumerate(_CMD_LIST)}
-
-class _CanvasManager(Widget):
-    """Private Canvas manager."""
-
-    _model_module = Unicode(module_name).tag(sync=True)
-    _model_module_version = Unicode(module_version).tag(sync=True)
-
-    _model_name = Unicode("CanvasManagerModel").tag(sync=True)
-
-    def __init__(self, *args, **kwargs):
-        self._caching = kwargs.get("caching", False)
-        self._commands_cache = []
-        self._buffers_cache = []
-
-        super(_CanvasManager, self).__init__()
-
-    def send_niivue_command(self, name, args=[], buffers=[]):
-        while len(args) and args[len(args) - 1] is None:
-            args.pop()
-        self.send_command([name, args, len(buffers)], buffers)
-
-    def send_command(self, command, buffers=[]):
-        if self._caching:
-            self._commands_cache.append(command)
-            self._buffers_cache += buffers
-            return
-        self._send_custom(command, buffers)
-
-    def flush(self):
-        """Flush all the cached commands and clear the cache."""
-        if not self._caching or not len(self._commands_cache):
-            return
-
-        self._send_custom(self._commands_cache, self._buffers_cache)
-
-        self._commands_cache = []
-        self._buffers_cache = []
-
-    def _send_custom(self, command, buffers=[]):
-        metadata, command_buffer = commands_to_buffer(command)
-        self.send(metadata, buffers=[command_buffer] + buffers)
-
-# Main canvas manager
-_CANVAS_MANAGER = _CanvasManager()
 
 class _CanvasBase(DOMWidget):
     """
@@ -95,10 +107,6 @@ class _CanvasBase(DOMWidget):
     _model_module_version = Unicode(module_version).tag(sync=True)
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
-
-    _canvas_manager = Instance(_CanvasManager, default_value=_CANVAS_MANAGER).tag(
-        sync=True, **widget_serialization
-    )
 
     height = CInt(480).tag(sync=True)
     width = CInt(640).tag(sync=True)
@@ -250,66 +258,185 @@ class Niivue(_CanvasBase):
     def _handle_frontend_event(self, _, content, buffers):
         print("_handle_frontend_event:", content, buffers)
 
-    #setters
-    def set_clip_plane(self, azimuth_elevation_depth):
-        self._canvas_manager.send_niivue_command(COMMANDS["setClipPlane"], azimuth_elevation_depth)
+    def _send_custom(self, command):
+        metadata, command_buffer = commands_to_buffer(command)
+        self.send(metadata, buffers=[command_buffer])
 
-    '''
-    def set_clip_plane_color(data):
+    #NiiVue functions
+    def save_scene(self, filename):
+        self._send_custom([COMMANDS["saveScene"], [filename]])
 
-    def set_color_map(data):
+    def add_volume_from_url(self, image_options):
+        self._send_custom([COMMANDS["addVolumeFromUrl"], [image_options]])
 
-    def set_color_map_negative(data):
+    def remove_volume_by_url(self, url):
+        self._send_custom([COMMANDS["removeVolumeByUrl"], [url]])
 
-    def set_corner_orientation_text(data):
+    def set_corner_orientation_text(self, is_corner_orientation_text):
+        self._send_custom([COMMANDS["setCornerOrientationText"], [is_corner_orientation_text]])
 
-    def set_crosshair_color(data):
+    def set_radiological_convention(self, is_radiological_convention):
+        self._send_custom([COMMANDS["setRadiologicalConvention"], [is_radiological_convention]])
 
-    def set_crosshair_width(data):
+    def set_mesh_thickness_on_2D(self, mesh_thickness_on_2D):
+        self._send_custom([COMMANDS["setMeshThicknessOn2D"], [mesh_thickness_on_2D]])
 
-    def set_custom_mesh_shader(data):
+    def set_slice_mosaic_string(self, string):
+        self._send_custom([COMMANDS["setSliceMosaicString"], [string]])
 
-    def set_drawing_enabled(data):
+    def set_slice_mm(self, is_slice_mm):
+        self._send_custom([COMMANDS["setSliceMM"], [is_slice_mm]])
 
-    def set_draw_opacity(data):
+    def set_high_resolution_capable(self, is_high_resolution_capable):
+        self._send_custom([COMMANDS["setHighResolutionCapable"], [is_high_resolution_capable]])
 
-    def set_frame_4D(data):
+    def add_volume(self, volume):
+        self._send_custom([COMMANDS["addVolume"], [volume]])
 
-    def set_high_resolution_capable(data):
+    def add_mesh(self, mesh):
+        self._send_custom([COMMANDS["addMesh"], [mesh]])
 
-    def set_interpolation(data):
+    def draw_undo(self):
+        self._send_custom([COMMANDS["drawUndo"], []])
 
-    def set_mesh_layer_property(data):
+    def load_drawing_from_url(self, fnm):
+        self._send_custom([COMMANDS["loadDrawingFromUrl"], [fnm]])
 
-    def set_mesh_property(data):
+    def draw_otsu(self, levels):
+        self._send_custom([COMMANDS["drawOtsu"], [levels]])
 
-    def set_mesh_shader(data):
+    def remove_haze(self, level, vol_index):
+        self._send_custom([COMMANDS["removeHaze"], [level, vol_index]])
 
-    def set_mesh_thickness_on_2D(data):
+    def save_image(self, fnm, is_save_drawing):
+        self._send_custom([COMMANDS["saveImage"], [fnm, is_save_drawing]])
 
-    def set_modulation_image(data):
+    def set_mesh_property(self, id_str, key, val):
+        self._send_custom([COMMANDS["setMeshProperty"], [id_str, key, val]])
 
-    def set_opacity(data):
+    def reverse_faces(self, mesh):
+        self._send_custom([COMMANDS["reverseFaces"], [mesh]])
 
-    def set_pan_2D_xyzmm(data):
+    def set_mesh_layer_property(self, mesh, layer, key, val):
+        self._send_custom([COMMANDS["setMeshLayerProperty"], [mesh, layer, key, val]])
 
-    def set_pen_value(data):
+    def set_pan_2D_xyzmm(self, xyzmm_zoom):
+        self._send_custom([COMMANDS["setPan2Dxyzmm"], [xyzmm_zoom]])
 
-    def set_radiological_convention(data):
+    def set_render_azimuth_elevation(self, a, e):
+        self._send_custom([COMMANDS["setRenderAzimuthElevation"], [a, e]])
 
-    def set_render_azimuth_elevation(data):
+    def set_volume(self, volume, to_index):
+        self._send_custom([COMMANDS["setVolume"], [volume, to_index]])
 
-    def set_scale(data):
+    def remove_volume(self, volume):
+        self._send_custom([COMMANDS["removeVolume"], [volume]])
 
-    def set_selection_box_color(data):
+    def remove_volume_by_index(self, index):
+        self._send_custom([COMMANDS["removeVolumeByIndex"], [index]])
 
-    def set_slice_MM(data):
+    def remove_mesh(self, mesh):
+        self._send_custom([COMMANDS["removeMesh"], [mesh]])
 
-    def set_slice_mosaic_string(data):
+    def remove_mesh_by_url(self, url):
+        self._send_custom([COMMANDS["removeMeshByUrl"], [url]])
 
-    def set_slice_type(data):      
-    '''  
+    def move_volume_to_bottom(self, volume):
+        self._send_custom([COMMANDS["moveVolumeToBottom"], [volume]])
 
+    def move_volume_up(self, volume):
+        self._send_custom([COMMANDS["moveVolumeUp"], [volume]])
+
+    def move_volume_down(self, volume):
+        self._send_custom([COMMANDS["moveVolumeDown"], [volume]])
+
+    def move_volume_to_top(self, volume):
+        self._send_custom([COMMANDS["moveVolumeToTop"], [volume]])
+
+    def set_clip_plane(self, depth_azimuth_elevation):
+        self._send_custom([COMMANDS["setClipPlane"], [depth_azimuth_elevation]])
+
+    def set_crosshair_color(self, color):
+        self._send_custom([COMMANDS["setCrosshairColor"], [color]])
+
+    def set_crosshair_width(self, crosshair_width):
+        self._send_custom([COMMANDS["setCrosshairWidth"], [crosshair_width]])
+
+    def set_drawing_enabled(self, true_or_false):
+        self._send_custom([COMMANDS["setDrawingEnabled"], [true_or_false]])
+
+    def set_pen_value(self, pen_value, is_filled_pen):
+        self._send_custom([COMMANDS["setPenValue"], [pen_value, is_filled_pen]])
+
+    def set_draw_opacity(self, opacity):
+        self._send_custom([COMMANDS["setDrawOpacity"], [opacity]])
+
+    def set_selection_box_color(self, color):
+        self._send_custom([COMMANDS["setSelectionBoxColor"], [color]])
+
+    def set_slice_type(self, st):
+        self._send_custom([COMMANDS["setSliceType"], [st]])
+
+    def set_opacity(self, vol_idx, new_opacity):
+        self._send_custom([COMMANDS["setOpacity"], [vol_idx, new_opacity]])
+
+    def set_scale(self, scale):
+        self._send_custom([COMMANDS["setScale"], [scale]])
+
+    def set_clip_plane_color(self, color):
+        self._send_custom([COMMANDS["setClipPlaneColor"], [color]])
+
+    def load_document_from_url(self, url):
+        self._send_custom([COMMANDS["loadDocumentFromUrl"], [url]])
+
+    def load_volumes(self, volume_list):
+        self._send_custom([COMMANDS["loadVolumes"], [volume_list]])
+
+    def add_mesh_from_url(self, mesh_options):
+        self._send_custom([COMMANDS["addMeshFromUrl"], [mesh_options]])
+
+    def load_meshes(self, mesh_list):
+        self._send_custom([COMMANDS["loadMeshes"], [mesh_list]])
+
+    def load_connectome(self, connectome):
+        self._send_custom([COMMANDS["loadConnectome"], [connectome]])
+
+    def create_empty_drawing(self):
+        self._send_custom([COMMANDS["createEmptyDrawing"], []])
+
+    def draw_grow_cut(self):
+        self._send_custom([COMMANDS["drawGrowCut"], []])
+
+    def set_mesh_shader(self, id_str, mesh_shader_name_or_number):
+        self._send_custom([COMMANDS["setMeshShader"], [id_str, mesh_shader_name_or_number]])
+
+    def set_custom_mesh_shader(self, fragment_shader_text, name):
+        self._send_custom([COMMANDS["setCustomMeshShader"], [fragment_shader_text, name]])
+
+    def update_gl_volume(self):
+        self._send_custom([COMMANDS["updateGLVolume"], []])
+
+    def set_color_map(self, id_str, color_map):
+        self._send_custom([COMMANDS["setColorMap"], [id_str, color_map]])
+
+    def set_color_map_negative(self, id_str, color_map_negative):
+        self._send_custom([COMMANDS["setColorMapNegative"], [id_str, color_map_negative]])
+
+    def set_modulation_image(self, id_target, id_modulation, modulate_alpha):
+        self._send_custom([COMMANDS["setModulationImage"], [id_target, id_modulation, modulate_alpha]])
+
+    def set_frame_4D(self, id_str, frame_4D):
+        self._send_custom([COMMANDS["setFrame4D"], [id_str, frame_4D]])
+
+    def set_interpolation(self, is_nearest):
+        self._send_custom([COMMANDS["setInterpolation"], [is_nearest]])
+
+    def move_crosshair_in_vox(self, x, y, z):
+        self._send_custom([COMMANDS["moveCrosshairInVox"], [x, y, z]])
+
+    def draw_mosaic(self, mosaic_str):
+        self._send_custom([COMMANDS["drawMosaic"], [mosaic_str]])
+    
     #temporary function
-    def set_volume(self, url):
+    def load_volume_from_url(self, url):
         self.value = url
