@@ -149,8 +149,8 @@ export class NiivueModel extends DOMWidgetModel {
         this.nv.saveScene(args[0]);
         break;
       case 'addVolumeFromUrl':
-        let image = await niivue.NVImage.loadFromUrl({url:args[0]})
-        this.nv.addVolume(image);
+        let options = new niivue.NVImageFromUrlOptions(args[0]);
+        this.nv.addVolumeFromUrl(options);
         break;
       case 'removeVolumeByUrl':
         this.nv.removeVolumeByUrl(args[0]);
