@@ -5,6 +5,7 @@
 //are from https://github.com/martinRenou/ipycanvas. NiivueModel is based off of  CanvasModel and NiivueView is based off of CanvasView.
 
 import { Buffer } from 'buffer';
+import * as niivue from '@niivue/niivue';
 
 import {
   DOMWidgetModel,
@@ -19,9 +20,7 @@ import {
   getTypedArray
 } from './utils';
 
-import "../css/styles.css";
-
-import * as niivue from '@niivue/niivue';
+import "../css/styles.css"
 
 const COMMANDS = [
   'saveScene', 
@@ -81,7 +80,8 @@ const COMMANDS = [
   'setFrame4D', 
   'setInterpolation', 
   'moveCrosshairInVox', 
-  'drawMosaic'
+  'drawMosaic',
+  'addVolumeFromBase64'
 ];
 
 function serializeImageData(array: Uint8ClampedArray) {
@@ -149,8 +149,7 @@ export class NiivueModel extends DOMWidgetModel {
         this.nv.saveScene(args[0]);
         break;
       case 'addVolumeFromUrl':
-        let options = new niivue.NVImageFromUrlOptions(args[0]);
-        this.nv.addVolumeFromUrl(options);
+        this.nv.addVolumeFromUrl({url: args[0]});
         break;
       case 'removeVolumeByUrl':
         this.nv.removeVolumeByUrl(args[0]);
@@ -319,6 +318,9 @@ export class NiivueModel extends DOMWidgetModel {
         break;
       case 'drawMosaic':
         this.nv.drawMosaic(args[0]);
+        break;
+      case 'addVolumeFromBase64':
+        this.nv.addVolume(niivue.NVImage.loadFromBase64({name: args[0], base64: args[1]}));
         break;
     }
   }

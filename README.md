@@ -24,6 +24,6 @@ jupyter lab
 To view changes made in the typescript, reload the jupyter page. To view changes made in the python, restart the kernel.
 
 ### Usage
-![example](docs/example.gif)
+![example](docs/example.png)
 
 

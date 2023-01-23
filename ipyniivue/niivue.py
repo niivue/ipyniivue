@@ -11,6 +11,9 @@
 TODO: Add module docstring
 """
 
+import pathlib
+import base64
+
 from traitlets import (
     Unicode, 
     Instance,
@@ -92,9 +95,17 @@ _CMD_LIST = [
     "setFrame4D", 
     "setInterpolation", 
     "moveCrosshairInVox", 
-    "drawMosaic"
+    "drawMosaic",
+    "addVolumeFromBase64"
 ]
 COMMANDS = {v: i for i, v in enumerate(_CMD_LIST)}
+
+def read_file(file):
+    try:
+        with open(file, 'rb') as f:
+            return f.read()
+    except FileNotFoundError as error: 
+        raise error
 
 class _CanvasBase(DOMWidget):
     """
@@ -290,8 +301,11 @@ class Niivue(_CanvasBase):
     def set_high_resolution_capable(self, is_high_resolution_capable):
         self._send_custom([COMMANDS["setHighResolutionCapable"], [is_high_resolution_capable]])
 
+    '''
+    #todo
     def add_volume(self, volume):
         self._send_custom([COMMANDS["addVolume"], [volume]])
+    '''
 
     def add_mesh(self, mesh):
         self._send_custom([COMMANDS["addMesh"], [mesh]])
@@ -437,6 +451,14 @@ class Niivue(_CanvasBase):
     def draw_mosaic(self, mosaic_str):
         self._send_custom([COMMANDS["drawMosaic"], [mosaic_str]])
     
-    #temporary function
-    def load_volume_from_url(self, url):
-        self.value = url
+    def add_volume(self, file):
+        if (file.startswith('http://') or file.startswith('https://')):
+            self._send_custom([COMMANDS["addVolumeFromUrl"], [file]])
+        else:
+            if file.startswith('file://'):
+                file = file[7:]
+            filename = pathlib.Path(file).name
+            filedata = read_file(file)
+            b64 = base64.b64encode(filedata).decode('ascii')
+            self._send_custom([COMMANDS["addVolumeFromBase64"], [filename, b64]])
+            
