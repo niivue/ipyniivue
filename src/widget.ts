@@ -4,8 +4,8 @@
 //Much of the structure and many of the functions/classes in this file
 //are from https://github.com/martinRenou/ipycanvas. NiivueModel is based off of  CanvasModel and NiivueView is based off of CanvasView.
 
-import { Buffer } from 'buffer';
 import * as niivue from '@niivue/niivue';
+import { arrayBufferToBase64 } from './utils';
 
 import {
   DOMWidgetModel,
@@ -15,10 +15,6 @@ import {
 } from '@jupyter-widgets/base';
 
 import { MODULE_NAME, MODULE_VERSION } from './version';
-
-import {
-  getTypedArray
-} from './utils';
 
 import "../css/styles.css"
 
@@ -133,17 +129,9 @@ export class NiivueModel extends DOMWidgetModel {
     this.createNV();
   }
 
-  private async onCommand(command: any, buffers: any) {
-    const cmd = JSON.parse(
-      Buffer.from(getTypedArray(buffers[0], command)).toString('utf-8')
-    );
-    await this.processCommand(cmd, buffers.slice(1, buffers.length));
-  }
-
-  private async processCommand(command: any, buffers: any) {
+  private async onCommand(command: any, buffers: DataView[]) {
     const name: string = COMMANDS[command[0]];
     const args: any[] = command[1];
-    console.log('DEBUG: processCommand', name, args);
     switch(name) {
       case 'saveScene':
         this.nv.saveScene(args[0]);
@@ -320,7 +308,7 @@ export class NiivueModel extends DOMWidgetModel {
         this.nv.drawMosaic(args[0]);
         break;
       case 'addVolumeFromBase64':
-        this.nv.addVolume(niivue.NVImage.loadFromBase64({name: args[0], base64: args[1]}));
+        this.nv.addVolume(niivue.NVImage.loadFromBase64({name: args[0], base64: arrayBufferToBase64(buffers[0].buffer)}));
         break;
     }
   }
@@ -395,10 +383,10 @@ export class NiivueView extends DOMWidgetView {
 
     this.resize();
     this.updateCanvas();
-    this.value_changed();
+    //this.value_changed();
 
     this.model.on_some_change(['width', 'height'], this.resize, this);
-    this.model.on('change:value', this.value_changed, this);
+    //this.model.on('change:value', this.value_changed, this);
   }
 
   protected resize() {
@@ -419,11 +407,12 @@ export class NiivueView extends DOMWidgetView {
     this.model.nv.attachToCanvas(this.canvas);
   }
 
+  //proof of concept - can have updates from variable changes
   value_changed() {
     this.model.nv.loadVolumes([{url: this.model.get("value")}]);
   }
 
-  //this makes this.el become a custom tag (div in this case)
+  //this makes this.el become a custom tag (div in this case). Technically this is not necessary.
   preinitialize() {
     this.tagName = 'div';
   }

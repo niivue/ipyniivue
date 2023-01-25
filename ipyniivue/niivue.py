@@ -12,7 +12,6 @@ TODO: Add module docstring
 """
 
 import pathlib
-import base64
 
 from traitlets import (
     Unicode, 
@@ -213,7 +212,7 @@ class Niivue(_CanvasBase):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    value = Unicode("Hello World").tag(sync=True)
+    value = Unicode("").tag(sync=True)
 
     #NiivueOptions
     text_height = CFloat(default_value = 0.06, help="the text height for orientation labels (0 to 1). Zero for no text labels").tag(sync=True)
@@ -269,9 +268,8 @@ class Niivue(_CanvasBase):
     def _handle_frontend_event(self, _, content, buffers):
         print("_handle_frontend_event:", content, buffers)
 
-    def _send_custom(self, command):
-        metadata, command_buffer = commands_to_buffer(command)
-        self.send(metadata, buffers=[command_buffer])
+    def _send_custom(self, command, buffers=[]):
+        self.send(command, buffers=buffers)
 
     #NiiVue functions
     def save_scene(self, filename):
@@ -459,6 +457,5 @@ class Niivue(_CanvasBase):
                 file = file[7:]
             filename = pathlib.Path(file).name
             filedata = read_file(file)
-            b64 = base64.b64encode(filedata).decode('ascii')
-            self._send_custom([COMMANDS["addVolumeFromBase64"], [filename, b64]])
+            self._send_custom([COMMANDS["addVolumeFromBase64"], [filename]], [filedata])
             
