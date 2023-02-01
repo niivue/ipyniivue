@@ -15,14 +15,12 @@ import pathlib
 
 from traitlets import (
     Unicode, 
-    Instance,
     CInt,
     CFloat,
     List,
     Bool, 
     UseEnum,
-    CaselessStrEnum,
-    Undefined
+    CaselessStrEnum
 )
 from .traits import ( 
     DragModes, 
@@ -30,11 +28,8 @@ from .traits import (
 )
 from ._frontend import module_name, module_version
 from ipywidgets import (
-    DOMWidget,
-    Widget,
-    widget_serialization
+    DOMWidget
 )
-from .utils import commands_to_buffer
 
 _CMD_LIST = [
     "saveScene", 

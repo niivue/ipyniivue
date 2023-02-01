@@ -378,8 +378,9 @@ export class NiivueView extends DOMWidgetView {
     //reason for canvas creation being in here is 2-fold
     //1) NiivueVIEW
     //2) https://ipywidgets.readthedocs.io/en/7.7.0/examples/Widget%20Low%20Level.html#Models-and-Views
-    //   "Multiple WidgetViews can be linked to a single WidgetModel. This is how you can redisplay the same Widget multiple times and it still works."
+    //   "Multiple WidgetViews can be linked to a single WidgetModel. This is how you can redisplay the same Widget multiple times and it still works."    
     this.canvas = document.createElement('canvas');
+    this.canvas.classList.add('niivue-widget');
 
     this.resize();
     this.updateCanvas();
@@ -405,6 +406,7 @@ export class NiivueView extends DOMWidgetView {
   updateCanvas() {
     this.el.appendChild(this.canvas);
     this.model.nv.attachToCanvas(this.canvas);
+    this.el.style.backgroundColor = 'transparent';
   }
 
   //proof of concept - can have updates from variable changes
