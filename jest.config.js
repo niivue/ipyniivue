@@ -1,6 +1,7 @@
 module.exports = {
   automock: false,
   moduleNameMapper: {
+    '\\.(jpg|jpeg|png|svg)$': '<rootDir>/fileMock.js',
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
   },
   preset: 'ts-jest/presets/js-with-babel',
@@ -11,6 +12,6 @@ module.exports = {
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.json',
-    },
-  },
+    }
+  }
 };

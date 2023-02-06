@@ -357,7 +357,7 @@ export class NiivueModel extends DOMWidgetModel {
       penValue: this.get('pen_value') == 1.7976931348623157e+308 ? undefined : this.get('pen_value'),
       isFilledPen: this.get('is_filled_pen'),
       maxDrawUndoBitmaps: this.get('max_draw_undo_bitmaps'),
-      thumbnail: this.get('thumbnail')
+      thumbnail: this.get('thumbnail') || ''
     });
   }
 
