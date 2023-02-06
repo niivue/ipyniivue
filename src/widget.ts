@@ -11,73 +11,73 @@ import {
   DOMWidgetModel,
   DOMWidgetView,
   ISerializers,
-  unpack_models
+  unpack_models,
 } from '@jupyter-widgets/base';
 
 import { MODULE_NAME, MODULE_VERSION } from './version';
 
-import "../css/styles.css"
+import '../css/styles.css';
 
 const COMMANDS = [
-  'saveScene', 
-  'addVolumeFromUrl', 
-  'removeVolumeByUrl', 
-  'setCornerOrientationText', 
-  'setRadiologicalConvention', 
-  'setMeshThicknessOn2D', 
-  'setSliceMosaicString', 
-  'setSliceMM', 
-  'setHighResolutionCapable', 
-  'addVolume', 
-  'addMesh', 
-  'drawUndo', 
-  'loadDrawingFromUrl', 
-  'drawOtsu', 
-  'removeHaze', 
-  'saveImage', 
-  'setMeshProperty', 
-  'reverseFaces', 
-  'setMeshLayerProperty', 
-  'setPan2Dxyzmm', 
-  'setRenderAzimuthElevation', 
-  'setVolume', 
-  'removeVolume', 
-  'removeVolumeByIndex', 
-  'removeMesh', 
-  'removeMeshByUrl', 
-  'moveVolumeToBottom', 
-  'moveVolumeUp', 
-  'moveVolumeDown', 
-  'moveVolumeToTop', 
-  'setClipPlane', 
-  'setCrosshairColor', 
-  'setCrosshairWidth', 
-  'setDrawingEnabled', 
-  'setPenValue', 
-  'setDrawOpacity', 
-  'setSelectionBoxColor', 
-  'setSliceType', 
-  'setOpacity', 
-  'setScale', 
-  'setClipPlaneColor', 
-  'loadDocumentFromUrl', 
-  'loadVolumes', 
-  'addMeshFromUrl', 
-  'loadMeshes', 
-  'loadConnectome', 
-  'createEmptyDrawing', 
-  'drawGrowCut', 
-  'setMeshShader', 
-  'setCustomMeshShader', 
-  'updateGLVolume', 
-  'setColorMap', 
-  'setColorMapNegative', 
-  'setModulationImage', 
-  'setFrame4D', 
-  'setInterpolation', 
-  'moveCrosshairInVox', 
+  'saveScene',
+  'addVolumeFromUrl',
+  'removeVolumeByUrl',
+  'setCornerOrientationText',
+  'setRadiologicalConvention',
+  'setMeshThicknessOn2D',
+  'setSliceMosaicString',
+  'setSliceMM',
+  'setHighResolutionCapable',
+  'addVolume',
+  'addMesh',
+  'drawUndo',
+  'loadDrawingFromUrl',
+  'drawOtsu',
+  'removeHaze',
+  'saveImage',
+  'setMeshProperty',
+  'reverseFaces',
+  'setMeshLayerProperty',
+  'setPan2Dxyzmm',
+  'setRenderAzimuthElevation',
+  'setVolume',
+  'removeVolume',
+  'removeVolumeByIndex',
+  'removeMesh',
+  'removeMeshByUrl',
+  'moveVolumeToBottom',
+  'moveVolumeUp',
+  'moveVolumeDown',
+  'moveVolumeToTop',
+  'setClipPlane',
+  'setCrosshairColor',
+  'setCrosshairWidth',
+  'setDrawingEnabled',
+  'setPenValue',
+  'setDrawOpacity',
+  'setSelectionBoxColor',
+  'setSliceType',
+  'setOpacity',
+  'setScale',
+  'setClipPlaneColor',
+  'loadDocumentFromUrl',
+  'loadVolumes',
+  'addMeshFromUrl',
+  'loadMeshes',
+  'loadConnectome',
+  'createEmptyDrawing',
+  'drawGrowCut',
+  'setMeshShader',
+  'setCustomMeshShader',
+  'updateGLVolume',
+  'setColorMap',
+  'setColorMapNegative',
+  'setModulationImage',
+  'setFrame4D',
+  'setInterpolation',
+  'moveCrosshairInVox',
   'drawMosaic',
-  'addVolumeFromBase64'
+  'addVolumeFromBase64',
 ];
 
 function serializeImageData(array: Uint8ClampedArray) {
@@ -104,7 +104,7 @@ export class NiivueModel extends DOMWidgetModel {
       _view_module: NiivueModel.view_module,
       _view_module_version: NiivueModel.view_module_version,
       height: 480,
-      width: 640
+      width: 640,
     };
   }
 
@@ -113,31 +113,31 @@ export class NiivueModel extends DOMWidgetModel {
     _canvas_manager: { deserialize: unpack_models as any },
     image_data: {
       serialize: serializeImageData,
-      deserialize: deserializeImageData
-    }
+      deserialize: deserializeImageData,
+    },
   };
 
   initialize(attributes: any, options: any) {
     super.initialize(attributes, options);
-  
+
     this.on('msg:custom', (command: any, buffers: any) => {
       this.currentProcessing = this.currentProcessing.then(async () => {
         await this.onCommand(command, buffers);
       });
     });
-    
+
     this.createNV();
   }
 
   private async onCommand(command: any, buffers: DataView[]) {
     const name: string = COMMANDS[command[0]];
     const args: any[] = command[1];
-    switch(name) {
+    switch (name) {
       case 'saveScene':
         this.nv.saveScene(args[0]);
         break;
       case 'addVolumeFromUrl':
-        this.nv.addVolumeFromUrl({url: args[0]});
+        this.nv.addVolumeFromUrl({ url: args[0] });
         break;
       case 'removeVolumeByUrl':
         this.nv.removeVolumeByUrl(args[0]);
@@ -308,14 +308,19 @@ export class NiivueModel extends DOMWidgetModel {
         this.nv.drawMosaic(args[0]);
         break;
       case 'addVolumeFromBase64':
-        this.nv.addVolume(niivue.NVImage.loadFromBase64({name: args[0], base64: arrayBufferToBase64(buffers[0].buffer)}));
+        this.nv.addVolume(
+          niivue.NVImage.loadFromBase64({
+            name: args[0],
+            base64: arrayBufferToBase64(buffers[0].buffer),
+          })
+        );
         break;
     }
   }
 
   private async createNV() {
-    this.nv = new niivue.Niivue({ 
-      isResizeCanvas: false, 
+    this.nv = new niivue.Niivue({
+      isResizeCanvas: false,
       logging: true,
 
       textHeight: this.get('text_height'),
@@ -346,7 +351,10 @@ export class NiivueModel extends DOMWidgetModel {
       isOrientCube: this.get('is_orient_cube'),
       multiplanarPadPixels: this.get('multiplanar_pad_pixels'),
       multiplanarForceRender: this.get('multiplanar_force_render'),
-      meshThicknessOn2D: this.get('mesh_thickness_on_2D') == 1.7976931348623157e+308 ? undefined : this.get('mesh_thickness_on_2D'),
+      meshThicknessOn2D:
+        this.get('mesh_thickness_on_2D') === 1.7976931348623157e308
+          ? undefined
+          : this.get('mesh_thickness_on_2D'),
       dragMode: this.get('drag_mode'),
       isDepthPickMesh: this.get('is_depth_pick_mesh'),
       isCornerOrientationText: this.get('is_corner_orientation_text'),
@@ -354,10 +362,13 @@ export class NiivueModel extends DOMWidgetModel {
       isSliceMM: this.get('is_slice_MM'),
       isHighResolutionCapable: this.get('is_high_resolution_capable'),
       drawingEnabled: this.get('drawing_enabled'),
-      penValue: this.get('pen_value') == 1.7976931348623157e+308 ? undefined : this.get('pen_value'),
+      penValue:
+        this.get('pen_value') === 1.7976931348623157e308
+          ? undefined
+          : this.get('pen_value'),
       isFilledPen: this.get('is_filled_pen'),
       maxDrawUndoBitmaps: this.get('max_draw_undo_bitmaps'),
-      thumbnail: this.get('thumbnail') || ''
+      thumbnail: this.get('thumbnail') || '',
     });
   }
 
@@ -378,7 +389,7 @@ export class NiivueView extends DOMWidgetView {
     //reason for canvas creation being in here is 2-fold
     //1) NiivueVIEW
     //2) https://ipywidgets.readthedocs.io/en/7.7.0/examples/Widget%20Low%20Level.html#Models-and-Views
-    //   "Multiple WidgetViews can be linked to a single WidgetModel. This is how you can redisplay the same Widget multiple times and it still works."    
+    //   "Multiple WidgetViews can be linked to a single WidgetModel. This is how you can redisplay the same Widget multiple times and it still works."
     this.canvas = document.createElement('canvas');
     this.canvas.classList.add('niivue-widget');
 
@@ -394,11 +405,21 @@ export class NiivueView extends DOMWidgetView {
     //resize div
     this.el.setAttribute('width', this.model.get('width'));
     this.el.setAttribute('height', this.model.get('height'));
-    this.el.setAttribute('style', `width: ${this.model.get('width')}px; height: ${this.model.get('height')}px;`);
+    this.el.setAttribute(
+      'style',
+      `width: ${this.model.get('width')}px; height: ${this.model.get(
+        'height'
+      )}px;`
+    );
     //resize canvas
     this.canvas.setAttribute('width', this.model.get('width'));
     this.canvas.setAttribute('height', this.model.get('height'));
-    this.canvas.setAttribute('style', `width: ${this.model.get('width')}px; height: ${this.model.get('height')};`);
+    this.canvas.setAttribute(
+      'style',
+      `width: ${this.model.get('width')}px; height: ${this.model.get(
+        'height'
+      )};`
+    );
     //redraw
     this.model.nv.drawScene();
   }
@@ -411,7 +432,7 @@ export class NiivueView extends DOMWidgetView {
 
   //proof of concept - can have updates from variable changes
   value_changed() {
-    this.model.nv.loadVolumes([{url: this.model.get("value")}]);
+    this.model.nv.loadVolumes([{ url: this.model.get('value') }]);
   }
 
   //this makes this.el become a custom tag (div in this case). Technically this is not necessary.
