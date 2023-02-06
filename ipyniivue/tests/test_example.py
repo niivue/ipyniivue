@@ -6,9 +6,9 @@
 
 import pytest
 
-from ..example import Niivue
+from ..niivue import Niivue
 
 
 def test_example_creation_blank():
-    w = Niivue()
-    assert w.value == 'Hello World'
+    nv = Niivue()
+    assert nv.thumbnail == ''
