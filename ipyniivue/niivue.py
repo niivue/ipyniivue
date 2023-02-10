@@ -206,10 +206,6 @@ class Niivue(_CanvasBase):
     def __init__(self, *args, **kwargs):
         """Create an Niivue widget."""
         super(Niivue, self).__init__(*args, **kwargs)
-
-        if "caching" in kwargs:
-            self._canvas_manager._caching = kwargs["caching"]
-
         self.on_msg(self._handle_frontend_event)
 
     def _handle_frontend_event(self, _, content, buffers):
