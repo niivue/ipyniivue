@@ -8,6 +8,10 @@
 #are from https://github.com/martinRenou/ipycanvas. The Niivue class is based off of Canvas class.
 
 import pathlib
+import random
+import string
+from urllib.request import url2pathname
+from urllib.parse import urlparse
 
 from traitlets import (
     Unicode, 
@@ -89,13 +93,6 @@ _CMD_LIST = [
     "addVolumeFromBase64"
 ]
 COMMANDS = {v: i for i, v in enumerate(_CMD_LIST)}
-
-def read_file(file):
-    try:
-        with open(file, 'rb') as f:
-            return f.read()
-    except FileNotFoundError as error: 
-        raise error
 
 class _CanvasBase(DOMWidget):
     """
@@ -752,8 +749,19 @@ class Niivue(_CanvasBase):
             self._send_custom([COMMANDS["addVolumeFromUrl"], [file]])
         else:
             if file.startswith('file://'):
-                file = file[7:]
-            filename = pathlib.Path(file).name
-            filedata = read_file(file)
-            self._send_custom([COMMANDS["addVolumeFromBase64"], [filename]], [filedata])
+                parsed = urlparse(file)
+                file = url2pathname(parsed.path)
+            p = pathlib.Path(file)
+            name = p.name
+            filedata = p.read_bytes()
+            self._send_custom([COMMANDS["addVolumeFromBase64"], [name]], [filedata])
             
+    def add_object(self, img):
+        """
+        Load a nibabel.nifti1.Nifti1Image object as a volume
+
+        Parameters:
+            img (nibabel.nifti1.Nifti1Image): Nifti1 image
+        """
+        filename = img.get_filename() or ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
+        self._send_custom([COMMANDS["addVolumeFromBase64"], [filename]], [img.to_bytes()])
