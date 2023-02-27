@@ -137,7 +137,7 @@ export class NiivueModel extends DOMWidgetModel {
         this.nv.saveScene(args[0]);
         break;
       case 'addVolumeFromUrl':
-        this.nv.addVolumeFromUrl({ url: args[0] });
+        await this.nv.addVolumeFromUrl({ url: args[0] });
         break;
       case 'removeVolumeByUrl':
         this.nv.removeVolumeByUrl(args[0]);
@@ -170,16 +170,16 @@ export class NiivueModel extends DOMWidgetModel {
         this.nv.drawUndo();
         break;
       case 'loadDrawingFromUrl':
-        this.nv.loadDrawingFromUrl(args[0]);
+        await this.nv.loadDrawingFromUrl(args[0], args[1]);
         break;
       case 'drawOtsu':
-        this.nv.drawOtsu(args[0]);
+        await this.nv.drawOtsu(args[0]);
         break;
       case 'removeHaze':
-        this.nv.removeHaze(args[0], args[1]);
+        await this.nv.removeHaze(args[0], args[1]);
         break;
       case 'saveImage':
-        this.nv.saveImage(args[0], args[1]);
+        await this.nv.saveImage(args[0], args[1]);
         break;
       case 'setMeshProperty':
         this.nv.setMeshProperty(args[0], args[1], args[2]);
@@ -257,22 +257,22 @@ export class NiivueModel extends DOMWidgetModel {
         this.nv.setClipPlaneColor(args[0]);
         break;
       case 'loadDocumentFromUrl':
-        this.nv.loadDocumentFromUrl(args[0]);
+        await this.nv.loadDocumentFromUrl(args[0]);
         break;
       case 'loadVolumes':
-        this.nv.loadVolumes(args[0]);
+        await this.nv.loadVolumes(args[0]);
         break;
       case 'addMeshFromUrl':
-        this.nv.addMeshFromUrl(args[0]);
+        await this.nv.addMeshFromUrl(args[0]);
         break;
       case 'loadMeshes':
-        this.nv.loadMeshes(args[0]);
+        await this.nv.loadMeshes(args[0]);
         break;
       case 'loadConnectome':
-        this.nv.loadConnectome(args[0]);
+        await this.nv.loadConnectome(args[0]);
         break;
       case 'createEmptyDrawing':
-        this.nv.createEmptyDrawing();
+        await this.nv.createEmptyDrawing();
         break;
       case 'drawGrowCut':
         this.nv.drawGrowCut();

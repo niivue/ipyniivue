@@ -10,6 +10,7 @@
 import pathlib
 import random
 import string
+import math
 from urllib.request import url2pathname
 from urllib.parse import urlparse
 
@@ -24,6 +25,7 @@ from traitlets import (
 )
 from .traits import ( 
     DragModes, 
+    SliceType,
     keycodes
 )
 from ._frontend import module_name, module_version
@@ -139,7 +141,7 @@ class Niivue(_CanvasBase):
         is_orient_cube (bool): whether orientation cube is shown for 3D renderings. Default is False.
         multiplanar_pad_pixels (int): spacing between tiles of a multiplanar view. Default is 0.
         mesh_thickness_on_2D (float): 2D slice views can show meshes within this range. Meshes only visible in sliceMM (world space) mode. Default is Infinity.
-        drag_mode(str/int): behavior for dragging. string ("none", "contrast", "measurement", "pan") or integer (0, 1, 2, 3). Default is "contrast" or 1.
+        drag_mode(str/int): behavior for dragging. string ("none", "contrast", "measurement", "pan", "slicer_3D") or integer (0, 1, 2, 3, 4). Default is "contrast" or 1.
         is_depth_pick_mesh (bool): when both voxel-based image and mesh is loaded, will depth picking be able to detect mesh or only voxels. Default is False.
         is_corner_orientation_text (bool): should slice text be shown in the upper right corner instead of the center of left and top axes?. Default is False.
         sagittal_nose_left (bool): should 2D sagittal slices show the anterior direction toward the left or right?. Default is False.
@@ -191,7 +193,7 @@ class Niivue(_CanvasBase):
     multiplanar_pad_pixels = CInt(default_value = 0, help="spacing between tiles of a multiplanar view").tag(sync=True)
     multiplanar_force_render = Bool(default_value = False, help="always show rendering in multiplanar view").tag(sync=True)
     mesh_thickness_on_2D = CFloat(default_value = 1.7976931348623157e+308, help="2D slice views can show meshes within this range. Meshes only visible in slice_MM (world space) mode").tag(sync=True)
-    drag_mode = UseEnum(DragModes, default_value=DragModes.contrast, help="behavior for dragging (\"none\", \"contrast\", \"measurement\", \"pan\")").tag(sync=True)
+    drag_mode = UseEnum(DragModes, default_value=DragModes.contrast, help="behavior for dragging (\"none\", \"contrast\", \"measurement\", \"pan\", \"slicer_3D\")").tag(sync=True)
     is_depth_pick_mesh = Bool(default_value = False, help="when both voxel-based image and mesh is loaded, will depth picking be able to detect mesh or only voxels").tag(sync=True)
     is_corner_orientation_text = Bool(default_value = False, help="should slice text be shown in the upper right corner instead of the center of left and top axes?").tag(sync=True)
     sagittal_nose_left = Bool(default_value = False, help="should 2D sagittal slices show the anterior direction toward the left or right?").tag(sync=True)
@@ -202,6 +204,8 @@ class Niivue(_CanvasBase):
     is_filled_pen = Bool(default_value = False, help="create filled drawings when user drags mouse (if drawingEnabled)").tag(sync=True)
     max_draw_undo_bitmaps = CInt(default_value = 8, help="number of possible undo steps (if drawingEnabled)").tag(sync=True)
     thumbnail = Unicode(default_value = "", help="optional 2D png bitmap that can be rapidly loaded to defer slow loading of 3D image").tag(sync=True)
+
+    slice_type = SliceType
 
     def __init__(self, *args, **kwargs):
         """Create an Niivue widget."""
@@ -214,7 +218,7 @@ class Niivue(_CanvasBase):
     def _send_custom(self, command, buffers=[]):
         self.send(command, buffers=buffers)
 
-    def save_scene(self, filename):
+    def save_scene(self, filename=""):
         """
         Save the webgl2 canvas as png format bitmap.
         
@@ -225,30 +229,30 @@ class Niivue(_CanvasBase):
 
     def add_volume_from_url(self, url):
         """
-        Add an image and notify subscribers
+        Add an image from a url
         
         Parameters:
-            url (str): The url of the volume.
+            url (str): The url link of the volume. Local paths and file urls are not accepted.
         """
         self._send_custom([COMMANDS["addVolumeFromUrl"], [url]])
 
     def remove_volume_by_url(self, url):
         """
-        Remove volume by url
+        Remove volume by url. Local paths and file urls are not accepted.
         
         Parameters:
             url (str): Volume added by url to remove.
         """
         self._send_custom([COMMANDS["removeVolumeByUrl"], [url]])
 
-    def set_corner_orientation_text(self, is_corner_orientation_text):
+    def set_text_orientation(self, is_at_corner):
         """
         Set text appearance at corner (True) or sides of 2D slice (False).
         
         Parameters:
-            is_corner_orientation_text (bool): text appearance at corner.
+            is_at_corner (bool): does the text show at the corner (True) or sides of 2D slice (False).
         """
-        self._send_custom([COMMANDS["setCornerOrientationText"], [is_corner_orientation_text]])
+        self._send_custom([COMMANDS["setCornerOrientationText"], [is_at_corner]])
 
     def set_radiological_convention(self, is_radiological_convention):
         """
@@ -261,11 +265,13 @@ class Niivue(_CanvasBase):
 
     def set_mesh_thickness_on_2D(self, mesh_thickness_on_2D):
         """
-        Limit visibility of mesh in front of a 2D image. Requires world-space mode. Use float('inf') to show entire mesh or 0.0 to hide mesh.
+        Limit visibility of mesh in front of a 2D image. Requires world-space mode.
 
         Parameters:
-            mesh_thickness_on_2D (float): distance from voxels for clipping mesh
+            mesh_thickness_on_2D (float): distance from voxels for clipping mesh. Use float('inf') to show entire mesh or 0.0 to hide mesh.
         """
+        if math.isinf(mesh_thickness_on_2D):
+            mesh_thickness_on_2D = 1.7976931348623157e+308
         self._send_custom([COMMANDS["setMeshThicknessOn2D"], [mesh_thickness_on_2D]])
 
     def set_slice_mosaic_string(self, description):
@@ -273,16 +279,16 @@ class Niivue(_CanvasBase):
         Create a custom multi-slice mosaic (aka lightbox, montage) view.
 
         Parameters:
-            description (str): description of mosaic.
+            description (str): description of mosaic. An example would be "A 0 20 C 30 S 42".
         """
         self._send_custom([COMMANDS["setSliceMosaicString"], [description]])
 
     def set_slice_mm(self, is_slice_mm):
         """
-        Control whether 2D slices use world space (true) or voxel space (false). Beware that voxel space mode limits properties like panning, zooming and mesh visibility.
+        determine view mode (world space or voxel space)
 
         Parameters:
-            is_slice_mm (bool): determines view mode.
+            is_slice_mm (bool): Control whether 2D slices use world space (True) or voxel space (False). Beware that voxel space mode limits properties like panning, zooming and mesh visibility.
         """
         self._send_custom([COMMANDS["setSliceMM"], [is_slice_mm]])
 
@@ -295,6 +301,7 @@ class Niivue(_CanvasBase):
         """
         self._send_custom([COMMANDS["setHighResolutionCapable"], [is_high_resolution_capable]])
 
+    '''
     def add_mesh(self, mesh):
         """
         todo: Add a new mesh to the canvas.
@@ -303,32 +310,34 @@ class Niivue(_CanvasBase):
             mesh (todo)
         """
         self._send_custom([COMMANDS["addMesh"], [mesh]])
+    '''
 
-    def draw_undo(self):
+    def undo_draw(self):
         """
         Restore drawing to previous state
         """
         self._send_custom([COMMANDS["drawUndo"], []])
 
-    def load_drawing_from_url(self, url):
+    def load_drawing_from_url(self, url, is_binarize = False):
         """
         Open drawing
 
         Parameters:
             url (str): the url
+            is_binarize (bool): binarize the drawing. Defaults to False.
         """
-        self._send_custom([COMMANDS["loadDrawingFromUrl"], [url]])
+        self._send_custom([COMMANDS["loadDrawingFromUrl"], [url, is_binarize]])
 
     def draw_otsu(self, levels):
         """
-        Draw otsu
+        Remove dark voxels in air
 
         Parameters:
             levels (int): (2-4) segment brain into this many types
         """
         self._send_custom([COMMANDS["drawOtsu"], [levels]])
 
-    def remove_haze(self, level, vol_index):
+    def remove_haze(self, level = 5, vol_index = 0):
         """
         Remove dark voxels in air
 
@@ -338,7 +347,7 @@ class Niivue(_CanvasBase):
         """
         self._send_custom([COMMANDS["removeHaze"], [level, vol_index]])
 
-    def save_image(self, filename, is_save_drawing):
+    def save_image(self, filename, is_save_drawing = False):
         """
         Save voxel-based image to disk
 
@@ -348,6 +357,8 @@ class Niivue(_CanvasBase):
         """
         self._send_custom([COMMANDS["saveImage"], [filename, is_save_drawing]])
 
+    '''
+    #todo. Finish functions for adding meshes first. Model should also have a meshes attribute.
     def set_mesh_property(self, mesh_id, key, value):
         """
         Change property of mesh, tractogram or connectome
@@ -358,7 +369,10 @@ class Niivue(_CanvasBase):
             value (float): for attribute
         """
         self._send_custom([COMMANDS["setMeshProperty"], [mesh_id, key, value]])
-
+    '''
+    
+    '''
+    #todo. Finish functions for adding meshes first. Model should also have a meshes attribute.
     def reverse_faces(self, mesh_id):
         """
         Reverse triangle winding of mesh (swap front and back faces)
@@ -367,7 +381,10 @@ class Niivue(_CanvasBase):
             mesh_id (int): identity of mesh to change
         """
         self._send_custom([COMMANDS["reverseFaces"], [mesh_id]])
+    '''
 
+    '''
+    #todo. Finish functions for adding meshes first. Model should also have a meshes attribute.
     def set_mesh_layer_property(self, mesh_id, layer, key, val):
         """
         Reverse triangle winding of mesh (swap front and back faces)
@@ -379,6 +396,7 @@ class Niivue(_CanvasBase):
             value (float): for attribute
         """
         self._send_custom([COMMANDS["setMeshLayerProperty"], [mesh_id, layer, key, val]])
+    '''
 
     def set_pan_2D_xyzmm(self, xyzmm_zoom):
         """
@@ -399,15 +417,20 @@ class Niivue(_CanvasBase):
         """
         self._send_custom([COMMANDS["setRenderAzimuthElevation"], [azimuth, elevation]])
 
-    def set_volume(self, volume, to_index):
+    '''
+    #todo. Finish functions for adding volumes first. Model should also have a volumes attribute.
+    def set_volume(self, volume, to_index = 0):
         """
         todo: Set the index of a volume. This will change it's ordering and appearance if there are multiple volumes loaded.
 
         volume (todo): the volume to update
-        to_index (int): the index to move the volume to. The default is the background (0 index)
+        to_index (int): the index to move the volume to. The default is the background (index 0)
         """
         self._send_custom([COMMANDS["setVolume"], [volume, to_index]])
+    '''
 
+    '''
+    #todo. Finish functions for adding volumes first. Model should also have a volumes attribute.
     def remove_volume(self, volume):
         """
         todo: Remove a volume
@@ -416,6 +439,7 @@ class Niivue(_CanvasBase):
             volume (todo): volume to remove
         """
         self._send_custom([COMMANDS["removeVolume"], [volume]])
+    '''
 
     def remove_volume_by_index(self, index):
         """
@@ -426,6 +450,8 @@ class Niivue(_CanvasBase):
         """
         self._send_custom([COMMANDS["removeVolumeByIndex"], [index]])
 
+    '''
+    #todo: Finish functions for adding meshes first.
     def remove_mesh(self, mesh):
         """
         todo: Remove a triangulated mesh, connectome or tractogram
@@ -434,6 +460,7 @@ class Niivue(_CanvasBase):
             mesh (todo): mesh to delete
         """
         self._send_custom([COMMANDS["removeMesh"], [mesh]])
+    '''
 
     def remove_mesh_by_url(self, url):
         """
@@ -444,6 +471,8 @@ class Niivue(_CanvasBase):
         """
         self._send_custom([COMMANDS["removeMeshByUrl"], [url]])
 
+    '''
+    #todo: Implement set_volume function first
     def move_volume_to_bottom(self, volume):
         """
         todo: Move a volume to the bottom of the stack of loaded volumes. The volume will become the background
@@ -479,13 +508,14 @@ class Niivue(_CanvasBase):
             volume (todo): 
         """
         self._send_custom([COMMANDS["moveVolumeToTop"], [volume]])
+    '''
 
     def set_clip_plane(self, depth_azimuth_elevation):
         """
         Update the clip plane orientation in 3D view mode
 
         Parameters:
-            depth_azimuth_elevation (list): a two component vector. azimuth: camera position in degrees around object, typically 0..360 (or -180..+180). elevation: camera height in degrees, range -90..90
+            depth_azimuth_elevation (list): a two component vector: [azimuth, elevation]. azimuth: camera position in degrees around object, typically 0..360 (or -180..+180). elevation: camera height in degrees, range -90..90
         """
         self._send_custom([COMMANDS["setClipPlane"], [depth_azimuth_elevation]])
 
@@ -512,26 +542,26 @@ class Niivue(_CanvasBase):
         Does dragging over a 2D slice create a drawing?
 
         Parameters:
-            drawing (bool): enabled (true) or not (false)
+            drawing (bool): enabled (True) or not (False)
         """
         self._send_custom([COMMANDS["setDrawingEnabled"], [drawing]])
 
-    def set_pen_value(self, pen_value, is_filled_pen):
+    def set_pen_value(self, pen_value, is_filled_pen = False):
         """
         Determine color and style of drawing
 
         Parameters:
-            pen_value (bool): sets the color of the pen
+            pen_value (int): sets the color of the pen
             is_filled_pen (bool): determines if dragging creates flood-filled shape
         """
         self._send_custom([COMMANDS["setPenValue"], [pen_value, is_filled_pen]])
 
     def set_draw_opacity(self, opacity):
         """
-        Control whether drawing is tansparent (0), opaque (1) or translucent (between 0 and 1).
+        Control whether drawing is transparent (0), opaque (1) or translucent (between 0 and 1).
 
         Parameters:
-            opacity (float): translucency of drawing
+            opacity (float): translucency of drawing. Transparent (0), opaque (1) or translucent (between 0 and 1).
         """
         self._send_custom([COMMANDS["setDrawOpacity"], [opacity]])
 
@@ -540,7 +570,7 @@ class Niivue(_CanvasBase):
         Set the selection box color. A selection box is drawn when you right click and drag to change image intensity
 
         Parameters:
-            color (list): an RGBA array. values range from 0 to 1
+            color (list): an RGBA array. Values range from 0 to 1.
         """
         self._send_custom([COMMANDS["setSelectionBoxColor"], [color]])
 
@@ -549,8 +579,13 @@ class Niivue(_CanvasBase):
         Set the slice type. This changes the view mode
 
         Parameters:
-            slice_type (todo)
+            slice_type (int): the slice type. Valid values are nv.slice_type.axial, nv.slice_type.coronal, nv.slice_type.sagittal, nv.slice_type.multiplanar, and nv.slice_type.render
+                These are enumerated, so you can also input the values directly (0-4), or you can input the strings ("axial", "coronal", "sagittal", "multiplanar", "render").
+
         """
+        if isinstance(slice_type, str):
+            slice_type = slice_type.lower()
+            slice_type = getattr(self.slice_type, slice_type)
         self._send_custom([COMMANDS["setSliceType"], [slice_type]])
 
     def set_opacity(self, vol_idx, new_opacity):
@@ -601,7 +636,7 @@ class Niivue(_CanvasBase):
 
     def add_mesh_from_url(self, url):
         """
-        Add mesh and notify subscribers
+        Add mesh from url
 
         Parameters:
             url (str): url of mesh
@@ -619,10 +654,10 @@ class Niivue(_CanvasBase):
 
     def load_connectome(self, connectome):
         """
-        Load a connectome specified by json
+        Load a connectome specified by dictionary/json
 
         Parameters:
-            connectome (str): model
+            connectome (dict): connectome model
         """
         self._send_custom([COMMANDS["loadConnectome"], [connectome]])
 
@@ -638,7 +673,9 @@ class Niivue(_CanvasBase):
         """
         self._send_custom([COMMANDS["drawGrowCut"], []])
 
-    def set_mesh_shader(self, mesh_id, mesh_shader_name_or_number):
+    '''
+    #todo: Finish mesh functions first
+    def set_mesh_shader(self, mesh_id, mesh_shader_name_or_number = 2):
         """
         Select new shader for triangulated meshes and connectomes
 
@@ -647,10 +684,11 @@ class Niivue(_CanvasBase):
             mesh_shader_name_or_number (str/int): identify shader for usage
         """
         self._send_custom([COMMANDS["setMeshShader"], [mesh_id, mesh_shader_name_or_number]])
+    '''
 
-    def set_custom_mesh_shader(self, fragment_shader_text, name):
+    def set_custom_mesh_shader(self, fragment_shader_text = "", name = "Custom"):
         """
-        control whether drawing is tansparent (0), opaque (1) or translucent (between 0 and 1).
+        Set custom shader for triangulated meshes and connectomes.
 
         Parameters:
             fragment_shader_text (str): custom fragment shader
@@ -684,7 +722,7 @@ class Niivue(_CanvasBase):
         """
         self._send_custom([COMMANDS["setColorMapNegative"], [id_str, color_map_negative]])
 
-    def set_modulation_image(self, id_target, id_modulation, modulate_alpha):
+    def set_modulation_image(self, id_target, id_modulation, modulate_alpha = False):
         """
         Modulate intensity of one image based on intensity of another
 
