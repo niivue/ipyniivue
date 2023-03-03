@@ -18,6 +18,7 @@ keywords = [
     "IPython",
     "Jupyter",
     "Widgets",
+    "NiiVue"
 ]
 classifiers = [
     "Framework :: Jupyter",
@@ -33,7 +34,7 @@ classifiers = [
 ]
 dependencies = [
     "ipywidgets>=7.0.0",
-    "jupyter_ui_poll>=0.2.2"
+    "jupyter-ui-poll>=0.2.2"
 ]
 version = "0.1.0"
 

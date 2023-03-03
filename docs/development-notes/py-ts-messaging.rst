@@ -63,7 +63,7 @@ the JavaScript.
 Wait for Websocket messages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-ipyNiiVue uses the `jupyter_ui_poll
+ipyNiiVue uses the `jupyter-ui-poll
 library <https://github.com/Kirill888/jupyter-ui-poll>`__ to block for
 cell interaction while waiting for websocket messages.
 
