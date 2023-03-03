@@ -37,7 +37,7 @@ Note, the reason for listing out each case in the switch statement in
 the TypeScript end instead of using something like
 ``nv[name]?.apply(nv, args)`` is that some niivue setter functions need
 to be awaited. Awaiting all functions (using
-``nv[name]?.apply(nv, args)``) would result in a performance drop, as
+``await nv[name]?.apply(nv, args)``) would result in a performance drop, as
 described in here: https://stackoverflow.com/a/55276645.
 
 Getters
