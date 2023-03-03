@@ -16,9 +16,9 @@ export function arrayBufferToString(buffer: ArrayBuffer) {
 }
 
 export function stringToArrayBuffer(str: string) {
-  var buf = new ArrayBuffer(str.length);
-  var bufView = new Uint8Array(buf);
-  for (var i=0, strLen=str.length; i < strLen; i++) {
+  const buf = new ArrayBuffer(str.length);
+  const bufView = new Uint8Array(buf);
+  for (let i = 0, strLen = str.length; i < strLen; i++) {
     bufView[i] = str.charCodeAt(i);
   }
   return buf;

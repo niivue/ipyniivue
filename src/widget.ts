@@ -6,10 +6,10 @@
 
 import * as niivue from '@niivue/niivue';
 
-import { 
-  arrayBufferToBase64, 
-  arrayBufferToString, 
-  stringToArrayBuffer 
+import {
+  arrayBufferToBase64,
+  arrayBufferToString,
+  stringToArrayBuffer,
 } from './utils';
 
 import {
@@ -78,10 +78,15 @@ export class NiivueModel extends DOMWidgetModel {
       await this.processCommand(name, args, buffers);
     } catch (e) {
       if (e instanceof Error) {
-        if (e.name == 'TypeError' 
-          && e.message == 'Cannot read properties of null (reading \'createTexture\')') {
-            console.warn('Niivue widget not attached to a canvas. Display the widget to attach it to a canvas.')
-            return;
+        if (
+          e.name === 'TypeError' &&
+          e.message ===
+            "Cannot read properties of null (reading 'createTexture')"
+        ) {
+          console.warn(
+            'Niivue widget not attached to a canvas. Display the widget to attach it to a canvas.'
+          );
+          return;
         }
         console.error(e);
       }
@@ -272,9 +277,10 @@ export class NiivueModel extends DOMWidgetModel {
           })
         );
         break;
-      case 'runCustomCode':
-        var result, hasResult: boolean = false;
-        var code = arrayBufferToString(buffers[0].buffer);
+      case 'runCustomCode': {
+        let result,
+          hasResult = false;
+        const code = arrayBufferToString(buffers[0].buffer);
         try {
           result = eval(code);
           hasResult = true;
@@ -285,27 +291,31 @@ export class NiivueModel extends DOMWidgetModel {
         }
         this.sendCustomCodeResult(args[0], hasResult, result);
         break;
+      }
     }
   }
 
   private sendCustomCodeResult(id: number, hasResult: boolean, result: any) {
-    var data: ArrayBuffer = new ArrayBuffer(0);
+    let data: ArrayBuffer = new ArrayBuffer(0);
     if (hasResult) {
-      var str = result === undefined ? 'undefined' : JSON.stringify(result);
+      const str = result === undefined ? 'undefined' : JSON.stringify(result);
       data = stringToArrayBuffer(str);
     }
 
     //chunk data into 5mb chunks
-    var chunkSize = 5 * 1024 * 1024;
-    var numChunks = Math.ceil(data.byteLength / chunkSize);
-    for (var i = 0; i < numChunks; ++i) {
-      var begin = i * chunkSize;
-      var end = Math.min(begin + chunkSize, data.byteLength);
-      var chunk = data.slice(begin, end);
-      this.send({ event: ['customCodeResult', id, numChunks - 1 - i] }, {}, [chunk]);
+    const chunkSize = 5 * 1024 * 1024;
+    const numChunks = Math.ceil(data.byteLength / chunkSize);
+    for (let i = 0; i < numChunks; ++i) {
+      const begin = i * chunkSize;
+      const end = Math.min(begin + chunkSize, data.byteLength);
+      const chunk = data.slice(begin, end);
+      this.send({ event: ['customCodeResult', id, numChunks - 1 - i] }, {}, [
+        chunk,
+      ]);
     }
-    if (numChunks == 0)
+    if (numChunks === 0) {
       this.send({ event: ['customCodeResult', id, 0] }, {});
+    }
   }
 
   private async createNV() {
