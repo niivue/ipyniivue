@@ -7,12 +7,17 @@
 #Much of the structure and many of the functions/classes in this file
 #are from https://github.com/martinRenou/ipycanvas. The Niivue class is based off of Canvas class.
 
+import json
+import math
 import pathlib
 import random
 import string
-import math
+import time
+
 from urllib.request import url2pathname
 from urllib.parse import urlparse
+
+from jupyter_ui_poll import ui_events
 
 from traitlets import (
     Unicode, 
@@ -29,72 +34,7 @@ from .traits import (
     keycodes
 )
 from ._frontend import module_name, module_version
-from ipywidgets import (
-    DOMWidget
-)
-
-_CMD_LIST = [
-    "saveScene", 
-    "addVolumeFromUrl", 
-    "removeVolumeByUrl", 
-    "setCornerOrientationText", 
-    "setRadiologicalConvention", 
-    "setMeshThicknessOn2D", 
-    "setSliceMosaicString", 
-    "setSliceMM", 
-    "setHighResolutionCapable", 
-    "addVolume", 
-    "addMesh", 
-    "drawUndo", 
-    "loadDrawingFromUrl", 
-    "drawOtsu", 
-    "removeHaze", 
-    "saveImage", 
-    "setMeshProperty", 
-    "reverseFaces", 
-    "setMeshLayerProperty", 
-    "setPan2Dxyzmm", 
-    "setRenderAzimuthElevation", 
-    "setVolume", 
-    "removeVolume", 
-    "removeVolumeByIndex", 
-    "removeMesh", 
-    "removeMeshByUrl", 
-    "moveVolumeToBottom", 
-    "moveVolumeUp", 
-    "moveVolumeDown", 
-    "moveVolumeToTop", 
-    "setClipPlane", 
-    "setCrosshairColor", 
-    "setCrosshairWidth", 
-    "setDrawingEnabled", 
-    "setPenValue", 
-    "setDrawOpacity", 
-    "setSelectionBoxColor", 
-    "setSliceType", 
-    "setOpacity", 
-    "setScale", 
-    "setClipPlaneColor", 
-    "loadDocumentFromUrl", 
-    "loadVolumes", 
-    "addMeshFromUrl", 
-    "loadMeshes", 
-    "loadConnectome", 
-    "createEmptyDrawing", 
-    "drawGrowCut", 
-    "setMeshShader", 
-    "setCustomMeshShader", 
-    "updateGLVolume", 
-    "setColorMap", 
-    "setColorMapNegative", 
-    "setModulationImage", 
-    "setFrame4D", 
-    "setInterpolation", 
-    "moveCrosshairInVox", 
-    "drawMosaic",
-    "addVolumeFromBase64"
-]
-COMMANDS = {v: i for i, v in enumerate(_CMD_LIST)}
+from ipywidgets import DOMWidget
 
 class _CanvasBase(DOMWidget):
     """
@@ -161,7 +101,10 @@ class Niivue(_CanvasBase):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    value = Unicode("").tag(sync=True)
+    #volumes = List(trait=Instance(NVImage), default_value = [], help="the list of images to display").tag(sync=True, **widget_serialization)
+    #meshes = List(trait=Instance(NVMesh), default_value = [], help="the list of meshes to display").tag(sync=True, **widget_serialization)
+    #value = List(trait=Unicode(), default_value = []).tag(sync=True)
+    _custom_code_results = {}
 
     #NiivueOptions
     text_height = CFloat(default_value = 0.06, help="the text height for orientation labels (0 to 1). Zero for no text labels").tag(sync=True)
@@ -210,13 +153,36 @@ class Niivue(_CanvasBase):
     def __init__(self, *args, **kwargs):
         """Create an Niivue widget."""
         super(Niivue, self).__init__(*args, **kwargs)
-        self.on_msg(self._handle_frontend_event)
+        self.on_msg(self._handle_frontend_msg)
 
-    def _handle_frontend_event(self, _, content, buffers):
-        print("_handle_frontend_event:", content, buffers)
+    def _handle_frontend_msg(self, _, content, buffers):
+        print("_handle_frontend_msg:", content, buffers)
+        event_data = content.get('event', [None])
+        if event_data[0] == 'customCodeResult':
+            code_id = event_data[1]
+            chunks_left = event_data[2]
+            if code_id not in self._custom_code_results:
+                self._custom_code_results[code_id] = {
+                    'chunks_left': -1, #placeholder. Correct value added after data processed.
+                    'result': b''
+                }
+
+            if len(buffers) > 0:
+                self._custom_code_results[code_id]['result'] += buffers[0].tobytes()
+            
+            if chunks_left == 0:
+                if len(buffers) == 0 or self._custom_code_results[code_id]['result'] == b'undefined':
+                    loaded = None
+                else:
+                    loaded = json.loads(self._custom_code_results[code_id]['result'])
+                self._custom_code_results[code_id]['result'] = loaded
+            
+            self._custom_code_results[code_id]['chunks_left'] = chunks_left
 
     def _send_custom(self, command, buffers=[]):
         self.send(command, buffers=buffers)
+
+    ### setter functions start here ###
 
     def save_scene(self, filename=""):
         """
@@ -225,7 +191,7 @@ class Niivue(_CanvasBase):
         Parameters:
             filename (str): for screen capture.
         """
-        self._send_custom([COMMANDS["saveScene"], [filename]])
+        self._send_custom(["saveScene", [filename]])
 
     def add_volume_from_url(self, url):
         """
@@ -234,7 +200,7 @@ class Niivue(_CanvasBase):
         Parameters:
             url (str): The url link of the volume. Local paths and file urls are not accepted.
         """
-        self._send_custom([COMMANDS["addVolumeFromUrl"], [url]])
+        self._send_custom(["addVolumeFromUrl", [url]])
 
     def remove_volume_by_url(self, url):
         """
@@ -243,7 +209,7 @@ class Niivue(_CanvasBase):
         Parameters:
             url (str): Volume added by url to remove.
         """
-        self._send_custom([COMMANDS["removeVolumeByUrl"], [url]])
+        self._send_custom(["removeVolumeByUrl", [url]])
 
     def set_text_orientation(self, is_at_corner):
         """
@@ -252,7 +218,7 @@ class Niivue(_CanvasBase):
         Parameters:
             is_at_corner (bool): does the text show at the corner (True) or sides of 2D slice (False).
         """
-        self._send_custom([COMMANDS["setCornerOrientationText"], [is_at_corner]])
+        self._send_custom(["setCornerOrientationText", [is_at_corner]])
 
     def set_radiological_convention(self, is_radiological_convention):
         """
@@ -261,7 +227,7 @@ class Niivue(_CanvasBase):
         Parameters:
             is_radiological_convention (bool): use radiological convention.
         """
-        self._send_custom([COMMANDS["setRadiologicalConvention"], [is_radiological_convention]])
+        self._send_custom(["setRadiologicalConvention", [is_radiological_convention]])
 
     def set_mesh_thickness_on_2D(self, mesh_thickness_on_2D):
         """
@@ -272,7 +238,7 @@ class Niivue(_CanvasBase):
         """
         if math.isinf(mesh_thickness_on_2D):
             mesh_thickness_on_2D = 1.7976931348623157e+308
-        self._send_custom([COMMANDS["setMeshThicknessOn2D"], [mesh_thickness_on_2D]])
+        self._send_custom(["setMeshThicknessOn2D", [mesh_thickness_on_2D]])
 
     def set_slice_mosaic_string(self, description):
         """
@@ -281,7 +247,7 @@ class Niivue(_CanvasBase):
         Parameters:
             description (str): description of mosaic. An example would be "A 0 20 C 30 S 42".
         """
-        self._send_custom([COMMANDS["setSliceMosaicString"], [description]])
+        self._send_custom(["setSliceMosaicString", [description]])
 
     def set_slice_mm(self, is_slice_mm):
         """
@@ -290,7 +256,7 @@ class Niivue(_CanvasBase):
         Parameters:
             is_slice_mm (bool): Control whether 2D slices use world space (True) or voxel space (False). Beware that voxel space mode limits properties like panning, zooming and mesh visibility.
         """
-        self._send_custom([COMMANDS["setSliceMM"], [is_slice_mm]])
+        self._send_custom(["setSliceMM", [is_slice_mm]])
 
     def set_high_resolution_capable(self, is_high_resolution_capable):
         """
@@ -299,7 +265,7 @@ class Niivue(_CanvasBase):
         Parameters:
             is_high_resolution_capable (bool): allow high-DPI display
         """
-        self._send_custom([COMMANDS["setHighResolutionCapable"], [is_high_resolution_capable]])
+        self._send_custom(["setHighResolutionCapable", [is_high_resolution_capable]])
 
     '''
     def add_mesh(self, mesh):
@@ -309,14 +275,14 @@ class Niivue(_CanvasBase):
         Parameters:
             mesh (todo)
         """
-        self._send_custom([COMMANDS["addMesh"], [mesh]])
+        self._send_custom(["addMesh", [mesh]])
     '''
 
     def undo_draw(self):
         """
         Restore drawing to previous state
         """
-        self._send_custom([COMMANDS["drawUndo"], []])
+        self._send_custom(["drawUndo", []])
 
     def load_drawing_from_url(self, url, is_binarize = False):
         """
@@ -326,7 +292,7 @@ class Niivue(_CanvasBase):
             url (str): the url
             is_binarize (bool): binarize the drawing. Defaults to False.
         """
-        self._send_custom([COMMANDS["loadDrawingFromUrl"], [url, is_binarize]])
+        self._send_custom(["loadDrawingFromUrl", [url, is_binarize]])
 
     def draw_otsu(self, levels):
         """
@@ -335,7 +301,7 @@ class Niivue(_CanvasBase):
         Parameters:
             levels (int): (2-4) segment brain into this many types
         """
-        self._send_custom([COMMANDS["drawOtsu"], [levels]])
+        self._send_custom(["drawOtsu", [levels]])
 
     def remove_haze(self, level = 5, vol_index = 0):
         """
@@ -345,7 +311,7 @@ class Niivue(_CanvasBase):
             level (int): (1-5) larger values for more preserved voxels
             vol_index (int): volume to dehaze
         """
-        self._send_custom([COMMANDS["removeHaze"], [level, vol_index]])
+        self._send_custom(["removeHaze", [level, vol_index]])
 
     def save_image(self, filename, is_save_drawing = False):
         """
@@ -355,7 +321,7 @@ class Niivue(_CanvasBase):
             filename (str): filename of NIfTI image to create
             is_save_drawing (bool): determines whether drawing or background image is saved
         """
-        self._send_custom([COMMANDS["saveImage"], [filename, is_save_drawing]])
+        self._send_custom(["saveImage", [filename, is_save_drawing]])
 
     '''
     #todo. Finish functions for adding meshes first. Model should also have a meshes attribute.
@@ -368,7 +334,7 @@ class Niivue(_CanvasBase):
             key (str): attribute to change
             value (float): for attribute
         """
-        self._send_custom([COMMANDS["setMeshProperty"], [mesh_id, key, value]])
+        self._send_custom(["setMeshProperty", [mesh_id, key, value]])
     '''
     
     '''
@@ -380,7 +346,7 @@ class Niivue(_CanvasBase):
         Parameters:
             mesh_id (int): identity of mesh to change
         """
-        self._send_custom([COMMANDS["reverseFaces"], [mesh_id]])
+        self._send_custom(["reverseFaces", [mesh_id]])
     '''
 
     '''
@@ -395,7 +361,7 @@ class Niivue(_CanvasBase):
             key (str): attribute to change
             value (float): for attribute
         """
-        self._send_custom([COMMANDS["setMeshLayerProperty"], [mesh_id, layer, key, val]])
+        self._send_custom(["setMeshLayerProperty", [mesh_id, layer, key, val]])
     '''
 
     def set_pan_2D_xyzmm(self, xyzmm_zoom):
@@ -405,7 +371,7 @@ class Niivue(_CanvasBase):
         Parameters:
             xyzmm_zoom (list): first three components are spatial, fourth is scaling
         """
-        self._send_custom([COMMANDS["setPan2Dxyzmm"], [xyzmm_zoom]])
+        self._send_custom(["setPan2Dxyzmm", [xyzmm_zoom]])
 
     def set_render_azimuth_elevation(self, azimuth, elevation):
         """
@@ -415,7 +381,7 @@ class Niivue(_CanvasBase):
             azimuth (float): which direction/angle to face
             elevation (float): how high up
         """
-        self._send_custom([COMMANDS["setRenderAzimuthElevation"], [azimuth, elevation]])
+        self._send_custom(["setRenderAzimuthElevation", [azimuth, elevation]])
 
     '''
     #todo. Finish functions for adding volumes first. Model should also have a volumes attribute.
@@ -426,7 +392,7 @@ class Niivue(_CanvasBase):
         volume (todo): the volume to update
         to_index (int): the index to move the volume to. The default is the background (index 0)
         """
-        self._send_custom([COMMANDS["setVolume"], [volume, to_index]])
+        self._send_custom(["setVolume", [volume, to_index]])
     '''
 
     '''
@@ -438,7 +404,7 @@ class Niivue(_CanvasBase):
         Parameters:
             volume (todo): volume to remove
         """
-        self._send_custom([COMMANDS["removeVolume"], [volume]])
+        self._send_custom(["removeVolume", [volume]])
     '''
 
     def remove_volume_by_index(self, index):
@@ -448,7 +414,7 @@ class Niivue(_CanvasBase):
         Parameters:
             index (int): index of volume to remove
         """
-        self._send_custom([COMMANDS["removeVolumeByIndex"], [index]])
+        self._send_custom(["removeVolumeByIndex", [index]])
 
     '''
     #todo: Finish functions for adding meshes first.
@@ -459,7 +425,7 @@ class Niivue(_CanvasBase):
         Parameters:
             mesh (todo): mesh to delete
         """
-        self._send_custom([COMMANDS["removeMesh"], [mesh]])
+        self._send_custom(["removeMesh", [mesh]])
     '''
 
     def remove_mesh_by_url(self, url):
@@ -469,7 +435,7 @@ class Niivue(_CanvasBase):
         Parameters:
             url (str): URL of mesh to delete
         """
-        self._send_custom([COMMANDS["removeMeshByUrl"], [url]])
+        self._send_custom(["removeMeshByUrl", [url]])
 
     '''
     #todo: Implement set_volume function first
@@ -480,7 +446,7 @@ class Niivue(_CanvasBase):
         Parameters:
             volume (todo): the volume to move
         """
-        self._send_custom([COMMANDS["moveVolumeToBottom"], [volume]])
+        self._send_custom(["moveVolumeToBottom", [volume]])
 
     def move_volume_up(self, volume):
         """
@@ -489,7 +455,7 @@ class Niivue(_CanvasBase):
         Parameters:
             volume (todo): the volume to move
         """
-        self._send_custom([COMMANDS["moveVolumeUp"], [volume]])
+        self._send_custom(["moveVolumeUp", [volume]])
 
     def move_volume_down(self, volume):
         """
@@ -498,7 +464,7 @@ class Niivue(_CanvasBase):
         Parameters:
             volume (todo): the volume to move
         """
-        self._send_custom([COMMANDS["moveVolumeDown"], [volume]])
+        self._send_custom(["moveVolumeDown", [volume]])
 
     def move_volume_to_top(self, volume):
         """
@@ -507,7 +473,7 @@ class Niivue(_CanvasBase):
         Parameters:
             volume (todo): 
         """
-        self._send_custom([COMMANDS["moveVolumeToTop"], [volume]])
+        self._send_custom(["moveVolumeToTop", [volume]])
     '''
 
     def set_clip_plane(self, depth_azimuth_elevation):
@@ -517,7 +483,7 @@ class Niivue(_CanvasBase):
         Parameters:
             depth_azimuth_elevation (list): a two component vector: [azimuth, elevation]. azimuth: camera position in degrees around object, typically 0..360 (or -180..+180). elevation: camera height in degrees, range -90..90
         """
-        self._send_custom([COMMANDS["setClipPlane"], [depth_azimuth_elevation]])
+        self._send_custom(["setClipPlane", [depth_azimuth_elevation]])
 
     def set_crosshair_color(self, color):
         """
@@ -526,7 +492,7 @@ class Niivue(_CanvasBase):
         Parameters:
             color (list): an RGBA array. Values range from 0 to 1
         """
-        self._send_custom([COMMANDS["setCrosshairColor"], [color]])
+        self._send_custom(["setCrosshairColor", [color]])
 
     def set_crosshair_width(self, crosshair_width):
         """
@@ -535,7 +501,7 @@ class Niivue(_CanvasBase):
         Parameters:
             crosshair_width (float): the crosshair width
         """
-        self._send_custom([COMMANDS["setCrosshairWidth"], [crosshair_width]])
+        self._send_custom(["setCrosshairWidth", [crosshair_width]])
 
     def set_drawing_enabled(self, drawing):
         """
@@ -544,7 +510,7 @@ class Niivue(_CanvasBase):
         Parameters:
             drawing (bool): enabled (True) or not (False)
         """
-        self._send_custom([COMMANDS["setDrawingEnabled"], [drawing]])
+        self._send_custom(["setDrawingEnabled", [drawing]])
 
     def set_pen_value(self, pen_value, is_filled_pen = False):
         """
@@ -554,7 +520,7 @@ class Niivue(_CanvasBase):
             pen_value (int): sets the color of the pen
             is_filled_pen (bool): determines if dragging creates flood-filled shape
         """
-        self._send_custom([COMMANDS["setPenValue"], [pen_value, is_filled_pen]])
+        self._send_custom(["setPenValue", [pen_value, is_filled_pen]])
 
     def set_draw_opacity(self, opacity):
         """
@@ -563,7 +529,7 @@ class Niivue(_CanvasBase):
         Parameters:
             opacity (float): translucency of drawing. Transparent (0), opaque (1) or translucent (between 0 and 1).
         """
-        self._send_custom([COMMANDS["setDrawOpacity"], [opacity]])
+        self._send_custom(["setDrawOpacity", [opacity]])
 
     def set_selection_box_color(self, color):
         """
@@ -572,7 +538,7 @@ class Niivue(_CanvasBase):
         Parameters:
             color (list): an RGBA array. Values range from 0 to 1.
         """
-        self._send_custom([COMMANDS["setSelectionBoxColor"], [color]])
+        self._send_custom(["setSelectionBoxColor", [color]])
 
     def set_slice_type(self, slice_type):
         """
@@ -586,7 +552,7 @@ class Niivue(_CanvasBase):
         if isinstance(slice_type, str):
             slice_type = slice_type.lower()
             slice_type = getattr(self.slice_type, slice_type)
-        self._send_custom([COMMANDS["setSliceType"], [slice_type]])
+        self._send_custom(["setSliceType", [slice_type]])
 
     def set_opacity(self, vol_idx, new_opacity):
         """
@@ -596,7 +562,7 @@ class Niivue(_CanvasBase):
             vol_idx (int): the volume index of the volume to change
             new_opacity (float): the opacity value. valid values range from 0 to 1. 0 will effectively remove a volume from the scene
         """
-        self._send_custom([COMMANDS["setOpacity"], [vol_idx, new_opacity]])
+        self._send_custom(["setOpacity", [vol_idx, new_opacity]])
 
     def set_scale(self, scale):
         """
@@ -605,7 +571,7 @@ class Niivue(_CanvasBase):
         Parameters:
             scale (float): the new scale value
         """
-        self._send_custom([COMMANDS["setScale"], [scale]])
+        self._send_custom(["setScale", [scale]])
 
     def set_clip_plane_color(self, color):
         """
@@ -614,7 +580,7 @@ class Niivue(_CanvasBase):
         Parameters:
             color (list): the new color. expects an array of RGBA values. values can range from 0 to 1
         """
-        self._send_custom([COMMANDS["setClipPlaneColor"], [color]])
+        self._send_custom(["setClipPlaneColor", [color]])
 
     def load_document_from_url(self, url):
         """
@@ -623,7 +589,7 @@ class Niivue(_CanvasBase):
         Parameters:
             url (str): URL of NVDocument
         """
-        self._send_custom([COMMANDS["loadDocumentFromUrl"], [url]])
+        self._send_custom(["loadDocumentFromUrl", [url]])
 
     def load_volumes(self, volume_list):
         """
@@ -632,7 +598,7 @@ class Niivue(_CanvasBase):
         Parameters:
             volume_list (list): the array of objects to load
         """
-        self._send_custom([COMMANDS["loadVolumes"], [volume_list]])
+        self._send_custom(["loadVolumes", [volume_list]])
 
     def add_mesh_from_url(self, url):
         """
@@ -641,7 +607,7 @@ class Niivue(_CanvasBase):
         Parameters:
             url (str): url of mesh
         """
-        self._send_custom([COMMANDS["addMeshFromUrl"], [url]])
+        self._send_custom(["addMeshFromUrl", [url]])
 
     def load_meshes(self, mesh_list):
         """
@@ -650,7 +616,7 @@ class Niivue(_CanvasBase):
         Parameters:
             mesh_list (list): the array of objects to load
         """
-        self._send_custom([COMMANDS["loadMeshes"], [mesh_list]])
+        self._send_custom(["loadMeshes", [mesh_list]])
 
     def load_connectome(self, connectome):
         """
@@ -659,19 +625,19 @@ class Niivue(_CanvasBase):
         Parameters:
             connectome (dict): connectome model
         """
-        self._send_custom([COMMANDS["loadConnectome"], [connectome]])
+        self._send_custom(["loadConnectome", [connectome]])
 
     def create_empty_drawing(self):
         """
         Generate a blank canvas for the pen tool
         """
-        self._send_custom([COMMANDS["createEmptyDrawing"], []])
+        self._send_custom(["createEmptyDrawing", []])
 
     def draw_grow_cut(self):
         """
         Dilate drawing so all voxels are colored. works on drawing with multiple colors
         """
-        self._send_custom([COMMANDS["drawGrowCut"], []])
+        self._send_custom(["drawGrowCut", []])
 
     '''
     #todo: Finish mesh functions first
@@ -683,7 +649,7 @@ class Niivue(_CanvasBase):
             mesh_id (int): id of mesh to change
             mesh_shader_name_or_number (str/int): identify shader for usage
         """
-        self._send_custom([COMMANDS["setMeshShader"], [mesh_id, mesh_shader_name_or_number]])
+        self._send_custom(["setMeshShader", [mesh_id, mesh_shader_name_or_number]])
     '''
 
     def set_custom_mesh_shader(self, fragment_shader_text = "", name = "Custom"):
@@ -694,13 +660,13 @@ class Niivue(_CanvasBase):
             fragment_shader_text (str): custom fragment shader
             name (str): title for new shader
         """
-        self._send_custom([COMMANDS["setCustomMeshShader"], [fragment_shader_text, name]])
+        self._send_custom(["setCustomMeshShader", [fragment_shader_text, name]])
 
     def update_gl_volume(self):
         """
         update the webGL 2.0 scene after making changes to the array of volumes. Use if altering one or more volumes manually (outside of Niivue setter methods).
         """
-        self._send_custom([COMMANDS["updateGLVolume"], []])
+        self._send_custom(["updateGLVolume", []])
 
     def set_color_map(self, id_str, color_map):
         """
@@ -710,7 +676,7 @@ class Niivue(_CanvasBase):
             id_str (str): the ID of the image
             color_map (str): the name of the color_map to use
         """
-        self._send_custom([COMMANDS["setColorMap"], [id_str, color_map]])
+        self._send_custom(["setColorMap", [id_str, color_map]])
 
     def set_color_map_negative(self, id_str, color_map_negative):
         """
@@ -720,7 +686,7 @@ class Niivue(_CanvasBase):
             id_str (str): the ID of the image
             color_map_negative (str): the name of the color_map to use
         """
-        self._send_custom([COMMANDS["setColorMapNegative"], [id_str, color_map_negative]])
+        self._send_custom(["setColorMapNegative", [id_str, color_map_negative]])
 
     def set_modulation_image(self, id_target, id_modulation, modulate_alpha = False):
         """
@@ -731,7 +697,7 @@ class Niivue(_CanvasBase):
             id_modulation (str): the ID of the image that controls bias (None to disable modulation)
             modulate_alpha (bool): the modulation influence alpha transparency (True) or RGB color (False) components
         """
-        self._send_custom([COMMANDS["setModulationImage"], [id_target, id_modulation, modulate_alpha]])
+        self._send_custom(["setModulationImage", [id_target, id_modulation, modulate_alpha]])
 
     def set_frame_4D(self, id_str, frame_4D):
         """
@@ -741,7 +707,7 @@ class Niivue(_CanvasBase):
             id_str: the ID of the 4D image
             frame_4D: to display (indexed from zero)
         """
-        self._send_custom([COMMANDS["setFrame4D"], [id_str, frame_4D]])
+        self._send_custom(["setFrame4D", [id_str, frame_4D]])
 
     def set_interpolation(self, is_nearest):
         """
@@ -750,7 +716,7 @@ class Niivue(_CanvasBase):
         Parameters:
             is_nearest (bool): whether nearest neighbor interpolation is used, else linear interpolation
         """
-        self._send_custom([COMMANDS["setInterpolation"], [is_nearest]])
+        self._send_custom(["setInterpolation", [is_nearest]])
 
     def move_crosshair_in_vox(self, x, y, z):
         """
@@ -761,7 +727,7 @@ class Niivue(_CanvasBase):
             y (float): translate posterior (-) or +anterior (+)
             z (float): translate inferior (-) or superior (+)
         """
-        self._send_custom([COMMANDS["moveCrosshairInVox"], [x, y, z]])
+        self._send_custom(["moveCrosshairInVox", [x, y, z]])
 
     def draw_mosaic(self, mosaic_str):
         """
@@ -770,7 +736,7 @@ class Niivue(_CanvasBase):
         Parameters:
             mosaic_str (str): specifies orientation (A,C,S) and location of slices.
         """
-        self._send_custom([COMMANDS["drawMosaic"], [mosaic_str]])
+        self._send_custom(["drawMosaic", [mosaic_str]])
     
     def add_volume(self, file):
         """
@@ -780,7 +746,7 @@ class Niivue(_CanvasBase):
             file (str): the path to the file (either url or local path)
         """
         if (file.startswith('http://') or file.startswith('https://')):
-            self._send_custom([COMMANDS["addVolumeFromUrl"], [file]])
+            self._send_custom(["addVolumeFromUrl", [file]])
         else:
             if file.startswith('file://'):
                 parsed = urlparse(file)
@@ -788,7 +754,7 @@ class Niivue(_CanvasBase):
             p = pathlib.Path(file)
             name = p.name
             filedata = p.read_bytes()
-            self._send_custom([COMMANDS["addVolumeFromBase64"], [name]], [filedata])
+            self._send_custom(["addVolumeFromBase64", [name]], [filedata])
             
     def add_object(self, img):
         """
@@ -798,4 +764,51 @@ class Niivue(_CanvasBase):
             img (nibabel.nifti1.Nifti1Image): Nifti1 image
         """
         filename = img.get_filename() or ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
-        self._send_custom([COMMANDS["addVolumeFromBase64"], [filename]], [img.to_bytes()])
+        self._send_custom(["addVolumeFromBase64", [filename]], [img.to_bytes()])
+
+    '''
+    #todo: implement other volume adding functions first
+    def binarize(self, volume):
+        """
+        Binarize the volume
+
+        Parameters:
+            volume (str): the ID of the volume
+        """
+        self._send_custom(["binarize", [volume]])
+    '''
+
+    ### getter functions start here ###
+    def run_custom_code(self, code, timeout = 60):
+        """
+        Run a custom JavaScript code snippet
+
+        Parameters:
+            code (str): the code to run
+            timeout (int): the maximum time to wait for the code to finish (in seconds)
+        
+        Returns:
+            the result of the code
+        """
+        code_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
+        self._send_custom(['runCustomCode', [code_id]], [code.encode('utf-8')])
+
+        start = time.time()
+        i = 1
+        with ui_events() as poll:
+            while True:
+                poll(1)
+                #https://math.stackexchange.com/a/2678903
+                num = int(((i+2) % 3) + 1)
+                print(num * '.' + '  ', end='\r')
+                i += 0.25
+                time.sleep(0.1)
+                if time.time() - start > timeout or (
+                    code_id in self._custom_code_results
+                    and self._custom_code_results[code_id]["chunks_left"] == 0
+                ):
+                    break
+        print("Done.")
+        result = self._custom_code_results.pop(code_id, {})
+        return result.get('result', None)
+

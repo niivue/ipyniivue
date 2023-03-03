@@ -8,3 +8,18 @@ export function arrayBufferToBase64(buffer: ArrayBuffer) {
   }
   return btoa(binary);
 }
+
+//https://developer.chrome.com/blog/how-to-convert-arraybuffer-to-and-from-string/
+export function arrayBufferToString(buffer: ArrayBuffer) {
+  const bytes = new Uint8Array(buffer);
+  return String.fromCharCode.apply(null, [...bytes]);
+}
+
+export function stringToArrayBuffer(str: string) {
+  var buf = new ArrayBuffer(str.length);
+  var bufView = new Uint8Array(buf);
+  for (var i=0, strLen=str.length; i < strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}

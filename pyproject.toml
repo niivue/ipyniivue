@@ -32,7 +32,8 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
 ]
 dependencies = [
-    "ipywidgets>=7.0.0"
+    "ipywidgets>=7.0.0",
+    "jupyter_ui_poll>=0.2.2"
 ]
 version = "0.1.0"
 

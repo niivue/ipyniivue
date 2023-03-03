@@ -5,7 +5,12 @@
 //are from https://github.com/martinRenou/ipycanvas. NiivueModel is based off of  CanvasModel and NiivueView is based off of CanvasView.
 
 import * as niivue from '@niivue/niivue';
-import { arrayBufferToBase64 } from './utils';
+
+import { 
+  arrayBufferToBase64, 
+  arrayBufferToString, 
+  stringToArrayBuffer 
+} from './utils';
 
 import {
   DOMWidgetModel,
@@ -17,68 +22,6 @@ import {
 import { MODULE_NAME, MODULE_VERSION } from './version';
 
 import '../css/styles.css';
-
-const COMMANDS = [
-  'saveScene',
-  'addVolumeFromUrl',
-  'removeVolumeByUrl',
-  'setCornerOrientationText',
-  'setRadiologicalConvention',
-  'setMeshThicknessOn2D',
-  'setSliceMosaicString',
-  'setSliceMM',
-  'setHighResolutionCapable',
-  'addVolume',
-  'addMesh',
-  'drawUndo',
-  'loadDrawingFromUrl',
-  'drawOtsu',
-  'removeHaze',
-  'saveImage',
-  'setMeshProperty',
-  'reverseFaces',
-  'setMeshLayerProperty',
-  'setPan2Dxyzmm',
-  'setRenderAzimuthElevation',
-  'setVolume',
-  'removeVolume',
-  'removeVolumeByIndex',
-  'removeMesh',
-  'removeMeshByUrl',
-  'moveVolumeToBottom',
-  'moveVolumeUp',
-  'moveVolumeDown',
-  'moveVolumeToTop',
-  'setClipPlane',
-  'setCrosshairColor',
-  'setCrosshairWidth',
-  'setDrawingEnabled',
-  'setPenValue',
-  'setDrawOpacity',
-  'setSelectionBoxColor',
-  'setSliceType',
-  'setOpacity',
-  'setScale',
-  'setClipPlaneColor',
-  'loadDocumentFromUrl',
-  'loadVolumes',
-  'addMeshFromUrl',
-  'loadMeshes',
-  'loadConnectome',
-  'createEmptyDrawing',
-  'drawGrowCut',
-  'setMeshShader',
-  'setCustomMeshShader',
-  'updateGLVolume',
-  'setColorMap',
-  'setColorMapNegative',
-  'setModulationImage',
-  'setFrame4D',
-  'setInterpolation',
-  'moveCrosshairInVox',
-  'drawMosaic',
-  'addVolumeFromBase64',
-];
 
 function serializeImageData(array: Uint8ClampedArray) {
   return new DataView(array.buffer.slice(0));
@@ -93,7 +36,6 @@ function deserializeImageData(dataview: DataView | null) {
 }
 
 export class NiivueModel extends DOMWidgetModel {
-  //for drawing things
   defaults() {
     return {
       ...super.defaults(),
@@ -130,8 +72,23 @@ export class NiivueModel extends DOMWidgetModel {
   }
 
   private async onCommand(command: any, buffers: DataView[]) {
-    const name: string = COMMANDS[command[0]];
+    const name: string = command[0];
     const args: any[] = command[1];
+    try {
+      await this.processCommand(name, args, buffers);
+    } catch (e) {
+      if (e instanceof Error) {
+        if (e.name == 'TypeError' 
+          && e.message == 'Cannot read properties of null (reading \'createTexture\')') {
+            console.warn('Niivue widget not attached to a canvas. Display the widget to attach it to a canvas.')
+            return;
+        }
+        console.error(e);
+      }
+    }
+  }
+
+  private async processCommand(name: string, args: any[], buffers: DataView[]) {
     switch (name) {
       case 'saveScene':
         this.nv.saveScene(args[0]);
@@ -315,7 +272,40 @@ export class NiivueModel extends DOMWidgetModel {
           })
         );
         break;
+      case 'runCustomCode':
+        var result, hasResult: boolean = false;
+        var code = arrayBufferToString(buffers[0].buffer);
+        try {
+          result = eval(code);
+          hasResult = true;
+        } catch (e) {
+          if (e instanceof Error) {
+            console.error(e.stack);
+          }
+        }
+        this.sendCustomCodeResult(args[0], hasResult, result);
+        break;
     }
+  }
+
+  private sendCustomCodeResult(id: number, hasResult: boolean, result: any) {
+    var data: ArrayBuffer = new ArrayBuffer(0);
+    if (hasResult) {
+      var str = result === undefined ? 'undefined' : JSON.stringify(result);
+      data = stringToArrayBuffer(str);
+    }
+
+    //chunk data into 5mb chunks
+    var chunkSize = 5 * 1024 * 1024;
+    var numChunks = Math.ceil(data.byteLength / chunkSize);
+    for (var i = 0; i < numChunks; ++i) {
+      var begin = i * chunkSize;
+      var end = Math.min(begin + chunkSize, data.byteLength);
+      var chunk = data.slice(begin, end);
+      this.send({ event: ['customCodeResult', id, numChunks - 1 - i] }, {}, [chunk]);
+    }
+    if (numChunks == 0)
+      this.send({ event: ['customCodeResult', id, 0] }, {});
   }
 
   private async createNV() {
