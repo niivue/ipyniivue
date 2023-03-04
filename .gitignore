@@ -140,10 +140,14 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# YARN
+.yarn
+yarn.lock
 
 # NPM
 # ----
 
+package-lock.json
 **/node_modules/
 ipyniivue/nbextension/index.*
 ipyniivue/labextension/*.tgz
