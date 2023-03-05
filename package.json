@@ -28,9 +28,8 @@
     "url": "https://github.com/niivue/ipyniivue"
   },
   "scripts": {
-    "preinstall": "npm install --prefix ./niivue",
-    "install": "node -e \"if (process.platform === 'win32'){process.exit(1)}\" && npm run --prefix ./niivue build || npm run --prefix ./niivue build-win",
-    "postinstall": "npm install ./niivue",
+    "install": "node -e \"if (process.platform === 'darwin'){process.exit(1)}\" || npm install @esbuild/darwin-x64",
+    "postinstall": "npm run --prefix ./niivue build && npm install ./niivue",
     "build": "yarn run build:lib && yarn run build:nbextension && yarn run build:labextension:dev",
     "build:prod": "yarn run build:lib && yarn run build:nbextension && yarn run build:labextension",
     "build:labextension": "jupyter labextension build .",
