@@ -7,6 +7,11 @@ ipyNiiVue is a Python / [Niivue](https://github.com/niivue/niivue) bridge for [J
 
 ### Installation
 ```sh
+pip install ipyniivue
+```
+
+### Development
+```sh
 conda create -n ipyniivue-dev -c conda-forge nodejs yarn python jupyterlab
 conda activate ipyniivue-dev
 git clone https://github.com/niivue/ipyniivue.git

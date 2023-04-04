@@ -1,6 +1,6 @@
 {
   "name": "ipyniivue",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Jupyter-Niivue bridge",
   "keywords": [
     "jupyter",
@@ -19,8 +19,7 @@
   },
   "license": "BSD-3-Clause",
   "author": {
-    "name": "Niivue",
-    "email": "aandroulakis@zoho.com"
+    "name": "Niivue"
   },
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
