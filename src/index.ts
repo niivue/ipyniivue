@@ -1,4 +1,4 @@
-// Copyright (c) NiiVue
+// Copyright (c) Niivue
 // Distributed under the terms of the Modified BSD License.
 
 export * from './version';

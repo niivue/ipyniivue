@@ -4,7 +4,7 @@ ipyniivue
 
 Version: |release|
 
-NiiVue Jupyter Library
+Jupyter-Niivue bridge
 
 
 Quickstart

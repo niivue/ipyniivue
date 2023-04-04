@@ -13,7 +13,6 @@ The widgets have been embedded into the page for demonstrative purposes.
 
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+    :glob:
 
-   ../notebooks/Example 1.ipynb
+    *

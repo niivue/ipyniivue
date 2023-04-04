@@ -7,18 +7,17 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ipyniivue"
-description = "NiiVue Jupyter Library"
+description = "Jupyter-Niivue bridge"
 readme = "README.md"
 license = { file = "LICENSE.txt" }
 requires-python = ">=3.7"
 authors = [
-    { name = "NiiVue" },
+    { name = "Niivue", email = "aandroulakis@zoho.com" },
 ]
 keywords = [
     "IPython",
     "Jupyter",
     "Widgets",
-    "NiiVue"
 ]
 classifiers = [
     "Framework :: Jupyter",
@@ -34,9 +33,9 @@ classifiers = [
 ]
 dependencies = [
     "ipywidgets>=7.0.0",
-    "jupyter-ui-poll>=0.2.2"
+    "jupyter_ui_poll>=0.2.2"
 ]
-version = "0.1.0"
+version = "0.1.0.dev0"
 
 [project.optional-dependencies]
 docs = [
@@ -106,7 +105,7 @@ file = [
 ]
 
 [tool.tbump.version]
-current = "0.1.0"
+current = "0.1.0.dev0"
 regex = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)((?P<channel>a|b|rc|.dev)(?P<release>\\d+))?"
 
 [tool.tbump.git]

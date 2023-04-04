@@ -1,8 +1,16 @@
-// Copyright (c) NiiVue
+// Copyright (c) Niivue
 // Distributed under the terms of the Modified BSD License.
 
-//Much of the structure and many of the functions/classes in this file
-//are from https://github.com/martinRenou/ipycanvas. NiivueModel is based off of  CanvasModel and NiivueView is based off of CanvasView.
+// Much of the structure and many of the functions/classes in this file
+// are from https://github.com/martinRenou/ipycanvas. NiivueModel is based off of  CanvasModel and NiivueView is based off of CanvasView.
+
+import {
+  DOMWidgetModel,
+  DOMWidgetView,
+  ISerializers,
+} from '@jupyter-widgets/base';
+
+import { MODULE_NAME, MODULE_VERSION } from './version';
 
 import * as niivue from '@niivue/niivue';
 
@@ -12,28 +20,66 @@ import {
   stringToArrayBuffer,
 } from './utils';
 
-import {
-  DOMWidgetModel,
-  DOMWidgetView,
-  ISerializers,
-  unpack_models,
-} from '@jupyter-widgets/base';
-
-import { MODULE_NAME, MODULE_VERSION } from './version';
-
-import '../css/styles.css';
-
-function serializeImageData(array: Uint8ClampedArray) {
-  return new DataView(array.buffer.slice(0));
-}
-
-function deserializeImageData(dataview: DataView | null) {
-  if (dataview === null) {
-    return null;
-  }
-
-  return new Uint8ClampedArray(dataview.buffer);
-}
+const setters: string[] = [
+  'saveScene',
+  'addVolumeFromUrl',
+  'removeVolumeByUrl',
+  'setCornerOrientationText',
+  'setRadiologicalConvention',
+  'setMeshThicknessOn2D',
+  'setSliceMosaicString',
+  'setSliceMM',
+  'setHighResolutionCapable',
+  'addVolume',
+  'addMesh',
+  'drawUndo',
+  'loadDrawingFromUrl',
+  'drawOtsu',
+  'removeHaze',
+  'saveImage',
+  'setMeshProperty',
+  'reverseFaces',
+  'setMeshLayerProperty',
+  'setPan2Dxyzmm',
+  'setRenderAzimuthElevation',
+  'setVolume',
+  'removeVolume',
+  'removeVolumeByIndex',
+  'removeMesh',
+  'removeMeshByUrl',
+  'moveVolumeToBottom',
+  'moveVolumeUp',
+  'moveVolumeDown',
+  'moveVolumeToTop',
+  'setClipPlane',
+  'setCrosshairColor',
+  'setCrosshairWidth',
+  'setDrawingEnabled',
+  'setPenValue',
+  'setDrawOpacity',
+  'setSelectionBoxColor',
+  'setSliceType',
+  'setOpacity',
+  'setScale',
+  'setClipPlaneColor',
+  'loadDocumentFromUrl',
+  'loadVolumes',
+  'addMeshFromUrl',
+  'loadMeshes',
+  'loadConnectome',
+  'createEmptyDrawing',
+  'drawGrowCut',
+  'setMeshShader',
+  'setCustomMeshShader',
+  'updateGLVolume',
+  'setColorMap',
+  'setColorMapNegative',
+  'setModulationImage',
+  'setFrame4D',
+  'setInterpolation',
+  'moveCrosshairInVox',
+  'drawMosaic',
+];
 
 export class NiivueModel extends DOMWidgetModel {
   defaults() {
@@ -45,18 +91,12 @@ export class NiivueModel extends DOMWidgetModel {
       _view_name: NiivueModel.view_name,
       _view_module: NiivueModel.view_module,
       _view_module_version: NiivueModel.view_module_version,
-      height: 480,
-      width: 640,
     };
   }
 
   static serializers: ISerializers = {
     ...DOMWidgetModel.serializers,
-    _canvas_manager: { deserialize: unpack_models as any },
-    image_data: {
-      serialize: serializeImageData,
-      deserialize: deserializeImageData,
-    },
+    // Add any extra serializers here
   };
 
   initialize(attributes: any, options: any) {
@@ -69,6 +109,17 @@ export class NiivueModel extends DOMWidgetModel {
     });
 
     this.createNV();
+  }
+
+  private async callNVFunctionByName(functionName: string, argsList: any[]) {
+    const isAsync = this.nv[functionName].constructor.name === 'AsyncFunction';
+
+    // If the function is async, use `await`
+    if (isAsync) {
+      await this.nv[functionName](...argsList);
+    } else {
+      this.nv[functionName](...argsList);
+    }
   }
 
   private async onCommand(command: any, buffers: DataView[]) {
@@ -94,181 +145,10 @@ export class NiivueModel extends DOMWidgetModel {
   }
 
   private async processCommand(name: string, args: any[], buffers: DataView[]) {
+    if (setters.includes(name)) {
+      this.callNVFunctionByName(name, args);
+    }
     switch (name) {
-      case 'saveScene':
-        this.nv.saveScene(args[0]);
-        break;
-      case 'addVolumeFromUrl':
-        await this.nv.addVolumeFromUrl({ url: args[0] });
-        break;
-      case 'removeVolumeByUrl':
-        this.nv.removeVolumeByUrl(args[0]);
-        break;
-      case 'setCornerOrientationText':
-        this.nv.setCornerOrientationText(args[0]);
-        break;
-      case 'setRadiologicalConvention':
-        this.nv.setRadiologicalConvention(args[0]);
-        break;
-      case 'setMeshThicknessOn2D':
-        this.nv.setMeshThicknessOn2D(args[0]);
-        break;
-      case 'setSliceMosaicString':
-        this.nv.setSliceMosaicString(args[0]);
-        break;
-      case 'setSliceMM':
-        this.nv.setSliceMM(args[0]);
-        break;
-      case 'setHighResolutionCapable':
-        this.nv.setHighResolutionCapable(args[0]);
-        break;
-      case 'addVolume':
-        this.nv.addVolume(args[0]);
-        break;
-      case 'addMesh':
-        this.nv.addMesh(args[0]);
-        break;
-      case 'drawUndo':
-        this.nv.drawUndo();
-        break;
-      case 'loadDrawingFromUrl':
-        await this.nv.loadDrawingFromUrl(args[0], args[1]);
-        break;
-      case 'drawOtsu':
-        await this.nv.drawOtsu(args[0]);
-        break;
-      case 'removeHaze':
-        await this.nv.removeHaze(args[0], args[1]);
-        break;
-      case 'saveImage':
-        await this.nv.saveImage(args[0], args[1]);
-        break;
-      case 'setMeshProperty':
-        this.nv.setMeshProperty(args[0], args[1], args[2]);
-        break;
-      case 'reverseFaces':
-        this.nv.reverseFaces(args[0]);
-        break;
-      case 'setMeshLayerProperty':
-        this.nv.setMeshLayerProperty(args[0], args[1], args[2], args[3]);
-        break;
-      case 'setPan2Dxyzmm':
-        this.nv.setPan2Dxyzmm(args[0]);
-        break;
-      case 'setRenderAzimuthElevation':
-        this.nv.setRenderAzimuthElevation(args[0], args[1]);
-        break;
-      case 'setVolume':
-        this.nv.setVolume(args[0], args[1]);
-        break;
-      case 'removeVolume':
-        this.nv.removeVolume(args[0]);
-        break;
-      case 'removeVolumeByIndex':
-        this.nv.removeVolumeByIndex(args[0]);
-        break;
-      case 'removeMesh':
-        this.nv.removeMesh(args[0]);
-        break;
-      case 'removeMeshByUrl':
-        this.nv.removeMeshByUrl(args[0]);
-        break;
-      case 'moveVolumeToBottom':
-        this.nv.moveVolumeToBottom(args[0]);
-        break;
-      case 'moveVolumeUp':
-        this.nv.moveVolumeUp(args[0]);
-        break;
-      case 'moveVolumeDown':
-        this.nv.moveVolumeDown(args[0]);
-        break;
-      case 'moveVolumeToTop':
-        this.nv.moveVolumeToTop(args[0]);
-        break;
-      case 'setClipPlane':
-        this.nv.setClipPlane(args[0]);
-        break;
-      case 'setCrosshairColor':
-        this.nv.setCrosshairColor(args[0]);
-        break;
-      case 'setCrosshairWidth':
-        this.nv.setCrosshairWidth(args[0]);
-        break;
-      case 'setDrawingEnabled':
-        this.nv.setDrawingEnabled(args[0]);
-        break;
-      case 'setPenValue':
-        this.nv.setPenValue(args[0], args[1]);
-        break;
-      case 'setDrawOpacity':
-        this.nv.setDrawOpacity(args[0]);
-        break;
-      case 'setSelectionBoxColor':
-        this.nv.setSelectionBoxColor(args[0]);
-        break;
-      case 'setSliceType':
-        this.nv.setSliceType(args[0]);
-        break;
-      case 'setOpacity':
-        this.nv.setOpacity(args[0], args[1]);
-        break;
-      case 'setScale':
-        this.nv.setScale(args[0]);
-        break;
-      case 'setClipPlaneColor':
-        this.nv.setClipPlaneColor(args[0]);
-        break;
-      case 'loadDocumentFromUrl':
-        await this.nv.loadDocumentFromUrl(args[0]);
-        break;
-      case 'loadVolumes':
-        await this.nv.loadVolumes(args[0]);
-        break;
-      case 'addMeshFromUrl':
-        await this.nv.addMeshFromUrl(args[0]);
-        break;
-      case 'loadMeshes':
-        await this.nv.loadMeshes(args[0]);
-        break;
-      case 'loadConnectome':
-        await this.nv.loadConnectome(args[0]);
-        break;
-      case 'createEmptyDrawing':
-        await this.nv.createEmptyDrawing();
-        break;
-      case 'drawGrowCut':
-        this.nv.drawGrowCut();
-        break;
-      case 'setMeshShader':
-        this.nv.setMeshShader(args[0], args[1]);
-        break;
-      case 'setCustomMeshShader':
-        this.nv.setCustomMeshShader(args[0], args[1]);
-        break;
-      case 'updateGLVolume':
-        this.nv.updateGLVolume();
-        break;
-      case 'setColorMap':
-        this.nv.setColorMap(args[0], args[1]);
-        break;
-      case 'setColorMapNegative':
-        this.nv.setColorMapNegative(args[0], args[1]);
-        break;
-      case 'setModulationImage':
-        this.nv.setModulationImage(args[0], args[1], args[2]);
-        break;
-      case 'setFrame4D':
-        this.nv.setFrame4D(args[0], args[1]);
-        break;
-      case 'setInterpolation':
-        this.nv.setInterpolation(args[0]);
-        break;
-      case 'moveCrosshairInVox':
-        this.nv.moveCrosshairInVox(args[0], args[1], args[2]);
-        break;
-      case 'drawMosaic':
-        this.nv.drawMosaic(args[0]);
-        break;
       case 'addVolumeFromBase64':
         this.nv.addVolume(
           niivue.NVImage.loadFromBase64({
@@ -370,7 +250,11 @@ export class NiivueModel extends DOMWidgetModel {
       maxDrawUndoBitmaps: this.get('max_draw_undo_bitmaps'),
       thumbnail: this.get('thumbnail') || '',
     });
+    console.log(this.nv.document);
   }
+
+  private currentProcessing: Promise<void> = Promise.resolve();
+  nv: any;
 
   static model_name = 'NiivueModel';
   static model_module = MODULE_NAME;
@@ -378,9 +262,6 @@ export class NiivueModel extends DOMWidgetModel {
   static view_name = 'NiivueView'; // Set to null if no view
   static view_module = MODULE_NAME; // Set to null if no view
   static view_module_version = MODULE_VERSION;
-
-  private currentProcessing: Promise<void> = Promise.resolve();
-  nv: any;
 }
 
 export class NiivueView extends DOMWidgetView {
@@ -428,16 +309,6 @@ export class NiivueView extends DOMWidgetView {
     this.el.appendChild(this.canvas);
     this.model.nv.attachToCanvas(this.canvas);
     this.el.style.backgroundColor = 'transparent';
-  }
-
-  //proof of concept - can have updates from variable changes
-  value_changed() {
-    this.model.nv.loadVolumes([{ url: this.model.get('value') }]);
-  }
-
-  //this makes this.el become a custom tag (div in this case). Technically this is not necessary.
-  preinitialize() {
-    this.tagName = 'div';
   }
 
   el: HTMLDivElement;

@@ -59,8 +59,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'ipyniivue'
-copyright = '2023, NiiVue'
-author = 'NiiVue'
+copyright = '2023, Niivue'
+author = 'Niivue'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -148,7 +148,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'ipyniivue.tex', 'ipyniivue Documentation',
-     'me', 'manual'),
+     'Niivue', 'manual'),
 ]
 
 
@@ -175,7 +175,7 @@ texinfo_documents = [
      'ipyniivue Documentation',
      author,
      'ipyniivue',
-     'NiiVue Jupyter Library',
+     'Jupyter-Niivue bridge',
      'Miscellaneous'),
 ]
 

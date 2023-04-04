@@ -1,4 +1,0 @@
-[submodule "niivue"]
-	path = niivue
-	url = https://github.com/niivue/niivue
-	branch = main
