@@ -1,6 +1,8 @@
 
 # ipyNiiVue
 
+[![JupyterLite](https://jupyterlite.rtfd.io/en/latest/_static/badge-launch.svg)](https://anthonyandroulakis.github.io/ipyNiiVueLite/lab?path=introduction.ipynb)
+
 ipyNiiVue is a Python / [Niivue](https://github.com/niivue/niivue) bridge for [Jupyter Widgets](https://jupyter.org/widgets). A Python API is used to interact with NiiVue.
 
 ## Getting started
