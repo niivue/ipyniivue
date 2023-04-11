@@ -1,6 +1,6 @@
 {
   "name": "ipyniivue",
-  "version": "1.0.1.dev0",
+  "version": "1.0.1",
   "description": "Jupyter-Niivue bridge",
   "keywords": [
     "jupyter",
