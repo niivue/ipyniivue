@@ -197,6 +197,16 @@ class Niivue(_CanvasBase):
 		super(Niivue, self).__init__(*args, **kwargs)
 		self.on_msg(self._handle_frontend_msg)
 
+	def __str__(self):
+		return f'Niivue {self._model_id}'
+	
+	def __repr__(self):
+		return f'ipyniivue.{super().__repr__()}'
+
+	def __dir__(self):
+		default = super().__dir__()
+		return [d for d in default if d not in dir(DOMWidget)]
+
 	def _handle_frontend_msg(self, _, content, buffers):
 		event_data = content.get('event', [None])
 		if event_data[0] == 'customCodeResult':
@@ -979,7 +989,7 @@ class Niivue(_CanvasBase):
 		Parameters:
 		-----------
 		ID: str
-            the ID of the 4D image
+			the ID of the 4D image
 
 		Returns:
 		--------
@@ -1008,7 +1018,7 @@ class Niivue(_CanvasBase):
 		Parameters:
 		-----------
 		ID: str
-            the ID of the overlay
+			the ID of the overlay
 
 		Returns:
 		--------
@@ -1033,7 +1043,7 @@ class Niivue(_CanvasBase):
 		Parameters:
 		-----------
 		ID: str
-            the ID of the volume
+			the ID of the volume
 
 		Returns:
 		--------
@@ -1048,7 +1058,7 @@ class Niivue(_CanvasBase):
 		Parameters:
 		-----------
 		url: str
-            the url or filepath of the mesh
+			the url or filepath of the mesh
 
 		Returns:
 		--------
