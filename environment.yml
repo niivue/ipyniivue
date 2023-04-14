@@ -1,0 +1,7 @@
+name: ipyniivue
+channels:
+  - conda-forge
+dependencies:
+  - jupyterlab=3
+  - ipyniivue=1.0.2
+  - ipyevents
