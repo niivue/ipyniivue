@@ -8,7 +8,7 @@ object: 1) using the help() function (for example, ``help([].append])``)
 
 These are implemented in ipyniivue. Here are some examples:
 
-.. code:: py
+.. code-block:: none
 
    from ipyniivue import Niivue
 
@@ -19,14 +19,14 @@ These are implemented in ipyniivue. Here are some examples:
 
 However, when you do the following:
 
-.. code:: py
+.. code-block:: none
 
    from ipyniivue import Niivue
 
    nv = Niivue()
    nv.thumbnail?
 
-The docstring for the thumnail attribute does not show.
+The docstring for the thumbnail attribute does not show.
 
 This is intended behavior since the option attributes of a
 ipyniivue.Niivue widget should not be modified directly. Instead, setter
