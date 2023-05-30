@@ -16,14 +16,13 @@ pip install ipyniivue
 
 ### Development
 ```sh
-conda create -n ipyniivue-dev -c conda-forge nodejs yarn python jupyterlab
+conda create -n ipyniivue-dev -c conda-forge nodejs yarn python jupyterlab=3.6.3
 conda activate ipyniivue-dev
 git clone https://github.com/niivue/ipyniivue.git
 cd ipyniivue
-npm install
 yarn install
 pip install -e . --user --upgrade
-npm run watch
+yarn run watch
 ```
 Then, in another terminal/cmd window:
 ```sh
