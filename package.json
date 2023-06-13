@@ -19,7 +19,7 @@
   },
   "license": "BSD-3-Clause",
   "author": {
-    "name": "Anthony Androulakis @ NiiVue"
+    "name": "Anthony Androulakis"
   },
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
