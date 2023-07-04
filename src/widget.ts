@@ -91,6 +91,8 @@ export class NiivueModel extends DOMWidgetModel {
       _view_name: NiivueModel.view_name,
       _view_module: NiivueModel.view_module,
       _view_module_version: NiivueModel.view_module_version,
+      height: 480,
+      width: 640,
     };
   }
 
@@ -145,7 +147,7 @@ export class NiivueModel extends DOMWidgetModel {
   }
 
   private async processCommand(name: string, args: any[], buffers: DataView[]) {
-    if (setters.includes(name)) {
+    if (setters.indexOf(name) > -1) {
       this.callNVFunctionByName(name, args);
     }
     switch (name) {
@@ -250,7 +252,6 @@ export class NiivueModel extends DOMWidgetModel {
       maxDrawUndoBitmaps: this.get('max_draw_undo_bitmaps'),
       thumbnail: this.get('thumbnail') || '',
     });
-    console.log(this.nv.document);
   }
 
   private currentProcessing: Promise<void> = Promise.resolve();
