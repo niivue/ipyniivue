@@ -250,7 +250,6 @@ export class NiivueModel extends DOMWidgetModel {
       maxDrawUndoBitmaps: this.get('max_draw_undo_bitmaps'),
       thumbnail: this.get('thumbnail') || '',
     });
-    console.log(this.nv.document);
   }
 
   private currentProcessing: Promise<void> = Promise.resolve();
@@ -297,9 +296,7 @@ export class NiivueView extends DOMWidgetView {
     this.canvas.setAttribute('height', this.model.get('height'));
     this.canvas.setAttribute(
       'style',
-      `width: ${this.model.get('width')}px; height: ${this.model.get(
-        'height'
-      )};`
+      `width: ${this.model.get('width')}px; height: ${this.model.get('height')};`
     );
     //redraw
     this.model.nv.drawScene();
