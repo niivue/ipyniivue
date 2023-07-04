@@ -92,7 +92,7 @@ export class NiivueModel extends DOMWidgetModel {
       _view_module: NiivueModel.view_module,
       _view_module_version: NiivueModel.view_module_version,
       height: 480,
-      width: 640
+      width: 640,
     };
   }
 
@@ -147,7 +147,7 @@ export class NiivueModel extends DOMWidgetModel {
   }
 
   private async processCommand(name: string, args: any[], buffers: DataView[]) {
-    if (setters.indexOf(name)> -1) {
+    if (setters.indexOf(name) > -1) {
       this.callNVFunctionByName(name, args);
     }
     switch (name) {
@@ -298,7 +298,9 @@ export class NiivueView extends DOMWidgetView {
     this.canvas.setAttribute('height', this.model.get('height'));
     this.canvas.setAttribute(
       'style',
-      `width: ${this.model.get('width')}px; height: ${this.model.get('height')};`
+      `width: ${this.model.get('width')}px; height: ${this.model.get(
+        'height'
+      )};`
     );
     //redraw
     this.model.nv.drawScene();
