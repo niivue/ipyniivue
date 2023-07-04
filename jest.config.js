@@ -11,7 +11,7 @@ module.exports = {
   transformIgnorePatterns: [
     '/node_modules/(?!(@jupyter(lab|-widgets)|@niivue)/.*)',
   ],
-  "transform": {
+  transform: {
     "^.+\\.(ts|tsx|js|jsx)?$": "babel-jest"
   },
   globals: {
