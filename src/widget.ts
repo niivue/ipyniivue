@@ -18,6 +18,8 @@ import {
   arrayBufferToBase64,
   arrayBufferToString,
   stringToArrayBuffer,
+  filterNVImage,
+  filterNVMesh,
 } from './utils';
 
 const setters: string[] = [
@@ -79,6 +81,7 @@ const setters: string[] = [
   'setInterpolation',
   'moveCrosshairInVox',
   'drawMosaic',
+  'addVolumeFromBase64' //from nvimage.js
 ];
 
 export class NiivueModel extends DOMWidgetModel {
@@ -116,7 +119,6 @@ export class NiivueModel extends DOMWidgetModel {
   private async callNVFunctionByName(functionName: string, argsList: any[]) {
     const isAsync = this.nv[functionName].constructor.name === 'AsyncFunction';
 
-    // If the function is async, use `await`
     if (isAsync) {
       await this.nv[functionName](...argsList);
     } else {
@@ -125,6 +127,10 @@ export class NiivueModel extends DOMWidgetModel {
   }
 
   private async onCommand(command: any, buffers: DataView[]) {
+    const preVolumes = this.nv.volumes.map(filterNVImage);
+    const preMeshes = this.nv.meshes.map(filterNVMesh);
+
+    console.log("onCommand:", command, buffers)
     const name: string = command[0];
     const args: any[] = command[1];
     try {
@@ -144,22 +150,51 @@ export class NiivueModel extends DOMWidgetModel {
         console.error(e);
       }
     }
+
+    //check for changes in volumes and meshes
+    const postVolumes = this.nv.volumes.map(filterNVImage);
+    const postMeshes = this.nv.meshes.map(filterNVMesh);
+
+    //push those changes to the python end. 
+    //Todo: have ipyniivue.volumes and .meshes be traitlets so that changes on the python side are reflected on the ts side
+    if (preVolumes !== postVolumes) {
+      buffers = [];
+      for (let i = 0; i < postVolumes.length; ++i) {
+        buffers.push(postVolumes[i].dataBuffer || new ArrayBuffer(0));
+      }
+      this.send({ event: ['updateVolumes', JSON.stringify(postVolumes)] }, undefined, buffers);
+    }
+    if (preMeshes !== postMeshes) {
+      this.send({ event: ['updateMeshes', JSON.stringify(postMeshes)] });
+    }
   }
 
   private async processCommand(name: string, args: any[], buffers: DataView[]) {
+    //if function is a sette
     if (setters.indexOf(name) > -1) {
-      this.callNVFunctionByName(name, args);
-    }
-    switch (name) {
-      case 'addVolumeFromBase64':
-        this.nv.addVolume(
-          niivue.NVImage.loadFromBase64({
+      switch (name) {
+        case 'addVolumeFromBase64':
+          console.log('case addVolumeFromBase64')
+          let volume = niivue.NVImage.loadFromBase64({
             name: args[0],
             base64: arrayBufferToBase64(buffers[0].buffer),
           })
-        );
-        break;
-      case 'runCustomCode': {
+            this.nv.addVolume(volume); //errors out on updateGLVolume() ...but addVolumeFromUrl() doesn't for some reason
+          break;
+        case 'addVolume':
+            this.nv.addVolume(new niivue.NVImage(args[0]));
+          break;
+        case 'addMesh':
+            this.nv.addMesh(new niivue.NVMesh(args[0]));
+          break;
+        default:
+          await this.callNVFunctionByName(name, args);
+          break;
+      }
+    }
+
+    //else if function is a getter
+    if (name == 'runCustomCode') {
         let result,
           hasResult = false;
         const code = arrayBufferToString(buffers[0].buffer);
@@ -172,8 +207,6 @@ export class NiivueModel extends DOMWidgetModel {
           }
         }
         this.sendCustomCodeResult(args[0], hasResult, result);
-        break;
-      }
     }
   }
 
@@ -191,12 +224,12 @@ export class NiivueModel extends DOMWidgetModel {
       const begin = i * chunkSize;
       const end = Math.min(begin + chunkSize, data.byteLength);
       const chunk = data.slice(begin, end);
-      this.send({ event: ['customCodeResult', id, numChunks - 1 - i] }, {}, [
+      this.send({ event: ['customCodeResult', id, numChunks - 1 - i] }, undefined, [
         chunk,
       ]);
     }
     if (numChunks === 0) {
-      this.send({ event: ['customCodeResult', id, 0] }, {});
+      this.send({ event: ['customCodeResult', id, 0] }, undefined);
     }
   }
 
@@ -277,10 +310,19 @@ export class NiivueView extends DOMWidgetView {
 
     this.resize();
     this.updateCanvas();
-    //this.value_changed();
+    this.isColorbar_changed();
 
     this.model.on_some_change(['width', 'height'], this.resize, this);
-    //this.model.on('change:value', this.value_changed, this);
+    this.model.on('change:is_colorbar', this.isColorbar_changed, this);
+  }
+
+  //todo: add the rest of the options
+  protected isColorbar_changed() {
+    console.log('isColorbar_changed', this.model.get('is_colorbar'))
+    this.model.nv.opts.isColorbar = this.model.get('is_colorbar')
+    if (this.model.nv.gl) {
+      this.model.nv.updateGLVolume();
+    }
   }
 
   protected resize() {

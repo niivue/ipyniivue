@@ -15,6 +15,7 @@ import pathlib
 import random
 import string
 import time
+import os
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 
@@ -25,6 +26,7 @@ from traitlets import (
     Unicode,
     CInt,
     CFloat,
+    Dict,
     List,
     Bool,
     UseEnum,
@@ -38,7 +40,8 @@ from .traits import (
     keycodes,
 )
 from ._frontend import module_name, module_version
-
+from .nvimage import NVImage
+from .nvmesh import NVMesh
 
 class _CanvasBase(DOMWidget):
     '''
@@ -368,6 +371,9 @@ class Niivue(_CanvasBase):
         '''Create an Niivue widget.'''
         super(Niivue, self).__init__(*args, **kwargs)
         self.on_msg(self._handle_frontend_msg)
+        #todo: convert volumes and meshes into traitlets so that updates on the python side can be reflected on the ts side
+        self.volumes = []
+        self.meshes = []
 
     def __str__(self):
         return f'Niivue {self._model_id}'
@@ -380,6 +386,7 @@ class Niivue(_CanvasBase):
         return [d for d in default if d not in dir(DOMWidget)]
 
     def _handle_frontend_msg(self, _, content, buffers):
+        print('_handle_frontend_msg:', content, buffers)
         event_data = content.get('event', [None])
         if event_data[0] == 'customCodeResult':
             code_id = event_data[1]
@@ -403,6 +410,12 @@ class Niivue(_CanvasBase):
                 res['result'] = loaded
 
             res['chunks_left'] = chunks_left
+        elif event_data[0] == 'updateVolumes':
+            partial_dict = json.loads(event_data[1])
+            volumes = [{**d, "dataBuffer": s.tobytes()} for d, s in zip(partial_dict, buffers)]
+            self.volumes = [NVImage(v) for v in volumes]
+        elif event_data[0] == 'updateMeshes':
+            self.meshes = [NVMesh(m) for m in json.loads(event_data[1])]
 
     def _send_custom(self, command, buffers=[]):
         self.send(command, buffers=buffers)
@@ -925,13 +938,25 @@ class Niivue(_CanvasBase):
 
     def load_volumes(self, volume_list):
         '''
-        todo: load an array of volume objects
+        load an array of volume objects
+
+        todo, allow for lists with mixed types (dictionaries and NVImage objects
 
         Parameters:
         -----------
         volume_list: list
             the array of objects to load
         '''
+        if not isinstance(volume_list, list):
+            raise TypeError('volume_list must be a list')
+        if type(volume_list[0]) not in (dict, NVImage):
+            raise TypeError('volume_list must be a list of dictionaries or NVImage objects')
+        
+        if len(volume_list) == 0:
+            return
+        
+        if isinstance(volume_list[0], NVImage):
+            volume_list = [dict(v) for v in volume_list]
         self._send_custom(['loadVolumes', [volume_list]])
 
     def add_mesh_from_url(self, url):
@@ -947,13 +972,25 @@ class Niivue(_CanvasBase):
 
     def load_meshes(self, mesh_list):
         '''
-        todo: load an array of meshes
+        load an array of volume objects
+
+        todo, allow for lists with mixed types (dictionaries and NVImage objects
 
         Parameters:
         -----------
         mesh_list: list
             the array of objects to load
         '''
+        if not isinstance(mesh_list, list):
+            raise TypeError('mesh_list must be a list')
+        if type(mesh_list[0]) not in (dict, NVMesh):
+            raise TypeError('mesh_list must be a list of dictionaries or NVMesh objects')
+        
+        if len(mesh_list) == 0:
+            return
+        
+        if isinstance(mesh_list[0], NVMesh):
+            mesh_list = [dict(v) for v in mesh_list]
         self._send_custom(['loadMeshes', [mesh_list]])
 
     def load_connectome(self, connectome):
@@ -1107,25 +1144,38 @@ class Niivue(_CanvasBase):
         '''
         self._send_custom(['drawMosaic', [mosaic_str]])
 
-    def add_volume(self, file):
+    def add_volume(self, volume):
         '''
         Add a new volume to the canvas
 
         Parameters:
         -----------
-        file: str
+        volume: str or dict or NVImage
             the path to the file (either url or local path)
         '''
-        if (file.startswith('http://') or file.startswith('https://')):
-            self._send_custom(['addVolumeFromUrl', [{'url': str(file)}]])
-        else:
-            if file.startswith('file://'):
-                parsed = urlparse(file)
-                file = url2pathname(parsed.path)
-            p = pathlib.Path(file)
-            name = p.name
-            filedata = p.read_bytes()
-            self._send_custom(['addVolumeFromBase64', [name]], [filedata])
+        if isinstance(volume, str):
+            file = volume
+            if file.startswith('http://') or file.startswith('https://'):
+                self._send_custom(['addVolumeFromUrl', [{'url': str(file)}]])
+            else:
+                if file.startswith('file://'):
+                    parsed = urlparse(file)
+                    file = url2pathname(parsed.path)
+                p = pathlib.Path(file)
+                name = p.name
+                filedata = p.read_bytes()
+                self._send_custom(['addVolumeFromBase64', [name]], [filedata])
+        elif isinstance(volume, dict):
+            buffers = []
+            if 'dataBuffer' in volume:
+                buffers = [volume.pop('dataBuffer')]
+            self._send_custom(['addVolume', [volume]], buffers)
+        elif isinstance(volume, NVImage):
+            dict_volume = dict(volume)
+            buffers = []
+            if 'dataBuffer' in dict_volume:
+                buffers = [dict_volume.pop('dataBuffer')]
+            self._send_custom(['addVolume', [dict_volume]], buffers)
 
     def add_object(self, img):
         '''
@@ -1141,7 +1191,7 @@ class Niivue(_CanvasBase):
                             for _ in range(20))
                     )
         self._send_custom(['addVolumeFromBase64',
-                           [filename]],
+                           [os.path.basename(filename)]],
                           [img.to_bytes()])
 
     # getter functions start here #
