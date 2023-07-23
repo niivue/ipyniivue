@@ -22,7 +22,7 @@ conda activate ipyniivue-dev
 git clone https://github.com/niivue/ipyniivue.git
 cd ipyniivue
 yarn install
-pip install -e . --user --upgrade
+jupyter labextension develop --overwrite .
 yarn run watch
 ```
 Then, in another terminal/cmd window:
