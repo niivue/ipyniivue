@@ -27,6 +27,8 @@ yarn run watch
 ```
 Then, in another terminal/cmd window:
 ```sh
+cd ipyniivue
+conda activate ipyniivue-dev
 jupyter lab
 ```
 
