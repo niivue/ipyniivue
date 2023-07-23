@@ -9,4 +9,4 @@ dependencies:
   - jupyter_ui_poll
   - traitlets
   - pip:
-    - ipyniivue==1.0.3
+    - ipyniivue==1.1.0

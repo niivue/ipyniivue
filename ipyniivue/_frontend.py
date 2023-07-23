@@ -9,4 +9,4 @@ Information about the frontend package of the widgets.
 """
 
 module_name = "ipyniivue"
-module_version = "^1.0.3"
+module_version = "^1.1.0"
