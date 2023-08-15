@@ -51,7 +51,7 @@ The ``Niivue.run_custom_code`` function displays this implementation.
 
 .. code:: py
 
-   >>> colormaps = nv.run_custom_code('nv.colorMaps()')
+   >>> colormaps = nv.run_custom_code('nv.colormaps()')
    Done.
 
    >>> print(colormaps)
