@@ -18,6 +18,8 @@ import time
 import os
 from urllib.parse import urlparse
 from urllib.request import url2pathname
+from pathlib import Path
+from typing import Union
 
 # Third-party libraries
 from ipywidgets import DOMWidget
@@ -1144,16 +1146,29 @@ class Niivue(_CanvasBase):
         '''
         self._send_custom(['drawMosaic', [mosaic_str]])
 
-    def add_volume(self, volume):
+    def add_volume(self, volume: Union[str, pathlib.Path, dict, NVImage]):
         '''
         Add a new volume to the canvas
 
         Parameters:
         -----------
-        volume: str or dict or NVImage
+        volume: str or Path or dict or NVImage
             the path to the file (either url or local path)
         '''
-        if isinstance(volume, str):
+        def _send_with_dict(volume: dict):
+            buffers = []
+            if 'dataBuffer' in volume:
+                buffers = [volume.pop('dataBuffer')]
+            self._send_custom(['addVolume', [volume]], buffers)
+
+        def _send_with_path(volume: pathlib.Path):
+            name = volume.name
+            filedata = volume.read_bytes()
+            self._send_custom(['addVolumeFromBase64', [name]], [filedata])
+
+        if isinstance(volume, Path):
+            _send_with_path(volume)
+        elif isinstance(volume, str):
             file = volume
             if file.startswith('http://') or file.startswith('https://'):
                 self._send_custom(['addVolumeFromUrl', [{'url': str(file)}]])
@@ -1161,21 +1176,17 @@ class Niivue(_CanvasBase):
                 if file.startswith('file://'):
                     parsed = urlparse(file)
                     file = url2pathname(parsed.path)
-                p = pathlib.Path(file)
-                name = p.name
-                filedata = p.read_bytes()
-                self._send_custom(['addVolumeFromBase64', [name]], [filedata])
+                _send_with_path(Path(file))
+
         elif isinstance(volume, dict):
-            buffers = []
-            if 'dataBuffer' in volume:
-                buffers = [volume.pop('dataBuffer')]
-            self._send_custom(['addVolume', [volume]], buffers)
+            _send_with_dict(volume)
         elif isinstance(volume, NVImage):
-            dict_volume = dict(volume)
-            buffers = []
-            if 'dataBuffer' in dict_volume:
-                buffers = [dict_volume.pop('dataBuffer')]
-            self._send_custom(['addVolume', [dict_volume]], buffers)
+            _send_with_dict(dict(volume))
+ 
+        else:
+            raise TypeError("The `volume` argument of `Niivue.add_volume` "
+                            "accepts only types pathlib.Path, str, dict, "
+                            "and NVImage.")
 
     def add_object(self, img):
         '''
