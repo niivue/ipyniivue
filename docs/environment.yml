@@ -9,3 +9,4 @@ dependencies:
   - pydata-sphinx-theme
   - nbsphinx
   - nbsphinx-link
+  - jupyter_ui_poll
