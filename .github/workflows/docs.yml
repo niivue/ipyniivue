@@ -27,6 +27,7 @@ jobs:
         cd docs
         conda env create -f environment.yml
         source activate ipyniivue_docs
+        python -m ipykernel install --user --name=ipyniivue_docs
         make html
 
     - name: Deploy

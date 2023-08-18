@@ -10,3 +10,5 @@ dependencies:
   - nbsphinx
   - nbsphinx-link
   - jupyter-ui-poll
+  - ipykernel
+  
