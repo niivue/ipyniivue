@@ -1,8 +1,11 @@
+
 class NVMesh:
-    #gl variable skipped because python
-    def __init__(self, input_dict={}, **kwargs):
+    # gl variable skipped because python
+    def __init__(self, input_dict=None, **kwargs):
+        if input_dict is None:
+            input_dict = {}
         kwargs.update(input_dict)
-        self.pts = kwargs.get("pts", []) #arent pts and tris required?
+        self.pts = kwargs.get("pts", [])  # arent pts and tris required?
         self.tris = kwargs.get("tris", [])
         self.name = kwargs.get("name", "")
         self.rgba255 = kwargs.get("rgba255", [255, 255, 255, 255])
@@ -31,5 +34,5 @@ class NVMesh:
 
     @staticmethod
     def load_from_base64(**kwargs):
-        #to be implemented
+        # to be implemented
         pass
