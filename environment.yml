@@ -6,7 +6,7 @@ dependencies:
   - pip
   - ipyevents
   - ipywidgets
-  - jupyter_ui_poll
+  - jupyter-ui-poll
   - traitlets
   - pip:
     - ipyniivue==1.1.0
