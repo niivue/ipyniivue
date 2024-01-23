@@ -1,15 +1,22 @@
 import "./widget.css";
 
-export function render({ model, el }) {
-	let btn = document.createElement("button");
-	btn.classList.add("ipyniivue_experimental-counter-button");
-	btn.innerHTML = `count is ${model.get("value")}`;
-	btn.addEventListener("click", () => {
-		model.set("value", model.get("value") + 1);
-		model.save_changes();
-	});
-	model.on("change:value", () => {
-		btn.innerHTML = `count is ${model.get("value")}`;
-	});
-	el.appendChild(btn);
+import { Niivue } from "@niivue/niivue";
+
+export async function render({ model, el }) {
+  let canvas = document.createElement("canvas");
+  let container = document.createElement("div");
+  container.style.height = "300px";
+  container.appendChild(canvas);
+  el.appendChild(container);
+  let nv = new Niivue();
+  nv.attachToCanvas(canvas);
+
+  console.log("Hello World!");
+  model.on("msg:custom", (msg) => {
+    console.log("Custom message received!");
+    console.log(msg.func);
+    console.log(msg.args);
+    let funcname = msg.func;
+    nv[funcname]( ...msg.args);
+  });
 }

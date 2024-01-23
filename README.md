@@ -49,9 +49,6 @@ npm i @niivue/niivue
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]" 
 ```
-```
-npm i @tldraw/tldraw
-```
 
 ```
 npm run dev
