@@ -1,0 +1,10 @@
+{
+	"scripts": {
+		"dev": "npm run build -- --sourcemap=inline --watch",
+		"build": "esbuild js/widget.js --minify --format=esm --bundle --outdir=src/ipyniivue_experimental/static"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"esbuild": "^0.19.11"
+	}
+}
