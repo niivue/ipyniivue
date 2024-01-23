@@ -1,7 +1,7 @@
 {
 	"scripts": {
 		"dev": "npm run build -- --sourcemap=inline --watch",
-		"build": "esbuild js/widget.js --minify --format=esm --bundle --outdir=src/ipyniivue_experimental/static"
+		"build": "esbuild js/*.js --minify --format=esm --bundle --outdir=src/ipyniivue_experimental/static"
 	},
 	"dependencies": {
 		"@niivue/niivue": "^0.39.0"
