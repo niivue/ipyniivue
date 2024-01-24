@@ -10,13 +10,13 @@ export async function render({ model, el }) {
   el.appendChild(container);
   let nv = new Niivue();
   nv.attachToCanvas(canvas);
-
-  console.log("Hello World!");
-  model.on("msg:custom", (msg) => {
-    console.log("Custom message received!");
-    console.log(msg.func);
-    console.log(msg.args);
-    let funcname = msg.func;
-    nv[funcname]( ...msg.args);
+  await nv.loadVolumes([
+    { url: "https://niivue.github.io/niivue/images/mni152.nii.gz" },
+  ]);
+  model.on("change:opacity", () => {
+    console.log("opacity changed");
+    let value = model.get("opacity");
+    console.log(value);
+    nv.setOpacity(0, value);
   });
 }
