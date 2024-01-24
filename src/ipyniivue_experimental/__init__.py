@@ -24,3 +24,9 @@ class AnyNiivue(anywidget.AnyWidget):
   def load_meshes(self, mesh_list):
     self.send({ "type": "api", "func": "loadMeshes", "args": [mesh_list] })
 ############
+    
+
+class AnyNiivueOpacity(anywidget.AnyWidget):
+  path_root = pathlib.Path(__file__).parent.parent.parent
+  _esm = path_root / "src" / "ipyniivue_experimental"/ "static" / "widget_traitlet.js"
+  opacity = traitlets.Float(1.0).tag(sync=True)
