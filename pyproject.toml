@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ipyniivue_experimental"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = ["anywidget"]
 
 [project.optional-dependencies]
@@ -21,8 +21,6 @@ artifacts = ["src/ipyniivue_experimental/static/*"]
 
 [tool.hatch.build.hooks.jupyter-builder]
 build-function = "hatch_jupyter_builder.npm_builder"
-ensured-targets = ["src/ipyniivue_experimental/static/widget.js"]
-skip-if-exists = ["src/ipyniivue_experimental/static/widget.js"]
 dependencies = ["hatch-jupyter-builder>=0.5.0"]
 
 [tool.hatch.build.hooks.jupyter-builder.build-kwargs]
