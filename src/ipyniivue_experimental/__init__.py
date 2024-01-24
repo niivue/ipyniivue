@@ -9,7 +9,6 @@ try:
 except importlib.metadata.PackageNotFoundError:
     __version__ = "unknown"
 
-############ This code block will go to __init__.py 
 
 import anywidget 
 import pathlib
@@ -23,7 +22,6 @@ class AnyNiivue(anywidget.AnyWidget):
 
   def load_meshes(self, mesh_list):
     self.send({ "type": "api", "func": "loadMeshes", "args": [mesh_list] })
-############
     
 
 class AnyNiivueOpacity(anywidget.AnyWidget):
