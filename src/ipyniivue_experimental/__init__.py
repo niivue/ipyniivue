@@ -15,8 +15,8 @@ import anywidget
 import pathlib
 
 class AnyNiivue(anywidget.AnyWidget):
-  path_root = pathlib.Path(__file__).parent.parent.parent
-  _esm = path_root / "src" / "ipyniivue_experimental"/ "static" / "widget_send.js"
+  path_root = pathlib.Path(__file__).parent / "static" 
+  _esm = path_root / "widget_send.js"
 
   def load_volumes(self, volume_list):
     self.send({ "type": "api", "func": "loadVolumes", "args": [volume_list] })
@@ -27,6 +27,6 @@ class AnyNiivue(anywidget.AnyWidget):
     
 
 class AnyNiivueOpacity(anywidget.AnyWidget):
-  path_root = pathlib.Path(__file__).parent.parent.parent
-  _esm = path_root / "src" / "ipyniivue_experimental"/ "static" / "widget_traitlet.js"
+  path_root = pathlib.Path(__file__).parent / "static" 
+  _esm = path_root / "widget_traitlet.js"
   opacity = traitlets.Float(1.0).tag(sync=True)
