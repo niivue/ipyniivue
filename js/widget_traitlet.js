@@ -13,6 +13,7 @@ export async function render({ model, el }) {
   await nv.loadVolumes([
     { url: "https://niivue.github.io/niivue/images/mni152.nii.gz" },
   ]);
+  // nv.setColorMap(0,"red")
   model.on("change:opacity", () => {
     console.log("opacity changed");
     let value = model.get("opacity");
