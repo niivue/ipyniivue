@@ -2,7 +2,8 @@ import "./widget.css";
 
 import { Niivue } from "@niivue/niivue";
 
-export async function render({ model, el }) {
+
+async function render({ model, el }) {
   let canvas = document.createElement("canvas");
   let container = document.createElement("div");
   container.style.height = "300px";
@@ -19,3 +20,6 @@ export async function render({ model, el }) {
     }
   });
 }
+
+
+export default { render }
