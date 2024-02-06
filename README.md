@@ -4,7 +4,26 @@
 pip install ipyniivue_experimental
 ```
 
+# Example
 
+```
+from ipyniivue_experimental import AnyNiivue
+
+nv = AnyNiivue()
+nv
+```
+
+
+```
+# second cell, wait for one second till the frontend code from cell1 is done loading.
+my_volumes = [
+           { "url": "https://niivue.github.io/niivue/images/mni152.nii.gz" }
+        ]
+nv.load_volumes(my_volumes)
+```
+
+
+# How this project was made:
 
 This project was made with 
 
