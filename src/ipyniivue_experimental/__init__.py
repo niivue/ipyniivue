@@ -22,7 +22,30 @@ class AnyNiivue(anywidget.AnyWidget):
 
   def load_meshes(self, mesh_list):
     self.send({ "type": "api", "func": "loadMeshes", "args": [mesh_list] })
-    
+
+
+  def set_opacity(self, opacity=1):
+      self.send(
+          {"type": "api", "func": "setOpacity", "args": [[0], [opacity]]}
+      )
+
+
+  def set_crosshair_color(self, color):
+        self.send(
+          {"type": "api", "func": "setCrosshairColor", "args": [color]}
+        )
+
+  def set_crosshair_color(self, color):
+        self.send(
+          {"type": "api", "func": "setCrosshairColor", "args": [color]}
+        )
+
+  def set_crosshair_width(self, width):
+        self.send(
+          {"type": "api", "func": "setCrosshairWidth", "args": [width]}
+        )
+
+
 
 class AnyNiivueOpacity(anywidget.AnyWidget):
   path_root = pathlib.Path(__file__).parent / "static" 
