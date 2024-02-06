@@ -4,8 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ipyniivue_experimental"
-version = "0.0.5"
+version = "0.0.6"
 dependencies = ["anywidget"]
+readme = "README.md"
+
 
 [project.optional-dependencies]
 dev = ["watchfiles", "jupyterlab"]
