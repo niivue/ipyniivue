@@ -1,7 +1,10 @@
 # ipyniivue_experimental
 
+
 ```sh
+python3.11 -m venv .venv && source .venv/bin/activate
 pip install ipyniivue_experimental
+pip install jupyterlab
 ```
 
 # Example
