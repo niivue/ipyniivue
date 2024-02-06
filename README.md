@@ -75,3 +75,17 @@ pip install -e ".[dev]"
 ```
 npm run dev
 ```
+
+
+# Changelog:
+
+## v0.0.5 
+
+Adding functions 
+load_volumes, load_meshes, set_opacity, set_crosshair_width and set_crosshair_color.
+
+
+
+## v0.0.4
+
+Setting up the project
