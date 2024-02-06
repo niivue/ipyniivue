@@ -2,7 +2,6 @@ import "./widget.css";
 
 import { Niivue } from "@niivue/niivue";
 
-
 async function render({ model, el }) {
   let canvas = document.createElement("canvas");
   let container = document.createElement("div");
@@ -21,5 +20,4 @@ async function render({ model, el }) {
   });
 }
 
-
-export default { render }
+export default { render };
