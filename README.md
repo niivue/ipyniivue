@@ -68,6 +68,7 @@ npm install
 npm i @niivue/niivue
 ```
 
+```
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]" 
 ```
@@ -78,6 +79,10 @@ npm run dev
 
 
 # Changelog:
+
+## v0.0.7
+
+Change to traitlet approach
 
 ## v0.0.5 
 
