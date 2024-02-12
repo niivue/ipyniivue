@@ -12,13 +12,11 @@ async function render({ model, el }) {
   let nv = new Niivue(options);
   nv.attachToCanvas(canvas);
 
-  model.on("change:binary_value", () => {
-    let dataView = model.get("binary_value"); // JavaScript DataView
-    console.log("Here is the data");
-    console.log(dataView);
-    let image = new NVImage(dataView.buffer, "my_image.nii.gz");
-    nv.addVolume(image);
-  });
+  let file = model.get("file");
+  let image = new NVImage(file.data.buffer, file.name);
+  nv.addVolume(image);
 }
 
 export default { render };
+
+
