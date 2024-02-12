@@ -24,6 +24,6 @@ export async function render({ model, el }) {
     console.log("volume changed");
     console.log(value);
     await nv.loadVolumes(value);
-    nv.setSliceType(SLICE_TYPE.MULTIPLANAR)
+    // nv.setSliceType(SLICE_TYPE.MULTIPLANAR)
   });
 }
