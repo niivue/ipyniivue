@@ -3,6 +3,7 @@ import "./widget.css";
 import { Niivue } from "@niivue/niivue";
 
 async function render({ model, el }) {
+  console.log("This approach is deprecated!")
   let canvas = document.createElement("canvas");
   let container = document.createElement("div");
   container.style.height = "300px";
