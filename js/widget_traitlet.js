@@ -14,7 +14,8 @@ async function render({ model, el }) {
 
   let volume_file = model.get("volume_file");
   let image = new NVImage(volume_file.data.buffer, volume_file.name);
-  nv.addVolume(image);
+  await nv.addVolume(image);
+  nv.setSliceType(SLICE_TYPE.SAGITTAL);
 
   model.on("change:opacity", () => {
     let value = model.get("opacity");
@@ -28,22 +29,19 @@ async function render({ model, el }) {
 
   model.on("change:slice_type", () => {
     let value = model.get("slice_type");
-    console.log(value);
-    console.log("slicetype changed!");
-    if (value == "SLICE_TYPE.AXIAL") {
-      nv.setSliceType(SLICE_TYPE.AXIAL);
+    nv.setSliceType(value);
+  });
+
+  model.on("change:drag_mode", () => {
+    let value = model.get("drag_mode");
+    if (value == "DRAG_MODES.CONTRAST") {
+      nv.opts.dragMode = nv.dragModes.contrast;
     }
-    if (value == "SLICE_TYPE.CORONAL") {
-      nv.setSliceType(SLICE_TYPE.CORONAL);
+    if (value == "DRAG_MODES.MEASUREMENT") {
+      nv.opts.dragMode = nv.dragModes.measurement;
     }
-    if (value == "SLICE_TYPE.SAGITTAL") {
-      nv.setSliceType(SLICE_TYPE.SAGITTAL);
-    }
-    if (value == "SLICE_TYPE.MULTIPLANAR") {
-      nv.setSliceType(SLICE_TYPE.MULTIPLANAR);
-    }
-    if (value == "SLICE_TYPE.RENDER") {
-      nv.setSliceType(SLICE_TYPE.RENDER);
+    if (value == "DRAG_MODES.PAN") {
+      nv.opts.dragMode = nv.dragModes.pan;
     }
   });
 }
