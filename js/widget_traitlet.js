@@ -15,7 +15,6 @@ async function render({ model, el }) {
   let volume_file = model.get("volume_file");
   let image = new NVImage(volume_file.data.buffer, volume_file.name);
   await nv.addVolume(image);
-  nv.setSliceType(SLICE_TYPE.SAGITTAL);
 
   model.on("change:opacity", () => {
     let value = model.get("opacity");
