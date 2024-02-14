@@ -43,6 +43,9 @@ class AnyNiivue(anywidget.AnyWidget):
 
   volume_file = traitlets.Instance(pathlib.Path).tag(sync=True, to_json=file_serializer)
 
+  def load_volume(self, value):
+     self.volume_file = value
+
   opacity = traitlets.Float(1.0).tag(sync = True)
   
   def set_opacity(self, value):
