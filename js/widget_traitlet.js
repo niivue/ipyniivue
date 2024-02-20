@@ -12,9 +12,9 @@ async function render({ model, el }) {
   let nv = new Niivue(options);
   nv.attachToCanvas(canvas);
 
-  let volume_file = model.get("volume_file");
-  let image = new NVImage(volume_file.data.buffer, volume_file.name);
-  await nv.addVolume(image);
+  // let volume_file = model.get("volume_file");
+  // let image = new NVImage(volume_file.data.buffer, volume_file.name);
+  // await nv.addVolume(image);
 
   model.on("change:volume_file", async() => {
     let volume_file = model.get("volume_file");
