@@ -25,7 +25,7 @@ async function render({ model, el }) {
   }
 
   render_volumes(); // initial render
-  model.on("change:_volumes", render_volumes); //later render
+  // model.on("change:_volumes", render_volumes); //later render
 
   // let image = new NVImage(volume_file.data.buffer, volume_file.name);
   // await nv.addVolume(image);
