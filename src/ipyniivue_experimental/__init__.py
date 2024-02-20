@@ -32,6 +32,8 @@ import traitlets
 import pathlib
 
 def file_serializer(instance: pathlib.Path, widget):
+    if instance == None:
+       return None
     return {
         "name": instance.name,
         "data": instance.read_bytes()
@@ -41,7 +43,7 @@ class AnyNiivue(anywidget.AnyWidget):
   path_root = pathlib.Path.cwd()
   _esm = path_root / "src" / "ipyniivue_experimental"/ "static" / "widget_traitlet.js"
 
-  volume_file = traitlets.Instance(pathlib.Path).tag(sync=True, to_json=file_serializer)
+  volume_file = traitlets.Instance(pathlib.Path, default_value=None, allow_none=True).tag(sync=True, to_json=file_serializer)
 
   def load_volume(self, value):
      self.volume_file = value
