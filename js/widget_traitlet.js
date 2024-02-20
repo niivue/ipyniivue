@@ -12,6 +12,14 @@ async function render({ model, el }) {
   let nv = new Niivue(options);
   nv.attachToCanvas(canvas);
 
+  console.log("volume")
+  console.log(nv.volumes) // this will be []
+
+  let current_volumes = nv.volumes; // [] on first render
+  let new_volumes = model.get("_volumes");
+
+  console.log(new_volumes)
+  
   // let volume_file = model.get("volume_file");
   // let image = new NVImage(volume_file.data.buffer, volume_file.name);
   // await nv.addVolume(image);

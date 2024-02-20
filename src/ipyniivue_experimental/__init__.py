@@ -75,9 +75,6 @@ class AnyNiivue(anywidget.AnyWidget):
         self.drag_mode = str(value)
 
 
-import anywidget
-import pathlib
-
 
 class AnyNiivueOldSend(anywidget.AnyWidget):
     path_root = pathlib.Path(__file__).parent / "static"
