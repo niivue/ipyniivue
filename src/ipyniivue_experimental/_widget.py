@@ -19,7 +19,6 @@ class Volume(ipywidgets.Widget):
     colorbar_visible = t.Bool(True).tag(sync=True)
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
-    visible = t.Bool(True).tag(sync=True)
 
 
 class AnyNiivue(OptionsMixin, anywidget.AnyWidget):

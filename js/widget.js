@@ -83,7 +83,7 @@ function create_volume(nv, vmodel) {
     undefined,                      // trustMinCalMinMax
     undefined,                      // percentileFrac
     undefined,                      // ignoreZeroVoxels
-    vmodel.get("visible"),          // visible
+    undefined,                      // visible
     undefined,                      // useQFormNotSForm
     undefined,                      // colormapNegative
     undefined,                      // frame4D
@@ -105,11 +105,6 @@ function create_volume(nv, vmodel) {
     volume.cal_min = vmodel.get("cal_min");
     nv.updateGLVolume();
   }
-  // NOTE: I don't think this does anything
-  function visible_changed() {
-    volume.visible = vmodel.get("visible");
-    nv.updateGLVolume();
-  }
   function colormap_changed() {
     volume.colormap = vmodel.get("colormap");
     nv.updateGLVolume();
@@ -121,14 +116,12 @@ function create_volume(nv, vmodel) {
   vmodel.on("change:colorbar_visible", colorbar_visible_changed);
   vmodel.on("change:cal_min", cal_min_changed);
   vmodel.on("change:cal_max", cal_max_changed);
-  vmodel.on("change:visible", visible_changed);
   vmodel.on("change:colormap", colormap_changed);
   vmodel.on("change:opacity", opacity_changed);
   return [volume, () => {
     vmodel.off("change:colorbar_visible", colorbar_visible_changed);
     vmodel.off("change:cal_min", cal_min_changed);
     vmodel.off("change:cal_max", cal_max_changed);
-    vmodel.off("change:visible", visible_changed);
     vmodel.off("change:colormap", colormap_changed);
     vmodel.off("change:opacity", opacity_changed);
   }]

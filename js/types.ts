@@ -7,7 +7,6 @@ export type VolumeModel = { model_id: string } & AnyModel<{
     colorbar_visible: boolean;
 	cal_min?: number;
 	cal_max?: number;
-	visible: boolean;
 }>;
 
 export type Model = AnyModel<{
