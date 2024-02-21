@@ -107,7 +107,6 @@ export default {
     model.on("change:_volumes", () => render_volumes(nv, model, cleanups));
     model.on("change:_opts", () => {
       nv.opts = { ...nv.opts, ...model.get("_opts") };
-      console.log(nv.opts);
       nv.drawScene();
       nv.updateGLVolume();
     });
