@@ -73,21 +73,55 @@ function gather_volume_models(model) {
  */
 function create_volume(nv, vmodel) {
   let volume = new NVImage(
-    vmodel.get("path").data.buffer,
-    volume_id(vmodel),
-    vmodel.get("colormap"),
-    vmodel.get("opacity"),
+    vmodel.get("path").data.buffer, // dataBuffer
+    volume_id(vmodel),              // name
+    vmodel.get("colormap"),         // colormap
+    vmodel.get("opacity"),          // opacity
+    undefined,                      // pairedImgData
+    vmodel.get("cal_min"),          // cal_min
+    vmodel.get("cal_max"),          // cal_max
+    undefined,                      // trustMinCalMinMax
+    undefined,                      // percentileFrac
+    undefined,                      // ignoreZeroVoxels
+    undefined,                      // visible
+    undefined,                      // useQFormNotSForm
+    undefined,                      // colormapNegative
+    undefined,                      // frame4D
+    undefined,                      // imageType
+    undefined,                      // cal_minNeg
+    undefined,                      // cal_maxNeg
+    vmodel.get("colorbar_visible"), // colorbarVisible
+    undefined,                      // colormapLabel
   );
+  function colorbar_visible_changed() {
+    volume.colorbarVisible = vmodel.get("colorbar_visible");
+    nv.updateGLVolume();
+  }
+  function cal_min_changed() {
+    volume.cal_min = vmodel.get("cal_min");
+    nv.updateGLVolume();
+  }
+  function cal_max_changed() {
+    volume.cal_min = vmodel.get("cal_min");
+    nv.updateGLVolume();
+  }
   function colormap_changed() {
-    nv.setColormap(volume.id, vmodel.get("colormap"));
+    volume.colormap = vmodel.get("colormap");
+    nv.updateGLVolume();
   }
   function opacity_changed() {
-    let idx = nv.volumes.findIndex(v => v === volume);
-    nv.setOpacity(idx, vmodel.get("opacity"));
+    volume.opacity = vmodel.get("opacity");
+    nv.updateGLVolume();
   }
+  vmodel.on("change:colorbar_visible", colorbar_visible_changed);
+  vmodel.on("change:cal_min", cal_min_changed);
+  vmodel.on("change:cal_max", cal_max_changed);
   vmodel.on("change:colormap", colormap_changed);
   vmodel.on("change:opacity", opacity_changed);
   return [volume, () => {
+    vmodel.off("change:colorbar_visible", colorbar_visible_changed);
+    vmodel.off("change:cal_min", cal_min_changed);
+    vmodel.off("change:cal_max", cal_max_changed);
     vmodel.off("change:colormap", colormap_changed);
     vmodel.off("change:opacity", opacity_changed);
   }]
