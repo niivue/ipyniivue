@@ -1,82 +1,51 @@
 # ipyniivue_experimental
 
+A Jupyter Widget for [Niivue](https://github.com/niivue/niivue) based on
+anywidget.
+
+# Installation
 
 ```sh
-python3.11 -m venv .venv && source .venv/bin/activate
 pip install ipyniivue_experimental
-pip install jupyterlab
 ```
 
-# Example
+# Usage
 
-```
+In a Jupyter environment:
+
+```py
 from ipyniivue_experimental import AnyNiivue
 
 nv = AnyNiivue()
+nv.load_volumes([{"path": "images/mni152.nii.gz"}])
 nv
 ```
 
+See the [basic demo](./demo/basic_multiplanar.ipynb) to learn more.
 
-```
-# second cell, wait for one second till the frontend code from cell1 is done loading.
-my_volumes = [
-           { "url": "https://niivue.github.io/niivue/images/mni152.nii.gz" }
-        ]
-nv.load_volumes(my_volumes)
-```
+# Development
 
+This is an [anywidget](https://github.com/manzt/anywidget) project. To get
+started create a virtual Python environment and install the necessary
+development dependencies.
 
-# How this project was made:
-
-This project was made with 
-
-
-1.
-```
-npm create anywidget@latest
-```
-2.
-
-
-create-anywidget version 0.4.5
-
-┌  Welcome to anywidget!
-│
-◇  Where should we create your project?
-│  .
-│
-◇  Directory not empty. Continue?
-│  Yes
-│
-◇  Which framework?
-│  Vanilla
-│
-◇  Which variant?
-│  JavaScript
-│
-└  Your project is ready!
-
-
-3
-
-```
-npm install
-```
-
-4
-```
-npm i @niivue/niivue
-```
-
-```
-python3.11 -m venv .venv && source .venv/bin/activate
+```sh
+python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]" 
 ```
 
-```
+Then, install JS dependencies with `npm` and run the dev server.
+
+```sh
+npm install
 npm run dev
 ```
 
+You can now start VS Code or JupyterLab to develop the widget. When finished,
+stop the JS development server.
+
+> NOTE: In order to have anywidget automatically apply changes as you work,
+> make sure to `export ANYWIDGET_HMR=1` environment variable.
 
 # Changelog:
 
@@ -88,8 +57,6 @@ Change to traitlet approach
 
 Adding functions 
 load_volumes, load_meshes, set_opacity, set_crosshair_width and set_crosshair_color.
-
-
 
 ## v0.0.4
 
