@@ -1,0 +1,12 @@
+import type { AnyModel } from "@anywidget/types";
+
+export type VolumeModel = { model_id: string } & AnyModel<{
+	path: { name: string; data: DataView };
+	colormap: string;
+	opacity: number;
+}>;
+
+export type Model = AnyModel<{
+	_volumes: string[];
+	_opts: Record<string, unknown>;
+}>
