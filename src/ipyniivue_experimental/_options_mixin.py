@@ -41,11 +41,11 @@ class OptionsMixin:
         self._opts = { **self._opts, "rulerWidth": value }
 
     @property
-    def show3_dcrosshair(self) -> bool:
+    def show_3d_crosshair(self) -> bool:
         return self._opts.get('show3Dcrosshair', False)
 
-    @show3_dcrosshair.setter
-    def show3_dcrosshair(self, value: bool):
+    @show_3d_crosshair.setter
+    def show_3d_crosshair(self, value: bool):
         self._opts = { **self._opts, "show3Dcrosshair": value }
 
     @property
@@ -225,11 +225,11 @@ class OptionsMixin:
         self._opts = { **self._opts, "isRadiologicalConvention": value }
 
     @property
-    def mesh_thickness_on2_d(self) -> float:
+    def mesh_thickness_on_2d(self) -> float:
         return self._opts.get('meshThicknessOn2D', inf)
 
-    @mesh_thickness_on2_d.setter
-    def mesh_thickness_on2_d(self, value: float):
+    @mesh_thickness_on_2d.setter
+    def mesh_thickness_on_2d(self, value: float):
         self._opts = { **self._opts, "meshThicknessOn2D": value }
 
     @property
@@ -241,11 +241,11 @@ class OptionsMixin:
         self._opts = { **self._opts, "dragMode": value }
 
     @property
-    def yoke3_dto2_d_zoom(self) -> bool:
+    def yoke_3d_to_2d_zoom(self) -> bool:
         return self._opts.get('yoke3Dto2DZoom', False)
 
-    @yoke3_dto2_d_zoom.setter
-    def yoke3_dto2_d_zoom(self, value: bool):
+    @yoke_3d_to_2d_zoom.setter
+    def yoke_3d_to_2d_zoom(self, value: bool):
         self._opts = { **self._opts, "yoke3Dto2DZoom": value }
 
     @property
@@ -273,11 +273,11 @@ class OptionsMixin:
         self._opts = { **self._opts, "sagittalNoseLeft": value }
 
     @property
-    def is_slice_m_m(self) -> bool:
+    def is_slice_mm(self) -> bool:
         return self._opts.get('isSliceMM', False)
 
-    @is_slice_m_m.setter
-    def is_slice_m_m(self, value: bool):
+    @is_slice_mm.setter
+    def is_slice_mm(self, value: bool):
         self._opts = { **self._opts, "isSliceMM": value }
 
     @property
@@ -401,11 +401,11 @@ class OptionsMixin:
         self._opts = { **self._opts, "isAntiAlias": value }
 
     @property
-    def limit_frames4_d(self) -> float:
+    def limit_frames_4d(self) -> float:
         return self._opts.get('limitFrames4D', nan)
 
-    @limit_frames4_d.setter
-    def limit_frames4_d(self, value: float):
+    @limit_frames_4d.setter
+    def limit_frames_4d(self, value: float):
         self._opts = { **self._opts, "limitFrames4D": value }
 
     @property
