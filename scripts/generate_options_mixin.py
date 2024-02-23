@@ -1,11 +1,16 @@
 import pathlib
 import typing
 
+
 from ipyniivue_experimental._constants import (
     DragMode,
     MuliplanarType,
     SliceType,
+    _SNAKE_TO_CAMEL_OVERRIDES,
 )
+
+
+RENAME_OVERRIDES = {v: k for k, v in _SNAKE_TO_CAMEL_OVERRIDES.items()}
 
 
 def camel_to_snake(name: str):
@@ -61,7 +66,8 @@ def generate_mixin(options):
         "class OptionsMixin:",
     ]
     for option, value in options.items():
-        snake_name = camel_to_snake(option)
+
+        snake_name = RENAME_OVERRIDES.get(option, camel_to_snake(option))
         hint = type_hint(value)
         lines.append("    @property")
         lines.append(f"    def {snake_name}(self) -> {hint}:")

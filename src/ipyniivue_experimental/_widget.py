@@ -6,6 +6,7 @@ import traitlets as t
 
 from ._options_mixin import OptionsMixin
 from ._utils import file_serializer, serialize_options, snake_to_camel
+from ._constants import _SNAKE_TO_CAMEL_OVERRIDES
 
 __all__ = ["AnyNiivue"]
 
@@ -30,7 +31,7 @@ class AnyNiivue(OptionsMixin, anywidget.AnyWidget):
 
     def __init__(self, **opts):
         # convert to JS camelCase options
-        _opts = {snake_to_camel(k): v for k, v in opts.items()}
+        _opts = {_SNAKE_TO_CAMEL_OVERRIDES.get(k, snake_to_camel(k)): v for k, v in opts.items()} 
         super().__init__(_opts=_opts, _volumes=[])
 
     def load_volumes(self, volumes: list):
