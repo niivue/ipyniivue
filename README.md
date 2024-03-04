@@ -1,4 +1,4 @@
-![demo](docs/example.png)
+<img src="docs/example.png" width="70%">
 
 # ipyNiiVue
 
@@ -14,6 +14,8 @@ You can try ipyniivue online at [![](https://img.shields.io/static/v1?message=Op
 ```sh
 pip install ipyniivue
 ```
+
+### [API Reference and Examples](https://niivue.github.io/ipyniivue)
 
 ### Development
 ```sh
@@ -33,6 +35,3 @@ jupyter lab
 ```
 
 To view changes made in the typescript, reload the jupyter page. To view changes made in the python, restart the kernel.
-
-### Usage
-[documentation](docs)       
