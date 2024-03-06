@@ -1,11 +1,14 @@
-![demo](docs/example.png)
+<img src="docs/example.png" width="60%">
 
 # ipyNiiVue
 
 ipyNiiVue is a Python / [Niivue](https://github.com/niivue/niivue) bridge for [Jupyter Widgets](https://jupyter.org/widgets). A Python API is used to interact with NiiVue.
 
-## Try it online
-You can try ipyniivue online at [![](https://img.shields.io/static/v1?message=Open%20in%20Colab&logo=googlecolab&labelColor=5c5c5c&color=0f80c1&label=%20&style=plastic)](https://colab.research.google.com/github/niivue/ipyniivue), [![JupyterLite](https://jupyterlite.rtfd.io/en/latest/_static/badge-launch.svg)](https://anthonyandroulakis.github.io/ipyNiiVueLite/lab?path=introduction.ipynb), or [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/niivue/ipyniivue/main?urlpath=lab/tree/examples/introduction.ipynb).
+## Showcase
+Try ipyniivue online!
+- [![](https://img.shields.io/static/v1?message=Open%20in%20Colab&logo=googlecolab&labelColor=5c5c5c&color=0f80c1&label=%20&style=plastic)](https://colab.research.google.com/github/niivue/ipyniivue)
+- [![JupyterLite](https://jupyterlite.rtfd.io/en/latest/_static/badge-launch.svg)](https://anthonyandroulakis.github.io/ipyNiiVueLite/lab?path=introduction.ipynb)
+- [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/niivue/ipyniivue/main?urlpath=lab/tree/examples/introduction.ipynb)
 
 
 ## Getting started
@@ -14,6 +17,8 @@ You can try ipyniivue online at [![](https://img.shields.io/static/v1?message=Op
 ```sh
 pip install ipyniivue
 ```
+
+### [API Reference and Examples](https://niivue.github.io/ipyniivue)
 
 ### Development
 ```sh
@@ -33,6 +38,3 @@ jupyter lab
 ```
 
 To view changes made in the typescript, reload the jupyter page. To view changes made in the python, restart the kernel.
-
-### Usage
-[documentation](docs)       
