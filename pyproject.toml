@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "ipyniivue_experimental"
+name = "ipyniivue"
 version = "2.0.0"
 dependencies = ["anywidget"]
 readme = "README.md"
@@ -19,7 +19,7 @@ features = ["dev"]
 
 [tool.hatch.build]
 only-packages = true
-artifacts = ["src/ipyniivue_experimental/static/*"]
+artifacts = ["src/ipyniivue/static/*"]
 
 [tool.hatch.build.hooks.jupyter-builder]
 build-function = "hatch_jupyter_builder.npm_builder"
