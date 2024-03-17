@@ -1,4 +1,4 @@
-# ipyniivue_experimental
+# ipyniivue
 
 A Jupyter Widget for [Niivue](https://github.com/niivue/niivue) based on
 anywidget.
@@ -6,7 +6,7 @@ anywidget.
 # Installation
 
 ```sh
-pip install ipyniivue_experimental
+pip install ipyniivue
 ```
 
 # Usage
@@ -14,7 +14,7 @@ pip install ipyniivue_experimental
 In a Jupyter environment:
 
 ```py
-from ipyniivue_experimental import AnyNiivue
+from ipyniivue import AnyNiivue
 
 nv = AnyNiivue()
 nv.load_volumes([{"path": "images/mni152.nii.gz"}])

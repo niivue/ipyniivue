@@ -2,7 +2,7 @@ import pathlib
 import typing
 
 
-from ipyniivue_experimental._constants import (
+from ipyniivue._constants import (
     DragMode,
     MuliplanarType,
     SliceType,
@@ -143,6 +143,6 @@ if __name__ == "__main__":
     code = generate_mixin(DEFAULT_OPTIONS)
     loc = (
         pathlib.Path(__file__).parent
-        / "../src/ipyniivue_experimental/_options_mixin.py"
+        / "../src/ipyniivue/_options_mixin.py"
     )
     loc.write_text(code)
