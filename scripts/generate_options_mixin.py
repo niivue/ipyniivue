@@ -42,10 +42,10 @@ def type_hint(value: typing.Any):
 
 
 def get_value(value: typing.Any):
-    if isinstance(value, float) and math.isnan(value):
-        return 'float("nan")'
     if value == float("inf"):
         return 'float("inf")'
+    if isinstance(value, float) and math.isnan(value):
+        return 'float("nan")'
     if isinstance(value, SliceType):
         return f"SliceType.{value.name}"
     if isinstance(value, MuliplanarType):
@@ -66,7 +66,7 @@ def generate_mixin(options: typing.Dict[str, typing.Any]):
         "",
         "import typing",
         "",
-        "from ._constants import SliceType, MuliplanarType, DragMode",
+        "from ._constants import DragMode, MuliplanarType, SliceType",
         "",
         '__all__ = ["OptionsMixin"]',
         "",
