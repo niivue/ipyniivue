@@ -23,6 +23,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      # requires Node to build JS
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
@@ -35,9 +40,6 @@ jobs:
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18.x
       - run: npx changelogithub@0.12
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
