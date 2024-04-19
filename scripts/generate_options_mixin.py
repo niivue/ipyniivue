@@ -1,3 +1,4 @@
+import math
 import pathlib
 import typing
 
@@ -41,10 +42,10 @@ def type_hint(value: typing.Any):
 
 
 def get_value(value: typing.Any):
+    if isinstance(value, float) and math.isnan(value):
+        return 'float("nan")'
     if value == float("inf"):
         return 'float("inf")'
-    if value == float("nan"):
-        return 'float("nan")'
     if isinstance(value, SliceType):
         return f"SliceType.{value.name}"
     if isinstance(value, MuliplanarType):

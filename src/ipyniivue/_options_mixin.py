@@ -403,7 +403,7 @@ class OptionsMixin:
 
     @property
     def limit_frames_4d(self) -> float:
-        return self._opts.get("limitFrames4D", nan)
+        return self._opts.get("limitFrames4D", float("nan"))
 
     @limit_frames_4d.setter
     def limit_frames_4d(self, value: float):
