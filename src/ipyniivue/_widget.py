@@ -4,9 +4,9 @@ import anywidget
 import ipywidgets
 import traitlets as t
 
+from ._constants import _SNAKE_TO_CAMEL_OVERRIDES
 from ._options_mixin import OptionsMixin
 from ._utils import file_serializer, serialize_options, snake_to_camel
-from ._constants import _SNAKE_TO_CAMEL_OVERRIDES
 
 __all__ = ["AnyNiivue"]
 
@@ -31,19 +31,22 @@ class AnyNiivue(OptionsMixin, anywidget.AnyWidget):
 
     def __init__(self, **opts):
         # convert to JS camelCase options
-        _opts = {_SNAKE_TO_CAMEL_OVERRIDES.get(k, snake_to_camel(k)): v for k, v in opts.items()} 
+        _opts = {
+            _SNAKE_TO_CAMEL_OVERRIDES.get(k, snake_to_camel(k)): v
+            for k, v in opts.items()
+        }
         super().__init__(_opts=_opts, _volumes=[])
 
     def load_volumes(self, volumes: list):
-        """Loads a list of volumes into the widget"""
+        """Loads a list of volumes into the widget."""
         volumes = [Volume(**item) for item in volumes]
         self._volumes = volumes
 
     def add_volume(self, volume: dict):
-        """Adds a single volume to the widget"""
-        self._volumes = self._volumes + [Volume(**volume)]
+        """Adds a single volume to the widget."""
+        self._volumes = [*self._volumes, Volume(**volume)]
 
     @property
     def volumes(self):
-        """Returns the list of volumes"""
+        """Returns the list of volumes."""
         return self._volumes

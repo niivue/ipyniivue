@@ -6,6 +6,7 @@ __all__ = [
     "MuliplanarType",
 ]
 
+
 class SliceType(enum.Enum):
     AXIAL = 1
     CORONAL = 2
@@ -28,9 +29,9 @@ class MuliplanarType(enum.Enum):
 
 
 _SNAKE_TO_CAMEL_OVERRIDES = {
-  "show_3d_crosshair": "show3Dcrosshair",
-  "mesh_thickness_on_2d": "meshThicknessOn2D",
-  "yoke_3d_to_2d_zoom": "yoke3Dto2DZoom",
-  "is_slice_mm": "isSliceMM",
-  "limit_frames_4d": "limitFrames4D",
+    "show_3d_crosshair": "show3Dcrosshair",
+    "mesh_thickness_on_2d": "meshThicknessOn2D",
+    "yoke_3d_to_2d_zoom": "yoke3Dto2DZoom",
+    "is_slice_mm": "isSliceMM",
+    "limit_frames_4d": "limitFrames4D",
 }

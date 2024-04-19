@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import typing
 
-from ._constants import SliceType, MuliplanarType, DragMode
+from ._constants import DragMode, MuliplanarType, SliceType
 
 __all__ = ["OptionsMixin"]
+
 
 class OptionsMixin:
     @property
