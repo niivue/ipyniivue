@@ -33,8 +33,8 @@ npm = "npm"
 build_cmd = "build"
 
 [tool.hatch.envs.default.scripts]
-lint = ["ruff check {args:.}", "ruff format --check --diff {args:.}"]
-format = ["ruff format {args:.}", "ruff check --fix {args:.}"]
+lint = ["ruff check . {args:.}", "ruff format . --check --diff {args:.}"]
+format = ["ruff format . {args:.}", "ruff check . --fix {args:.}"]
 test = ["pytest {args:.}"]
 
 [tool.ruff.lint]
@@ -53,9 +53,6 @@ select = [
 	"RUF",  # ruff-specific rules
 	"TCH",  # flake8-type-checking
 	"TID",  # flake8-tidy-imports
-]
-ignore = [
-	"D401", # First line should be in imperative mood (remove to opt in)
 ]
 
 [tool.ruff.lint.per-file-ignores]
