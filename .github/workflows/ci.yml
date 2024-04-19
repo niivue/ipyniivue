@@ -37,8 +37,5 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: |
-          pip install uv
-          uv pip install --system .
-          uv pip install --system pytest inline-snapshot
-      - name: Run tests
-        run: pytest ./tests --color=yes
+          pipx install hatch
+          hatch run test
