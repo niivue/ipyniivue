@@ -108,18 +108,3 @@ server with `Ctrl+C`.
 
 By following this release process and utilizing conventional commits, you can
 ensure consistent and informative releases for your project.
-
-## Changelog
-
-## v0.0.7
-
-Change to traitlet approach
-
-## v0.0.5 
-
-Adding functions 
-load_volumes, load_meshes, set_opacity, set_crosshair_width and set_crosshair_color.
-
-## v0.0.4
-
-Setting up the project
