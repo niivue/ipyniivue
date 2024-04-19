@@ -1,6 +1,6 @@
-import typing
-import pathlib
 import enum
+import pathlib
+import typing
 
 
 def snake_to_camel(snake_str: str):

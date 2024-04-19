@@ -1,9 +1,8 @@
+"""A Jupyter widget for Niivue based on anywidget."""
+
 import importlib.metadata
 
-from ._constants import SliceType, DragMode, MuliplanarType # noqa
-from ._widget import AnyNiivue # noqa
+from ._constants import DragMode, MuliplanarType, SliceType  # noqa: F401
+from ._widget import AnyNiivue  # noqa: F401
 
-try:
-    __version__ = importlib.metadata.version("ipyniivue")
-except importlib.metadata.PackageNotFoundError:
-    __version__ = "unknown"
+__version__ = importlib.metadata.version("ipyniivue")

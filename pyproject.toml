@@ -1,21 +1,24 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "ipyniivue"
-version = "2.0.0"
+dynamic = ["version"]
+description = "A Jupyter Widget for Niivue based on anywidget."
 dependencies = ["anywidget"]
 readme = "README.md"
 
-
 [project.optional-dependencies]
-dev = ["watchfiles", "jupyterlab"]
+dev = ["watchfiles", "jupyterlab", "ruff", "pytest"]
 
-# automatically add the dev feature to the default env (e.g., hatch shell)
 [tool.hatch.envs.default]
 features = ["dev"]
+uv = true
 
+# https://github.com/ofek/hatch-vcs
+[tool.hatch.version]
+source = "vcs"
 
 [tool.hatch.build]
 only-packages = true
@@ -28,3 +31,30 @@ dependencies = ["hatch-jupyter-builder>=0.5.0"]
 [tool.hatch.build.hooks.jupyter-builder.build-kwargs]
 npm = "npm"
 build_cmd = "build"
+
+[tool.hatch.envs.default.scripts]
+lint = ["ruff check . {args:.}", "ruff format . --check --diff {args:.}"]
+format = ["ruff format . {args:.}", "ruff check . --fix {args:.}"]
+test = ["pytest {args:.}"]
+
+[tool.ruff.lint]
+pydocstyle = { convention = "numpy" }
+select = [
+	"E",    # style errors
+	"W",    # style warnings
+	"F",    # flakes
+	"D",    # pydocstyle
+	"D417", # Missing argument descriptions in Docstrings
+	"I",    # isort
+	"UP",   # pyupgrade
+	"C4",   # flake8-comprehensions
+	"B",    # flake8-bugbear
+	"A001", # flake8-builtins
+	"RUF",  # ruff-specific rules
+	"TCH",  # flake8-type-checking
+	"TID",  # flake8-tidy-imports
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["D", "S"]
+"scripts/*.py" = ["D", "S"]
