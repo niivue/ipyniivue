@@ -9,7 +9,7 @@ anywidget.
 pip install ipyniivue
 ```
 
-# Usage
+## Usage
 
 In a Jupyter environment:
 
@@ -23,7 +23,7 @@ nv
 
 See the [basic demo](./demo/basic_multiplanar.ipynb) to learn more.
 
-# Development
+## Development
 
 **ipyniivue** uses [the
 recommended](https://packaging.python.org/en/latest/flow/#) `hatchling`
