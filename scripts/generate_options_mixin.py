@@ -51,6 +51,9 @@ def get_value(value: typing.Any):
         return f"MuliplanarType.{value.name}"
     if isinstance(value, DragMode):
         return f"DragMode.{value.name}"
+    if isinstance(value, str):
+        # double quote
+        return f'"{value}"'
     return repr(value)
 
 
