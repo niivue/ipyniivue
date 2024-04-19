@@ -98,7 +98,8 @@ server with `Ctrl+C`.
 
 ### Changelog Generation
 
-- The changelog is automatically generated using [`antfu/changelogithub`](https://github.com/antfu/changelogithub)
+- We generate a changelog for GitHub releases with
+  [`antfu/changelogithub`](https://github.com/antfu/changelogithub)
 - Each changelog entry is grouped and rendered based on conventional commits,
   and it is recommended to follow the [Conventional
   Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary).
