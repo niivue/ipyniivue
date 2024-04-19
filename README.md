@@ -80,17 +80,31 @@ server with `Ctrl+C`.
 > make sure to `export ANYWIDGET_HMR=1` environment variable. This can be set
 > directly in a notebook with `%env ANYWIDGET_HMR=1` in a cell.
 
-# Changelog:
+## Release Process
 
-## v0.0.7
+1. Releases are automated using GitHub Actions and the
+   [`release.yml`](.github/workflows/release.yml) workflow.
+2. The workflow is triggered when a new tag matching the pattern `v*` is pushed
+   to the repository.
+3. To create a new release, create a tag from the command line:
+    ```sh
+    git tag -a vX.X.X -m "vX.X.X"
+    git push --follow-tags
+    ```
+4. When triggered, the workflow will:
+  - Publish the package to PyPI with the tag version.
+  - Generate a changelog based on conventional commits and create a GitHub
+    Release with the changelog.
 
-Change to traitlet approach
+### Changelog Generation
 
-## v0.0.5 
+- We generate a changelog for GitHub releases with
+  [`antfu/changelogithub`](https://github.com/antfu/changelogithub)
+- Each changelog entry is grouped and rendered based on conventional commits,
+  and it is recommended to follow the [Conventional
+  Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary).
+- The tool generates the changelog based on the commits between the latest
+  release tag and the previous release tag.
 
-Adding functions 
-load_volumes, load_meshes, set_opacity, set_crosshair_width and set_crosshair_color.
-
-## v0.0.4
-
-Setting up the project
+By following this release process and utilizing conventional commits, you can
+ensure consistent and informative releases for your project.
