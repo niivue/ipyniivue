@@ -4,7 +4,7 @@
 		"build": "esbuild js/*.js --minify --format=esm --bundle --outdir=src/ipyniivue/static"
 	},
 	"dependencies": {
-		"@anywidget/types": "^0.1.5",
+		"@anywidget/types": "^0.1.9",
 		"@niivue/niivue": "^0.39.0"
 	},
 	"devDependencies": {
