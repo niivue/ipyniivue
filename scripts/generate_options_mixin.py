@@ -41,6 +41,10 @@ def type_hint(value: typing.Any):
 
 
 def get_value(value: typing.Any):
+    if value == float("inf"):
+        return 'float("inf")'
+    if value == float("nan"):
+        return 'float("nan")'
     if isinstance(value, SliceType):
         return f"SliceType.{value.name}"
     if isinstance(value, MuliplanarType):
@@ -69,11 +73,11 @@ def generate_mixin(options: typing.Dict[str, typing.Any]):
         hint = type_hint(value)
         lines.append("    @property")
         lines.append(f"    def {snake_name}(self) -> {hint}:")
-        lines.append(f"        return self._opts.get('{option}', {get_value(value)})")
+        lines.append(f'        return self._opts.get("{option}", {get_value(value)})')
         lines.append("")
         lines.append(f"    @{snake_name}.setter")
         lines.append(f"    def {snake_name}(self, value: {hint}):")
-        lines.append(f'        self._opts = {{ **self._opts, "{option}": value }}')
+        lines.append(f'        self._opts = {{**self._opts, "{option}": value}}')
         lines.append("")
     return "\n".join(lines)
 
