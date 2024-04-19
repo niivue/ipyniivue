@@ -25,27 +25,60 @@ See the [basic demo](./demo/basic_multiplanar.ipynb) to learn more.
 
 # Development
 
-This is an [anywidget](https://github.com/manzt/anywidget) project. To get
-started create a virtual Python environment and install the necessary
-development dependencies.
+**ipyniivue** uses [the
+recommended](https://packaging.python.org/en/latest/flow/#) `hatchling`
+build-system, which is convenient to use via the [`hatch`
+CLI](https://hatch.pypa.io/latest/). We recommend installing `hatch` globally
+(e.g., via `pipx`) and running the various commands defined within
+`pyproject.toml`. `hatch` will take care of creating and synchronizing a
+virtual environment with all dependencies defined in `pyproject.toml`.
+
+### Commands Cheatsheet
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                | Action                                                                    |
+| :--------------------- | :-------------------------------------------------------------------------|
+| `hatch run format`     | Format project with `ruff format .` and apply linting with `ruff --fix .` |
+| `hatch run lint`       | Lint project with `ruff check .`.                                         |
+| `hatch run test`       | Run unit tests with `pytest`                                              |
+
+Alternatively, you can develop **ipyniivue** by manually creating a virtual
+environment and managing installation and dependencies with `pip`.
 
 ```sh
 python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]" 
+pip install -e ".[dev]"
 ```
 
-Then, install JS dependencies with `npm` and run the dev server.
+### Making Changes to the JavaScript Code
+
+This is an [anywidget](https://github.com/manzt/anywidget) project, which means
+the code base is hybrid Python and JavaScript. The JavaScript part is developed
+under `js/` and uses [esbuild](https://esbuild.github.io/) to bundle the code.
+Any time you make changes to the JavaScript code, you need to rebuild the files
+under `src/ipyniivue/static`. This can be done in two ways:
 
 ```sh
-npm install
+npm run build
+```
+
+which will build the JavaScript code once, or you can start a development server:
+
+```sh
 npm run dev
 ```
 
-You can now start VS Code or JupyterLab to develop the widget. When finished,
-stop the JS development server.
+which will start a development server that will automatically rebuild the code
+as you make changes. We recommend the latter approach, as it is more convenient.
+
+Once you have the development server running, you can start the JupyterLab
+or VS Code to develop the widget. When finished, you can stop the development
+server with `Ctrl+C`.
 
 > NOTE: In order to have anywidget automatically apply changes as you work,
-> make sure to `export ANYWIDGET_HMR=1` environment variable.
+> make sure to `export ANYWIDGET_HMR=1` environment variable. This can be set
+> directly in a notebook with `%env ANYWIDGET_HMR=1` in a cell.
 
 # Changelog:
 
