@@ -8,7 +8,7 @@ from ._constants import _SNAKE_TO_CAMEL_OVERRIDES
 from ._options_mixin import OptionsMixin
 from ._utils import file_serializer, serialize_options, snake_to_camel
 
-__all__ = ["AnyNiivue"]
+__all__ = ["Niivue"]
 
 
 class Volume(ipywidgets.Widget):
@@ -22,7 +22,7 @@ class Volume(ipywidgets.Widget):
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
 
 
-class AnyNiivue(OptionsMixin, anywidget.AnyWidget):
+class Niivue(OptionsMixin, anywidget.AnyWidget):
     """Represents a Niivue instance."""
 
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"

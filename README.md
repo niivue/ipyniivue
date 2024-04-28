@@ -14,9 +14,9 @@ pip install ipyniivue
 In a Jupyter environment:
 
 ```py
-from ipyniivue import AnyNiivue
+from ipyniivue import Niivue
 
-nv = AnyNiivue()
+nv = Niivue()
 nv.load_volumes([{"path": "images/mni152.nii.gz"}])
 nv
 ```
