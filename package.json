@@ -5,7 +5,7 @@
 	},
 	"dependencies": {
 		"@anywidget/types": "^0.1.9",
-		"@niivue/niivue": "^0.39.0"
+		"@niivue/niivue": "^0.43.3"
 	},
 	"devDependencies": {
 		"esbuild": "^0.20.2"
