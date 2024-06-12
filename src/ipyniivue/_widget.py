@@ -6,9 +6,24 @@ import traitlets as t
 
 from ._constants import _SNAKE_TO_CAMEL_OVERRIDES
 from ._options_mixin import OptionsMixin
-from ._utils import file_serializer, serialize_options, snake_to_camel
+from ._utils import (
+    file_serializer,
+    mesh_layers_serializer,
+    serialize_options,
+    snake_to_camel,
+)
 
 __all__ = ["NiiVue"]
+
+
+class Mesh(ipywidgets.Widget):
+    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
+        sync=True, to_json=file_serializer
+    )
+    color = t.List([0, 0, 0, 0]).tag(sync=True)
+    opacity = t.Float(1.0).tag(sync=True)
+    wireframe = t.Bool(False).tag(sync=True)
+    layers = t.List([]).tag(sync=True, to_json=mesh_layers_serializer)
 
 
 class Volume(ipywidgets.Widget):
@@ -30,14 +45,17 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     _volumes = t.List(t.Instance(Volume), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
     )
+    _meshes = t.List(t.Instance(Mesh), default_value=[]).tag(
+        sync=True, **ipywidgets.widget_serialization
+    )
 
-    def __init__(self, **opts):
+    def __init__(self, **options):
         # convert to JS camelCase options
         _opts = {
             _SNAKE_TO_CAMEL_OVERRIDES.get(k, snake_to_camel(k)): v
-            for k, v in opts.items()
+            for k, v in options.items()
         }
-        super().__init__(_opts=_opts, _volumes=[])
+        super().__init__(_opts=_opts, _volumes=[], _meshes=[])
 
     def load_volumes(self, volumes: list):
         """Load a list of volumes into the widget.
@@ -63,4 +81,30 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     @property
     def volumes(self):
         """Returns the list of volumes."""
-        return self._volumes
+        return list(*self._volumes)
+
+    def load_meshes(self, meshes: list):
+        """Load a list of meshes into the widget.
+
+        Parameters
+        ----------
+        meshes : list
+            A list of dictionaries containing the mesh information.
+        """
+        meshes = [Mesh(**item) for item in meshes]
+        self._meshes = meshes
+
+    def add_mesh(self, mesh: Mesh):
+        """Add a single mesh to the widget.
+
+        Parameters
+        ----------
+        mesh : dict
+            A dictionary containing the mesh information.
+        """
+        self._meshes = [*self._meshes, mesh]
+
+    @property
+    def meshes(self):
+        """Returns the list of meshes."""
+        return list(*self._meshes)
