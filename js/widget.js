@@ -149,7 +149,7 @@ async function create_mesh(nv, mmodel) {
     nv.gl,                          // gl
     mmodel.get("opacity"),          // opacity
     mmodel.get("rgba255"),          // rgba255
-    undefined,                      // visible
+    mmodel.get("visible"),          // visible
   );
   for (let layer of mmodel.get("layers")) {
     // https://github.com/niivue/niivue/blob/10d71baf346b23259570d7b2aa463749adb5c95b/src/nvmesh.ts#L1432C5-L1455C6
@@ -166,19 +166,29 @@ async function create_mesh(nv, mmodel) {
     )
   }
   function opacity_changed() {
-    mesh.setProperty("opacity", mmodel.get("opacity"), nv.gl);
+    mesh.opacity = mmodel.get("opacity");
+    mesh.updateMesh(nv.gl);
+    nv.updateGLVolume();
   }
   function rgba255_changed() {
-    mesh.setProperty("rgba255", mmodel.get("rgba255"), nv.gl);
+    mesh.rgba255 = mmodel.get("rgba255");
+    mesh.updateMesh(nv.gl);
+    nv.updateGLVolume();
+  }
+  function visible_changed() {
+    mesh.visible = mmodel.get("visible");
+    mesh.updateMesh(nv.gl);
+    nv.updateGLVolume();
   }
   mmodel.on("change:opacity", opacity_changed);
   mmodel.on("change:rgba255", rgba255_changed);
+  mmodel.on("change:visible", visible_changed);
   return [mesh, () => {
     mmodel.off("change:opacity", opacity_changed);
     mmodel.off("change:rgba255", rgba255_changed);
+    mmodel.off("change:visible", visible_changed);
   }];
 }
-
 
 /**
   * @param {niivue.Niivue} nv
