@@ -1,5 +1,5 @@
 // @ts-check
-import { Niivue, NVImage } from "@niivue/niivue";
+import * as niivue from "@niivue/niivue";
 
 /**
  * Generates a unique file name for a volume (using the model id and the volume path)
@@ -57,6 +57,7 @@ function gather_models(model, ids) {
 
 /**
  * @param {import('./types').Model} model
+ * @returns {Promise<Array<import('./types').VolumeModel>>}
  */
 function gather_volume_models(model) {
   let ids = model.get("_volumes");
@@ -64,15 +65,24 @@ function gather_volume_models(model) {
 }
 
 /**
+ * @param {import('./types').Model} model
+ * @returns {Promise<Array<import('./types').MeshModel>>}
+ */
+function gather_mesh_models(model) {
+  let ids = model.get("_meshes");
+  return gather_models(model, ids);
+}
+
+/**
  * Create a new NVImage and attach the necessary event listeners
  * Returns the NVImage and a cleanup function that removes the event listeners.
  *
- * @param {Niivue} nv
+ * @param {niivue.Niivue} nv
  * @param {import('./types').VolumeModel} vmodel
- * @returns {[NVImage, () => void]}
+ * @returns {[niivue.NVImage, () => void]}
  */
 function create_volume(nv, vmodel) {
-  let volume = new NVImage(
+  let volume = new niivue.NVImage(
     vmodel.get("path").data.buffer, // dataBuffer
     volume_id(vmodel),              // name
     vmodel.get("colormap"),         // colormap
@@ -127,9 +137,51 @@ function create_volume(nv, vmodel) {
   }]
 }
 
+/**
+ * @param {niivue.Niivue} nv
+ * @param {import('./types').MeshModel} mmodel
+ * @returns {Promise<[niivue.NVMesh, () => void]>}
+ */
+async function create_mesh(nv, mmodel) {
+  let mesh = niivue.NVMesh.readMesh(
+    mmodel.get("path").data.buffer, // buffer
+    mmodel.get("path").name,        // name (used to identify the mesh)
+    nv.gl,                          // gl
+    mmodel.get("opacity"),          // opacity
+    mmodel.get("rgba255"),          // rgba255
+    undefined,                      // visible
+  );
+  for (let layer of mmodel.get("layers")) {
+    // https://github.com/niivue/niivue/blob/10d71baf346b23259570d7b2aa463749adb5c95b/src/nvmesh.ts#L1432C5-L1455C6
+    niivue.NVMeshLoaders.readLayer(
+      layer.path.name,
+      layer.path.data.buffer,
+      mesh,
+      layer.opacity ?? 0.5,
+      layer.colormap ?? 'warm',
+      layer.colormapNegative ?? 'winter',
+      layer.useNegativeCmap ?? false,
+      layer.cal_min ?? null,
+      layer.cal_max ?? null,
+    )
+  }
+  function opacity_changed() {
+    mesh.setProperty("opacity", mmodel.get("opacity"), nv.gl);
+  }
+  function rgba255_changed() {
+    mesh.setProperty("rgba255", mmodel.get("rgba255"), nv.gl);
+  }
+  mmodel.on("change:opacity", opacity_changed);
+  mmodel.on("change:rgba255", rgba255_changed);
+  return [mesh, () => {
+    mmodel.off("change:opacity", opacity_changed);
+    mmodel.off("change:rgba255", rgba255_changed);
+  }];
+}
+
 
 /**
-  * @param {Niivue} nv
+  * @param {niivue.Niivue} nv
   * @param {import("./types").Model} model
   * @param {Map<string, () => void>} cleanups
   */
@@ -165,9 +217,40 @@ async function render_volumes(nv, model, cleanups) {
   }
 }
 
+/**
+ * @param {niivue.Niivue} nv
+ * @param {import("./types").Model} model
+ * @param {Map<string, () => void>} cleanups
+ */
+async function render_meshes(nv, model, cleanups) {
+  let mmodels = await gather_mesh_models(model);
+  let curr_names = nv.meshes.map(m => m.name);
+  let new_names = mmodels.map(m => m.get("path").name);
+  let update_type = determine_update_type(curr_names, new_names);
+  if (update_type === "add") {
+    // We know that the new meshes are the same as the old meshes,
+    // except for the last one. We can just add the last mesh.
+    let mmodel = mmodels[mmodels.length - 1];
+    let [mesh, cleanup] = await create_mesh(nv, mmodel);
+    cleanups.set(mesh.name, cleanup);
+    nv.addMesh(mesh);
+    return;
+  }
+  // HERE can be the place to add more update types
+  for (let [_, cleanup] of cleanups) cleanup();
+  cleanups.clear();
+
+  // create each mesh and add one-by-one
+  for (let mmodel of mmodels) {
+    let [mesh, cleanup] = await create_mesh(nv, mmodel);
+    cleanups.set(mesh.name, cleanup);
+    nv.addMesh(mesh);
+  }
+}
+
 export default {
   /** @param {{ model: import("./types").Model, el: HTMLElement }} ctx */
-  render({ model, el }) {
+  async render({ model, el }) {
 
     let canvas = document.createElement("canvas");
     let container = document.createElement("div");
@@ -175,14 +258,18 @@ export default {
     container.appendChild(canvas);
     el.appendChild(container);
 
-    let nv = new Niivue(model.get("_opts") ?? {});
+    let nv = new niivue.Niivue(model.get("_opts") ?? {});
     nv.attachToCanvas(canvas);
 
     /** @type {Map<string, () => void>} */
     let vcleanups = new Map();
-    render_volumes(nv, model, vcleanups);
-    // Any time we change the volumes, we need to update the nv object
+    await render_volumes(nv, model, vcleanups);
     model.on("change:_volumes", () => render_volumes(nv, model, vcleanups));
+
+    /** @type {Map<string, () => void>} */
+    let mcleanups = new Map();
+    await render_meshes(nv, model, mcleanups);
+    model.on("change:_meshes", () => render_meshes(nv, model, mcleanups));
 
     // Any time we change the options, we need to update the nv object
     // and redraw the scene.
@@ -196,6 +283,8 @@ export default {
     return () => {
       for (let [_, cleanup] of vcleanups) cleanup();
       vcleanups.clear();
+      for (let [_, cleanup] of mcleanups) cleanup();
+      mcleanups.clear();
       model.off("change:_volumes");
       model.off("change:_opts");
     }
