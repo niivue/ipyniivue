@@ -20,9 +20,9 @@ class Mesh(ipywidgets.Widget):
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
-    color = t.List([0, 0, 0, 0]).tag(sync=True)
+    rgba255 = t.List([0, 0, 0, 0]).tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
-    wireframe = t.Bool(False).tag(sync=True)
+    visible = t.Bool(True).tag(sync=True)
     layers = t.List([]).tag(sync=True, to_json=mesh_layers_serializer)
 
 
@@ -81,7 +81,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     @property
     def volumes(self):
         """Returns the list of volumes."""
-        return list(*self._volumes)
+        return list(self._volumes)
 
     def load_meshes(self, meshes: list):
         """Load a list of meshes into the widget.
@@ -107,4 +107,4 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     @property
     def meshes(self):
         """Returns the list of meshes."""
-        return list(*self._meshes)
+        return list(self._meshes)

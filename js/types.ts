@@ -28,8 +28,8 @@ export type MeshModel = { model_id: string } & AnyModel<{
 	path: File;
 	rgba255: Array<number>;
 	opacity: number;
-	wireframe: boolean;
 	layers: Array<MeshLayer>;
+	visible: boolean;
 }>;
 
 export type Model = AnyModel<{
