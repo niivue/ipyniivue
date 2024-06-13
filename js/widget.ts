@@ -26,7 +26,7 @@ export default {
 		// Any time we change the options, we need to update the nv object
 		// and redraw the scene.
 		model.on("change:_opts", () => {
-			nv.opts = { ...nv.opts, ...model.get("_opts") };
+			nv.document.opts = { ...nv.opts, ...model.get("_opts") };
 			nv.drawScene();
 			nv.updateGLVolume();
 		});

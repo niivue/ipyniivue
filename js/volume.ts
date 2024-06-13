@@ -21,7 +21,6 @@ function create_volume(
 		undefined, // trustMinCalMinMax
 		undefined, // percentileFrac
 		undefined, // ignoreZeroVoxels
-		undefined, // visible
 		undefined, // useQFormNotSForm
 		undefined, // colormapNegative
 		undefined, // frame4D

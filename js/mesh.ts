@@ -15,7 +15,7 @@ function create_mesh(
 		mmodel.get("path").name, // name (used to identify the mesh)
 		nv.gl, // gl
 		mmodel.get("opacity"), // opacity
-		mmodel.get("rgba255"), // rgba255
+		new Uint8Array(mmodel.get("rgba255")), // rgba255
 		mmodel.get("visible"), // visible
 	);
 	for (const layer of mmodel.get("layers")) {
@@ -38,7 +38,7 @@ function create_mesh(
 		nv.updateGLVolume();
 	}
 	function rgba255_changed() {
-		mesh.rgba255 = mmodel.get("rgba255");
+		mesh.rgba255 = new Uint8Array(mmodel.get("rgba255"));
 		mesh.updateMesh(nv.gl);
 		nv.updateGLVolume();
 	}
