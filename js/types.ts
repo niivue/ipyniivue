@@ -6,7 +6,7 @@ interface File {
 }
 
 export type VolumeModel = { model_id: string } & AnyModel<{
-	path: File,
+	path: File;
 	colormap: string;
 	opacity: number;
 	colorbar_visible: boolean;
@@ -36,4 +36,4 @@ export type Model = AnyModel<{
 	_volumes: Array<string>;
 	_meshes: Array<string>;
 	_opts: Record<string, unknown>;
-}>
+}>;
