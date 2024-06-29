@@ -41,6 +41,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     """Represents a Niivue instance."""
 
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
+
+    height = t.Int().tag(sync=True)
     _opts = t.Dict({}).tag(sync=True, to_json=serialize_options)
     _volumes = t.List(t.Instance(Volume), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
@@ -49,13 +51,13 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         sync=True, **ipywidgets.widget_serialization
     )
 
-    def __init__(self, **options):
+    def __init__(self, height: int = 300, **options):
         # convert to JS camelCase options
         _opts = {
             _SNAKE_TO_CAMEL_OVERRIDES.get(k, snake_to_camel(k)): v
             for k, v in options.items()
         }
-        super().__init__(_opts=_opts, _volumes=[], _meshes=[])
+        super().__init__(height=height, _opts=_opts, _volumes=[], _meshes=[])
 
     def load_volumes(self, volumes: list):
         """Load a list of volumes into the widget.

@@ -8,7 +8,7 @@ export default {
 	async render({ model, el }: { model: Model; el: HTMLElement }) {
 		const canvas = document.createElement("canvas");
 		const container = document.createElement("div");
-		container.style.height = "300px";
+		container.style.height = `${model.get("height")}px`;
 		container.appendChild(canvas);
 		el.appendChild(container);
 
@@ -30,6 +30,9 @@ export default {
 			nv.drawScene();
 			nv.updateGLVolume();
 		});
+		model.on("change:height", () => {
+			container.style.height = `${model.get("height")}px`;
+		})
 
 		// All the logic for cleaning up the event listeners and the nv object
 		return () => {
