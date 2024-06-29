@@ -30,7 +30,6 @@ class Volume(ipywidgets.Widget):
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
-    visible = t.Bool(True).tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     colormap = t.Unicode("gray").tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)

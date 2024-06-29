@@ -21,7 +21,6 @@ function create_volume(
 		undefined, // trustMinCalMinMax
 		undefined, // percentileFrac
 		undefined, // ignoreZeroVoxels
-		vmodel.get("visible"), // visible
 		undefined, // useQFormNotSForm
 		undefined, // colormapNegative
 		undefined, // frame4D
@@ -51,16 +50,11 @@ function create_volume(
 		volume.opacity = vmodel.get("opacity");
 		nv.updateGLVolume();
 	}
-	function visible_changed() {
-		volume.visible = vmodel.get("visible");
-		nv.updateGLVolume();
-	}
 	vmodel.on("change:colorbar_visible", colorbar_visible_changed);
 	vmodel.on("change:cal_min", cal_min_changed);
 	vmodel.on("change:cal_max", cal_max_changed);
 	vmodel.on("change:colormap", colormap_changed);
 	vmodel.on("change:opacity", opacity_changed);
-	vmodel.on("change:visible", visible_changed);
 	return [
 		volume,
 		() => {
@@ -69,7 +63,6 @@ function create_volume(
 			vmodel.off("change:cal_max", cal_max_changed);
 			vmodel.off("change:colormap", colormap_changed);
 			vmodel.off("change:opacity", opacity_changed);
-			vmodel.off("change:visible", visible_changed);
 		},
 	];
 }
