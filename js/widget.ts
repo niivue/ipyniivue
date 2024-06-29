@@ -1,10 +1,9 @@
 import * as niivue from "@niivue/niivue";
 import type { Model } from "./types.ts";
 
+import { Disposer } from "./lib.ts";
 import { render_meshes } from "./mesh.ts";
 import { render_volumes } from "./volume.ts";
-import { Disposer } from "./lib.ts";
-
 
 export default {
 	async render({ model, el }: { model: Model; el: HTMLElement }) {
@@ -32,7 +31,7 @@ export default {
 		});
 		model.on("change:height", () => {
 			container.style.height = `${model.get("height")}px`;
-		})
+		});
 
 		// All the logic for cleaning up the event listeners and the nv object
 		return () => {
