@@ -9,6 +9,7 @@ export type VolumeModel = { model_id: string } & AnyModel<{
 	path: File;
 	colormap: string;
 	opacity: number;
+	visible: boolean;
 	colorbar_visible: boolean;
 	cal_min?: number;
 	cal_max?: number;

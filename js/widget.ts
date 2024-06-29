@@ -3,9 +3,12 @@ import type { Model } from "./types.ts";
 
 import { render_meshes } from "./mesh.ts";
 import { render_volumes } from "./volume.ts";
+import { Disposer } from "./lib.ts";
+
 
 export default {
 	async render({ model, el }: { model: Model; el: HTMLElement }) {
+		const disposer = new Disposer();
 		const canvas = document.createElement("canvas");
 		const container = document.createElement("div");
 		container.style.height = `${model.get("height")}px`;
@@ -15,13 +18,10 @@ export default {
 		const nv = new niivue.Niivue(model.get("_opts") ?? {});
 		nv.attachToCanvas(canvas);
 
-		const vcleanups = new Map<string, () => void>();
-		await render_volumes(nv, model, vcleanups);
-		model.on("change:_volumes", () => render_volumes(nv, model, vcleanups));
-
-		const mcleanups = new Map<string, () => void>();
-		await render_meshes(nv, model, mcleanups);
-		model.on("change:_meshes", () => render_meshes(nv, model, mcleanups));
+		await render_volumes(nv, model, disposer);
+		model.on("change:_volumes", () => render_volumes(nv, model, disposer));
+		await render_meshes(nv, model, disposer);
+		model.on("change:_meshes", () => render_meshes(nv, model, disposer));
 
 		// Any time we change the options, we need to update the nv object
 		// and redraw the scene.
@@ -36,10 +36,7 @@ export default {
 
 		// All the logic for cleaning up the event listeners and the nv object
 		return () => {
-			for (const [_, cleanup] of vcleanups) cleanup();
-			vcleanups.clear();
-			for (const [_, cleanup] of mcleanups) cleanup();
-			mcleanups.clear();
+			disposer.disposeAll();
 			model.off("change:_volumes");
 			model.off("change:_opts");
 		};

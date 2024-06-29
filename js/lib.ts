@@ -1,3 +1,4 @@
+import * as nv from "@niivue/niivue";
 import type { AnyModel } from "@anywidget/types";
 import type { Model } from "./types.ts";
 
@@ -49,4 +50,23 @@ export function determine_update_type<T>(
 		return "add";
 	}
 	return "unknown";
+}
+
+/**
+ * A class to keep track of disposers for callbacks for updating the scene.
+ */
+export class Disposer {
+	#disposers = new Map<string, () => void>();
+	register(obj: nv.NVMesh | nv.NVImage, disposer: () => void): void {
+		const prefix = obj instanceof nv.NVMesh ? "mesh" : "image";
+		this.#disposers.set(`${prefix}:${obj.name}`, disposer);
+	}
+	disposeAll(kind?: "mesh" | "image"): void {
+		for (const [name, dispose] of this.#disposers) {
+			if (!kind || name.startsWith(kind)) {
+				dispose();
+				this.#disposers.delete(name);
+			}
+		}
+	}
 }

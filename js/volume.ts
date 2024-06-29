@@ -21,6 +21,7 @@ function create_volume(
 		undefined, // trustMinCalMinMax
 		undefined, // percentileFrac
 		undefined, // ignoreZeroVoxels
+		vmodel.get("visible"), // visible
 		undefined, // useQFormNotSForm
 		undefined, // colormapNegative
 		undefined, // frame4D
@@ -50,11 +51,16 @@ function create_volume(
 		volume.opacity = vmodel.get("opacity");
 		nv.updateGLVolume();
 	}
+	function visible_changed() {
+		volume.visible = vmodel.get("visible");
+		nv.updateGLVolume();
+	}
 	vmodel.on("change:colorbar_visible", colorbar_visible_changed);
 	vmodel.on("change:cal_min", cal_min_changed);
 	vmodel.on("change:cal_max", cal_max_changed);
 	vmodel.on("change:colormap", colormap_changed);
 	vmodel.on("change:opacity", opacity_changed);
+	vmodel.on("change:visible", visible_changed);
 	return [
 		volume,
 		() => {
@@ -63,6 +69,7 @@ function create_volume(
 			vmodel.off("change:cal_max", cal_max_changed);
 			vmodel.off("change:colormap", colormap_changed);
 			vmodel.off("change:opacity", opacity_changed);
+			vmodel.off("change:visible", visible_changed);
 		},
 	];
 }
@@ -70,7 +77,7 @@ function create_volume(
 export async function render_volumes(
 	nv: niivue.Niivue,
 	model: Model,
-	cleanups: Map<string, () => void>,
+	disposer: lib.Disposer,
 ) {
 	const vmodels = await lib.gather_models<VolumeModel>(
 		model,
@@ -84,7 +91,7 @@ export async function render_volumes(
 		// except for the last one. We can just add the last volume.
 		const vmodel = vmodels[vmodels.length - 1];
 		const [volume, cleanup] = create_volume(nv, vmodel);
-		cleanups.set(volume.id, cleanup);
+		disposer.register(volume, cleanup);
 		nv.addVolume(volume);
 		return;
 	}
@@ -95,13 +102,12 @@ export async function render_volumes(
 	// and add the new ones.
 
 	// clear all volumes
-	for (const [_, cleanup] of cleanups) cleanup();
-	cleanups.clear();
+	disposer.disposeAll("image");
 
 	// create each volume and add one-by-one
 	for (const vmodel of vmodels) {
 		const [volume, cleanup] = create_volume(nv, vmodel);
-		cleanups.set(volume.id, cleanup);
+		disposer.register(volume, cleanup);
 		nv.addVolume(volume);
 	}
 }

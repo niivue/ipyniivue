@@ -1,5 +1,5 @@
 import * as niivue from "@niivue/niivue";
-import { determine_update_type, gather_models, unique_id } from "./lib.ts";
+import * as lib from "./lib.ts";
 import type { MeshModel, Model } from "./types.ts";
 
 /**
@@ -63,29 +63,33 @@ function create_mesh(
 export async function render_meshes(
 	nv: niivue.Niivue,
 	model: Model,
-	cleanups: Map<string, () => void>,
+	disposer: lib.Disposer,
 ) {
-	const mmodels = await gather_models<MeshModel>(model, model.get("_meshes"));
+	const mmodels = await lib.gather_models<MeshModel>(
+		model,
+		model.get("_meshes"),
+	);
 	const curr_names = nv.meshes.map((m) => m.name);
-	const new_names = mmodels.map(unique_id);
-	const update_type = determine_update_type(curr_names, new_names);
+	const new_names = mmodels.map(lib.unique_id);
+	const update_type = lib.determine_update_type(curr_names, new_names);
 	if (update_type === "add") {
 		// We know that the new meshes are the same as the old meshes,
 		// except for the last one. We can just add the last mesh.
 		const mmodel = mmodels[mmodels.length - 1];
 		const [mesh, cleanup] = create_mesh(nv, mmodel);
-		cleanups.set(mesh.name, cleanup);
+		disposer.register(mesh, cleanup);
 		nv.addMesh(mesh);
 		return;
 	}
-	// HERE can be the place to add more update types
-	for (const [_, cleanup] of cleanups) cleanup();
-	cleanups.clear();
+
+	// If we can't determine the update type, we need
+	// to remove all the meshes
+	disposer.disposeAll("mesh");
 
 	// create each mesh and add one-by-one
 	for (const mmodel of mmodels) {
 		const [mesh, cleanup] = create_mesh(nv, mmodel);
-		cleanups.set(mesh.name, cleanup);
+		disposer.register(mesh, cleanup);
 		nv.addMesh(mesh);
 	}
 }
