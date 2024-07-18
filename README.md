@@ -21,7 +21,7 @@ nv.load_volumes([{"path": "images/mni152.nii.gz"}])
 nv
 ```
 
-See the [basic demo](./demo/basic_multiplanar.ipynb) to learn more.
+See the [basic demo](./examples/basic_multiplanar.ipynb) to learn more.
 
 ## Development
 
