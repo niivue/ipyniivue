@@ -9,7 +9,7 @@
 	},
 	"dependencies": {
 		"@anywidget/types": "^0.1.9",
-		"@niivue/niivue": "^0.43.3"
+		"@niivue/niivue": "^0.44.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.1",
