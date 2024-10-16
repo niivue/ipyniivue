@@ -8,11 +8,11 @@ __all__ = [
 
 
 class SliceType(enum.Enum):
-    AXIAL = 1
-    CORONAL = 2
-    SAGITTAL = 3
-    MULTIPLANAR = 4
-    RENDER = 5
+    AXIAL = 0
+    CORONAL = 1
+    SAGITTAL = 2
+    MULTIPLANAR = 3
+    RENDER = 4
 
 
 class DragMode(enum.Enum):
