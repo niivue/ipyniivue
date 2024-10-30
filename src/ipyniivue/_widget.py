@@ -36,6 +36,14 @@ class Volume(ipywidgets.Widget):
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
 
+class Drawing(ipywidgets.Widget):
+    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
+        sync=True, to_json=file_serializer
+    )
+    opacity = t.Float(1.0).tag(sync=True)
+    colormap = t.Unicode("gray").tag(sync=True)
+    colorbar_visible = t.Bool(True).tag(sync=True)
+
 
 class NiiVue(OptionsMixin, anywidget.AnyWidget):
     """Represents a Niivue instance."""
@@ -50,6 +58,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     _meshes = t.List(t.Instance(Mesh), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
     )
+    _drawings = t.List(t.Instance(Drawing), default_value=[]).tag(
+        sync=True, **ipywidgets.widget_serialization
+    )
 
     def __init__(self, height: int = 300, **options):
         # convert to JS camelCase options
@@ -57,7 +68,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             _SNAKE_TO_CAMEL_OVERRIDES.get(k, snake_to_camel(k)): v
             for k, v in options.items()
         }
-        super().__init__(height=height, _opts=_opts, _volumes=[], _meshes=[])
+        super().__init__(height=height, _opts=_opts, _volumes=[], _meshes=[], _drawings=[])
 
     def load_volumes(self, volumes: list):
         """Load a list of volumes into the widget.
@@ -85,6 +96,14 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """Returns the list of volumes."""
         return list(self._volumes)
 
+    def load_drawings(self, drawings: list):
+        drawings = [Drawing(**item) for item in drawings]
+        self._drawings = drawings
+        
+    @property
+    def drawings(self):
+    	return list(self._drawings)
+
     def load_meshes(self, meshes: list):
         """Load a list of meshes into the widget.
 
@@ -110,3 +129,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     def meshes(self):
         """Returns the list of meshes."""
         return list(self._meshes)
+
+class WidgetChange():
+    def __init__(self, image, attribute):
+        self.image = image
+        self.attribute = attribute
+    def widget_change(self, change):
+        setattr(self.image, self.attribute, change["new"])
