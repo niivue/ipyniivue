@@ -111,7 +111,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """Returns the list of meshes."""
         return list(self._meshes)
 
-class WidgetChange():
+class WidgetChange:
     def __init__(self, image, attribute):
         self.image = image
         self.attribute = attribute
