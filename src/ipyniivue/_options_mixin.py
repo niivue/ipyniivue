@@ -8,6 +8,7 @@ from ._constants import DragMode, MuliplanarType, SliceType
 
 __all__ = ["OptionsMixin"]
 
+
 class OptionsMixin:
     @property
     def text_height(self) -> float:
