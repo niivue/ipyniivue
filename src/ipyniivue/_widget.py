@@ -110,3 +110,18 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     def meshes(self):
         """Returns the list of meshes."""
         return list(self._meshes)
+
+class WidgetObserver:
+    """Sets an observed for `widget` on the `attribute` of `object`."""
+
+    def __init__(self, widget, object, attribute):
+        self.widget = widget
+        self.object = object
+        self.attribute = attribute
+        self._observe()
+
+    def _widget_change(self, change):
+        setattr(self.object, self.attribute, change["new"])
+
+    def _observe(self):
+        self.widget.observe(self._widget_change, names=["value"])
