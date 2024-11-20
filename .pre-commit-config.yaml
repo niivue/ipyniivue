@@ -1,0 +1,9 @@
+repos:
+  - repo: https://github.com/srstevenson/nb-clean
+    rev: 4.0.1
+    hooks:
+      - id: nb-clean
+        args:
+          - --remove-empty-cells
+          - --remove-all-notebook-metadata
+          - --
