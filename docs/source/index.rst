@@ -1,18 +1,11 @@
-.. IPyNiiVue documentation master file, created by
-   sphinx-quickstart on Tue Nov 19 16:09:10 2024.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 IPyNiiVue Documentation
 =======================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+A Jupyter Widget for Niivue based on anywidget.
 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 4
     :caption: Contents:
 
     install

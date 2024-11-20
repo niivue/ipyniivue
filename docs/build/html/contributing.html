@@ -13,7 +13,7 @@
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="IPyNiiVue Documentation" href="index.html" />
+    <link rel="prev" title="Installation" href="install.html" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
 <!--[if lte IE 6]>
@@ -29,7 +29,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="index.html" title="IPyNiiVue Documentation"
+          <a href="install.html" title="Installation"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">IPyNiiVue 2.0.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Contributing</a></li> 
@@ -45,24 +45,19 @@
 <h1>Contributing<a class="headerlink" href="#contributing" title="Link to this heading">¶</a></h1>
 <p>We are glad you are here! Contributions to this package are always welcome.
 Read on to learn more about the contribution process and package design.</p>
-<section id="setting-up-your-development-environment">
-<h2>Setting up your development environment<a class="headerlink" href="#setting-up-your-development-environment" title="Link to this heading">¶</a></h2>
-<p>To get started, you will need to clone the pyLossless repository and install
-the package in development mode. This will allow you to make changes to the
-package and see the changes reflected in your python environment.</p>
-<p>This assumes that you have already forked and cloned the pyLossless repository,
-and that you have navigated to the root of the repository in your terminal.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>--editable<span class="w"> </span>./pylossless
-<span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements_testing.txt
-<span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements_doc.txt
-</pre></div>
-</div>
-</section>
 <section id="install-pre-commit-hooks">
 <h2>Install Pre-Commit hooks<a class="headerlink" href="#install-pre-commit-hooks" title="Link to this heading">¶</a></h2>
-<p>We use <a class="reference external" href="https://pre-commit.com/">pre-commit</a> to run code checks before
-committing changes. To install the pre-commit hooks, run the following command:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pre-commit<span class="w"> </span>install<span class="w"> </span>--install-hooks
+<p>We use <a class="reference external" href="https://pre-commit.com/">pre-commit</a> to run code checks and clear
+notebook outputs before committing changes. To install the pre-commit hooks,
+run the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pre-commit<span class="w"> </span>install
+</pre></div>
+</div>
+<p>As a result, the hooks will automatically check and fix some issues before
+pushing with git. If changes are made after committing with git, you will need
+to commit again afterwords. Alternatively, you can just run the following
+command beforehand:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>nb-clean<span class="w"> </span>clean<span class="w"> </span>--remove-empty-cells<span class="w"> </span>--remove-all-notebook-metadata
 </pre></div>
 </div>
 </section>
@@ -79,7 +74,6 @@ committing changes. To install the pre-commit hooks, run the following command:<
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Contributing</a><ul>
-<li><a class="reference internal" href="#setting-up-your-development-environment">Setting up your development environment</a></li>
 <li><a class="reference internal" href="#install-pre-commit-hooks">Install Pre-Commit hooks</a></li>
 </ul>
 </li>
@@ -88,8 +82,8 @@ committing changes. To install the pre-commit hooks, run the following command:<
   </div>
   <div>
     <h4>Previous topic</h4>
-    <p class="topless"><a href="index.html"
-                          title="previous chapter">IPyNiiVue Documentation</a></p>
+    <p class="topless"><a href="install.html"
+                          title="previous chapter">Installation</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -119,7 +113,7 @@ committing changes. To install the pre-commit hooks, run the following command:<
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="index.html" title="IPyNiiVue Documentation"
+          <a href="install.html" title="Installation"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">IPyNiiVue 2.0.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Contributing</a></li> 
