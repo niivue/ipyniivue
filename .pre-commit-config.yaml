@@ -5,5 +5,4 @@ repos:
       - id: nb-clean
         args:
           - --remove-empty-cells
-          - --remove-all-notebook-metadata
           - --
