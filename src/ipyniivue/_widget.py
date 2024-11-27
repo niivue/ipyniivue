@@ -111,6 +111,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """Returns the list of meshes."""
         return list(self._meshes)
 
+
 class WidgetObserver:
     """Sets an observed for `widget` on the `attribute` of `object`."""
 
