@@ -51,6 +51,18 @@
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>ipyniivue
 </pre></div>
 </div>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<p>In a Jupyter environment:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">from ipyniivue import NiiVue</span>
+
+<span class="go">nv = NiiVue()</span>
+<span class="go">nv.load_volumes([{&quot;path&quot;: &quot;images/mni152.nii.gz&quot;}])</span>
+<span class="go">nv</span>
+</pre></div>
+</div>
+<p>See the <a class="reference external" href="https://github.com/niivue/ipyniivue/blob/main/examples/basic_multiplanar.ipynb">basic demo</a> to learn more.</p>
+</section>
 </section>
 
 
@@ -60,6 +72,16 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
   <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="index.html"
