@@ -17,19 +17,19 @@ def download_dataset(api_url, dest_folder):
 
     file_list = response.json()
     for item in file_list:
-        item_type = item['type']
-        download_url = item.get('download_url', '') if item_type == 'file' else ''
-        name = item['name']
+        item_type = item["type"]
+        download_url = item.get("download_url", "") if item_type == "file" else ""
+        name = item["name"]
 
-        if item_type == 'file':
+        if item_type == "file":
             print(f"Downloading {name}...")
             file_response = requests.get(download_url)
             if file_response.status_code == 200:
-                with open(os.path.join(dest_folder, name), 'wb') as f:
+                with open(os.path.join(dest_folder, name), "wb") as f:
                     f.write(file_response.content)
             else:
                 print(f"Failed to download {name}: {file_response.status_code}")
-        elif item_type == 'dir':
+        elif item_type == "dir":
             print(f"Entering directory {name}...")
             subfolder = os.path.join(dest_folder, name)
             sub_api_url = f"{api_url}/{name}"

@@ -25,4 +25,3 @@ def mesh_layers_serializer(instance: list, widget: object):
 def serialize_options(instance: dict, widget: object):
     # serialize enums as their value
     return {k: v.value if isinstance(v, enum.Enum) else v for k, v in instance.items()}
-
