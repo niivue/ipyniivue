@@ -1,7 +1,10 @@
+"""Downloads all data needed for provided example images."""
+
 # Import necessary libraries
 import os
-import ipyniivue
+
 import requests
+
 
 def download_dataset(api_url, dest_folder):
     """Fetch and download files recursively."""
@@ -17,7 +20,6 @@ def download_dataset(api_url, dest_folder):
         item_type = item['type']
         download_url = item.get('download_url', '') if item_type == 'file' else ''
         name = item['name']
-        path = item['path']
 
         if item_type == 'file':
             print(f"Downloading {name}...")
@@ -33,4 +35,4 @@ def download_dataset(api_url, dest_folder):
             sub_api_url = f"{api_url}/{name}"
             download_dataset(sub_api_url, subfolder)
 
-    print(f"All files and subdirectories have been downloaded to {DEST_FOLDER}.")
+    print(f"All files and subdirectories have been downloaded to {dest_folder}.")
