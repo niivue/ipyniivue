@@ -3,7 +3,7 @@ import os
 import ipyniivue
 import requests
 
-def DownloadImages(api_url, dest_folder):
+def download_dataset(api_url, dest_folder):
     """Fetch and download files recursively."""
     print(f"Fetching contents from {api_url}...")
     os.makedirs(dest_folder, exist_ok=True)
@@ -31,4 +31,6 @@ def DownloadImages(api_url, dest_folder):
             print(f"Entering directory {name}...")
             subfolder = os.path.join(dest_folder, name)
             sub_api_url = f"{api_url}/{name}"
-            DownloadImages(sub_api_url, subfolder)
+            download_dataset(sub_api_url, subfolder)
+
+    print(f"All files and subdirectories have been downloaded to {DEST_FOLDER}.")

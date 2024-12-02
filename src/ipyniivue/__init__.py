@@ -4,6 +4,6 @@ import importlib.metadata
 
 from ._constants import DragMode, MuliplanarType, SliceType  # noqa: F401
 from ._widget import NiiVue  # noqa: F401
-from .download_images import DownloadImages
+from .download_images import download_dataset
 
 __version__ = importlib.metadata.version("ipyniivue")
