@@ -10,3 +10,6 @@ __pycache__
 src/ipyniivue/static
 
 launch.json
+
+# OS Specific
+.DS_Store
