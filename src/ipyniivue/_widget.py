@@ -129,10 +129,17 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         return list(self._meshes)
 
 
-class WidgetChange:
-    def __init__(self, image, attribute):
-        self.image = image
-        self.attribute = attribute
+class WidgetObserver:
+    """Sets an observed for `widget` on the `attribute` of `object`."""
 
-    def widget_change(self, change):
-        setattr(self.image, self.attribute, change["new"])
+    def __init__(self, widget, object, attribute):
+        self.widget = widget
+        self.object = object
+        self.attribute = attribute
+        self._observe()
+
+    def _widget_change(self, change):
+        setattr(self.object, self.attribute, change["new"])
+
+    def _observe(self):
+        self.widget.observe(self._widget_change, names=["value"])
