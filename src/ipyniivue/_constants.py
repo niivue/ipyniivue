@@ -1,9 +1,9 @@
 import enum
 
 __all__ = [
-    "SliceType",
     "DragMode",
     "MuliplanarType",
+    "SliceType",
 ]
 
 

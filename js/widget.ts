@@ -21,6 +21,8 @@ export default {
 		model.on("change:_volumes", () => render_volumes(nv, model, disposer));
 		await render_meshes(nv, model, disposer);
 		model.on("change:_meshes", () => render_meshes(nv, model, disposer));
+        
+        nv.createEmptyDrawing();
 
 		// Any time we change the options, we need to update the nv object
 		// and redraw the scene.
