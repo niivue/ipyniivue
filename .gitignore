@@ -2,6 +2,7 @@ node_modules
 .venv
 dist
 images
+docs/build
 
 # Python
 __pycache__
