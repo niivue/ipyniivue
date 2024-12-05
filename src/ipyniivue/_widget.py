@@ -37,6 +37,15 @@ class Volume(ipywidgets.Widget):
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
 
 
+class Drawing(ipywidgets.Widget):
+    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
+        sync=True, to_json=file_serializer
+    )
+    opacity = t.Float(1.0).tag(sync=True)
+    colormap = t.List([0, 0, 0, 0]).tag(sync=True)
+    colorbar_visible = t.Bool(True).tag(sync=True)
+
+
 class NiiVue(OptionsMixin, anywidget.AnyWidget):
     """Represents a Niivue instance."""
 
@@ -84,6 +93,14 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     def volumes(self):
         """Returns the list of volumes."""
         return list(self._volumes)
+
+    def load_drawings(self, drawings: list):
+        drawings = [Drawing(**item) for item in drawings]
+        self._drawings = drawings
+
+    @property
+    def drawings(self):
+        return list(self._drawings)
 
     def load_meshes(self, meshes: list):
         """Load a list of meshes into the widget.
