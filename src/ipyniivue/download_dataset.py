@@ -6,7 +6,23 @@ import os
 import requests
 
 
-def download_dataset(api_url, dest_folder):
+from pathlib import Path
+
+# GitHub API URL for the base folder
+BASE_API_URL = (
+    "https://api.github.com/repos/niivue/niivue/contents/packages/niivue/demos/images"
+)
+
+DATA_FOLDER = Path(ipyniivue.__file__).parent / "images"
+
+
+def download_dataset(api_url=None, dest_folder=None):
+    """ Download the datasets used for demos and testing. """
+    if api_url is None:
+        api_url = BASE_API_URL
+    if dest_folder is None:
+        dest_folder = DATA_FOLDER
+
     """Fetch and download files recursively."""
     print(f"Fetching contents from {api_url}...")
     os.makedirs(dest_folder, exist_ok=True)
