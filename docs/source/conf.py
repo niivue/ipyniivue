@@ -5,8 +5,9 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "IPyNiiVue"
-project_copyright = "2024, Jan-Hendrik Müller, Trevor Manz, Bradley Alford, Anthony Androulakis, Taylor Hanayik, Christian O'Reilly"
-author = "Jan-Hendrik Müller, Trevor Manz, Bradley Alford, Anthony Androulakis, Taylor Hanayik, Christian O'Reilly"
+author = "Jan-Hendrik Müller, Trevor Manz, Bradley Alford, Anthony Androulakis, "
+author += "Taylor Hanayik, Christian O'Reilly"
+project_copyright = "2024, " + author
 release = "2.1.0"
 
 # -- General configuration ---------------------------------------------------
