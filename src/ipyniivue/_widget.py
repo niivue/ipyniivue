@@ -132,14 +132,16 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 class WidgetObserver:
     """Sets an observed for `widget` on the `attribute` of `object`."""
 
-    def __init__(self, widget, object, attribute):
+    def __init__(self, widget, obj, attribute):
         self.widget = widget
-        self.object = object
+        self.object = obj
         self.attribute = attribute
         self._observe()
 
     def _widget_change(self, change):
-        setattr(self.object, self.attribute, change["new"])
+        # Converts string to float because negative 0 as a float
+        # with ipywidgets does not work as expected.
+        setattr(self.object, self.attribute, float(change["new"]))
 
     def _observe(self):
         self.widget.observe(self._widget_change, names=["value"])
