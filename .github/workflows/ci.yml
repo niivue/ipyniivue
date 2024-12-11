@@ -37,8 +37,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: |
-          pipx install hatch
-          hatch run test
+          pip install pytest-notebook
+          pip install pre-commit
+          pre-commit run --all
+          pre-commit install      
+          pipx install hatch          
+          hatch run test --cover --nb-test-files
 
   LintJavaScript:
     name: JavaScript / Lint
