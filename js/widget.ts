@@ -22,6 +22,8 @@ export default {
 		await render_meshes(nv, model, disposer);
 		model.on("change:_meshes", () => render_meshes(nv, model, disposer));
 
+		nv.createEmptyDrawing();
+
 		// Any time we change the options, we need to update the nv object
 		// and redraw the scene.
 		model.on("change:_opts", () => {
