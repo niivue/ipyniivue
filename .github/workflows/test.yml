@@ -33,6 +33,7 @@ jobs:
         run: |
           pip install -e .
           pip install pytest-notebook
+          pip install pre-commit
           pre-commit run --all
           pre-commit install
       - name: Test import
