@@ -2,11 +2,11 @@
 
 # Import necessary libraries
 import os
+from pathlib import Path
 
 import requests
 
-
-from pathlib import Path
+import ipyniivue
 
 # GitHub API URL for the base folder
 BASE_API_URL = (
@@ -17,7 +17,7 @@ DATA_FOLDER = Path(ipyniivue.__file__).parent / "images"
 
 
 def download_dataset(api_url=None, dest_folder=None):
-    """ Download the datasets used for demos and testing. """
+    """Download the datasets used for demos and testing."""
     if api_url is None:
         api_url = BASE_API_URL
     if dest_folder is None:
