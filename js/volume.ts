@@ -11,7 +11,7 @@ function create_volume(
 	vmodel: VolumeModel,
 ): [niivue.NVImage, () => void] {
 	const volume = new niivue.NVImage(
-		vmodel.get("path").data.buffer, // dataBuffer
+		vmodel.get("path").data.buffer as ArrayBuffer, // dataBuffer
 		lib.unique_id(vmodel), // name
 		vmodel.get("colormap"), // colormap
 		vmodel.get("opacity"), // opacity
