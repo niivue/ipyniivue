@@ -37,6 +37,15 @@ class Volume(ipywidgets.Widget):
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
 
 
+class Drawing(ipywidgets.Widget):
+    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
+        sync=True, to_json=file_serializer
+    )
+    opacity = t.Float(1.0).tag(sync=True)
+    colormap = t.List([0, 0, 0, 0]).tag(sync=True)
+    colorbar_visible = t.Bool(True).tag(sync=True)
+
+
 class NiiVue(OptionsMixin, anywidget.AnyWidget):
     """Represents a Niivue instance."""
 
@@ -85,6 +94,14 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """Returns the list of volumes."""
         return list(self._volumes)
 
+    def load_drawings(self, drawings: list):
+        drawings = [Drawing(**item) for item in drawings]
+        self._drawings = drawings
+
+    @property
+    def drawings(self):
+        return list(self._drawings)
+
     def load_meshes(self, meshes: list):
         """Load a list of meshes into the widget.
 
@@ -115,14 +132,16 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 class WidgetObserver:
     """Sets an observed for `widget` on the `attribute` of `object`."""
 
-    def __init__(self, widget, object, attribute):
+    def __init__(self, widget, obj, attribute):
         self.widget = widget
-        self.object = object
+        self.object = obj
         self.attribute = attribute
         self._observe()
 
     def _widget_change(self, change):
-        setattr(self.object, self.attribute, change["new"])
+        # Converts string to float because negative 0 as a float
+        # with ipywidgets does not work as expected.
+        setattr(self.object, self.attribute, float(change["new"]))
 
     def _observe(self):
         self.widget.observe(self._widget_change, names=["value"])
