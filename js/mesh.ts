@@ -11,7 +11,7 @@ function create_mesh(
 	mmodel: MeshModel,
 ): [niivue.NVMesh, () => void] {
 	const mesh = niivue.NVMesh.readMesh(
-		mmodel.get("path").data.buffer, // buffer
+		mmodel.get("path").data.buffer as ArrayBuffer, // buffer
 		mmodel.get("path").name, // name (used to identify the mesh)
 		nv.gl, // gl
 		mmodel.get("opacity"), // opacity
@@ -22,7 +22,7 @@ function create_mesh(
 		// https://github.com/niivue/niivue/blob/10d71baf346b23259570d7b2aa463749adb5c95b/src/nvmesh.ts#L1432C5-L1455C6
 		niivue.NVMeshLoaders.readLayer(
 			layer.path.name,
-			layer.path.data.buffer,
+			layer.path.data.buffer as ArrayBuffer,
 			mesh,
 			layer.opacity ?? 0.5,
 			layer.colormap ?? "warm",
