@@ -37,5 +37,5 @@ export type Model = AnyModel<{
 	height: number;
 	_volumes: Array<string>;
 	_meshes: Array<string>;
-	_opts: Record<string, unknown;
+	_opts: Record<string, unknown>;
 }>;
