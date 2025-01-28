@@ -59,6 +59,11 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     _meshes = t.List(t.Instance(Mesh), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
     )
+    other_niivue = t.List(t.Instance(NiiVue), default_value=[]).tag(
+        sync=True, **ipywidgets.widget_serialization
+    )
+    sync_opts = t.Dict({}).tag(sync=True, to_json=serialize_options)
+    
 
     def __init__(self, height: int = 300, **options):
         # convert to JS camelCase options
@@ -127,6 +132,11 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     def meshes(self):
         """Returns the list of meshes."""
         return list(self._meshes)
+
+    def broadcast_to(self, otherNV: list, syncOpts: dict):
+        self.other_niivue = otherNV
+        self.sync_opts = syncOpts
+        
 
 
 class WidgetObserver:

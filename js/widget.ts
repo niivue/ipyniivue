@@ -34,12 +34,17 @@ export default {
 		model.on("change:height", () => {
 			container.style.height = `${model.get("height")}px`;
 		});
+        model.on("change:other_niivue", () => {
+            nv.broadcastTo(nv.other_niivue, nv.sync_opts);
+        });
 
 		// All the logic for cleaning up the event listeners and the nv object
 		return () => {
 			disposer.disposeAll();
 			model.off("change:_volumes");
+            model.off("change:_meshes");
 			model.off("change:_opts");
+            model.off("change:height");
 		};
 	},
 };
