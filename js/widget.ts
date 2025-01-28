@@ -23,19 +23,23 @@ export default {
 		model.on("change:_meshes", () => render_meshes(nv, model, disposer));
 
 		nv.createEmptyDrawing();
-
+        
 		// Any time we change the options, we need to update the nv object
 		// and redraw the scene.
 		model.on("change:_opts", () => {
-			nv.document.opts = { ...nv.opts, ...model.get("_opts") };
-			nv.drawScene();
-			nv.updateGLVolume();
+            //nv.document.opts = { ...nv.opts, ...model.get("_opts") };
+    		//nv.drawScene();
+    		//nv.updateGLVolume();
 		});
 		model.on("change:height", () => {
 			container.style.height = `${model.get("height")}px`;
 		});
-        model.on("change:other_niivue", () => {
-            nv.broadcastTo(nv.other_niivue, nv.sync_opts);
+        model.on("msg:custom", (msg) => {
+            if (msg?.type === "broadcastTo") {
+                nv.document.opts.drawingEnabled = true;
+                nv.broadcastTo(model.get("_other_niivue"), model.get("_sync_opts"))
+                nv.drawScene();
+            }
         });
 
 		// All the logic for cleaning up the event listeners and the nv object
