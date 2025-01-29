@@ -28,8 +28,6 @@ jobs:
           pip install codespell
           codespell codespell src/**/*.py
 
-
-
   Test:
     runs-on: ubuntu-latest
     strategy:
@@ -60,6 +58,7 @@ jobs:
 
       - name: Test Pipeline
         run: |
+          pip install coverage
           coverage run -m pytest
       - name: Upload coverage to codecov (Only do this for the ubuntu-latest job)
         if: matrix.os == 'ubuntu-latest'
