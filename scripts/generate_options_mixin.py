@@ -72,6 +72,7 @@ def generate_mixin(options: dict[str, typing.Any]):
         "",
         '__all__ = ["OptionsMixin"]',
         "",
+        "",
         "class OptionsMixin:",
     ]
 
