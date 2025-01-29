@@ -16,10 +16,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      # Run Ruff
+      - name: Run Ruff
       - run: |
           pip install uv
           uv pip install --system ruff
           ruff check
+      # Run Codespell
+      - name: Run Codespell
+        run: codespell codespell src/**/*.py
+
+
 
   Test:
     runs-on: ubuntu-latest
@@ -46,8 +53,17 @@ jobs:
           pip install pre-commit
           pre-commit run --all
           pre-commit install      
-          pipx install hatch          
-          hatch run test --cover --nb-test-files
+        # pipx install hatch
+        # hatch run test --cover --nb-test-files
+
+      - name: Test Pipeline
+        run: |
+          coverage run -m pytest
+      - name: Upload coverage to codecov (Only do this for the ubuntu-latest job)
+        if: matrix.os == 'ubuntu-latest'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
 
   LintJavaScript:
     name: JavaScript / Lint
