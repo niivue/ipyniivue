@@ -55,8 +55,12 @@ jobs:
           pre-commit install      
       # pipx install hatch
       # hatch run test --cover --nb-test-files
-
-      - name: Test Pipeline
+      - name: Install IPyNiiVue & Deps
+        run: pip install -e .
+      - name: Test import
+        run: |
+          python -c "import ipyniivue"
+      - name: Test IPyNiiVue
         run: |
           pip install coverage
           coverage run -m pytest
