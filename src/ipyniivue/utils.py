@@ -4,11 +4,24 @@ import typing
 
 
 def snake_to_camel(snake_str: str):
+    """
+
+    Parameters
+    ----------
+    snake_str : str
+    """
     components = snake_str.split("_")
     return components[0] + "".join(x.title() for x in components[1:])
 
 
 def file_serializer(instance: typing.Union[pathlib.Path, str], widget: object):
+    """
+
+    Parameters
+    ----------
+    instance : typing.Union[pathLib.Path, str]
+    widget : object
+    """
     if isinstance(instance, str):
         # make sure we have a pathlib.Path instance
         instance = pathlib.Path(instance)
@@ -16,12 +29,26 @@ def file_serializer(instance: typing.Union[pathlib.Path, str], widget: object):
 
 
 def mesh_layers_serializer(instance: list, widget: object):
+    """
+
+    Parameters
+    ----------
+    instance : list
+    widget : object
+    """
     return [
         {**mesh_layer, "path": file_serializer(mesh_layer["path"], widget)}
         for mesh_layer in instance
     ]
 
 
-def serialize_options(instance: dict, widget: object):
+def serialize_options(instance: dict, widget: object)
+    """
+
+    Parameters
+    ----------
+    instance : dict
+    widdget : object
+    """
     # serialize enums as their value
     return {k: v.value if isinstance(v, enum.Enum) else v for k, v in instance.items()}

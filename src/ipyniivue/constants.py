@@ -8,6 +8,13 @@ __all__ = [
 
 
 class SliceType(enum.Enum):
+    """
+    Defines the number value equivalents for each SliceType of a NiiVue instance.
+
+    Parameters
+    ----------
+    enum.Enum
+    """
     AXIAL = 0
     CORONAL = 1
     SAGITTAL = 2
@@ -16,12 +23,26 @@ class SliceType(enum.Enum):
 
 
 class DragMode(enum.Enum):
+    """
+    Defines the number value equivalents for each DragMode of a NiiVue instance.
+
+    Paramters
+    ---------
+    enum.Enum
+    """
     CONTRAST = 1
     MEASUREMENT = 2
     PAN = 3
 
 
 class MuliplanarType(enum.Enum):
+    """
+    Defines the number value equivalents for each MultiplanarType of a NiiVue instance.
+ 
+    Paramters
+    ---------
+    enum.Enum
+    """
     AUTO = 0
     COLUMN = 1
     GRID = 2
