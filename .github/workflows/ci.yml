@@ -24,7 +24,9 @@ jobs:
           ruff check
       # Run Codespell
       - name: Run Codespell
-        run: codespell codespell src/**/*.py
+        run: |
+          pip install codespell
+          codespell codespell src/**/*.py
 
 
 
