@@ -103,7 +103,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         return list(self._volumes)
 
     def load_drawings(self, drawings: list):
-        """Create and load the drawings passed as an agument."""
+        """Create and load the drawings passed as an argument."""
         drawings = [Drawing(**item) for item in drawings]
         self._drawings = drawings
 
