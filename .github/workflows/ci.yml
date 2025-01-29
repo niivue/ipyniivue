@@ -65,7 +65,16 @@ jobs:
           pip install coverage
           pip install --upgrade pip ipython ipykernel
           ipython kernel install --name "python3" --user
-          coverage run -m pytest  --nb-test-files
+          coverage run -m pytest
+      - name: Test example notebooks
+        run: |          
+          pip install pytest nbmake
+          coverage run -a -m pytest --nbmake examples/*ipynb
+     #     coverage run -m pytest  --nb-test-files
+     # nbt-test-files check for changes in the output of the notebook.
+     # This does not work for our purpose since we wipe the output
+     # before committing changes to facilitate integration with git.
+          
       - name: Upload coverage to codecov (Only do this for the ubuntu-latest job)
         if: matrix.os == 'ubuntu-latest'
         uses: codecov/codecov-action@v5
