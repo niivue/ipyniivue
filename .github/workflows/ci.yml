@@ -63,6 +63,8 @@ jobs:
       - name: Test IPyNiiVue
         run: |
           pip install coverage
+          pip install --upgrade pip ipython ipykernel
+          ipython kernel install --name "python3" --user
           coverage run -m pytest  --nb-test-files
       - name: Upload coverage to codecov (Only do this for the ubuntu-latest job)
         if: matrix.os == 'ubuntu-latest'
