@@ -18,7 +18,7 @@ jobs:
           python-version: "3.12"
       # Run Ruff
       - name: Run Ruff
-      - run: |
+        run: |
           pip install uv
           uv pip install --system ruff
           ruff check
@@ -53,8 +53,8 @@ jobs:
           pip install pre-commit
           pre-commit run --all
           pre-commit install      
-        # pipx install hatch
-        # hatch run test --cover --nb-test-files
+      # pipx install hatch
+      # hatch run test --cover --nb-test-files
 
       - name: Test Pipeline
         run: |
