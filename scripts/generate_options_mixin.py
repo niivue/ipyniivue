@@ -2,7 +2,7 @@ import math
 import pathlib
 import typing
 
-from ipyniivue._constants import (
+from ipyniivue.constants import (
     _SNAKE_TO_CAMEL_OVERRIDES,
     DragMode,
     MuliplanarType,

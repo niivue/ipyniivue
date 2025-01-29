@@ -4,9 +4,9 @@ import anywidget
 import ipywidgets
 import traitlets as t
 
-from ._constants import _SNAKE_TO_CAMEL_OVERRIDES
-from ._options_mixin import OptionsMixin
-from ._utils import (
+from .constants import _SNAKE_TO_CAMEL_OVERRIDES
+from .options_mixin import OptionsMixin
+from .utils import (
     file_serializer,
     mesh_layers_serializer,
     serialize_options,

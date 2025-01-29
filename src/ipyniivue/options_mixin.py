@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import typing
 
-from ._constants import DragMode, MuliplanarType, SliceType
+from .constants import DragMode, MuliplanarType, SliceType
 
 __all__ = ["OptionsMixin"]
 
