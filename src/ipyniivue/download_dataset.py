@@ -1,4 +1,10 @@
-"""Downloads all data needed for provided example images."""
+"""
+Downloads the data needed to run provided examples.
+
+This module is designed to download the nii files needed to run examples
+and is set to do so if another url is not provided. It can, however, download
+other data, like fonts, from the NiiVue repo or elsewhere.
+"""
 
 # Import necessary libraries
 import os
@@ -17,13 +23,22 @@ DATA_FOLDER = Path(ipyniivue.__file__).parent / "images"
 
 
 def download_dataset(api_url=None, dest_folder=None):
-    """Download the datasets used for demos and testing."""
+    """
+    Download the datasets used for demos and testing.
+
+    Parameters
+    ----------
+    api_url
+        Option to provide a custom url to download data.
+    dest_folder
+        Option to provide a custom folder to store the data.
+    """
     if api_url is None:
         api_url = BASE_API_URL
     if dest_folder is None:
         dest_folder = DATA_FOLDER
 
-    """Fetch and download files recursively."""
+    # Fetch and download files recursively.
     print(f"Fetching contents from {api_url}...")
     os.makedirs(dest_folder, exist_ok=True)
     response = requests.get(api_url)
