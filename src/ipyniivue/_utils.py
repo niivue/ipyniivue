@@ -9,6 +9,8 @@ def snake_to_camel(snake_str: str):
 
 
 def file_serializer(instance: typing.Union[pathlib.Path, str], widget: object):
+    if instance is None:
+        return None
     if isinstance(instance, str):
         # make sure we have a pathlib.Path instance
         instance = pathlib.Path(instance)
