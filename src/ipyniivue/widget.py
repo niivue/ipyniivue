@@ -1,3 +1,11 @@
+"""
+Widgets representing NiiVue model instances as well as volume, mesh, and drawing models.
+
+Aside from setting up the Mesh, Volume, Drawing, and NiiVue widgets, this module
+contains many of the classes needed to make NiiVue instances work, such as classes
+to load objects in, change attributes of the instance, and more.
+"""
+
 import pathlib
 
 import anywidget
@@ -19,11 +27,12 @@ __all__ = ["NiiVue"]
 class Mesh(ipywidgets.Widget):
     """
     Represents a Mesh model.
-    
+
     Parameters
     ----------
-    ipywidgets.Widget : 
+    ipywidgets.Widget : A widget representing a mesh model and its data.
     """
+
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
@@ -36,11 +45,12 @@ class Mesh(ipywidgets.Widget):
 class Volume(ipywidgets.Widget):
     """
     Represents a Volume model.
-    
+
     Parameters
     ----------
-    ipywidgets.Widget : 
+    ipywidgets.Widget : A widget representing a volume model and its data.
     """
+
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
@@ -54,11 +64,12 @@ class Volume(ipywidgets.Widget):
 class Drawing(ipywidgets.Widget):
     """
     Represents a Drawing model.
-    
+
     Parameters
     ----------
-    ipywidgets.Widget : 
+    ipywidgets.Widget : A widget representing a drawing model and its data.
     """
+
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
@@ -73,9 +84,11 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
     Parameters
     ----------
-    OptionsMixin :
-    anywidget.Anywidget :
+    OptionsMixin : The list of default options for a NiiVue instance.
+    anywidget.Anywidget : An AnyWidget model representing a NiiVue
+        instance and its data.
     """
+
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
 
     height = t.Int().tag(sync=True)
@@ -136,7 +149,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
         Parameters
         ----------
-        volumes : list
+        drawings : list
             A list of dictionaries containing the drawing information.
         """
         drawings = [Drawing(**item) for item in drawings]
@@ -181,7 +194,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     def meshes(self):
         """
         Returns the list of meshes.
-        
+
         Returns
         -------
         list
@@ -191,9 +204,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
 
 class WidgetObserver:
-    """
-    Creates an observer on the `attribute` of `object` for a `widget`.
-    """
+    """Creates an observer on the `attribute` of `object` for a `widget`."""
+
     def __init__(self, widget, obj, attribute):
         self.widget = widget
         self.object = obj
