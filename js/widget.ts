@@ -34,12 +34,21 @@ export default {
 		model.on("change:height", () => {
 			container.style.height = `${model.get("height")}px`;
 		});
+        model.on("change:font_info", () => {
+            nv.loadFont(model.get("font_image"), model.get("font_info"));
+        });
+
+        model.on("msg:custom", (msg) => {
+            //if (msg?.type === "file_upload") 
+            nv.loadFromFile(data);
+        });
 
 		// All the logic for cleaning up the event listeners and the nv object
 		return () => {
 			disposer.disposeAll();
 			model.off("change:_volumes");
 			model.off("change:_opts");
+            model.off("change:font_info");
 		};
 	},
 };

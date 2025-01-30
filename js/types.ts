@@ -38,4 +38,6 @@ export type Model = AnyModel<{
 	_volumes: Array<string>;
 	_meshes: Array<string>;
 	_opts: Record<string, unknown>;
+    font_image: string;
+    font_info: string
 }>;
