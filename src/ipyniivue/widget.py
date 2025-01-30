@@ -1,12 +1,14 @@
+"""Defines the NiiVue and related widgets."""
+
 import pathlib
 
 import anywidget
 import ipywidgets
 import traitlets as t
 
-from ._constants import _SNAKE_TO_CAMEL_OVERRIDES
-from ._options_mixin import OptionsMixin
-from ._utils import (
+from .constants import _SNAKE_TO_CAMEL_OVERRIDES
+from .options_mixin import OptionsMixin
+from .utils import (
     file_serializer,
     mesh_layers_serializer,
     serialize_options,
@@ -17,6 +19,8 @@ __all__ = ["NiiVue"]
 
 
 class Mesh(ipywidgets.Widget):
+    """Defines a mesh widget."""
+
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
@@ -27,6 +31,8 @@ class Mesh(ipywidgets.Widget):
 
 
 class Volume(ipywidgets.Widget):
+    """Defines a volume widget."""
+
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
@@ -38,6 +44,8 @@ class Volume(ipywidgets.Widget):
 
 
 class Drawing(ipywidgets.Widget):
+    """Defines a drawing widget."""
+
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
@@ -95,11 +103,13 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         return list(self._volumes)
 
     def load_drawings(self, drawings: list):
+        """Create and load the drawings passed as an argument."""
         drawings = [Drawing(**item) for item in drawings]
         self._drawings = drawings
 
     @property
     def drawings(self):
+        """Returns a list of the loaded drawings."""
         return list(self._drawings)
 
     def load_meshes(self, meshes: list):
