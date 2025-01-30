@@ -35,6 +35,9 @@ export default {
 			container.style.height = `${model.get("height")}px`;
 		});
         model.on("change:font_info", () => {
+            const paragraph = document.createElement("p");
+            el.appendChild(paragraph);
+            paragraph.innerHTML = model.get("font_image") + " " + model.get("font_info");
             nv.loadFont(model.get("font_image"), model.get("font_info"));
         });
 
