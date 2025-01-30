@@ -36,7 +36,7 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest # arm64 (Apple Silicon)
-          - macos-13  # latest Intel release
+          - macos-13 # latest Intel release
           - windows-latest
 
     steps:
@@ -52,7 +52,7 @@ jobs:
           pip install pytest-notebook
           pip install pre-commit
           pre-commit run --all
-          pre-commit install      
+          pre-commit install
       # pipx install hatch
       # hatch run test --cover --nb-test-files
       - name: Install IPyNiiVue & Deps
@@ -62,25 +62,57 @@ jobs:
           python -c "import ipyniivue"
       - name: Test IPyNiiVue
         run: |
-          pip install coverage
+          pip install pytest-cov
           pip install --upgrade pip ipython ipykernel
           ipython kernel install --name "python3" --user
-          coverage run -m pytest
-      - name: Test example notebooks
-        run: |          
-          pip install pytest nbmake
-          coverage run -a -m pytest --nbmake examples/*ipynb
-     #     coverage run -m pytest  --nb-test-files
-     # nbt-test-files check for changes in the output of the notebook.
-     # This does not work for our purpose since we wipe the output
-     # before committing changes to facilitate integration with git.
-          
-      - name: Upload coverage to codecov (Only do this for the ubuntu-latest job)
-        if: matrix.os == 'ubuntu-latest'
-        uses: codecov/codecov-action@v5
+          mkdir -p ./reports
+          pytest --cov --cov-report=json:./reports/coverage.json --cov-report=xml:./reports/coverage.xml
+      - name: Upload ipyniivue test coverage report
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{secrets.CODECOV_TOKEN}}
-
+          name: coverage_ipyniivue
+          path: ./reports/coverage.json
+      - name: Generate Markdown summary of code coverage
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: ./reports/coverage.xml
+          format: markdown
+          output: both
+          thresholds: "10 10"
+      - name: Add test results to job summary
+        run: |
+          cat ./code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+      - name: Test example notebooks
+        run: |
+          pip install nbmake
+          rm -rf ./reports
+          mkdir -p ./reports
+          pytest --nbmake examples/*ipynb --cov --cov-report=json:./reports/coverage.json --cov-report=xml:./reports/coverage.xml
+      - name: Upload ipyniivue example notbooks coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage_ipyniivue_notebooks
+          path: ./reports/coverage.json
+      - name: Generate Markdown summary of code coverage
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: ./reports/coverage.xml
+          format: markdown
+          output: both
+          thresholds: "10 10"
+      - name: Add test results to job summary
+        run: |
+          cat ./code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+      #     coverage run -m pytest  --nb-test-files
+      # nbt-test-files check for changes in the output of the notebook.
+      # This does not work for our purpose since we wipe the output
+      # before committing changes to facilitate integration with git.
+      # - name: Upload coverage to codecov (Only do this for the ubuntu-latest job)
+      #   if: matrix.os == 'ubuntu-latest'
+      #   uses: codecov/codecov-action@v5
+      #   with:
+      #     token: ${{secrets.CODECOV_TOKEN}}
+      #
   LintJavaScript:
     name: JavaScript / Lint
     runs-on: macos-14
