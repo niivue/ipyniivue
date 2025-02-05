@@ -1,4 +1,5 @@
 import pathlib
+from typing import Optional
 
 import anywidget
 import ipywidgets
@@ -59,14 +60,33 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     _meshes = t.List(t.Instance(Mesh), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
     )
+    font_image = t.Union([t.Instance(pathlib.Path), t.Unicode()], allow_none=True).tag(
+        sync=True, to_json=file_serializer
+    )
+    font_info = t.Union([t.Instance(pathlib.Path), t.Unicode()], allow_none=True).tag(
+        sync=True, to_json=file_serializer
+    )
 
-    def __init__(self, height: int = 300, **options):
+    def __init__(
+        self,
+        height: int = 300,
+        font_image: Optional[str] = None,
+        font_info: Optional[str] = None,
+        **options,
+    ):
         # convert to JS camelCase options
         _opts = {
             _SNAKE_TO_CAMEL_OVERRIDES.get(k, snake_to_camel(k)): v
             for k, v in options.items()
         }
-        super().__init__(height=height, _opts=_opts, _volumes=[], _meshes=[])
+        super().__init__(
+            height=height,
+            _opts=_opts,
+            _volumes=[],
+            _meshes=[],
+            font_image=font_image,
+            font_info=font_info,
+        )
 
     def load_volumes(self, volumes: list):
         """Load a list of volumes into the widget.
@@ -127,6 +147,37 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     def meshes(self):
         """Returns the list of meshes."""
         return list(self._meshes)
+
+    def set_font(self, font_img: pathlib.Path, font_info: pathlib.Path):
+        """
+        Change the font for the NiiVue instance.
+
+        Parameters
+        ----------
+        font_img : str
+            A string of the url to the font png file.
+        font_info : str
+            A string of the url to the font JSON information.
+        """
+        self.font_image = font_img
+        self.font_info = font_info
+
+    @property
+    def font(self):
+        """
+        Return the list of font data urls.
+
+        Returns
+        -------
+        font_img : str
+            A string of the url to the font png file for this NiiVue instance.
+        font_info : str
+            A string of the url to the font JSON information for this NiiVue instance.
+        """
+        return [self.font_image, self.font_info]
+
+    def load_file(self, file):
+        self.send({"type": "file_upload", "data": file})
 
 
 class WidgetObserver:
