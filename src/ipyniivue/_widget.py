@@ -60,13 +60,20 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         sync=True, **ipywidgets.widget_serialization
     )
 
+    _other_niivue: t.List(t.Instance("NiiVue"), default_value=[]).tag(
+        sync=True, **ipywidgets.widget_serialization
+    ) = None
+    _sync_opts = t.Dict({}).tag(sync=True, to_json=serialize_options)
+
+
     def __init__(self, height: int = 300, **options):
         # convert to JS camelCase options
         _opts = {
             _SNAKE_TO_CAMEL_OVERRIDES.get(k, snake_to_camel(k)): v
             for k, v in options.items()
         }
-        super().__init__(height=height, _opts=_opts, _volumes=[], _meshes=[])
+        super().__init__(height=height, _opts=_opts, _volumes=[], _meshes=[],
+                        _other_niivue=[], _sync_opts={})
 
     def load_volumes(self, volumes: list):
         """Load a list of volumes into the widget.
@@ -127,6 +134,12 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     def meshes(self):
         """Returns the list of meshes."""
         return list(self._meshes)
+
+    def broadcast_to(self, otherNV: list, syncOpts: dict):
+        self._other_niivue = otherNV
+        self._sync_opts = syncOpts
+        self.send({"type": "broadcastTo"})
+
 
 
 class WidgetObserver:
