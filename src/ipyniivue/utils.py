@@ -30,7 +30,7 @@ def snake_to_camel(snake_str: str):
 
 def file_serializer(instance: typing.Union[pathlib.Path, str], widget: object):
     """
-    Serialize a file to be transfered and read by the JS side.
+    Serialize a file to be transferred and read by the JS side.
 
     Parameters
     ----------
