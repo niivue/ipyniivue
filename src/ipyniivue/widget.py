@@ -121,8 +121,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         self._volumes = volumes
 
     def add_volume(self, volume: dict):
-        """
-        Add a single volume to the widget.
+        """Add a single volume to the widget.
 
         Parameters
         ----------

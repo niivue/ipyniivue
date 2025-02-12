@@ -25,8 +25,7 @@ def snake_to_camel(snake_str: str):
         The parameter string converted to camel case.
     """
     components = snake_str.split("_")
-    camel_string = components[0] + "".join(x.title() for x in components[1:])
-    return camel_string
+    return components[0] + "".join(x.title() for x in components[1:])
 
 
 def file_serializer(instance: typing.Union[pathlib.Path, str], widget: object):
