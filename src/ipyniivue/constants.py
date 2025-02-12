@@ -50,7 +50,7 @@ class MuliplanarType(enum.Enum):
     """
     Defines the number value equivalents for each MultiplanarType of a NiiVue instance.
 
-    Paramters
+    Parameters
     ---------
     enum.Enum
         A new enumeration for this class to store members.
