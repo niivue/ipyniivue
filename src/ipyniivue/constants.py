@@ -36,7 +36,7 @@ class DragMode(enum.Enum):
     Defines the number value equivalents for each DragMode of a NiiVue instance.
 
     Parameters
-    ---------
+    ----------
     enum.Enum
         A new enumeration for this class to store members.
     """
