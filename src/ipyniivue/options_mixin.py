@@ -573,5 +573,4 @@ class OptionsMixin:
     @render_overlay_blend.setter
     def render_overlay_blend(self, value: float):
         """Automatically generated property. See generate_options_mixin.py."""
-
         self._opts = {**self._opts, "renderOverlayBlend": value}
