@@ -28,6 +28,11 @@ class Mesh(ipywidgets.Widget):
     opacity = t.Float(1.0).tag(sync=True)
     visible = t.Bool(True).tag(sync=True)
     layers = t.List([]).tag(sync=True, to_json=mesh_layers_serializer)
+    fiber_radius = t.Float(0.0).tag(sync=True)
+    fiber_length = t.Float(1.0).tag(sync=True)
+    fiber_dither = t.Float(0.1).tag(sync=True)
+    fiber_color = t.Unicode("Global").tag(sync=True)
+    fiber_decimation = t.Float(1.0).tag(sync=True)
 
 
 class Volume(ipywidgets.Widget):
@@ -67,6 +72,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     _meshes = t.List(t.Instance(Mesh), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
     )
+    clipplane = t.List([2.0, 0]).tag(sync=True)
 
     def __init__(self, height: int = 300, **options):
         # convert to JS camelCase options
@@ -132,6 +138,31 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             A dictionary containing the mesh information.
         """
         self._meshes = [*self._meshes, mesh]
+
+    def change_mesh_property(self, mesh: Mesh, prop: str, value):
+        """
+        Switches a specific property of a mesh to a new value.
+
+        Parameters
+        ----------
+        mesh : dict
+            A dictionary containing the mesh information.
+        prop : str
+            The property of the mesh to be switched.
+        value
+            The new value of the mesh property.
+        """
+        match prop:
+            case "fiber_radius":
+                mesh.fiber_radius = value
+            case "fiber_length":
+                mesh.fiber_length = value
+            case "fiber_dither":
+                mesh.fiber_dither = value
+            case "fiber_color":
+                mesh.fiber_color = value
+            case "fiber_decimation":
+                mesh.fiber_decimation = value
 
     @property
     def meshes(self):
