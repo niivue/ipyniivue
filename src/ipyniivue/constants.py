@@ -1,4 +1,9 @@
-"""Defines constants for reuse across the package."""
+"""
+Provides classes for reusable, readable versions of important data.
+
+This module uses enum to enumerate important constants for slice types,
+drag modes, and multiplanar types in more readable formats for use in notebooks.
+"""
 
 import enum
 
@@ -10,7 +15,14 @@ __all__ = [
 
 
 class SliceType(enum.Enum):
-    """Maps numerical values to slice type names."""
+    """
+    Defines the number value equivalents for each SliceType of a NiiVue instance.
+
+    Parameters
+    ----------
+    enum.Enum
+        A new enumeration for this class to store members.
+    """
 
     AXIAL = 0
     CORONAL = 1
@@ -20,7 +32,14 @@ class SliceType(enum.Enum):
 
 
 class DragMode(enum.Enum):
-    """Maps numerical values to types of mouse interactions."""
+    """
+    Defines the number value equivalents for each DragMode of a NiiVue instance.
+
+    Parameters
+    ----------
+    enum.Enum
+        A new enumeration for this class to store members.
+    """
 
     CONTRAST = 1
     MEASUREMENT = 2
@@ -28,7 +47,14 @@ class DragMode(enum.Enum):
 
 
 class MuliplanarType(enum.Enum):
-    """Maps numerical values to types of panel arrangements."""
+    """
+    Defines the number value equivalents for each MultiplanarType of a NiiVue instance.
+
+    Parameters
+    ----------
+    enum.Enum
+        A new enumeration for this class to store members.
+    """
 
     AUTO = 0
     COLUMN = 1
