@@ -31,6 +31,11 @@ export type MeshModel = { model_id: string } & AnyModel<{
 	opacity: number;
 	layers: Array<MeshLayer>;
 	visible: boolean;
+    fiber_radius: number;
+    fiber_length: number;
+    fiber_dither: number;
+    fiber_color: string;
+    fiber_decimation: number;
 }>;
 
 export type Model = AnyModel<{
@@ -38,4 +43,5 @@ export type Model = AnyModel<{
 	_volumes: Array<string>;
 	_meshes: Array<string>;
 	_opts: Record<string, unknown>;
+    clipplane: Array<number>;
 }>;
