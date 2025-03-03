@@ -13,6 +13,7 @@ export type VolumeModel = { model_id: string } & AnyModel<{
 	colorbar_visible: boolean;
 	cal_min?: number;
 	cal_max?: number;
+	frame4D: number;
 }>;
 
 interface MeshLayer {

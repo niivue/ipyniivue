@@ -59,6 +59,7 @@ class Volume(ipywidgets.Widget):
     colorbar_visible = t.Bool(True).tag(sync=True)
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
+    frame4D = t.Int(0).tag(sync=True)
 
 
 class Drawing(ipywidgets.Widget):
@@ -76,7 +77,6 @@ class Drawing(ipywidgets.Widget):
     opacity = t.Float(1.0).tag(sync=True)
     colormap = t.List([0, 0, 0, 0]).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
-
 
 class NiiVue(OptionsMixin, anywidget.AnyWidget):
     """
