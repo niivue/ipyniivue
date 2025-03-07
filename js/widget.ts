@@ -14,8 +14,6 @@ export default {
 		container.appendChild(canvas);
 		el.appendChild(container);
 
-        
-
 		const nv = new niivue.Niivue(model.get("_opts") ?? {});
 		nv.attachToCanvas(canvas);
 
@@ -37,10 +35,10 @@ export default {
 			container.style.height = `${model.get("height")}px`;
 		});
 
-        nv.setClipPlane(model.get("clipplane"));
-        model.on("change:clipplane", () => {
-            nv.setClipPlane(model.get("clipplane"));
-        });
+		nv.setClipPlane(model.get("clipplane"));
+		model.on("change:clipplane", () => {
+			nv.setClipPlane(model.get("clipplane"));
+		});
 
 		// All the logic for cleaning up the event listeners and the nv object
 		return () => {
