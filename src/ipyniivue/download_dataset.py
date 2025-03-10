@@ -22,7 +22,7 @@ BASE_API_URL = (
 DATA_FOLDER = Path(ipyniivue.__file__).parent / "images"
 
 
-def download_dataset(api_url=None, dest_folder=None):
+def download_dataset(api_url=None, dest_folder=None, force_download=False):
     """
     Download the datasets used for demos and testing.
 
@@ -32,6 +32,8 @@ def download_dataset(api_url=None, dest_folder=None):
         Option to provide a custom url to download data.
     dest_folder
         Option to provide a custom folder to store the data.
+    force_download
+        If true, download datasets even if they are already available locally.
     """
     if api_url is None:
         api_url = BASE_API_URL
@@ -53,16 +55,19 @@ def download_dataset(api_url=None, dest_folder=None):
         name = item["name"]
 
         if item_type == "file":
+            out_path = dest_folder / name
+            if out_path.exists() and not force_download:
+                continue
             print(f"Downloading {name}...")
             file_response = requests.get(download_url)
             if file_response.status_code == 200:
-                with open(os.path.join(dest_folder, name), "wb") as f:
+                with out_path.open("wb") as f:
                     f.write(file_response.content)
             else:
                 print(f"Failed to download {name}: {file_response.status_code}")
         elif item_type == "dir":
             print(f"Entering directory {name}...")
-            subfolder = os.path.join(dest_folder, name)
+            subfolder = dest_folder / name
             sub_api_url = f"{api_url}/{name}"
             download_dataset(sub_api_url, subfolder)
 
