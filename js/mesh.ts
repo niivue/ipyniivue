@@ -17,11 +17,6 @@ function create_mesh(
 		mmodel.get("opacity"), // opacity
 		new Uint8Array(mmodel.get("rgba255")), // rgba255
 		mmodel.get("visible"), // visible
-		mmodel.get("fiber_radius"),
-		mmodel.get("fiber_length"),
-		mmodel.get("fiber_dither"),
-		mmodel.get("fiber_color"),
-		mmodel.get("fiber_decimation"),
 	);
 	for (const layer of mmodel.get("layers")) {
 		// https://github.com/niivue/niivue/blob/10d71baf346b23259570d7b2aa463749adb5c95b/src/nvmesh.ts#L1432C5-L1455C6
@@ -53,20 +48,36 @@ function create_mesh(
 		nv.updateGLVolume();
 	}
 	function fiber_radius_changed() {
-		nv.setMeshProperty(mesh.id, "fiberRadius", mmodel.get("fiber_radius"));
+		nv.setMeshProperty(
+			Number.parseFloat(mesh.id),
+			"fiberRadius",
+			mmodel.get("fiber_radius"),
+		);
 	}
 	function fiber_length_changed() {
-		nv.setMeshProperty(mesh.id, "fiberLength", mmodel.get("fiber_length"));
+		nv.setMeshProperty(
+			Number.parseFloat(mesh.id),
+			"fiberLength",
+			mmodel.get("fiber_length"),
+		);
 	}
 	function fiber_dither_changed() {
-		nv.setMeshProperty(mesh.id, "fiberDither", mmodel.get("fiber_dither"));
+		nv.setMeshProperty(
+			Number.parseFloat(mesh.id),
+			"fiberDither",
+			mmodel.get("fiber_dither"),
+		);
 	}
 	function fiber_color_changed() {
-		nv.setMeshProperty(mesh.id, "fiberColor", mmodel.get("fiber_color"));
+		nv.setMeshProperty(
+			Number.parseFloat(mesh.id),
+			"fiberColor",
+			mmodel.get("fiber_color"),
+		);
 	}
 	function fiber_decimation_changed() {
 		nv.setMeshProperty(
-			mesh.id,
+			Number.parseFloat(mesh.id),
 			"fiberDecimationStride",
 			mmodel.get("fiber_decimation"),
 		);
