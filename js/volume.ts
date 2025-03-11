@@ -54,8 +54,6 @@ function create_volume(
 		volume.frame4D = vmodel.get("frame4D");
 		nv.updateGLVolume();
 	}
-	
-
 
 	vmodel.on("change:colorbar_visible", colorbar_visible_changed);
 	vmodel.on("change:cal_min", cal_min_changed);
