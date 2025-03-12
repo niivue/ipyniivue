@@ -6,11 +6,11 @@ import type { MeshModel, Model } from "./types.ts";
  * Create a new NVMesh and attach the necessary event listeners
  * Returns the NVMesh and a cleanup function that removes the event listeners.
  */
-function create_mesh(
+export async function create_mesh(
 	nv: niivue.Niivue,
 	mmodel: MeshModel,
-): [niivue.NVMesh, () => void] {
-	const mesh = niivue.NVMesh.readMesh(
+): Promise<[niivue.NVMesh, () => void]> {
+	const mesh = await niivue.NVMesh.readMesh(
 		mmodel.get("path").data.buffer as ArrayBuffer, // buffer
 		mmodel.get("path").name, // name (used to identify the mesh)
 		nv.gl, // gl
@@ -76,7 +76,7 @@ export async function render_meshes(
 		// We know that the new meshes are the same as the old meshes,
 		// except for the last one. We can just add the last mesh.
 		const mmodel = mmodels[mmodels.length - 1];
-		const [mesh, cleanup] = create_mesh(nv, mmodel);
+		const [mesh, cleanup] = await create_mesh(nv, mmodel);
 		disposer.register(mesh, cleanup);
 		nv.addMesh(mesh);
 		return;
@@ -88,7 +88,7 @@ export async function render_meshes(
 
 	// create each mesh and add one-by-one
 	for (const mmodel of mmodels) {
-		const [mesh, cleanup] = create_mesh(nv, mmodel);
+		const [mesh, cleanup] = await create_mesh(nv, mmodel);
 		disposer.register(mesh, cleanup);
 		nv.addMesh(mesh);
 	}
