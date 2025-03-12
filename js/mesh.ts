@@ -6,7 +6,7 @@ import type { MeshModel, Model } from "./types.ts";
  * Create a new NVMesh and attach the necessary event listeners
  * Returns the NVMesh and a cleanup function that removes the event listeners.
  */
-async function create_mesh(
+export async function create_mesh(
 	nv: niivue.Niivue,
 	mmodel: MeshModel,
 ): [niivue.NVMesh, () => void] {
