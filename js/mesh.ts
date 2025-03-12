@@ -9,7 +9,7 @@ import type { MeshModel, Model } from "./types.ts";
 export async function create_mesh(
 	nv: niivue.Niivue,
 	mmodel: MeshModel,
-): Promise<[niivue.NVMesh, () => void]> {
+): [Promise<niivue.NVMesh>, () => void] {
 	const mesh = await niivue.NVMesh.readMesh(
 		mmodel.get("path").data.buffer as ArrayBuffer, // buffer
 		mmodel.get("path").name, // name (used to identify the mesh)
