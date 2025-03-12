@@ -9,7 +9,7 @@ import type { MeshModel, Model } from "./types.ts";
 export async function create_mesh(
 	nv: niivue.Niivue,
 	mmodel: MeshModel,
-): [Promise<niivue.NVMesh>, () => void] {
+): Promise<[niivue.NVMesh, () => void]> {
 	const mesh = await niivue.NVMesh.readMesh(
 		mmodel.get("path").data.buffer as ArrayBuffer, // buffer
 		mmodel.get("path").name, // name (used to identify the mesh)
@@ -76,7 +76,7 @@ export async function render_meshes(
 		// We know that the new meshes are the same as the old meshes,
 		// except for the last one. We can just add the last mesh.
 		const mmodel = mmodels[mmodels.length - 1];
-		const [mesh, cleanup] = create_mesh(nv, mmodel);
+		const [mesh, cleanup] = await create_mesh(nv, mmodel);
 		disposer.register(mesh, cleanup);
 		nv.addMesh(mesh);
 		return;
@@ -88,7 +88,7 @@ export async function render_meshes(
 
 	// create each mesh and add one-by-one
 	for (const mmodel of mmodels) {
-		const [mesh, cleanup] = create_mesh(nv, mmodel);
+		const [mesh, cleanup] = await create_mesh(nv, mmodel);
 		disposer.register(mesh, cleanup);
 		nv.addMesh(mesh);
 	}
