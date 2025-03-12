@@ -6,11 +6,11 @@ import type { MeshModel, Model } from "./types.ts";
  * Create a new NVMesh and attach the necessary event listeners
  * Returns the NVMesh and a cleanup function that removes the event listeners.
  */
-function create_mesh(
+async function create_mesh(
 	nv: niivue.Niivue,
 	mmodel: MeshModel,
 ): [niivue.NVMesh, () => void] {
-	const mesh = niivue.NVMesh.readMesh(
+	const mesh = await niivue.NVMesh.readMesh(
 		mmodel.get("path").data.buffer as ArrayBuffer, // buffer
 		mmodel.get("path").name, // name (used to identify the mesh)
 		nv.gl, // gl
