@@ -35,6 +35,11 @@ export default {
 			container.style.height = `${model.get("height")}px`;
 		});
 
+		nv.setClipPlane(model.get("clipplane"));
+		model.on("change:clipplane", () => {
+			nv.setClipPlane(model.get("clipplane"));
+		});
+
 		// All the logic for cleaning up the event listeners and the nv object
 		return () => {
 			disposer.disposeAll();

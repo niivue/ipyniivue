@@ -47,15 +47,60 @@ export async function create_mesh(
 		mesh.updateMesh(nv.gl);
 		nv.updateGLVolume();
 	}
+	function fiber_radius_changed() {
+		nv.setMeshProperty(
+			Number.parseFloat(mesh.id),
+			"fiberRadius",
+			mmodel.get("fiber_radius"),
+		);
+	}
+	function fiber_length_changed() {
+		nv.setMeshProperty(
+			Number.parseFloat(mesh.id),
+			"fiberLength",
+			mmodel.get("fiber_length"),
+		);
+	}
+	function fiber_dither_changed() {
+		nv.setMeshProperty(
+			Number.parseFloat(mesh.id),
+			"fiberDither",
+			mmodel.get("fiber_dither"),
+		);
+	}
+	function fiber_color_changed() {
+		nv.setMeshProperty(
+			Number.parseFloat(mesh.id),
+			"fiberColor",
+			mmodel.get("fiber_color"),
+		);
+	}
+	function fiber_decimation_changed() {
+		nv.setMeshProperty(
+			Number.parseFloat(mesh.id),
+			"fiberDecimationStride",
+			mmodel.get("fiber_decimation"),
+		);
+	}
 	mmodel.on("change:opacity", opacity_changed);
 	mmodel.on("change:rgba255", rgba255_changed);
 	mmodel.on("change:visible", visible_changed);
+	mmodel.on("change:fiber_radius", fiber_radius_changed);
+	mmodel.on("change:fiber_length", fiber_length_changed);
+	mmodel.on("change:fiber_dither", fiber_dither_changed);
+	mmodel.on("change:fiber_color", fiber_color_changed);
+	mmodel.on("change:fiber_decimation", fiber_decimation_changed);
 	return [
 		mesh,
 		() => {
 			mmodel.off("change:opacity", opacity_changed);
 			mmodel.off("change:rgba255", rgba255_changed);
 			mmodel.off("change:visible", visible_changed);
+			mmodel.off("change:fiber_radius", fiber_radius_changed);
+			mmodel.off("change:fiber_length", fiber_length_changed);
+			mmodel.off("change:fiber_dither", fiber_dither_changed);
+			mmodel.off("change:fiber_color", fiber_color_changed);
+			mmodel.off("change:fiber_decimation", fiber_decimation_changed);
 		},
 	];
 }
