@@ -203,7 +203,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
     def save_document(self, file_name: str = "document.nvd", compress: bool = True):
         """
-        Saves the entire scene with settings as a document.
+        Save the entire scene with settings as a document.
 
         Parameters
         ----------
@@ -219,7 +219,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
     def save_html(self, file_name: str = "untitled.html", canvas_id: str = "gl1"):
         """
-        Saves the current instance as an html page.
+        Save the current instance as an html page.
 
         Parameters
         ----------
@@ -233,10 +233,11 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             'data': [file_name, canvas_id]
         })
 
-    def save_image(self, file_name: str = "image.nii.gz", save_drawing: bool = True, index_volume: int = 0):
+    def save_image(self, file_name: str = "image.nii.gz", save_drawing: bool = True,
+                   index_volume: int = 0):
         """
-        Saves the current image as a nii file.
-        
+        Save the current image as a nii file.
+
         Parameters
         ----------
         file_name : str
@@ -253,11 +254,11 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
     def save_scene(self, file_name: str = "scene.png"):
         """
-        Saves the current scene with the provided file name.
-        
+        Save the current scene with the provided file name.
+
         Parameters
         ----------
-        filename : str
+        file_name : str
             The file name to save the scene as.
         """
         self.send({

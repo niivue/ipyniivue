@@ -36,7 +36,7 @@ export default {
 		});
 
 		// Handle any message directions from the nv object.
-		model.on("msg:custom", (payload: { type: string; data: any }) => {
+		model.on("msg:custom", (payload: { type: string; data: list }) => {
 			const { type, data } = payload;
 			switch (type) {
 				case "save_document": {
