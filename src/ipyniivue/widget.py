@@ -263,7 +263,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """
         self.send({
             'type': 'save_scene',
-            'data': file_name
+            'data': [file_name]
         })
 
 
