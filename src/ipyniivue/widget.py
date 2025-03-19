@@ -201,6 +201,72 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """
         return list(self._meshes)
 
+    def save_document(self, file_name: str = "document.nvd", compress: bool = True):
+        """
+        Saves the entire scene with settings as a document.
+
+        Parameters
+        ----------
+        file_name : str
+            The file name to save the document as.
+        compress : bool
+            A value represneing if the file should be compressed.
+        """
+        self.send({
+            'type': 'save_document',
+            'data': [file_name, compress]
+        })
+
+    def save_html(self, file_name: str = "untitled.html", canvas_id: str = "gl1"):
+        """
+        Saves the current instance as an html page.
+
+        Parameters
+        ----------
+        file_name : str
+            The file name to save the page as.
+        canvas_id : str
+            The id of the canvas that NiiVue will be attatched to.
+        """
+        self.send({
+            'type': 'save_html',
+            'data': [file_name, canvas_id]
+        })
+
+    def save_image(self, file_name: str = "image.nii.gz", save_drawing: bool = True, index_volume: int = 0):
+        """
+        Saves the current image as a nii file.
+        
+        Parameters
+        ----------
+        file_name : str
+            The file name to save the image as.
+        save_drawing : bool
+            A value representing if the drawings should be saved.
+        index_volume : int
+            The volume layer which should be saved (0 for background)
+        """
+        self.send({
+            'type': 'save_image',
+            'data': [file_name, save_drawing, index_volume]
+        })
+
+    def save_scene(self, file_name: str = "scene.png"):
+        """
+        Saves the current scene with the provided file name.
+        
+        Parameters
+        ----------
+        filename : str
+            The file name to save the scene as.
+        """
+        self.send({
+            'type': 'save_scene',
+            'data': file_name
+        })
+
+
+
 
 class WidgetObserver:
     """Creates an observer on the `attribute` of `object` for a `widget`."""

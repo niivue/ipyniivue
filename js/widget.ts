@@ -35,6 +35,32 @@ export default {
 			container.style.height = `${model.get("height")}px`;
 		});
 
+		// Handle any message directions from the nv object.
+		model.on("msg:custom", (payload: { type: string; data: any }) => {
+			const { type, data } = payload;
+			switch (type) {
+				case "save_document": {
+					const { fileName, compress } = data;
+					nv.saveDocument(fileName, compress);
+					break;
+				}
+				case "save_html": {
+					const { fileName, canvasId } = data;
+					// Note: currently fails as esm is inaccesbile.
+					// nv.saveHTML(fileName, canvasId, esm);
+					break;
+				}
+				case "save_image": {
+					nv.sameImage(data);
+					break;
+				}
+				case "save_scene": {
+					nv.saveScene(data);
+					break;
+				}
+			}
+		});
+
 		// All the logic for cleaning up the event listeners and the nv object
 		return () => {
 			disposer.disposeAll();
