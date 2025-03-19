@@ -226,7 +226,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         file_name : str
             The file name to save the page as.
         canvas_id : str
-            The id of the canvas that NiiVue will be attatched to.
+            The id of the canvas that NiiVue will be attached to.
         """
         self.send({
             'type': 'save_html',

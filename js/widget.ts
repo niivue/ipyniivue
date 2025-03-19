@@ -36,7 +36,7 @@ export default {
 		});
 
 		// Handle any message directions from the nv object.
-		model.on("msg:custom", (payload: { type: string; data: list }) => {
+		model.on("msg:custom", (payload: { type: string; data }) => {
 			const { type, data } = payload;
 			switch (type) {
 				case "save_document": {
@@ -51,7 +51,7 @@ export default {
 					break;
 				}
 				case "save_image": {
-					nv.sameImage(data);
+					nv.saveImage(data);
 					break;
 				}
 				case "save_scene": {
