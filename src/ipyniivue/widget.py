@@ -3,7 +3,7 @@ Widgets representing NiiVue model instances as well as volume, mesh, and drawing
 
 Aside from setting up the Mesh, Volume, Drawing, and NiiVue widgets, this module
 contains many of the classes needed to make NiiVue instances work, such as classes
-to load objects in, change attributes of the instance, and more.
+to load objects in, change attributes of this instance, and more.
 """
 
 import pathlib
@@ -110,23 +110,48 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
     def load_volumes(self, volumes: list):
         """
-        Load a list of volumes into the widget.
+        Load a list of volume objects.
 
         Parameters
         ----------
         volumes : list
             A list of dictionaries containing the volume information.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv = NiiVue()
+            nv.load_volumes([{"path": "mni152.nii.gz"}])
+
         """
         volumes = [Volume(**item) for item in volumes]
         self._volumes = volumes
 
     def add_volume(self, volume: dict):
-        """Add a single volume to the widget.
+        """
+        Add a new volume to the widget.
 
         Parameters
         ----------
         volume : dict
             A dictionary containing the volume information.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv = NiiVue()
+            nv.add_volume({"path": "mni152.nii.gz"})
+
         """
         self._volumes = [*self._volumes, Volume(**volume)]
 
@@ -139,17 +164,36 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         -------
         list
             A list of dictionairies containing the volume information.
+
+        Examples
+        --------
+        ::
+
+            print(nv.volumes)
+
         """
         return list(self._volumes)
 
     def load_drawings(self, drawings: list):
         """
-        Load a list of drawings into the widget.
+        Load a list of drawings objects.
 
         Parameters
         ----------
         drawings : list
             A list of dictionaries containing the drawing information.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv = NiiVue()
+            nv.load_drawings([{"path": "lesion.nii.gz"}])
+
         """
         drawings = [Drawing(**item) for item in drawings]
         self._drawings = drawings
@@ -163,17 +207,36 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         -------
         list
             A list of dictionairies containing the drawing information.
+
+        Examples
+        --------
+        ::
+
+            print(nv.drawings)
+
         """
         return list(self._drawings)
 
     def load_meshes(self, meshes: list):
         """
-        Load a list of meshes into the widget.
+        Load a list of meshes objects.
 
         Parameters
         ----------
         meshes : list
             A list of dictionaries containing the mesh information.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv = NiiVue()
+            nv.load_meshes([{"path": "BrainMesh_ICBM152.lh.mz3"}])
+
         """
         meshes = [Mesh(**item) for item in meshes]
         self._meshes = meshes
@@ -186,6 +249,18 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         ----------
         mesh : dict
             A dictionary containing the mesh information.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv = NiiVue()
+            nv.add_mesh({"path": "BrainMesh_ICBM152.lh.mz3"})
+
         """
         self._meshes = [*self._meshes, mesh]
 
@@ -198,6 +273,13 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         -------
         list
             A list of dictionairies containing the mesh information.
+
+        Examples
+        --------
+        ::
+
+            print(nv.meshes)
+
         """
         return list(self._meshes)
 
