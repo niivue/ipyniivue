@@ -3,7 +3,7 @@ Widgets representing NiiVue model instances as well as volume, mesh, and drawing
 
 Aside from setting up the Mesh, Volume, Drawing, and NiiVue widgets, this module
 contains many of the classes needed to make NiiVue instances work, such as classes
-to load objects in, change attributes of the instance, and more.
+to load objects in, change attributes of this instance, and more.
 """
 
 import pathlib
