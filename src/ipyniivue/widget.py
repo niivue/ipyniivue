@@ -201,6 +201,117 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """
         return list(self._meshes)
 
+    def save_document(self, file_name: str = "document.nvd", compress: bool = True):
+        """
+        Save the entire scene with settings as a document.
+
+        Parameters
+        ----------
+        file_name : str
+            The file name to save the document as.
+        compress : bool
+            A value represneing if the file should be compressed.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv.save_document("mydoc.nvd", False)
+
+        """
+        self.send({
+            'type': 'save_document',
+            'data': [file_name, compress]
+        })
+
+    def save_html(self, file_name: str = "untitled.html", canvas_id: str = "gl1"):
+        """
+        Save the current instance as an html page.
+
+        Parameters
+        ----------
+        file_name : str
+            The file name to save the page as.
+        canvas_id : str
+            The id of the canvas that NiiVue will be attached to.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv.save_html("mypage.html")
+
+        """
+        self.send({
+            'type': 'save_html',
+            'data': [file_name, canvas_id]
+        })
+
+    def save_image(self, file_name: str = "image.nii.gz", save_drawing: bool = True,
+                   index_volume: int = 0):
+        """
+        Save the current image as a nii file.
+
+        Parameters
+        ----------
+        file_name : str
+            The file name to save the image as.
+        save_drawing : bool
+            A value representing if the drawings should be saved.
+        index_volume : int
+            The volume layer which should be saved (0 for background)
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv.save_image("myimage.nii.gz", True, 2)
+
+        """
+        self.send({
+            'type': 'save_image',
+            'data': [file_name, save_drawing, index_volume]
+        })
+
+    def save_scene(self, file_name: str = "scene.png"):
+        """
+        Save the current scene with the provided file name.
+
+        Parameters
+        ----------
+        file_name : str
+            The file name to save the scene as.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv.save_scene("myscene.png")
+
+        """
+        self.send({
+            'type': 'save_scene',
+            'data': [file_name]
+        })
+
+
+
 
 class WidgetObserver:
     """Creates an observer on the `attribute` of `object` for a `widget`."""
