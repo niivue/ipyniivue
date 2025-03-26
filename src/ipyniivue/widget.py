@@ -211,6 +211,17 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             The file name to save the document as.
         compress : bool
             A value represneing if the file should be compressed.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv.save_document("mydoc.nvd", False)
+
         """
         self.send({
             'type': 'save_document',
@@ -227,6 +238,17 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             The file name to save the page as.
         canvas_id : str
             The id of the canvas that NiiVue will be attached to.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv.save_html("mypage.html")
+
         """
         self.send({
             'type': 'save_html',
@@ -246,6 +268,17 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             A value representing if the drawings should be saved.
         index_volume : int
             The volume layer which should be saved (0 for background)
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv.save_image("myimage.nii.gz", True, 2)
+
         """
         self.send({
             'type': 'save_image',
@@ -260,6 +293,17 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         ----------
         file_name : str
             The file name to save the scene as.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        ::
+
+            nv.save_scene("myscene.png")
+
         """
         self.send({
             'type': 'save_scene',

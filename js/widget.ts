@@ -41,7 +41,7 @@ export default {
 			switch (type) {
 				case "save_document": {
 					const { fileName, compress } = data;
-					nv.saveDocument(fileName, compress);
+					// nv.saveDocument(fileName, compress);
 					break;
 				}
 				case "save_html": {
@@ -51,7 +51,7 @@ export default {
 					break;
 				}
 				case "save_image": {
-					nv.saveImage(data);
+					// nv.saveImage(data);
 					break;
 				}
 				case "save_scene": {
