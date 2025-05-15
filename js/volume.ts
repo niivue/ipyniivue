@@ -6,11 +6,11 @@ import type { Model, VolumeModel } from "./types.ts";
  * Create a new NVImage and attach the necessary event listeners
  * Returns the NVImage and a cleanup function that removes the event listeners.
  */
-function create_volume(
+async function create_volume(
 	nv: niivue.Niivue,
 	vmodel: VolumeModel,
-): [niivue.NVImage, () => void] {
-	const volume = new niivue.NVImage(
+): Promise<[niivue.NVImage, () => void]> {
+	const volume = await niivue.NVImage.new(
 		vmodel.get("path").data.buffer as ArrayBuffer, // dataBuffer
 		lib.unique_id(vmodel), // name
 		vmodel.get("colormap"), // colormap
@@ -90,7 +90,7 @@ export async function render_volumes(
 		// We know that the new volumes are the same as the old volumes,
 		// except for the last one. We can just add the last volume.
 		const vmodel = vmodels[vmodels.length - 1];
-		const [volume, cleanup] = create_volume(nv, vmodel);
+		const [volume, cleanup] = await create_volume(nv, vmodel);
 		disposer.register(volume, cleanup);
 		nv.addVolume(volume);
 		return;
@@ -106,7 +106,7 @@ export async function render_volumes(
 
 	// create each volume and add one-by-one
 	for (const vmodel of vmodels) {
-		const [volume, cleanup] = create_volume(nv, vmodel);
+		const [volume, cleanup] = await create_volume(nv, vmodel);
 		disposer.register(volume, cleanup);
 		nv.addVolume(volume);
 	}
