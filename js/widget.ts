@@ -24,11 +24,9 @@ export default {
 
 		nv.createEmptyDrawing();
 
-		// Any time we change the options, we need to update the nv object
-		// and redraw the scene.
+		// Any time we change the options, we need to update the nv gl
 		model.on("change:_opts", () => {
 			nv.document.opts = { ...nv.opts, ...model.get("_opts") };
-			nv.drawScene();
 			nv.updateGLVolume();
 		});
 		model.on("change:height", () => {

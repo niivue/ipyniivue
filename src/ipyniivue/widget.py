@@ -7,6 +7,7 @@ to load objects in, change attributes of this instance, and more.
 """
 
 import pathlib
+import uuid
 
 import anywidget
 import ipywidgets
@@ -36,10 +37,23 @@ class Mesh(ipywidgets.Widget):
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
+    id = t.Unicode(default_value="").tag(sync=True)
     rgba255 = t.List([0, 0, 0, 0]).tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     visible = t.Bool(True).tag(sync=True)
     layers = t.List([]).tag(sync=True, to_json=mesh_layers_serializer)
+
+    @t.validate('path')
+    def _validate_path(self, proposal):
+        if 'path' in self._trait_values and self.path and self.path != proposal['value']:
+            raise t.TraitError('Cannot modify path once set.')
+        return proposal['value']
+
+    @t.validate('id')
+    def _validate_id(self, proposal):
+        if 'id' in self._trait_values and self.id and self.id != proposal['value']:
+            raise t.TraitError('Cannot modify id once set.')
+        return proposal['value']
 
 
 class Volume(ipywidgets.Widget):
@@ -54,6 +68,7 @@ class Volume(ipywidgets.Widget):
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
+    id = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     colormap = t.Unicode("gray").tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
@@ -61,6 +76,17 @@ class Volume(ipywidgets.Widget):
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     frame4D = t.Int(0).tag(sync=True)
 
+    @t.validate('path')
+    def _validate_path(self, proposal):
+        if 'path' in self._trait_values and self.path and self.path != proposal['value']:
+            raise t.TraitError('Cannot modify path once set.')
+        return proposal['value']
+
+    @t.validate('id')
+    def _validate_id(self, proposal):
+        if 'id' in self._trait_values and self.id and self.id != proposal['value']:
+            raise t.TraitError('Cannot modify id once set.')
+        return proposal['value']
 
 class Drawing(ipywidgets.Widget):
     """
@@ -74,9 +100,22 @@ class Drawing(ipywidgets.Widget):
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
+    id = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     colormap = t.List([0, 0, 0, 0]).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
+
+    @t.validate('path')
+    def _validate_path(self, proposal):
+        if 'path' in self._trait_values and self.path and self.path != proposal['value']:
+            raise t.TraitError('Cannot modify path once set.')
+        return proposal['value']
+
+    @t.validate('id')
+    def _validate_id(self, proposal):
+        if 'id' in self._trait_values and self.id and self.id != proposal['value']:
+            raise t.TraitError('Cannot modify id once set.')
+        return proposal['value']
 
 class NiiVue(OptionsMixin, anywidget.AnyWidget):
     """

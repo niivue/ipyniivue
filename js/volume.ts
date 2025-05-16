@@ -10,6 +10,7 @@ async function create_volume(
 	nv: niivue.Niivue,
 	vmodel: VolumeModel,
 ): Promise<[niivue.NVImage, () => void]> {
+	console.log('create volume called')
 	const volume = await niivue.NVImage.new(
 		vmodel.get("path").data.buffer as ArrayBuffer, // dataBuffer
 		lib.unique_id(vmodel), // name
@@ -30,6 +31,10 @@ async function create_volume(
 		vmodel.get("colorbar_visible"), // colorbarVisible
 		undefined, // colormapLabel
 	);
+
+	vmodel.set("id", volume.id);
+	vmodel.save_changes();
+
 	function colorbar_visible_changed() {
 		volume.colorbarVisible = vmodel.get("colorbar_visible");
 		nv.updateGLVolume();
@@ -83,31 +88,67 @@ export async function render_volumes(
 		model,
 		model.get("_volumes"),
 	);
-	const curr_names = nv.volumes.map((v) => v.name);
-	const new_names = vmodels.map(lib.unique_id);
-	const update_type = lib.determine_update_type(curr_names, new_names);
-	if (update_type === "add") {
-		// We know that the new volumes are the same as the old volumes,
-		// except for the last one. We can just add the last volume.
-		const vmodel = vmodels[vmodels.length - 1];
-		const [volume, cleanup] = await create_volume(nv, vmodel);
-		disposer.register(volume, cleanup);
-		nv.addVolume(volume);
-		return;
+  
+	const backend_volumes = vmodels;
+	const frontend_volumes = nv.volumes;
+	
+	const backend_volume_map = new Map<string, VolumeModel>();
+	const frontend_volume_map = new Map<string, niivue.NVImage>();
+  
+	// create backend volume map, use 'id' value if available, otherwise use temp key
+	backend_volumes.forEach((vmodel, index) => {
+		const id = vmodel.get("id") || `__temp_id__${index}`;
+		backend_volume_map.set(id, vmodel);
+	});
+  
+	// create frontend volume map
+	frontend_volumes.forEach((volume, index) => {
+		const id = volume.id || `__temp_id__${index}`;
+		frontend_volume_map.set(id, volume);
+	});
+
+	console.log('render_volumes called');
+	console.log('backend_volumes:', backend_volumes, backend_volumes.length);
+	console.log('frontend_volumes:', frontend_volumes, frontend_volumes.length);
+  
+	// add volumes
+	for (const [id, vmodel] of backend_volume_map.entries()) {
+		if (!frontend_volume_map.has(id) || vmodel.get("id") === "") {
+			// case: volume is in backend but not in frontend, or id is empty
+			// result: add volume
+			const [volume, cleanup] = await create_volume(nv, vmodel);
+			disposer.register(volume, cleanup);
+			nv.addVolume(volume);
+		}
 	}
-	// HERE can be the place to add more update types
-	// ...
-
-	// We don't know what the update type is, so we need to remove all volumes
-	// and add the new ones.
-
-	// clear all volumes
-	disposer.disposeAll("image");
-
-	// create each volume and add one-by-one
-	for (const vmodel of vmodels) {
-		const [volume, cleanup] = await create_volume(nv, vmodel);
-		disposer.register(volume, cleanup);
-		nv.addVolume(volume);
+  
+	// remove volumes
+	for (const [id, volume] of frontend_volume_map.entries()) {
+		if (!backend_volume_map.has(id)) {
+			// case: volume is in frontend but not in backend
+			// result: remove volume
+			nv.removeVolume(volume);
+			disposer.dispose(volume.id);
+		}
 	}
+  
+	// match frontend volume order to backend order
+	const new_volumes_order: niivue.NVImage[] = [];
+	backend_volumes.forEach((vmodel) => {
+		const id = vmodel.get("id") || "";
+		const volume = nv.volumes.find((v: niivue.NVImage) => v.id === id);
+		if (volume) {
+			new_volumes_order.push(volume);
+		} else {
+			// handle case where volume was just added and id isn't set yet
+			const temp_index = backend_volumes.indexOf(vmodel);
+			const temp_id = `__temp_id__${temp_index}`;
+			const volume_temp = nv.volumes.find((v: niivue.NVImage) => v.id === temp_id);
+			if (volume_temp) {
+				new_volumes_order.push(volume_temp);
+			}
+		}
+	});
+	nv.volumes = new_volumes_order;
+	nv.updateGLVolume();
 }

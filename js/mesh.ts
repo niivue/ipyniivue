@@ -32,6 +32,12 @@ export async function create_mesh(
 			layer.cal_max ?? null,
 		);
 	}
+
+	mesh.updateMesh(nv.gl);
+
+	mmodel.set("id", mesh.id);
+	mmodel.save_changes();
+
 	function opacity_changed() {
 		mesh.opacity = mmodel.get("opacity");
 		mesh.updateMesh(nv.gl);
@@ -65,31 +71,57 @@ export async function render_meshes(
 	model: Model,
 	disposer: lib.Disposer,
 ) {
-	const mmodels = await lib.gather_models<MeshModel>(
-		model,
-		model.get("_meshes"),
-	);
-	const curr_names = nv.meshes.map((m) => m.name);
-	const new_names = mmodels.map(lib.unique_id);
-	const update_type = lib.determine_update_type(curr_names, new_names);
-	if (update_type === "add") {
-		// We know that the new meshes are the same as the old meshes,
-		// except for the last one. We can just add the last mesh.
-		const mmodel = mmodels[mmodels.length - 1];
-		const [mesh, cleanup] = await create_mesh(nv, mmodel);
-		disposer.register(mesh, cleanup);
-		nv.addMesh(mesh);
-		return;
-	}
+    const mmodels = await lib.gather_models<MeshModel>(
+        model,
+        model.get("_meshes"),
+    );
 
-	// If we can't determine the update type, we need
-	// to remove all the meshes
-	disposer.disposeAll("mesh");
+    const backend_meshes = mmodels;
+    const frontend_meshes = nv.meshes;
 
-	// create each mesh and add one-by-one
-	for (const mmodel of mmodels) {
-		const [mesh, cleanup] = await create_mesh(nv, mmodel);
-		disposer.register(mesh, cleanup);
-		nv.addMesh(mesh);
-	}
+    const backend_mesh_map = new Map<string, MeshModel>();
+    const frontend_mesh_map = new Map<string, niivue.NVMesh>();
+
+    // create backend mesh map
+    backend_meshes.forEach((mmodel, index) => {
+        const id = mmodel.get("id") || `__temp_id__${index}`;
+        backend_mesh_map.set(id, mmodel);
+    });
+
+    // create frontend mesh map
+    frontend_meshes.forEach((mesh, index) => {
+        const id = mesh.id || `__temp_id__${index}`;
+        frontend_mesh_map.set(id, mesh);
+    });
+
+    // add meshes
+    for (const [id, mmodel] of backend_mesh_map.entries()) {
+		if (!frontend_mesh_map.has(id) || mmodel.get("id") === "") {
+            // Create and add the mesh
+            const [mesh, cleanup] = await create_mesh(nv, mmodel);
+            disposer.register(mesh, cleanup);
+            nv.addMesh(mesh);
+        }
+    }
+
+    // remove meshes
+    for (const [id, mesh] of frontend_mesh_map.entries()) {
+        if (!backend_mesh_map.has(id)) {
+            // Remove mesh
+            nv.removeMesh(mesh);
+            disposer.dispose(mesh.id);
+        }
+    }
+
+    // Match frontend mesh order to backend order
+    const new_meshes_order: niivue.NVMesh[] = [];
+    backend_meshes.forEach((mmodel) => {
+        const id = mmodel.get("id") || "";
+        const mesh = nv.meshes.find((m: niivue.NVMesh) => m.id === id);
+        if (mesh) {
+            new_meshes_order.push(mesh);
+        }
+    });
+    nv.meshes = new_meshes_order;
+    nv.updateGLVolume();
 }
