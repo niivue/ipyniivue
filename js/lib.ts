@@ -38,12 +38,15 @@ export function gather_models<T extends AnyModel>(
  */
 export class Disposer {
 	#disposers = new Map<string, () => void>();
-  
-	register(obj: { id: string } | { id: string | undefined }, disposer: () => void): void {
+
+	register(
+		obj: { id: string } | { id: string | undefined },
+		disposer: () => void,
+	): void {
 		const id = obj.id || "";
 		this.#disposers.set(id, disposer);
 	}
-  
+
 	dispose(id: string): void {
 		const dispose = this.#disposers.get(id);
 		if (dispose) {

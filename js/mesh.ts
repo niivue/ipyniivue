@@ -71,57 +71,70 @@ export async function render_meshes(
 	model: Model,
 	disposer: lib.Disposer,
 ) {
-    const mmodels = await lib.gather_models<MeshModel>(
-        model,
-        model.get("_meshes"),
-    );
+	const mmodels = await lib.gather_models<MeshModel>(
+		model,
+		model.get("_meshes"),
+	);
 
-    const backend_meshes = mmodels;
-    const frontend_meshes = nv.meshes;
+	const backend_meshes = mmodels;
+	const frontend_meshes = nv.meshes;
 
-    const backend_mesh_map = new Map<string, MeshModel>();
-    const frontend_mesh_map = new Map<string, niivue.NVMesh>();
+	const backend_mesh_map = new Map<string, MeshModel>();
+	const frontend_mesh_map = new Map<string, niivue.NVMesh>();
 
-    // create backend mesh map
-    backend_meshes.forEach((mmodel, index) => {
-        const id = mmodel.get("id") || `__temp_id__${index}`;
-        backend_mesh_map.set(id, mmodel);
-    });
+	// Create backend mesh map
+	let backendIndex = 0;
+	for (const mmodel of backend_meshes) {
+		const id = mmodel.get("id") || `__temp_id__${backendIndex}`;
+		backend_mesh_map.set(id, mmodel);
+		backendIndex++;
+	}
 
-    // create frontend mesh map
-    frontend_meshes.forEach((mesh, index) => {
-        const id = mesh.id || `__temp_id__${index}`;
-        frontend_mesh_map.set(id, mesh);
-    });
+	// Create frontend mesh map
+	let frontendIndex = 0;
+	for (const mesh of frontend_meshes) {
+		const id = mesh.id || `__temp_id__${frontendIndex}`;
+		frontend_mesh_map.set(id, mesh);
+		frontendIndex++;
+	}
 
-    // add meshes
-    for (const [id, mmodel] of backend_mesh_map.entries()) {
+	// add meshes
+	for (const [id, mmodel] of backend_mesh_map.entries()) {
 		if (!frontend_mesh_map.has(id) || mmodel.get("id") === "") {
-            // Create and add the mesh
-            const [mesh, cleanup] = await create_mesh(nv, mmodel);
-            disposer.register(mesh, cleanup);
-            nv.addMesh(mesh);
-        }
-    }
+			// Create and add the mesh
+			const [mesh, cleanup] = await create_mesh(nv, mmodel);
+			disposer.register(mesh, cleanup);
+			nv.addMesh(mesh);
+		}
+	}
 
-    // remove meshes
-    for (const [id, mesh] of frontend_mesh_map.entries()) {
-        if (!backend_mesh_map.has(id)) {
-            // Remove mesh
-            nv.removeMesh(mesh);
-            disposer.dispose(mesh.id);
-        }
-    }
+	// remove meshes
+	for (const [id, mesh] of frontend_mesh_map.entries()) {
+		if (!backend_mesh_map.has(id)) {
+			// Remove mesh
+			nv.removeMesh(mesh);
+			disposer.dispose(mesh.id);
+		}
+	}
 
-    // Match frontend mesh order to backend order
-    const new_meshes_order: niivue.NVMesh[] = [];
-    backend_meshes.forEach((mmodel) => {
-        const id = mmodel.get("id") || "";
-        const mesh = nv.meshes.find((m: niivue.NVMesh) => m.id === id);
-        if (mesh) {
-            new_meshes_order.push(mesh);
-        }
-    });
-    nv.meshes = new_meshes_order;
-    nv.updateGLVolume();
+	// match frontend mesh order to backend order
+	const new_meshes_order: niivue.NVMesh[] = [];
+	let backendOrderIndex = 0;
+	for (const mmodel of backend_meshes) {
+		const id = mmodel.get("id") || "";
+		const mesh = nv.meshes.find((m: niivue.NVMesh) => m.id === id);
+		if (mesh) {
+			new_meshes_order.push(mesh);
+		} else {
+			// handle case where mesh was just added and id isn't set yet
+			const temp_id = `__temp_id__${backendOrderIndex}`;
+			const mesh_temp = nv.meshes.find((m: niivue.NVMesh) => m.id === temp_id);
+			if (mesh_temp) {
+				new_meshes_order.push(mesh_temp);
+			}
+		}
+		backendOrderIndex++;
+	}
+	nv.meshes = new_meshes_order;
+	nv.updateGLVolume();
 }

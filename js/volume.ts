@@ -10,7 +10,7 @@ async function create_volume(
 	nv: niivue.Niivue,
 	vmodel: VolumeModel,
 ): Promise<[niivue.NVImage, () => void]> {
-	console.log('create volume called')
+	console.log("create volume called");
 	const volume = await niivue.NVImage.new(
 		vmodel.get("path").data.buffer as ArrayBuffer, // dataBuffer
 		lib.unique_id(vmodel), // name
@@ -88,29 +88,29 @@ export async function render_volumes(
 		model,
 		model.get("_volumes"),
 	);
-  
+
 	const backend_volumes = vmodels;
 	const frontend_volumes = nv.volumes;
-	
+
 	const backend_volume_map = new Map<string, VolumeModel>();
 	const frontend_volume_map = new Map<string, niivue.NVImage>();
-  
+
 	// create backend volume map, use 'id' value if available, otherwise use temp key
 	backend_volumes.forEach((vmodel, index) => {
 		const id = vmodel.get("id") || `__temp_id__${index}`;
 		backend_volume_map.set(id, vmodel);
 	});
-  
+
 	// create frontend volume map
 	frontend_volumes.forEach((volume, index) => {
 		const id = volume.id || `__temp_id__${index}`;
 		frontend_volume_map.set(id, volume);
 	});
 
-	console.log('render_volumes called');
-	console.log('backend_volumes:', backend_volumes, backend_volumes.length);
-	console.log('frontend_volumes:', frontend_volumes, frontend_volumes.length);
-  
+	console.log("render_volumes called");
+	console.log("backend_volumes:", backend_volumes, backend_volumes.length);
+	console.log("frontend_volumes:", frontend_volumes, frontend_volumes.length);
+
 	// add volumes
 	for (const [id, vmodel] of backend_volume_map.entries()) {
 		if (!frontend_volume_map.has(id) || vmodel.get("id") === "") {
@@ -121,7 +121,7 @@ export async function render_volumes(
 			nv.addVolume(volume);
 		}
 	}
-  
+
 	// remove volumes
 	for (const [id, volume] of frontend_volume_map.entries()) {
 		if (!backend_volume_map.has(id)) {
@@ -131,24 +131,27 @@ export async function render_volumes(
 			disposer.dispose(volume.id);
 		}
 	}
-  
+
 	// match frontend volume order to backend order
 	const new_volumes_order: niivue.NVImage[] = [];
-	backend_volumes.forEach((vmodel) => {
+	let backendOrderIndex = 0;
+	for (const vmodel of backend_volumes) {
 		const id = vmodel.get("id") || "";
 		const volume = nv.volumes.find((v: niivue.NVImage) => v.id === id);
 		if (volume) {
 			new_volumes_order.push(volume);
 		} else {
 			// handle case where volume was just added and id isn't set yet
-			const temp_index = backend_volumes.indexOf(vmodel);
-			const temp_id = `__temp_id__${temp_index}`;
-			const volume_temp = nv.volumes.find((v: niivue.NVImage) => v.id === temp_id);
+			const temp_id = `__temp_id__${backendOrderIndex}`;
+			const volume_temp = nv.volumes.find(
+				(v: niivue.NVImage) => v.id === temp_id,
+			);
 			if (volume_temp) {
 				new_volumes_order.push(volume_temp);
 			}
 		}
-	});
+		backendOrderIndex++;
+	}
 	nv.volumes = new_volumes_order;
 	nv.updateGLVolume();
 }
