@@ -81,8 +81,9 @@ def generate_mixin(options: dict[str, typing.Any]):
         "",
     ]
 
-    docstring = ('"""Automatically generated property. ' +
-                 'See generate_options_mixin.py."""')
+    docstring = (
+        '"""Automatically generated property. ' + 'See generate_options_mixin.py."""'
+    )
     for option, value in options.items():
         snake_name = RENAME_OVERRIDES.get(option, camel_to_snake(option))
         hint = type_hint(value)

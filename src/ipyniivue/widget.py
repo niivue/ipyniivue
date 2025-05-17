@@ -7,7 +7,6 @@ to load objects in, change attributes of this instance, and more.
 """
 
 import pathlib
-import uuid
 
 import anywidget
 import ipywidgets
@@ -43,17 +42,21 @@ class Mesh(ipywidgets.Widget):
     visible = t.Bool(True).tag(sync=True)
     layers = t.List([]).tag(sync=True, to_json=mesh_layers_serializer)
 
-    @t.validate('path')
+    @t.validate("path")
     def _validate_path(self, proposal):
-        if 'path' in self._trait_values and self.path and self.path != proposal['value']:
-            raise t.TraitError('Cannot modify path once set.')
-        return proposal['value']
+        if (
+            "path" in self._trait_values
+            and self.path
+            and self.path != proposal["value"]
+        ):
+            raise t.TraitError("Cannot modify path once set.")
+        return proposal["value"]
 
-    @t.validate('id')
+    @t.validate("id")
     def _validate_id(self, proposal):
-        if 'id' in self._trait_values and self.id and self.id != proposal['value']:
-            raise t.TraitError('Cannot modify id once set.')
-        return proposal['value']
+        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
+            raise t.TraitError("Cannot modify id once set.")
+        return proposal["value"]
 
 
 class Volume(ipywidgets.Widget):
@@ -76,17 +79,22 @@ class Volume(ipywidgets.Widget):
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     frame4D = t.Int(0).tag(sync=True)
 
-    @t.validate('path')
+    @t.validate("path")
     def _validate_path(self, proposal):
-        if 'path' in self._trait_values and self.path and self.path != proposal['value']:
-            raise t.TraitError('Cannot modify path once set.')
-        return proposal['value']
+        if (
+            "path" in self._trait_values
+            and self.path
+            and self.path != proposal["value"]
+        ):
+            raise t.TraitError("Cannot modify path once set.")
+        return proposal["value"]
 
-    @t.validate('id')
+    @t.validate("id")
     def _validate_id(self, proposal):
-        if 'id' in self._trait_values and self.id and self.id != proposal['value']:
-            raise t.TraitError('Cannot modify id once set.')
-        return proposal['value']
+        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
+            raise t.TraitError("Cannot modify id once set.")
+        return proposal["value"]
+
 
 class Drawing(ipywidgets.Widget):
     """
@@ -105,17 +113,22 @@ class Drawing(ipywidgets.Widget):
     colormap = t.List([0, 0, 0, 0]).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
 
-    @t.validate('path')
+    @t.validate("path")
     def _validate_path(self, proposal):
-        if 'path' in self._trait_values and self.path and self.path != proposal['value']:
-            raise t.TraitError('Cannot modify path once set.')
-        return proposal['value']
+        if (
+            "path" in self._trait_values
+            and self.path
+            and self.path != proposal["value"]
+        ):
+            raise t.TraitError("Cannot modify path once set.")
+        return proposal["value"]
 
-    @t.validate('id')
+    @t.validate("id")
     def _validate_id(self, proposal):
-        if 'id' in self._trait_values and self.id and self.id != proposal['value']:
-            raise t.TraitError('Cannot modify id once set.')
-        return proposal['value']
+        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
+            raise t.TraitError("Cannot modify id once set.")
+        return proposal["value"]
+
 
 class NiiVue(OptionsMixin, anywidget.AnyWidget):
     """
@@ -344,10 +357,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             nv.save_document("mydoc.nvd", False)
 
         """
-        self.send({
-            'type': 'save_document',
-            'data': [file_name, compress]
-        })
+        self.send({"type": "save_document", "data": [file_name, compress]})
 
     def save_html(self, file_name: str = "untitled.html", canvas_id: str = "gl1"):
         """
@@ -371,13 +381,14 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             nv.save_html("mypage.html")
 
         """
-        self.send({
-            'type': 'save_html',
-            'data': [file_name, canvas_id]
-        })
+        self.send({"type": "save_html", "data": [file_name, canvas_id]})
 
-    def save_image(self, file_name: str = "image.nii.gz", save_drawing: bool = True,
-                   index_volume: int = 0):
+    def save_image(
+        self,
+        file_name: str = "image.nii.gz",
+        save_drawing: bool = True,
+        index_volume: int = 0,
+    ):
         """
         Save the current image as a nii file.
 
@@ -401,10 +412,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             nv.save_image("myimage.nii.gz", True, 2)
 
         """
-        self.send({
-            'type': 'save_image',
-            'data': [file_name, save_drawing, index_volume]
-        })
+        self.send(
+            {"type": "save_image", "data": [file_name, save_drawing, index_volume]}
+        )
 
     def save_scene(self, file_name: str = "scene.png"):
         """
@@ -426,12 +436,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             nv.save_scene("myscene.png")
 
         """
-        self.send({
-            'type': 'save_scene',
-            'data': [file_name]
-        })
-
-
+        self.send({"type": "save_scene", "data": [file_name]})
 
 
 class WidgetObserver:
