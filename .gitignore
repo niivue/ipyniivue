@@ -3,6 +3,7 @@ node_modules
 dist
 images
 docs/build
+package-lock.json
 
 # Python
 __pycache__

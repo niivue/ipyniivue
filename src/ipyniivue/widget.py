@@ -36,10 +36,27 @@ class Mesh(ipywidgets.Widget):
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
+    id = t.Unicode(default_value="").tag(sync=True)
     rgba255 = t.List([0, 0, 0, 0]).tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     visible = t.Bool(True).tag(sync=True)
     layers = t.List([]).tag(sync=True, to_json=mesh_layers_serializer)
+
+    @t.validate("path")
+    def _validate_path(self, proposal):
+        if (
+            "path" in self._trait_values
+            and self.path
+            and self.path != proposal["value"]
+        ):
+            raise t.TraitError("Cannot modify path once set.")
+        return proposal["value"]
+
+    @t.validate("id")
+    def _validate_id(self, proposal):
+        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
+            raise t.TraitError("Cannot modify id once set.")
+        return proposal["value"]
 
 
 class Volume(ipywidgets.Widget):
@@ -54,12 +71,29 @@ class Volume(ipywidgets.Widget):
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
+    id = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     colormap = t.Unicode("gray").tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     frame4D = t.Int(0).tag(sync=True)
+
+    @t.validate("path")
+    def _validate_path(self, proposal):
+        if (
+            "path" in self._trait_values
+            and self.path
+            and self.path != proposal["value"]
+        ):
+            raise t.TraitError("Cannot modify path once set.")
+        return proposal["value"]
+
+    @t.validate("id")
+    def _validate_id(self, proposal):
+        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
+            raise t.TraitError("Cannot modify id once set.")
+        return proposal["value"]
 
 
 class Drawing(ipywidgets.Widget):
@@ -74,9 +108,27 @@ class Drawing(ipywidgets.Widget):
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
+    id = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     colormap = t.List([0, 0, 0, 0]).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
+
+    @t.validate("path")
+    def _validate_path(self, proposal):
+        if (
+            "path" in self._trait_values
+            and self.path
+            and self.path != proposal["value"]
+        ):
+            raise t.TraitError("Cannot modify path once set.")
+        return proposal["value"]
+
+    @t.validate("id")
+    def _validate_id(self, proposal):
+        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
+            raise t.TraitError("Cannot modify id once set.")
+        return proposal["value"]
+
 
 class NiiVue(OptionsMixin, anywidget.AnyWidget):
     """
@@ -305,10 +357,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             nv.save_document("mydoc.nvd", False)
 
         """
-        self.send({
-            'type': 'save_document',
-            'data': [file_name, compress]
-        })
+        self.send({"type": "save_document", "data": [file_name, compress]})
 
     def save_html(self, file_name: str = "untitled.html", canvas_id: str = "gl1"):
         """
@@ -332,13 +381,14 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             nv.save_html("mypage.html")
 
         """
-        self.send({
-            'type': 'save_html',
-            'data': [file_name, canvas_id]
-        })
+        self.send({"type": "save_html", "data": [file_name, canvas_id]})
 
-    def save_image(self, file_name: str = "image.nii.gz", save_drawing: bool = True,
-                   index_volume: int = 0):
+    def save_image(
+        self,
+        file_name: str = "image.nii.gz",
+        save_drawing: bool = True,
+        index_volume: int = 0,
+    ):
         """
         Save the current image as a nii file.
 
@@ -362,10 +412,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             nv.save_image("myimage.nii.gz", True, 2)
 
         """
-        self.send({
-            'type': 'save_image',
-            'data': [file_name, save_drawing, index_volume]
-        })
+        self.send(
+            {"type": "save_image", "data": [file_name, save_drawing, index_volume]}
+        )
 
     def save_scene(self, file_name: str = "scene.png"):
         """
@@ -387,12 +436,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             nv.save_scene("myscene.png")
 
         """
-        self.send({
-            'type': 'save_scene',
-            'data': [file_name]
-        })
-
-
+        self.send({"type": "save_scene", "data": [file_name]})
 
 
 class WidgetObserver:

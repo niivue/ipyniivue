@@ -34,39 +34,31 @@ export function gather_models<T extends AnyModel>(
 }
 
 /**
- * Determine what type of update is necessary to go from `old_arr` to `new_arr`.
- *
- * If cannot determine the update type, return "unknown". Only "add" is supported
- * for now.
- */
-export function determine_update_type<T>(
-	old_arr: Array<T>,
-	new_arr: Array<T>,
-): "add" | "unknown" {
-	if (
-		old_arr.length === new_arr.length - 1 &&
-		old_arr.every((v, i) => new_arr[i] === v)
-	) {
-		return "add";
-	}
-	return "unknown";
-}
-
-/**
  * A class to keep track of disposers for callbacks for updating the scene.
  */
 export class Disposer {
 	#disposers = new Map<string, () => void>();
-	register(obj: nv.NVMesh | nv.NVImage, disposer: () => void): void {
-		const prefix = obj instanceof nv.NVMesh ? "mesh" : "image";
-		this.#disposers.set(`${prefix}:${obj.name}`, disposer);
+
+	register(
+		obj: { id: string } | { id: string | undefined },
+		disposer: () => void,
+	): void {
+		const id = obj.id || "";
+		this.#disposers.set(id, disposer);
 	}
-	disposeAll(kind?: "mesh" | "image"): void {
-		for (const [name, dispose] of this.#disposers) {
-			if (!kind || name.startsWith(kind)) {
-				dispose();
-				this.#disposers.delete(name);
-			}
+
+	dispose(id: string): void {
+		const dispose = this.#disposers.get(id);
+		if (dispose) {
+			dispose();
+			this.#disposers.delete(id);
 		}
+	}
+
+	disposeAll(): void {
+		for (const dispose of this.#disposers.values()) {
+			dispose();
+		}
+		this.#disposers.clear();
 	}
 }
