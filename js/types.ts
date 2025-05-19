@@ -39,6 +39,7 @@ export type MeshModel = { model_id: string } & AnyModel<{
 }>;
 
 export type Model = AnyModel<{
+	id: string;
 	height: number;
 	_volumes: Array<string>;
 	_meshes: Array<string>;

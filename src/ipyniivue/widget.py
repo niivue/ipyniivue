@@ -7,6 +7,7 @@ to load objects in, change attributes of this instance, and more.
 """
 
 import pathlib
+import uuid
 
 import anywidget
 import ipywidgets
@@ -144,6 +145,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     """
 
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
+
+    id = t.Unicode(default_value=str(uuid.uuid4()), read_only=True).tag(sync=True)
 
     height = t.Int().tag(sync=True)
     _opts = t.Dict({}).tag(sync=True, to_json=serialize_options)
