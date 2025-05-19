@@ -33,6 +33,7 @@ async function create_volume(
 	);
 
 	vmodel.set("id", volume.id);
+	vmodel.set("name", volume.name);
 	vmodel.save_changes();
 
 	function colorbar_visible_changed() {

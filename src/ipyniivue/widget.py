@@ -37,6 +37,7 @@ class Mesh(ipywidgets.Widget):
         sync=True, to_json=file_serializer
     )
     id = t.Unicode(default_value="").tag(sync=True)
+    name = t.Unicode(default_value="").tag(sync=True)
     rgba255 = t.List([0, 0, 0, 0]).tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     visible = t.Bool(True).tag(sync=True)
@@ -72,6 +73,7 @@ class Volume(ipywidgets.Widget):
         sync=True, to_json=file_serializer
     )
     id = t.Unicode(default_value="").tag(sync=True)
+    name = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     colormap = t.Unicode("gray").tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)

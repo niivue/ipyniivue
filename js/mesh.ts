@@ -36,6 +36,7 @@ export async function create_mesh(
 	mesh.updateMesh(nv.gl);
 
 	mmodel.set("id", mesh.id);
+	mmodel.set("name", mesh.name);
 	mmodel.save_changes();
 
 	function opacity_changed() {
