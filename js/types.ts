@@ -5,7 +5,7 @@ interface File {
 	data: DataView;
 }
 
-export type VolumeModel = { model_id: string } & AnyModel<{
+export type VolumeModel = AnyModel<{
 	path: File;
 	id: string;
 	colormap: string;
@@ -27,7 +27,7 @@ interface MeshLayer {
 	cal_max?: number;
 }
 
-export type MeshModel = { model_id: string } & AnyModel<{
+export type MeshModel = AnyModel<{
 	path: File;
 	id: string;
 	rgba255: Array<number>;

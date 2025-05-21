@@ -1,6 +1,5 @@
 import type { AnyModel } from "@anywidget/types";
-import * as nv from "@niivue/niivue";
-import type { Model } from "./types.ts";
+import type { Model, VolumeModel } from "./types.ts";
 
 /**
  * Generates a unique file name for a volume (using the model id and the volume path)
@@ -9,13 +8,9 @@ import type { Model } from "./types.ts";
  * to the volume sent from Python. This function generates a new filename for the volume
  * using the existing filename and model
  */
-export function unique_id(model: {
-	model_id: string;
-	get(name: "path"): { name: string };
-}): string {
-	const path = model.get("path");
-	// take the first 6 characters of the model_id, it should be unique enough
-	const id = model.model_id.slice(0, 6);
+export function unique_id(vmodel: VolumeModel): string {
+	const id = vmodel.get("id");
+	const path = vmodel.get("path");
 	return `${id}:${path.name}`;
 }
 
