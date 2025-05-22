@@ -165,6 +165,61 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         }
         super().__init__(height=height, _opts=_opts, _volumes=[], _meshes=[])
 
+        # handle messages coming from frontend
+        self.on_msg(self._handle_custom_msg)
+
+    def _handle_custom_msg(self, content, buffers):
+        event = content.get("event", "")
+        data = content.get("data", {})
+        if event == "add_volume":
+            self._add_volume_from_frontend(data)
+            return
+        elif event == "add_mesh":
+            self._add_mesh_from_frontend(data)
+            return
+
+    def _add_volume_from_frontend(self, volume_data):
+        index = volume_data.pop("index", None)
+        volume = Volume(**volume_data)
+        if index is not None and 0 <= index <= len(self._volumes):
+            self._volumes = self._volumes[:index] + [volume] + self._volumes[index:]
+        else:
+            self._volumes = [*self._volumes, volume]
+
+    def _add_mesh_from_frontend(self, mesh_data):
+        index = mesh_data.pop("index", None)
+        mesh = Mesh(**mesh_data)
+        if index is not None and 0 <= index <= len(self._meshes):
+            self._meshes = self._meshes[:index] + [mesh] + self._meshes[index:]
+        else:
+            self._meshes = [*self._meshes, mesh]
+
+    def get_volume_index_by_id(self, id_: str) -> int:
+        """Return the index of the volume with the given id.
+
+        Parameters
+        ----------
+        id_ : str
+            The id of the volume.
+        """
+        for idx, vol in enumerate(self._volumes):
+            if vol.id == id_:
+                return idx
+        return -1
+
+    def get_mesh_index_by_id(self, id_: str) -> int:
+        """Return the index of the mesh with the given id.
+
+        Parameters
+        ----------
+        id_ : str
+            The id of the mesh.
+        """
+        for idx, mesh in enumerate(self._meshes):
+            if mesh.id == id_:
+                return idx
+        return -1
+
     def load_volumes(self, volumes: list):
         """
         Load a list of volume objects.
