@@ -36,10 +36,14 @@ def file_serializer(instance: typing.Union[pathlib.Path, str], widget: object):
     ----------
     instance : typing.Union[pathLib.Path, str]
         The path to a file to be serialized.
+        Placeholder <fromfrontend> allowed for images added
+        from the frontend.
     widget : object
         The NiiVue widget the instance is a part of.
     """
     if isinstance(instance, str):
+        if instance == "<fromfrontend>":
+            return {"name": "<fromfrontend>", "data": b""}
         # Make sure we have a pathlib.Path instance
         instance = pathlib.Path(instance)
     return {"name": instance.name, "data": instance.read_bytes()}

@@ -7,6 +7,7 @@ to load objects in, change attributes of this instance, and more.
 """
 
 import pathlib
+import uuid
 
 import anywidget
 import ipywidgets
@@ -37,6 +38,7 @@ class Mesh(ipywidgets.Widget):
         sync=True, to_json=file_serializer
     )
     id = t.Unicode(default_value="").tag(sync=True)
+    name = t.Unicode(default_value="").tag(sync=True)
     rgba255 = t.List([0, 0, 0, 0]).tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     visible = t.Bool(True).tag(sync=True)
@@ -72,6 +74,7 @@ class Volume(ipywidgets.Widget):
         sync=True, to_json=file_serializer
     )
     id = t.Unicode(default_value="").tag(sync=True)
+    name = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     colormap = t.Unicode("gray").tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
@@ -143,6 +146,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
 
+    id = t.Unicode(default_value=str(uuid.uuid4()), read_only=True).tag(sync=True)
+
     height = t.Int().tag(sync=True)
     _opts = t.Dict({}).tag(sync=True, to_json=serialize_options)
     _volumes = t.List(t.Instance(Volume), default_value=[]).tag(
@@ -159,6 +164,61 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             for k, v in options.items()
         }
         super().__init__(height=height, _opts=_opts, _volumes=[], _meshes=[])
+
+        # handle messages coming from frontend
+        self.on_msg(self._handle_custom_msg)
+
+    def _handle_custom_msg(self, content, buffers):
+        event = content.get("event", "")
+        data = content.get("data", {})
+        if event == "add_volume":
+            self._add_volume_from_frontend(data)
+            return
+        elif event == "add_mesh":
+            self._add_mesh_from_frontend(data)
+            return
+
+    def _add_volume_from_frontend(self, volume_data):
+        index = volume_data.pop("index", None)
+        volume = Volume(**volume_data)
+        if index is not None and 0 <= index <= len(self._volumes):
+            self._volumes = self._volumes[:index] + [volume] + self._volumes[index:]
+        else:
+            self._volumes = [*self._volumes, volume]
+
+    def _add_mesh_from_frontend(self, mesh_data):
+        index = mesh_data.pop("index", None)
+        mesh = Mesh(**mesh_data)
+        if index is not None and 0 <= index <= len(self._meshes):
+            self._meshes = self._meshes[:index] + [mesh] + self._meshes[index:]
+        else:
+            self._meshes = [*self._meshes, mesh]
+
+    def get_volume_index_by_id(self, id_: str) -> int:
+        """Return the index of the volume with the given id.
+
+        Parameters
+        ----------
+        id_ : str
+            The id of the volume.
+        """
+        for idx, vol in enumerate(self._volumes):
+            if vol.id == id_:
+                return idx
+        return -1
+
+    def get_mesh_index_by_id(self, id_: str) -> int:
+        """Return the index of the mesh with the given id.
+
+        Parameters
+        ----------
+        id_ : str
+            The id of the mesh.
+        """
+        for idx, mesh in enumerate(self._meshes):
+            if mesh.id == id_:
+                return idx
+        return -1
 
     def load_volumes(self, volumes: list):
         """

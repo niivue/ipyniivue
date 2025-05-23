@@ -10,14 +10,21 @@ export async function create_mesh(
 	nv: niivue.Niivue,
 	mmodel: MeshModel,
 ): Promise<[niivue.NVMesh, () => void]> {
-	const mesh = await niivue.NVMesh.readMesh(
-		mmodel.get("path").data.buffer as ArrayBuffer, // buffer
-		mmodel.get("path").name, // name (used to identify the mesh)
-		nv.gl, // gl
-		mmodel.get("opacity"), // opacity
-		new Uint8Array(mmodel.get("rgba255")), // rgba255
-		mmodel.get("visible"), // visible
-	);
+	let mesh: niivue.NVMesh;
+	if (mmodel.get("path").name === "<fromfrontend>") {
+		const idx = nv.meshes.findIndex((m) => m.id === mmodel.get("id"));
+		mesh = nv.meshes[idx];
+	} else {
+		mesh = await niivue.NVMesh.readMesh(
+			mmodel.get("path").data.buffer as ArrayBuffer, // buffer
+			mmodel.get("path").name, // name (used to identify the mesh)
+			nv.gl, // gl
+			mmodel.get("opacity"), // opacity
+			new Uint8Array(mmodel.get("rgba255")), // rgba255
+			mmodel.get("visible"), // visible
+		);
+	}
+
 	for (const layer of mmodel.get("layers")) {
 		// https://github.com/niivue/niivue/blob/10d71baf346b23259570d7b2aa463749adb5c95b/src/nvmesh.ts#L1432C5-L1455C6
 		niivue.NVMeshLoaders.readLayer(
@@ -36,6 +43,7 @@ export async function create_mesh(
 	mesh.updateMesh(nv.gl);
 
 	mmodel.set("id", mesh.id);
+	mmodel.set("name", mesh.name);
 	mmodel.save_changes();
 
 	function opacity_changed() {
@@ -100,11 +108,20 @@ export async function render_meshes(
 
 	// add meshes
 	for (const [id, mmodel] of backend_mesh_map.entries()) {
-		if (!frontend_mesh_map.has(id) || mmodel.get("id") === "") {
-			// Create and add the mesh
+		const fromFrontend = mmodel.get("path").name === "<fromfrontend>";
+		const inFrontend = frontend_mesh_map.has(id);
+		const emptyId = mmodel.get("id") === "";
+
+		if (fromFrontend && !inFrontend) {
+			// Cleanup meshes from frontend that no longer exist in the frontend
+			disposer.dispose(id);
+		} else if (!inFrontend || emptyId || (fromFrontend && inFrontend)) {
+			// Add or sync meshes as needed
 			const [mesh, cleanup] = await create_mesh(nv, mmodel);
 			disposer.register(mesh, cleanup);
-			nv.addMesh(mesh);
+			if (!fromFrontend) {
+				nv.addMesh(mesh);
+			}
 		}
 	}
 

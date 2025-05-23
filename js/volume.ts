@@ -10,29 +10,35 @@ async function create_volume(
 	nv: niivue.Niivue,
 	vmodel: VolumeModel,
 ): Promise<[niivue.NVImage, () => void]> {
-	console.log("create volume called");
-	const volume = await niivue.NVImage.new(
-		vmodel.get("path").data.buffer as ArrayBuffer, // dataBuffer
-		lib.unique_id(vmodel), // name
-		vmodel.get("colormap"), // colormap
-		vmodel.get("opacity"), // opacity
-		undefined, // pairedImgData
-		vmodel.get("cal_min"), // cal_min
-		vmodel.get("cal_max"), // cal_max
-		undefined, // trustMinCalMinMax
-		undefined, // percentileFrac
-		undefined, // ignoreZeroVoxels
-		undefined, // useQFormNotSForm
-		undefined, // colormapNegative
-		vmodel.get("frame4D"), // frame4D
-		undefined, // imageType
-		undefined, // cal_minNeg
-		undefined, // cal_maxNeg
-		vmodel.get("colorbar_visible"), // colorbarVisible
-		undefined, // colormapLabel
-	);
+	let volume: niivue.NVImage;
+	if (vmodel.get("path").name === "<fromfrontend>") {
+		const idx = nv.getVolumeIndexByID(vmodel.get("id"));
+		volume = nv.volumes[idx];
+	} else {
+		volume = await niivue.NVImage.new(
+			vmodel.get("path").data.buffer as ArrayBuffer, // dataBuffer
+			lib.unique_id(vmodel), // name
+			vmodel.get("colormap"), // colormap
+			vmodel.get("opacity"), // opacity
+			undefined, // pairedImgData
+			vmodel.get("cal_min"), // cal_min
+			vmodel.get("cal_max"), // cal_max
+			undefined, // trustMinCalMinMax
+			undefined, // percentileFrac
+			undefined, // ignoreZeroVoxels
+			undefined, // useQFormNotSForm
+			undefined, // colormapNegative
+			vmodel.get("frame4D"), // frame4D
+			undefined, // imageType
+			undefined, // cal_minNeg
+			undefined, // cal_maxNeg
+			vmodel.get("colorbar_visible"), // colorbarVisible
+			undefined, // colormapLabel
+		);
+	}
 
 	vmodel.set("id", volume.id);
+	vmodel.set("name", volume.name);
 	vmodel.save_changes();
 
 	function colorbar_visible_changed() {
@@ -113,12 +119,20 @@ export async function render_volumes(
 
 	// add volumes
 	for (const [id, vmodel] of backend_volume_map.entries()) {
-		if (!frontend_volume_map.has(id) || vmodel.get("id") === "") {
-			// case: volume is in backend but not in frontend, or id is empty
-			// result: add volume
+		const fromFrontend = vmodel.get("path").name === "<fromfrontend>";
+		const inFrontend = frontend_volume_map.has(id);
+		const emptyId = vmodel.get("id") === "";
+
+		if (fromFrontend && !inFrontend) {
+			// Cleanup volumes from frontend that no longer exist in the frontend
+			disposer.dispose(id);
+		} else if (!inFrontend || emptyId || (fromFrontend && inFrontend)) {
+			// Add volumes that are missing or need syncing
 			const [volume, cleanup] = await create_volume(nv, vmodel);
 			disposer.register(volume, cleanup);
-			nv.addVolume(volume);
+			if (!fromFrontend) {
+				nv.addVolume(volume);
+			}
 		}
 	}
 
