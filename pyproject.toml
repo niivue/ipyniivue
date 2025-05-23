@@ -13,6 +13,7 @@ readme = "README.md"
 dev = ["watchfiles", "jupyterlab", "ruff", "pytest"]
 
 [pytest]
+nb_test_files = true
 
 [tool.hatch.envs.default]
 features = ["dev"]
