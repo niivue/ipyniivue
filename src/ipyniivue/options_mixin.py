@@ -574,3 +574,23 @@ class OptionsMixin:
     def render_overlay_blend(self, value: float):
         """Automatically generated property. See generate_options_mixin.py."""
         self._opts = {**self._opts, "renderOverlayBlend": value}
+
+    @property
+    def slice_mosaic_string(self) -> str:
+        """Automatically generated property. See generate_options_mixin.py."""
+        return self._opts.get("sliceMosaicString", "")
+
+    @slice_mosaic_string.setter
+    def slice_mosaic_string(self, value: str):
+        """Automatically generated property. See generate_options_mixin.py."""
+        self._opts = {**self._opts, "sliceMosaicString": value}
+
+    @property
+    def center_mosaic(self) -> bool:
+        """Automatically generated property. See generate_options_mixin.py."""
+        return self._opts.get("centerMosaic", False)
+
+    @center_mosaic.setter
+    def center_mosaic(self, value: bool):
+        """Automatically generated property. See generate_options_mixin.py."""
+        self._opts = {**self._opts, "centerMosaic": value}
