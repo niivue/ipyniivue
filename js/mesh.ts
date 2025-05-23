@@ -11,7 +11,7 @@ export async function create_mesh(
 	mmodel: MeshModel,
 ): Promise<[niivue.NVMesh, () => void]> {
 	let mesh: niivue.NVMesh;
-	if (mmodel.get("path").name === "<preloaded>") {
+	if (mmodel.get("path").name === "<fromfrontend>") {
 		const idx = nv.meshes.findIndex((m) => m.id === mmodel.get("id"));
 		mesh = nv.meshes[idx];
 	} else {
