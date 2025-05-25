@@ -159,6 +159,8 @@ if __name__ == "__main__":
         "legendTextColor": (1.0, 1.0, 1.0, 1.0),
         "multiplanarLayout": MuliplanarType.AUTO,
         "renderOverlayBlend": 1.0,
+        "sliceMosaicString": "",
+        "centerMosaic": False,
     }
     code = generate_mixin(DEFAULT_OPTIONS)
     loc = pathlib.Path(__file__).parent / "../src/ipyniivue/options_mixin.py"
