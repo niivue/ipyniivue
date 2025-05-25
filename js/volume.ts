@@ -3,6 +3,57 @@ import * as lib from "./lib.ts";
 import type { Model, VolumeModel } from "./types.ts";
 
 /**
+ * Set up event listeners to handle changes to the volume properties.
+ * Returns a function to clean up the event listeners.
+ */
+function setup_volume_property_listeners(
+	volume: niivue.NVImage,
+	vmodel: VolumeModel,
+	nv: niivue.Niivue,
+): () => void {
+	function colorbar_visible_changed() {
+		volume.colorbarVisible = vmodel.get("colorbar_visible");
+		nv.updateGLVolume();
+	}
+	function cal_min_changed() {
+		volume.cal_min = vmodel.get("cal_min");
+		nv.updateGLVolume();
+	}
+	function cal_max_changed() {
+		volume.cal_min = vmodel.get("cal_min");
+		nv.updateGLVolume();
+	}
+	function colormap_changed() {
+		volume.colormap = vmodel.get("colormap");
+		nv.updateGLVolume();
+	}
+	function opacity_changed() {
+		volume.opacity = vmodel.get("opacity");
+		nv.updateGLVolume();
+	}
+	function frame4D_changed() {
+		volume.frame4D = vmodel.get("frame4D");
+		nv.updateGLVolume();
+	}
+
+	vmodel.on("change:colorbar_visible", colorbar_visible_changed);
+	vmodel.on("change:cal_min", cal_min_changed);
+	vmodel.on("change:cal_max", cal_max_changed);
+	vmodel.on("change:colormap", colormap_changed);
+	vmodel.on("change:opacity", opacity_changed);
+	vmodel.on("change:frame4D", frame4D_changed);
+
+	return () => {
+		vmodel.off("change:colorbar_visible", colorbar_visible_changed);
+		vmodel.off("change:cal_min", cal_min_changed);
+		vmodel.off("change:cal_max", cal_max_changed);
+		vmodel.off("change:colormap", colormap_changed);
+		vmodel.off("change:opacity", opacity_changed);
+		vmodel.off("change:frame4D", frame4D_changed);
+	};
+}
+
+/**
  * Create a new NVImage and attach the necessary event listeners
  * Returns the NVImage and a cleanup function that removes the event listeners.
  */
@@ -41,46 +92,18 @@ async function create_volume(
 	vmodel.set("name", volume.name);
 	vmodel.save_changes();
 
-	function colorbar_visible_changed() {
-		volume.colorbarVisible = vmodel.get("colorbar_visible");
-		nv.updateGLVolume();
-	}
-	function cal_min_changed() {
-		volume.cal_min = vmodel.get("cal_min");
-		nv.updateGLVolume();
-	}
-	function cal_max_changed() {
-		volume.cal_min = vmodel.get("cal_min");
-		nv.updateGLVolume();
-	}
-	function colormap_changed() {
-		volume.colormap = vmodel.get("colormap");
-		nv.updateGLVolume();
-	}
-	function opacity_changed() {
-		volume.opacity = vmodel.get("opacity");
-		nv.updateGLVolume();
-	}
-	function frame4D_changed() {
-		volume.frame4D = vmodel.get("frame4D");
-		nv.updateGLVolume();
-	}
+	// Handle changes to the volume properties
+	const cleanup_volume_listeners = setup_volume_property_listeners(
+		volume,
+		vmodel,
+		nv,
+	);
 
-	vmodel.on("change:colorbar_visible", colorbar_visible_changed);
-	vmodel.on("change:cal_min", cal_min_changed);
-	vmodel.on("change:cal_max", cal_max_changed);
-	vmodel.on("change:colormap", colormap_changed);
-	vmodel.on("change:opacity", opacity_changed);
-	vmodel.on("change:frame4D", frame4D_changed);
 	return [
 		volume,
 		() => {
-			vmodel.off("change:colorbar_visible", colorbar_visible_changed);
-			vmodel.off("change:cal_min", cal_min_changed);
-			vmodel.off("change:cal_max", cal_max_changed);
-			vmodel.off("change:colormap", colormap_changed);
-			vmodel.off("change:opacity", opacity_changed);
-			vmodel.off("change:frame4D", frame4D_changed);
+			// Remove event listeners for volume properties
+			cleanup_volume_listeners();
 		},
 	];
 }
