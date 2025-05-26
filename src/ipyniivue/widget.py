@@ -741,21 +741,21 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             A function that takes one argument—a ``dict`` containing drag release
             parameters with the following keys:
 
-            - **fracStart** (list of float): Starting fractional coordinates
+            - **frac_start** (list of float): Starting fractional coordinates
             ``[X, Y, Z]`` before the drag.
-            - **fracEnd** (list of float): Ending fractional coordinates
+            - **frac_end** (list of float): Ending fractional coordinates
             ``[X, Y, Z]`` after the drag.
-            - **voxStart** (list of float): Starting voxel coordinates ``[X, Y, Z]``
+            - **vox_start** (list of float): Starting voxel coordinates ``[X, Y, Z]``
             before the drag.
-            - **voxEnd** (list of float): Ending voxel coordinates ``[X, Y, Z]``
+            - **vox_end** (list of float): Ending voxel coordinates ``[X, Y, Z]``
             after the drag.
-            - **mmStart** (list of float): Starting coordinates in millimeters
+            - **mm_start** (list of float): Starting coordinates in millimeters
             ``[X, Y, Z]`` before the drag.
-            - **mmEnd** (list of float): Ending coordinates in millimeters
+            - **mm_end** (list of float): Ending coordinates in millimeters
             ``[X, Y, Z]`` after the drag.
-            - **mmLength** (float): Length of the drag in millimeters.
-            - **tileIdx** (int): Index of the image tile where the drag occurred.
-            - **axCorSag** (int): View index (axial=0, coronal=1, sagittal=2) where
+            - **mm_length** (float): Length of the drag in millimeters.
+            - **tile_idx** (int): Index of the image tile where the drag occurred.
+            - **ax_cor_sag** (int): View index (axial=0, coronal=1, sagittal=2) where
             the drag occurred.
 
         remove : bool, optional
@@ -862,7 +862,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             A function that takes one argument—a ``dict`` containing the new
             location data—with the following keys:
 
-            - **axCorSag** (int): The view index where the location changed.
+            - **ax_cor_sag** (int): The view index where the location changed.
             - **frac** (list of float): The fractional coordinates ``[X, Y, Z]``
             in the volume.
             - **mm** (list of float): The coordinates ``[X, Y, Z]`` in millimeters.
