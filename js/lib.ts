@@ -1,19 +1,6 @@
 import type { AnyModel } from "@anywidget/types";
 import type { Model, VolumeModel } from "./types.ts";
 
-/**
- * Generates a unique file name for a volume (using the model id and the volume path)
- *
- * We need to keep track of the volumes from Python somehow, and the model_id is unique
- * to the volume sent from Python. This function generates a new filename for the volume
- * using the existing filename and model
- */
-export function unique_id(vmodel: VolumeModel): string {
-	const id = vmodel.get("id");
-	const path = vmodel.get("path");
-	return `${id}:${path.name}`;
-}
-
 export function gather_models<T extends AnyModel>(
 	model: Model,
 	ids: Array<string>,

@@ -3,44 +3,14 @@ import * as lib from "./lib.ts";
 import type { Model, VolumeModel } from "./types.ts";
 
 /**
- * Create a new NVImage and attach the necessary event listeners
- * Returns the NVImage and a cleanup function that removes the event listeners.
+ * Set up event listeners to handle changes to the volume properties.
+ * Returns a function to clean up the event listeners.
  */
-async function create_volume(
-	nv: niivue.Niivue,
+function setup_volume_property_listeners(
+	volume: niivue.NVImage,
 	vmodel: VolumeModel,
-): Promise<[niivue.NVImage, () => void]> {
-	let volume: niivue.NVImage;
-	if (vmodel.get("path").name === "<fromfrontend>") {
-		const idx = nv.getVolumeIndexByID(vmodel.get("id"));
-		volume = nv.volumes[idx];
-	} else {
-		volume = await niivue.NVImage.new(
-			vmodel.get("path").data.buffer as ArrayBuffer, // dataBuffer
-			lib.unique_id(vmodel), // name
-			vmodel.get("colormap"), // colormap
-			vmodel.get("opacity"), // opacity
-			undefined, // pairedImgData
-			vmodel.get("cal_min"), // cal_min
-			vmodel.get("cal_max"), // cal_max
-			undefined, // trustMinCalMinMax
-			undefined, // percentileFrac
-			undefined, // ignoreZeroVoxels
-			undefined, // useQFormNotSForm
-			undefined, // colormapNegative
-			vmodel.get("frame4D"), // frame4D
-			undefined, // imageType
-			undefined, // cal_minNeg
-			undefined, // cal_maxNeg
-			vmodel.get("colorbar_visible"), // colorbarVisible
-			undefined, // colormapLabel
-		);
-	}
-
-	vmodel.set("id", volume.id);
-	vmodel.set("name", volume.name);
-	vmodel.save_changes();
-
+	nv: niivue.Niivue,
+): () => void {
 	function colorbar_visible_changed() {
 		volume.colorbarVisible = vmodel.get("colorbar_visible");
 		nv.updateGLVolume();
@@ -72,15 +42,68 @@ async function create_volume(
 	vmodel.on("change:colormap", colormap_changed);
 	vmodel.on("change:opacity", opacity_changed);
 	vmodel.on("change:frame4D", frame4D_changed);
+
+	return () => {
+		vmodel.off("change:colorbar_visible", colorbar_visible_changed);
+		vmodel.off("change:cal_min", cal_min_changed);
+		vmodel.off("change:cal_max", cal_max_changed);
+		vmodel.off("change:colormap", colormap_changed);
+		vmodel.off("change:opacity", opacity_changed);
+		vmodel.off("change:frame4D", frame4D_changed);
+	};
+}
+
+/**
+ * Create a new NVImage and attach the necessary event listeners
+ * Returns the NVImage and a cleanup function that removes the event listeners.
+ */
+async function create_volume(
+	nv: niivue.Niivue,
+	vmodel: VolumeModel,
+): Promise<[niivue.NVImage, () => void]> {
+	let volume: niivue.NVImage;
+	if (vmodel.get("path").name === "<fromfrontend>") {
+		const idx = nv.getVolumeIndexByID(vmodel.get("id"));
+		volume = nv.volumes[idx];
+	} else {
+		volume = await niivue.NVImage.new(
+			vmodel.get("path").data.buffer as ArrayBuffer, // dataBuffer
+			vmodel.get("path").name, // name
+			vmodel.get("colormap"), // colormap
+			vmodel.get("opacity"), // opacity
+			undefined, // pairedImgData
+			vmodel.get("cal_min"), // cal_min
+			vmodel.get("cal_max"), // cal_max
+			undefined, // trustMinCalMinMax
+			undefined, // percentileFrac
+			undefined, // ignoreZeroVoxels
+			undefined, // useQFormNotSForm
+			undefined, // colormapNegative
+			vmodel.get("frame4D"), // frame4D
+			undefined, // imageType
+			undefined, // cal_minNeg
+			undefined, // cal_maxNeg
+			vmodel.get("colorbar_visible"), // colorbarVisible
+			undefined, // colormapLabel
+		);
+	}
+
+	vmodel.set("id", volume.id);
+	vmodel.set("name", volume.name);
+	vmodel.save_changes();
+
+	// Handle changes to the volume properties
+	const cleanup_volume_listeners = setup_volume_property_listeners(
+		volume,
+		vmodel,
+		nv,
+	);
+
 	return [
 		volume,
 		() => {
-			vmodel.off("change:colorbar_visible", colorbar_visible_changed);
-			vmodel.off("change:cal_min", cal_min_changed);
-			vmodel.off("change:cal_max", cal_max_changed);
-			vmodel.off("change:colormap", colormap_changed);
-			vmodel.off("change:opacity", opacity_changed);
-			vmodel.off("change:frame4D", frame4D_changed);
+			// Remove event listeners for volume properties
+			cleanup_volume_listeners();
 		},
 	];
 }

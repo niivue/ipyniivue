@@ -1,9 +1,264 @@
 import * as niivue from "@niivue/niivue";
-import type { Model } from "./types.ts";
+import type { CustomMessagePayload, Model } from "./types.ts";
 
 import { Disposer } from "./lib.ts";
 import { render_meshes } from "./mesh.ts";
 import { render_volumes } from "./volume.ts";
+
+// Attach Niivue event handlers
+function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
+	nv.onImageLoaded = async (volume: niivue.NVImage) => {
+		// Check if the volume is already in the backend
+		const volumeID = volume.id;
+		const volumeModels = await Promise.all(
+			model.get("_volumes").map(async (v: string) => {
+				const modelID = v.slice("IPY_MODEL_".length);
+				const vmodel = await model.widget_manager.get_model(modelID);
+				return vmodel;
+			}),
+		);
+
+		const backendVolumeIds = volumeModels.map(
+			(vmodel) => vmodel?.get("id") || "",
+		);
+
+		if (!backendVolumeIds.includes(volumeID)) {
+			// Volume is new; create a new VolumeModel in the backend
+			// volume.toUint8Array().slice().buffer for data
+			const volumeData = {
+				path: "<fromfrontend>",
+				id: volume.id,
+				name: volume.name,
+				colormap: volume.colormap,
+				opacity: volume.opacity,
+				colorbar_visible: volume.colorbarVisible,
+				cal_min: volume.cal_min,
+				cal_max: volume.cal_max,
+				index: nv.getVolumeIndexByID(volume.id),
+			};
+
+			// Send a custom message to the backend to add the volume with the index
+			model.send({
+				event: "add_volume",
+				data: volumeData,
+			});
+		}
+
+		model.send({
+			event: "image_loaded",
+			data: {
+				id: volume.id,
+			},
+		});
+	};
+
+	nv.onMeshLoaded = async (mesh: niivue.NVMesh) => {
+		// Check if the mesh is already in the backend
+		const meshID = mesh.id;
+		const meshModels = await Promise.all(
+			model.get("_meshes").map(async (m: string) => {
+				const modelID = m.slice("IPY_MODEL_".length);
+				const mmodel = await model.widget_manager.get_model(modelID);
+				return mmodel;
+			}),
+		);
+
+		const backendMeshIds = meshModels.map((mmodel) => mmodel?.get("id") || "");
+
+		if (!backendMeshIds.includes(meshID)) {
+			// Mesh is new; create a new MeshModel in the backend
+			const meshData = {
+				path: "<fromfrontend>",
+				id: mesh.id,
+				name: mesh.name,
+				rgba255: Array.from(mesh.rgba255),
+				opacity: mesh.opacity,
+				layers: [], //don't send layers for now
+				visible: mesh.visible,
+				index: nv.meshes.findIndex((m) => m.id === mesh.id),
+			};
+
+			// Send a custom message to the backend to add the mesh
+			model.send({
+				event: "add_mesh",
+				data: meshData,
+			});
+		}
+
+		model.send({
+			event: "mesh_loaded",
+			data: {
+				id: mesh.id,
+			},
+		});
+	};
+
+	// update other event handlers
+	nv.onAzimuthElevationChange = (azimuth: number, elevation: number) => {
+		model.send({
+			event: "azimuth_elevation_change",
+			data: { azimuth, elevation },
+		});
+	};
+
+	nv.onClickToSegment = (data: { mm3: number; mL: number }) => {
+		model.send({
+			event: "click_to_segment",
+			data,
+		});
+	};
+
+	nv.onClipPlaneChange = (clipPlane: number[]) => {
+		model.send({
+			event: "clip_plane_change",
+			data: clipPlane,
+		});
+	};
+
+	// todo: can add more properties, see niivue/packages/niivue/src/nvdocument.ts
+	nv.onDocumentLoaded = (document: niivue.NVDocument) => {
+		model.send({
+			event: "document_loaded",
+			data: {
+				title: document.title || "",
+				opts: document.opts || {},
+				volumes: document.volumes.map((volume) => volume.id),
+				meshes: document.meshes.map((mesh) => mesh.id),
+			},
+		});
+	};
+
+	nv.onDragRelease = (params: niivue.DragReleaseParams) => {
+		model.send({
+			event: "drag_release",
+			data: {
+				frac_start: params.fracStart,
+				frac_end: params.fracEnd,
+				vox_start: params.voxStart,
+				vox_end: params.voxEnd,
+				mm_start: params.mmStart,
+				mm_end: params.mmEnd,
+				mm_length: params.mmLength,
+				tile_idx: params.tileIdx,
+				ax_cor_sag: params.axCorSag,
+			},
+		});
+	};
+
+	nv.onFrameChange = (volume: niivue.NVImage, index: number) => {
+		model.send({
+			event: "frame_change",
+			data: {
+				id: volume.id,
+				index,
+			},
+		});
+	};
+
+	nv.onIntensityChange = (volume: niivue.NVImage) => {
+		model.send({
+			event: "intensity_change",
+			data: {
+				id: volume.id,
+			},
+		});
+	};
+
+	// biome-ignore lint/suspicious/noExplicitAny: location has unknown type in niivue library
+	nv.onLocationChange = (location: any) => {
+		model.send({
+			event: "location_change",
+			data: {
+				ax_cor_sag: location.axCorSag,
+				frac: location.frac,
+				mm: location.mm,
+				string: location.string || "",
+				values: location.values,
+				vox: location.vox,
+				xy: location.xy,
+			},
+		});
+	};
+
+	// biome-ignore lint/suspicious/noExplicitAny: LoadFromUrlParams does not exist type niivue
+	nv.onMeshAddedFromUrl = (meshOptions: any, mesh: niivue.NVMesh) => {
+		model.send({
+			event: "mesh_added_from_url",
+			data: {
+				url: meshOptions.url,
+				headers: meshOptions?.headers || {},
+				mesh: {
+					id: mesh.id,
+					name: mesh.name,
+					rgba255: Array.from(mesh.rgba255),
+					opacity: mesh.opacity,
+					visible: mesh.visible,
+				},
+			},
+		});
+	};
+
+	// biome-ignore lint/suspicious/noExplicitAny: UIData does not exist type niivue
+	nv.onMouseUp = (data: any) => {
+		model.send({
+			event: "mouse_up",
+			data: {
+				is_dragging: data.isDragging,
+				mouse_pos: data.mousePos,
+				frac_pos: data.fracPos,
+			},
+		});
+	};
+
+	// biome-ignore lint/suspicious/noExplicitAny: ImageFromUrlOptions does not exist type niivue
+	nv.onVolumeAddedFromUrl = (imageOptions: any, volume: niivue.NVImage) => {
+		model.send({
+			event: "volume_added_from_url",
+			data: {
+				url: imageOptions.url,
+				url_image_data: imageOptions?.urlImageData || "",
+				headers: imageOptions?.headers || {},
+				name: imageOptions?.name || "",
+				colormap: imageOptions?.colorMap || "gray",
+				opacity: imageOptions?.opacity || 1,
+				cal_min: imageOptions?.cal_min || Number.NaN,
+				cal_max: imageOptions?.cal_max || Number.NaN,
+				trust_cal_min_max: imageOptions?.trustCalMinMax || true,
+				percentile_frac: imageOptions?.percentileFrac || 0.02,
+				use_qform_not_sform: imageOptions?.useQFormNotSForm || false,
+				alpha_threshold: imageOptions?.alphaThreshold || false,
+				colormap_negative: imageOptions?.colormapNegative || "",
+				cal_min_neg: imageOptions?.cal_minNeg || Number.NaN,
+				cal_max_neg: imageOptions?.cal_maxNeg || Number.NaN,
+				colorbar_visible: imageOptions?.colorbarVisible || true,
+				ignore_zero_voxels: imageOptions?.ignoreZeroVoxels || false,
+				image_type: imageOptions?.imageType || 0,
+				frame4D: imageOptions?.frame4D || 0,
+				colormap_label: imageOptions?.colormapLabel || null,
+				//paired_img_data: imageOptions?.pairedImgData || null, //support? or no?
+				limit_frames4D: imageOptions?.limitFrames4D || Number.NaN,
+				is_manifest: imageOptions?.isManifest || false,
+				//url_img_data: imageOptions?.urlImgData || null, //support? or no?
+
+				volume: {
+					id: volume.id,
+					name: volume.name,
+					colormap: volume.colormap,
+					opacity: volume.opacity,
+					colorbar_visible: volume.colorbarVisible,
+					cal_min: volume.cal_min,
+					cal_max: volume.cal_max,
+				},
+			},
+		});
+	};
+
+	nv.onVolumeUpdated = () => {
+		model.send({
+			event: "volume_updated",
+		});
+	};
+}
 
 export default {
 	async render({ model, el }: { model: Model; el: HTMLElement }) {
@@ -17,79 +272,8 @@ export default {
 		const nv = new niivue.Niivue(model.get("_opts") ?? {});
 		nv.attachToCanvas(canvas);
 
-		nv.onImageLoaded = async (volume: niivue.NVImage) => {
-			// Check if the volume is already in the backend
-			const volumeID = volume.id;
-			const volumeModels = await Promise.all(
-				model.get("_volumes").map(async (v: string) => {
-					const modelID = v.slice("IPY_MODEL_".length);
-					const vmodel = await model.widget_manager.get_model(modelID);
-					return vmodel;
-				}),
-			);
-
-			const backendVolumeIds = volumeModels.map(
-				(vmodel) => vmodel?.get("id") || "",
-			);
-
-			if (!backendVolumeIds.includes(volumeID)) {
-				// Volume is new; create a new VolumeModel in the backend
-				// volume.toUint8Array().slice().buffer for data
-				const volumeData = {
-					path: "<fromfrontend>",
-					id: volume.id,
-					name: volume.name,
-					colormap: volume.colormap,
-					opacity: volume.opacity,
-					colorbar_visible: volume.colorbarVisible,
-					cal_min: volume.cal_min,
-					cal_max: volume.cal_max,
-					index: nv.getVolumeIndexByID(volume.id),
-				};
-
-				// Send a custom message to the backend to add the volume with the index
-				model.send({
-					event: "add_volume",
-					data: volumeData,
-				});
-			}
-		};
-
-		nv.onMeshLoaded = async (mesh: niivue.NVMesh) => {
-			// Check if the mesh is already in the backend
-			const meshID = mesh.id;
-			const meshModels = await Promise.all(
-				model.get("_meshes").map(async (m: string) => {
-					const modelID = m.slice("IPY_MODEL_".length);
-					const mmodel = await model.widget_manager.get_model(modelID);
-					return mmodel;
-				}),
-			);
-
-			const backendMeshIds = meshModels.map(
-				(mmodel) => mmodel?.get("id") || "",
-			);
-
-			if (!backendMeshIds.includes(meshID)) {
-				// Mesh is new; create a new MeshModel in the backend
-				const meshData = {
-					path: "<fromfrontend>",
-					id: mesh.id,
-					name: mesh.name,
-					rgba255: Array.from(mesh.rgba255),
-					opacity: mesh.opacity,
-					layers: [], //don't send layers for now
-					visible: mesh.visible,
-					index: nv.meshes.findIndex((m) => m.id === mesh.id),
-				};
-
-				// Send a custom message to the backend to add the mesh
-				model.send({
-					event: "add_mesh",
-					data: meshData,
-				});
-			}
-		};
+		// Attach niivue event handlers
+		attachNiivueEventHandlers(nv, model);
 
 		await render_volumes(nv, model, disposer);
 		model.on("change:_volumes", () => render_volumes(nv, model, disposer));
@@ -106,33 +290,6 @@ export default {
 		model.on("change:height", () => {
 			container.style.height = `${model.get("height")}px`;
 		});
-
-		// Define specific types for each case
-		type SaveDocumentData = {
-			fileName: string;
-			compress: boolean;
-		};
-
-		type SaveHTMLData = {
-			fileName: string;
-			canvasId: string;
-		};
-
-		type SaveImageData = {
-			fileName: string;
-			saveDrawing: boolean;
-			indexVolume: number;
-		};
-
-		type SaveSceneData = {
-			fileName: string;
-		};
-
-		type CustomMessagePayload =
-			| { type: "save_document"; data: SaveDocumentData }
-			| { type: "save_html"; data: SaveHTMLData }
-			| { type: "save_image"; data: SaveImageData }
-			| { type: "save_scene"; data: SaveSceneData };
 
 		// Handle any message directions from the nv object.
 		model.on("msg:custom", (payload: CustomMessagePayload) => {

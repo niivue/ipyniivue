@@ -3,6 +3,43 @@ import * as lib from "./lib.ts";
 import type { MeshModel, Model } from "./types.ts";
 
 /**
+ * Set up event listeners to handle changes to the mesh properties.
+ * Returns a function to clean up the event listeners.
+ */
+function setup_mesh_property_listeners(
+	mesh: niivue.NVMesh,
+	mmodel: MeshModel,
+	nv: niivue.Niivue,
+): () => void {
+	function opacity_changed() {
+		mesh.opacity = mmodel.get("opacity");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+	function rgba255_changed() {
+		mesh.rgba255 = new Uint8Array(mmodel.get("rgba255"));
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+	function visible_changed() {
+		mesh.visible = mmodel.get("visible");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	mmodel.on("change:opacity", opacity_changed);
+	mmodel.on("change:rgba255", rgba255_changed);
+	mmodel.on("change:visible", visible_changed);
+
+	// Return a function to remove the event listeners
+	return () => {
+		mmodel.off("change:opacity", opacity_changed);
+		mmodel.off("change:rgba255", rgba255_changed);
+		mmodel.off("change:visible", visible_changed);
+	};
+}
+
+/**
  * Create a new NVMesh and attach the necessary event listeners
  * Returns the NVMesh and a cleanup function that removes the event listeners.
  */
@@ -46,30 +83,18 @@ export async function create_mesh(
 	mmodel.set("name", mesh.name);
 	mmodel.save_changes();
 
-	function opacity_changed() {
-		mesh.opacity = mmodel.get("opacity");
-		mesh.updateMesh(nv.gl);
-		nv.updateGLVolume();
-	}
-	function rgba255_changed() {
-		mesh.rgba255 = new Uint8Array(mmodel.get("rgba255"));
-		mesh.updateMesh(nv.gl);
-		nv.updateGLVolume();
-	}
-	function visible_changed() {
-		mesh.visible = mmodel.get("visible");
-		mesh.updateMesh(nv.gl);
-		nv.updateGLVolume();
-	}
-	mmodel.on("change:opacity", opacity_changed);
-	mmodel.on("change:rgba255", rgba255_changed);
-	mmodel.on("change:visible", visible_changed);
+	// Handle changes to the mesh properties
+	const cleanup_mesh_listeners = setup_mesh_property_listeners(
+		mesh,
+		mmodel,
+		nv,
+	);
+
 	return [
 		mesh,
 		() => {
-			mmodel.off("change:opacity", opacity_changed);
-			mmodel.off("change:rgba255", rgba255_changed);
-			mmodel.off("change:visible", visible_changed);
+			// Remove event listeners for mesh properties
+			cleanup_mesh_listeners();
 		},
 	];
 }

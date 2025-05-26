@@ -12,6 +12,7 @@ import uuid
 import anywidget
 import ipywidgets
 import traitlets as t
+from ipywidgets import CallbackDispatcher
 
 from .constants import _SNAKE_TO_CAMEL_OVERRIDES
 from .options_mixin import OptionsMixin
@@ -166,17 +167,61 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         super().__init__(height=height, _opts=_opts, _volumes=[], _meshes=[])
 
         # handle messages coming from frontend
+        self._event_handlers = {}
         self.on_msg(self._handle_custom_msg)
+
+    def _register_callback(self, event_name, callback, remove=False):
+        if event_name not in self._event_handlers:
+            self._event_handlers[event_name] = CallbackDispatcher()
+        if remove:
+            self._event_handlers[event_name].remove(callback)
+        else:
+            self._event_handlers[event_name].register_callback(callback)
 
     def _handle_custom_msg(self, content, buffers):
         event = content.get("event", "")
         data = content.get("data", {})
+
+        # handle add_volume and add_mesh events separately
         if event == "add_volume":
             self._add_volume_from_frontend(data)
             return
         elif event == "add_mesh":
             self._add_mesh_from_frontend(data)
             return
+
+        # check if the event has a registered handler
+        handler = self._event_handlers.get(event)
+        if not handler:
+            return
+
+        # handle events that require specific processing
+        if event == "azimuth_elevation_change":
+            handler(data["azimuth"], data["elevation"])
+        elif event == "frame_change":
+            idx = self.get_volume_index_by_id(data["id"])
+            if idx != -1:
+                handler(self._volumes[idx], data["frame_index"])
+        elif event in {"image_loaded", "intensity_change"}:
+            idx = self.get_volume_index_by_id(data["id"])
+            if idx != -1:
+                handler(self._volumes[idx])
+            else:
+                handler(data)
+        elif event == "mesh_loaded":
+            idx = self.get_mesh_index_by_id(data["id"])
+            if idx != -1:
+                handler(self._meshes[idx])
+            else:
+                handler(data)
+        elif event == "mesh_added_from_url":
+            mesh_options = {"url": data["url"], "headers": data["headers"]}
+            handler(mesh_options, data["mesh"])
+        elif event == "volume_added_from_url":
+            image_options = {"url": data["url"], "headers": data["headers"]}
+            handler(image_options, data["volume"])
+        else:
+            handler(data)
 
     def _add_volume_from_frontend(self, volume_data):
         index = volume_data.pop("index", None)
@@ -497,6 +542,590 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
         """
         self.send({"type": "save_scene", "data": [file_name]})
+
+    """
+    Custom event callbacks
+    """
+
+    def on_azimuth_elevation_change(self, callback, remove=False):
+        """
+        Register a callback for the 'azimuth_elevation_change' event.
+
+        Set a callback function to run when the user changes the rotation of the 3D
+        rendering.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes two arguments:
+
+            - **azimuth** (float): The azimuth angle in degrees.
+            - **elevation** (float): The elevation angle in degrees.
+
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(azimuth, elevation):
+                with out:
+                    print('Azimuth:', azimuth)
+                    print('Elevation:', elevation)
+
+            nv.on_azimuth_elevation_change(my_callback)
+
+        """
+        self._register_callback("azimuth_elevation_change", callback, remove=remove)
+
+    def on_click_to_segment(self, callback, remove=False):
+        """
+        Register a callback for the 'click_to_segment' event.
+
+        Set a callback function when ``clickToSegment`` is enabled and the user clicks
+        on the image.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes one argument—a ``dict`` with the following keys:
+
+            - **mm3** (float): The segmented volume in cubic millimeters.
+            - **mL** (float): The segmented volume in milliliters.
+
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(data):
+                with out:
+                    print('Clicked to segment')
+                    print('Volume mm3:', data['mm3'])
+                    print('Volume mL:', data['mL'])
+
+            nv.on_click_to_segment(my_callback)
+
+        """
+        self._register_callback("click_to_segment", callback, remove=remove)
+
+    def on_clip_plane_change(self, callback, remove=False):
+        """
+        Register a callback for the 'clip_plane_change' event.
+
+        Set a callback function to run when the user changes the clip plane.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes one argument—a list of numbers representing the
+            clip plane.
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(clip_plane):
+                with out:
+                    print('Clip plane changed:', clip_plane)
+
+            nv.on_clip_plane_change(my_callback)
+
+        """
+        self._register_callback("clip_plane_change", callback, remove=remove)
+
+    # todo: make volumes be a list of Volumes and meshes be a list of Meshes
+    def on_document_loaded(self, callback, remove=False):
+        """
+        Register a callback for the 'document_loaded' event.
+
+        Set a callback function to run when the user loads a new NiiVue document.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes one argument—a ``dict`` representing the loaded
+            document with the following keys:
+
+            - **title** (str): The title of the loaded document.
+            - **opts** (dict): Options associated with the document.
+            - **volumes** (list of str): A list of volume IDs loaded in the document.
+            - **meshes** (list of str): A list of mesh IDs loaded in the document.
+
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(document):
+                with out:
+                    print('Document loaded:')
+                    print('Title:', document['title'])
+                    print('Options:', document['opts'])
+                    print('Volumes:', document['volumes'])
+                    print('Meshes:', document['meshes'])
+
+            nv.on_document_loaded(my_callback)
+
+        """
+        self._register_callback("document_loaded", callback, remove=remove)
+
+    def on_image_loaded(self, callback, remove=False):
+        """
+        Register a callback for the 'image_loaded' event.
+
+        Set a callback function to run when a new volume is loaded.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes one argument—a ``Volume`` object.
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(volume):
+                with out:
+                    print('Image loaded:', volume.id)
+
+            nv.on_image_loaded(my_callback)
+
+        """
+        self._register_callback("image_loaded", callback, remove=remove)
+
+    def on_drag_release(self, callback, remove=False):
+        """
+        Register a callback for the 'drag_release' event.
+
+        Set a callback function to run when the right mouse button is released
+        after dragging.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes one argument—a ``dict`` containing drag release
+            parameters with the following keys:
+
+            - **frac_start** (list of float): Starting fractional coordinates
+            ``[X, Y, Z]`` before the drag.
+            - **frac_end** (list of float): Ending fractional coordinates
+            ``[X, Y, Z]`` after the drag.
+            - **vox_start** (list of float): Starting voxel coordinates ``[X, Y, Z]``
+            before the drag.
+            - **vox_end** (list of float): Ending voxel coordinates ``[X, Y, Z]``
+            after the drag.
+            - **mm_start** (list of float): Starting coordinates in millimeters
+            ``[X, Y, Z]`` before the drag.
+            - **mm_end** (list of float): Ending coordinates in millimeters
+            ``[X, Y, Z]`` after the drag.
+            - **mm_length** (float): Length of the drag in millimeters.
+            - **tile_idx** (int): Index of the image tile where the drag occurred.
+            - **ax_cor_sag** (int): View index (axial=0, coronal=1, sagittal=2) where
+            the drag occurred.
+
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(params):
+                with out:
+                    print('Drag release event:', params)
+
+            nv.on_drag_release(my_callback)
+
+        """
+        self._register_callback("drag_release", callback, remove=remove)
+
+    def on_frame_change(self, callback, remove=False):
+        """
+        Register a callback for the 'frame_change' event.
+
+        Set a callback function to run whenever the current frame (timepoint) of a
+        4D image volume changes.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes two arguments:
+
+            - **volume** (``Volume``): The image volume object that has changed frame.
+            - **frame_index** (int): The index of the new frame.
+
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(volume, frame_index):
+                with out:
+                    print('Frame changed')
+                    print('Volume:', volume)
+                    print('Frame index:', frame_index)
+
+            nv.on_frame_change(my_callback)
+
+        """
+        self._register_callback("frame_change", callback, remove=remove)
+
+    def on_intensity_change(self, callback, remove=False):
+        """
+        Register a callback for the 'intensity_change' event.
+
+        Set a callback function to run when the user changes the intensity range
+        with the selection-box action (right click).
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes one argument—a ``Volume`` object.
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(volume):
+                with out:
+                    print('Intensity changed for volume:', volume)
+
+            nv.on_intensity_change(my_callback)
+
+        """
+        self._register_callback("intensity_change", callback, remove=remove)
+
+    # todo: maybe create NiiVueLocation and NiiVueLocationValue classes?
+    def on_location_change(self, callback, remove=False):
+        """
+        Register a callback for the 'location_change' event.
+
+        Set a callback function to run when the crosshair location changes.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes one argument—a ``dict`` containing the new
+            location data—with the following keys:
+
+            - **ax_cor_sag** (int): The view index where the location changed.
+            - **frac** (list of float): The fractional coordinates ``[X, Y, Z]``
+            in the volume.
+            - **mm** (list of float): The coordinates ``[X, Y, Z]`` in millimeters.
+            - **vox** (list of int): The voxel coordinates ``[X, Y, Z]``.
+            - **values** (list of float): Intensity values at the current location
+            for each volume.
+            - **string** (str): Formatted string representing the location and
+            intensity values.
+            - **xy** (list of float): The canvas coordinates ``[X, Y]``.
+
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(location):
+                with out:
+                    print('Location changed', location)
+
+            nv.on_location_change(my_callback)
+
+        """
+        self._register_callback("location_change", callback, remove=remove)
+
+    def on_mesh_added_from_url(self, callback, remove=False):
+        """
+        Register a callback for the 'mesh_added_from_url' event.
+
+        Set a callback function to run when a mesh is added from a URL.
+
+        **Note:** This is called before the ``mesh_loaded`` event is emitted, so
+        the mesh object will **not** be available in the callback.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes two arguments:
+
+            - **mesh_options** (dict): Dictionary containing:
+                - **url** (str): The URL from which the mesh was loaded.
+                - **headers** (dict): HTTP headers used when loading the mesh.
+
+            - **mesh** (dict): Dictionary containing:
+                - **id** (str): The ID of the mesh.
+                - **name** (str): The name of the mesh.
+                - **rgba255** (list of int): RGBA color values (0-255) of the mesh.
+                - **opacity** (float): The opacity of the mesh.
+                - **visible** (bool): Whether the mesh is visible.
+
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(mesh_options, mesh):
+                with out:
+                    print('Mesh added from URL')
+                    print('URL:', mesh_options['url'])
+                    print('Headers:', mesh_options['headers'])
+                    print('Mesh ID:', mesh['id'])
+
+            nv.on_mesh_added_from_url(my_callback)
+
+        """
+        self._register_callback("mesh_added_from_url", callback, remove=remove)
+
+    def on_mesh_loaded(self, callback, remove=False):
+        """
+        Register a callback for the 'mesh_loaded' event.
+
+        Set a callback function to run when a new mesh is loaded.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes one argument—the loaded mesh (``Mesh`` object).
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(mesh):
+                with out:
+                    print('Mesh loaded', mesh)
+
+            nv.on_mesh_loaded(my_callback)
+
+        """
+        self._register_callback("mesh_loaded", callback, remove=remove)
+
+    def on_mouse_up(self, callback, remove=False):
+        """
+        Register a callback for the 'mouse_up' event.
+
+        Set a callback function to run when the left mouse button is released.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes one argument—a ``dict`` containing mouse event data
+            with the following keys:
+
+            - **is_dragging** (bool): Indicates if a drag action is in progress
+            (``True``) or not (``False``).
+            - **mouse_pos** (tuple of int): The ``(x, y)`` pixel coordinates of the
+            mouse on the canvas when the button was released.
+            - **frac_pos** (tuple of float): The fractional position ``(X, Y, Z)``
+            within the volume, with each coordinate ranging from ``0.0`` to ``1.0``.
+
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(data):
+                with out:
+                    print('Mouse button released', data)
+
+            nv.on_mouse_up(my_callback)
+
+        """
+        self._register_callback("mouse_up", callback, remove=remove)
+
+    def on_volume_added_from_url(self, callback, remove=False):
+        """
+        Register a callback for the 'volume_added_from_url' event.
+
+        Set a callback function to run when a volume is added from a URL.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes two arguments:
+
+            - **image_options** (dict): Dictionary containing:
+
+                - **url** (str): The URL from which the volume was loaded.
+                - **url_image_data** (str): The URL to the image data associated with
+                    the volume (if separate from header).
+                - **headers** (dict): HTTP headers used when loading the volume.
+                - **name** (str): A name for this image (default is an empty string).
+                - **colormap** (str): A colormap to use (default is 'gray').
+                - **opacity** (float): The opacity for this image (default is 1).
+                - **cal_min** (float): Minimum intensity for color brightness/contrast.
+                - **cal_max** (float): Maximum intensity for color brightness/contrast.
+                - **trust_cal_min_max** (bool): Whether to trust `cal_min` and `cal_max`
+                    from the NIfTI header (default is True).
+                - **percentile_frac** (float): The percentile to use for setting the
+                    robust range of the display values (default is 0.02).
+                - **use_qform_not_sform** (bool): Whether to use QForm instead of SForm
+                    during construction (default is False).
+                - **alpha_threshold** (bool): Whether to use alpha thresholding
+                    (default is False).
+                - **colormap_negative** (str): Colormap for negative values.
+                - **cal_min_neg** (float): Minimum intensity for negative color
+                    brightness/contrast.
+                - **cal_max_neg** (float): Maximum intensity for negative color
+                    brightness/contrast.
+                - **colorbar_visible** (bool): Visibility of the colorbar
+                    (default is True).
+                - **ignore_zero_voxels** (bool): Whether to ignore zero voxels when
+                    setting the display range (default is False).
+                - **image_type** (int): The image type (default is 0).
+                - **frame4D** (int): Frame number for 4D images (default is 0).
+                - **colormap_label** (str or None): Label for the colormap.
+                - **limit_frames4D** (int): Limit the number of frames for 4D images.
+                - **is_manifest** (bool): Whether the image is loaded from a manifest
+                    (default is False).
+
+            - **volume** (dict): Dictionary containing:
+
+                - **id** (str): The ID of the volume.
+                - **name** (str): The name of the volume.
+                - **colormap** (str): The colormap used for the volume.
+                - **opacity** (float): The opacity of the volume.
+                - **colorbar_visible** (bool): Visibility of the colorbar.
+                - **cal_min** (float or None): Minimum calibration value.
+                - **cal_max** (float or None): Maximum calibration value.
+
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+            out = Output()
+            display(out)
+
+            def my_callback(image_options, volume):
+                with out:
+                    print('Volume added from URL')
+                    print('URL:', image_options['url'])
+                    print('Headers:', image_options['headers'])
+                    print('Volume ID:', volume['id'])
+
+            nv.on_volume_added_from_url(my_callback)
+
+        """
+        self._register_callback("volume_added_from_url", callback, remove=remove)
+
+    def on_volume_updated(self, callback, remove=False):
+        """
+        Register a callback for the 'volume_updated' event.
+
+        Sets a callback function to run when `updateGLVolume` is called.
+        Most users will not need to use this directly.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes no arguments.
+        remove : bool, optional
+            If True, remove the callback. Defaults to False.
+
+        Examples
+        --------
+        ::
+
+            from ipywidgets import Output
+            from IPython.display import display
+
+            out = Output()
+            display(out)
+
+            def my_callback():
+                with out:
+                    print('Volumes updated')
+
+            nv.on_volume_updated(my_callback)
+
+        """
+        self._register_callback("volume_updated", callback, remove=remove)
 
 
 class WidgetObserver:
