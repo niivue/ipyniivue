@@ -327,7 +327,10 @@ export default {
 		return () => {
 			disposer.disposeAll();
 			model.off("change:_volumes");
+			model.off("change:_meshes");
 			model.off("change:_opts");
+			model.off("change:height");
+			model.off("msg:custom");
 		};
 	},
 };
