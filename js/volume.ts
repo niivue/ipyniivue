@@ -68,7 +68,7 @@ async function create_volume(
 	} else {
 		volume = await niivue.NVImage.new(
 			vmodel.get("path").data.buffer as ArrayBuffer, // dataBuffer
-			lib.unique_id(vmodel), // name
+			vmodel.get("path").name, // name
 			vmodel.get("colormap"), // colormap
 			vmodel.get("opacity"), // opacity
 			undefined, // pairedImgData
