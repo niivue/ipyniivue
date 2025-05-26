@@ -12,7 +12,7 @@ Usage
 
 In a Jupyter environment:
 
-.. code-block:: console
+.. code-block:: python
 
     from ipyniivue import NiiVue
 
