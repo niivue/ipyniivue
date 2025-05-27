@@ -10,7 +10,7 @@ dependencies = ["anywidget", "requests"]
 readme = "README.md"
 
 [project.optional-dependencies]
-dev = ["watchfiles", "jupyterlab", "ruff", "pytest"]
+dev = ["watchfiles", "jupyterlab", "ruff", "pytest", "sphinx", "furo"]
 
 [pytest]
 nb_test_files = true
@@ -39,6 +39,7 @@ build_cmd = "build"
 lint = ["ruff check . {args:.}", "ruff format . --check --diff {args:.}"]
 format = ["ruff format . {args:.}", "ruff check . --fix {args:.}"]
 test = ["pytest {args:.}"]
+docs = "cd docs && make clean && make html"
 
 [tool.ruff.lint]
 pydocstyle = { convention = "numpy" }

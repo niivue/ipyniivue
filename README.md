@@ -1,19 +1,28 @@
 # ipyniivue
 
-A Jupyter Widget for [Niivue](https://github.com/niivue/niivue) based on
-anywidget.
+[![PyPI Version](https://badge.fury.io/py/ipyniivue.svg)](https://badge.fury.io/py/ipyniivue)
+[![License](https://img.shields.io/github/license/niivue/ipyniivue)](https://opensource.org/license/bsd-2-clause)
 
-# Installation
+**A Jupyter Widget for [Niivue](https://github.com/niivue/niivue) based on [anywidget](https://github.com/manzt/anywidget).**
+
+---
+
+
+## Installation
+
+Install ipyniivue using `pip`:
 
 ```sh
 pip install ipyniivue
 ```
 
+---
+
 ## Usage
 
 In a Jupyter environment:
 
-```py
+```python
 from ipyniivue import NiiVue
 
 nv = NiiVue()
@@ -21,30 +30,34 @@ nv.load_volumes([{"path": "images/mni152.nii.gz"}])
 nv
 ```
 
-See the [basic demo](./examples/basic_multiplanar.ipynb) to learn more.
+This will render an interactive Niivue widget within your notebook.
+
+**See the [basic demo](./examples/basic_multiplanar.ipynb) to learn more.**
+
+---
+
+## Documentation
+
+For detailed usage instructions and API reference, please refer to the [ipyniivue Documentation](https://github.com/niivue/ipyniivue).
+
+---
 
 ## Development
 
-**ipyniivue** uses [the
-recommended](https://packaging.python.org/en/latest/flow/#) `hatchling`
-build-system, which is convenient to use via the [`hatch`
-CLI](https://hatch.pypa.io/latest/). We recommend installing `hatch` globally
-(e.g., via `pipx`) and running the various commands defined within
-`pyproject.toml`. `hatch` will take care of creating and synchronizing a
-virtual environment with all dependencies defined in `pyproject.toml`.
+ipyniivue uses the recommended [`hatchling`](https://packaging.python.org/en/latest/flow/#using-hatch) build system, which is convenient to use via the [`hatch` CLI](https://hatch.pypa.io/latest/). We recommend installing `hatch` globally (e.g., via `pipx`) and running the various commands defined within `pyproject.toml`. `hatch` will take care of creating and synchronizing a virtual environment with all dependencies defined in `pyproject.toml`.
 
-### Commands Cheatsheet
+### Command Cheat Sheet
 
-All commands are run from the root of the project, from a terminal:
+Run these commands from the root of the project:
 
-| Command                | Action                                                                    |
-| :--------------------- | :-------------------------------------------------------------------------|
-| `hatch run format`     | Format project with `ruff format .` and apply linting with `ruff --fix .` |
-| `hatch run lint`       | Lint project with `ruff check .`.                                         |
-| `hatch run test`       | Run unit tests with `pytest`                                              |
+| Command                | Description                                                          |
+|------------------------|----------------------------------------------------------------------|
+| `hatch run format`     | Format the project with `ruff format .` and apply linting with `ruff --fix .` |
+| `hatch run lint`       | Lint the project with `ruff check .`                                 |
+| `hatch run test`       | Run unit tests with `pytest`                                         |
+| `hatch run docs`       | Build docs with `Sphinx`                                             |
 
-Alternatively, you can develop **ipyniivue** by manually creating a virtual
-environment and managing installation and dependencies with `pip`.
+Alternatively, you can manually create a virtual environment and manage installation and dependencies with `pip`:
 
 ```sh
 python3 -m venv .venv && source .venv/bin/activate
@@ -53,58 +66,63 @@ pip install -e ".[dev]"
 
 ### Making Changes to the JavaScript Code
 
-This is an [anywidget](https://github.com/manzt/anywidget) project, which means
-the code base is hybrid Python and JavaScript. The JavaScript part is developed
-under `js/` and uses [esbuild](https://esbuild.github.io/) to bundle the code.
-Any time you make changes to the JavaScript code, you need to rebuild the files
-under `src/ipyniivue/static`. This can be done in two ways:
+This is an [anywidget](https://github.com/manzt/anywidget) project, meaning the codebase is a hybrid of Python and JavaScript. The JavaScript code resides under the `js/` directory and uses [esbuild](https://esbuild.github.io/) for bundling. Whenever you make changes to the JavaScript code, you need to rebuild the files under `src/ipyniivue/static`.
 
-```sh
-npm run build
-```
+You have two options:
 
-which will build the JavaScript code once, or you can start a development server:
+1. **Build Once**: Build the JavaScript code one time:
 
-```sh
-npm run dev
-```
+    ```sh
+    npm run build
+    ```
 
-which will start a development server that will automatically rebuild the code
-as you make changes. We recommend the latter approach, as it is more convenient.
+2. **Start Development Server**: Start a development server that automatically rebuilds the code as you make changes:
 
-Once you have the development server running, you can start the JupyterLab
-or VS Code to develop the widget. When finished, you can stop the development
-server with `Ctrl+C`.
+    ```sh
+    npm run dev
+    ```
 
-> NOTE: In order to have anywidget automatically apply changes as you work,
-> make sure to `export ANYWIDGET_HMR=1` environment variable. This can be set
-> directly in a notebook with `%env ANYWIDGET_HMR=1` in a cell.
+    We recommend this approach for a smoother development experience.
+
+**Working with Jupyter**
+
+Once the development server is running, you can start JupyterLab or Visual Studio Code to develop the widget. When you're finished, stop the development server with `Ctrl+C`.
+
+> **Note:** To have `anywidget` automatically apply changes as you work, set the environment variable `ANYWIDGET_HMR=1`. You can set this directly in a notebook cell:
+>
+> ```python
+> %env ANYWIDGET_HMR=1
+> ```
+> or in the shell:
+> ```sh
+> export ANYWIDGET_HMR=1
+> ```
+
+---
 
 ## Release Process
 
-1. Releases are automated using GitHub Actions and the
-   [`release.yml`](.github/workflows/release.yml) workflow.
-2. The workflow is triggered when a new tag matching the pattern `v*` is pushed
-   to the repository.
-3. To create a new release, create a tag from the command line:
+Releases are automated using GitHub Actions via the [`release.yml`](.github/workflows/release.yml) workflow.
+
+### Steps to Create a New Release
+
+1. **Commit Changes**: Ensure all your changes are committed.
+
+2. **Create a Tag**: Create a new tag matching the pattern `v*`:
+
     ```sh
     git tag -a vX.X.X -m "vX.X.X"
     git push --follow-tags
     ```
-4. When triggered, the workflow will:
-  - Publish the package to PyPI with the tag version.
-  - Generate a changelog based on conventional commits and create a GitHub
-    Release with the changelog.
+
+3. **Workflow Actions**: When triggered, the workflow will:
+
+   - Publish the package to PyPI with the tag version.
+   - Generate a changelog based on conventional commits.
+   - Create a GitHub Release with the changelog.
 
 ### Changelog Generation
 
-- We generate a changelog for GitHub releases with
-  [`antfu/changelogithub`](https://github.com/antfu/changelogithub)
-- Each changelog entry is grouped and rendered based on conventional commits,
-  and it is recommended to follow the [Conventional
-  Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary).
-- The tool generates the changelog based on the commits between the latest
-  release tag and the previous release tag.
-
-By following this release process and utilizing conventional commits, you can
-ensure consistent and informative releases for your project.
+- We generate a changelog for GitHub releases with [`antfu/changelogithub`](https://github.com/antfu/changelogithub).
+- Each changelog entry is grouped and rendered based on conventional commits.
+- It's recommended to follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) specification.

@@ -136,13 +136,10 @@ class Drawing(ipywidgets.Widget):
 
 class NiiVue(OptionsMixin, anywidget.AnyWidget):
     """
-    Represents a Niivue instance.
+    Represents a NiiVue widget instance.
 
-    Parameters
-    ----------
-    OptionsMixin : The list of default options for a NiiVue instance.
-    anywidget.Anywidget : An AnyWidget model representing a NiiVue
-        instance and its data.
+    This class provides a Jupyter widget for visualizing neuroimaging data using
+    NiiVue. It inherits from `OptionsMixin` for default options.
     """
 
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
@@ -159,6 +156,17 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     )
 
     def __init__(self, height: int = 300, **options):
+        """
+        Initialize the NiiVue widget.
+
+        Parameters
+        ----------
+        height : int, optional
+            The height of the widget in pixels (default: 300).
+        options : dict, optional
+            Additional keyword arguments to configure the NiiVue widget.
+            See :class:`ipyniivue.options_mixin.OptionsMixin` for all options.
+        """
         # convert to JS camelCase options
         _opts = {
             _SNAKE_TO_CAMEL_OVERRIDES.get(k, snake_to_camel(k)): v
@@ -239,29 +247,29 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         else:
             self._meshes = [*self._meshes, mesh]
 
-    def get_volume_index_by_id(self, id_: str) -> int:
+    def get_volume_index_by_id(self, volume_id: str) -> int:
         """Return the index of the volume with the given id.
 
         Parameters
         ----------
-        id_ : str
+        volume_id : str
             The id of the volume.
         """
         for idx, vol in enumerate(self._volumes):
-            if vol.id == id_:
+            if vol.id == volume_id:
                 return idx
         return -1
 
-    def get_mesh_index_by_id(self, id_: str) -> int:
+    def get_mesh_index_by_id(self, mesh_id: str) -> int:
         """Return the index of the mesh with the given id.
 
         Parameters
         ----------
-        id_ : str
+        mesh_id : str
             The id of the mesh.
         """
         for idx, mesh in enumerate(self._meshes):
-            if mesh.id == id_:
+            if mesh.id == mesh_id:
                 return idx
         return -1
 
@@ -742,21 +750,21 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             parameters with the following keys:
 
             - **frac_start** (list of float): Starting fractional coordinates
-            ``[X, Y, Z]`` before the drag.
+                ``[X, Y, Z]`` before the drag.
             - **frac_end** (list of float): Ending fractional coordinates
-            ``[X, Y, Z]`` after the drag.
+                ``[X, Y, Z]`` after the drag.
             - **vox_start** (list of float): Starting voxel coordinates ``[X, Y, Z]``
-            before the drag.
+                before the drag.
             - **vox_end** (list of float): Ending voxel coordinates ``[X, Y, Z]``
-            after the drag.
+                after the drag.
             - **mm_start** (list of float): Starting coordinates in millimeters
-            ``[X, Y, Z]`` before the drag.
+                ``[X, Y, Z]`` before the drag.
             - **mm_end** (list of float): Ending coordinates in millimeters
-            ``[X, Y, Z]`` after the drag.
+                ``[X, Y, Z]`` after the drag.
             - **mm_length** (float): Length of the drag in millimeters.
             - **tile_idx** (int): Index of the image tile where the drag occurred.
             - **ax_cor_sag** (int): View index (axial=0, coronal=1, sagittal=2) where
-            the drag occurred.
+                the drag occurred.
 
         remove : bool, optional
             If ``True``, remove the callback. Defaults to ``False``.
@@ -864,13 +872,13 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
             - **ax_cor_sag** (int): The view index where the location changed.
             - **frac** (list of float): The fractional coordinates ``[X, Y, Z]``
-            in the volume.
+                in the volume.
             - **mm** (list of float): The coordinates ``[X, Y, Z]`` in millimeters.
             - **vox** (list of int): The voxel coordinates ``[X, Y, Z]``.
             - **values** (list of float): Intensity values at the current location
-            for each volume.
+                for each volume.
             - **string** (str): Formatted string representing the location and
-            intensity values.
+                intensity values.
             - **xy** (list of float): The canvas coordinates ``[X, Y]``.
 
         remove : bool, optional
@@ -987,11 +995,11 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             with the following keys:
 
             - **is_dragging** (bool): Indicates if a drag action is in progress
-            (``True``) or not (``False``).
+                (``True``) or not (``False``).
             - **mouse_pos** (tuple of int): The ``(x, y)`` pixel coordinates of the
-            mouse on the canvas when the button was released.
+                mouse on the canvas when the button was released.
             - **frac_pos** (tuple of float): The fractional position ``(X, Y, Z)``
-            within the volume, with each coordinate ranging from ``0.0`` to ``1.0``.
+                within the volume, with each coordinate ranging from ``0.0`` to ``1.0``.
 
         remove : bool, optional
             If ``True``, remove the callback. Defaults to ``False``.
@@ -1019,6 +1027,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Register a callback for the 'volume_added_from_url' event.
 
         Set a callback function to run when a volume is added from a URL.
+
+        **Note:** This is called before the ``image_loaded`` event is emitted, so
+        the volume object will **not** be available in the callback.
 
         Parameters
         ----------

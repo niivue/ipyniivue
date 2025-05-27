@@ -1,11 +1,22 @@
 API Documentation
 =================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+.. autoclass:: ipyniivue.widget.NiiVue
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-.. automodule:: ipyniivue.widget
+.. autoclass:: ipyniivue.widget.Volume
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: ipyniivue.widget.Mesh
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: ipyniivue.widget.Drawing
    :members:
    :undoc-members:
    :show-inheritance:
