@@ -5,17 +5,29 @@ import { Disposer } from "./lib.ts";
 import { render_meshes } from "./mesh.ts";
 import { render_volumes } from "./volume.ts";
 
+// store all nv objects for the page
+const nvMap = new Map<string, niivue.Niivue>();
+
 // Attach model event handlers
 function attachModelEventHandlers(
 	nv: niivue.Niivue,
 	model: Model,
 	disposer: Disposer,
 ) {
-	model.on("change:_volumes", () => render_volumes(nv, model, disposer));
-	model.on("change:_meshes", () => render_meshes(nv, model, disposer));
+	model.on("change:_volumes", () => {
+		if (nv.canvas) {
+			render_volumes(nv, model, disposer);
+		}
+	});
+	model.on("change:_meshes", () => {
+		if (nv.canvas) {
+			render_meshes(nv, model, disposer);
+		}
+	});
 
 	// Any time we change the options, we need to update the nv gl
 	model.on("change:_opts", () => {
+		console.log("Updating opts callback");
 		nv.document.opts = { ...nv.opts, ...model.get("_opts") };
 		nv.updateGLVolume();
 	});
@@ -309,16 +321,18 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 }
 
 export default {
-	async render({ model, el }: { model: Model; el: HTMLElement }) {
+	async initialize({ model }: { model: Model }) {
+		let id = model.get("id");
+		console.log("Initializing called on model:", id);
 		const disposer = new Disposer();
-		const canvas = document.createElement("canvas");
-		const container = document.createElement("div");
-		container.style.height = `${model.get("height")}px`;
-		container.appendChild(canvas);
-		el.appendChild(container);
 
-		const nv = new niivue.Niivue(model.get("_opts") ?? {});
-		nv.attachToCanvas(canvas);
+		let nv = nvMap.get(model.get("id"));
+
+		if (!nv) {
+			console.log("Creating new Niivue instance");
+			nv = new niivue.Niivue(model.get("_opts") ?? {});
+			nvMap.set(model.get("id"), nv);
+		}
 
 		// Attach model event handlers
 		attachModelEventHandlers(nv, model, disposer);
@@ -326,23 +340,74 @@ export default {
 		// Attach niivue event handlers
 		attachNiivueEventHandlers(nv, model);
 
-		await render_volumes(nv, model, disposer);
-		await render_meshes(nv, model, disposer);
-
-		nv.createEmptyDrawing();
-
-		model.on("change:height", () => {
-			container.style.height = `${model.get("height")}px`;
-		});
-
-		// All the logic for cleaning up the event listeners and the nv object
+		// Logic for cleaning up the event listeners and the nv object
 		return () => {
 			disposer.disposeAll();
+
 			model.off("change:_volumes");
 			model.off("change:_meshes");
 			model.off("change:_opts");
 			model.off("change:height");
 			model.off("msg:custom");
+
+			// remove the nv instance
+			nvMap.delete(model.get("id"));
+		};
+	},
+	async render({ model, el }: { model: Model; el: HTMLElement }) {
+		const nv = nvMap.get(model.get("id"));
+		if (!nv) {
+			console.error("Niivue instance not found for model", model.get("id"));
+			return;
+		}
+
+		const disposer = new Disposer();
+
+		if (!nv.canvas?.parentNode) {
+			console.log("drawing first render");
+
+			// Create a container div and set its height
+			const container = document.createElement("div");
+			container.style.height = `${model.get("height")}px`;
+			el.appendChild(container);
+
+			// Create a new canvas and attach it to the container
+			const canvas = document.createElement("canvas");
+			container.appendChild(canvas);
+
+			// Handle height changes
+			model.on("change:height", () => {
+				container.style.height = `${model.get("height")}px`;
+			});
+
+			// Attach nv to canvas
+			nv.attachToCanvas(canvas);
+
+			// Load initial volumes and meshes
+			await render_volumes(nv, model, disposer);
+			await render_meshes(nv, model, disposer);
+
+			// Drawing setup
+			nv.createEmptyDrawing();
+		} else {
+			console.log("moving render around");
+
+			// Ensure the canvas is attached to the container
+			if (nv.canvas.parentNode?.parentNode) {
+				nv.canvas.parentNode.parentNode.removeChild(nv.canvas.parentNode);
+			}
+
+			// Attach
+			el.appendChild(nv.canvas.parentNode);
+		}
+
+		// Return cleanup function, runs when page reloaded or cell run again
+		return () => {
+			// only want to run disposer when nv widget is removed, not when it is re-displayed
+
+			if (nv.canvas?.parentNode?.parentNode) {
+				nv.canvas.parentNode.parentNode.removeChild(nv.canvas.parentNode);
+			}
 		};
 	},
 };
