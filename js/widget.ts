@@ -322,7 +322,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 
 export default {
 	async initialize({ model }: { model: Model }) {
-		let id = model.get("id");
+		const id = model.get("id");
 		console.log("Initializing called on model:", id);
 		const disposer = new Disposer();
 
