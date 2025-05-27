@@ -26,7 +26,7 @@ jobs:
 
       - name: Set up Hatch environment and install dependencies
         run: |
-          hatch shell
+          hatch env create
 
       - name: Build documentation with Hatch
         run: |
