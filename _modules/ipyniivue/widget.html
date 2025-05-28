@@ -1,0 +1,1524 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
+        <title>ipyniivue.widget - IPyNiiVue 2.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">IPyNiiVue 2.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  
+  <span class="sidebar-brand-text">IPyNiiVue 2.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for ipyniivue.widget</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Widgets representing NiiVue model instances as well as volume, mesh, and drawing models.</span>
+
+<span class="sd">Aside from setting up the Mesh, Volume, Drawing, and NiiVue widgets, this module</span>
+<span class="sd">contains many of the classes needed to make NiiVue instances work, such as classes</span>
+<span class="sd">to load objects in, change attributes of this instance, and more.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">anywidget</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipywidgets</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traitlets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">CallbackDispatcher</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SNAKE_TO_CAMEL_OVERRIDES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.options_mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptionsMixin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">file_serializer</span><span class="p">,</span>
+    <span class="n">mesh_layers_serializer</span><span class="p">,</span>
+    <span class="n">serialize_options</span><span class="p">,</span>
+    <span class="n">snake_to_camel</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NiiVue&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Mesh">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Mesh">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mesh</span><span class="p">(</span><span class="n">ipywidgets</span><span class="o">.</span><span class="n">Widget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a Mesh model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ipywidgets.Widget : A widget representing a mesh model and its data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span>
+    <span class="p">)</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">rgba255</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">visible</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">layers</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">([])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">mesh_layers_serializer</span><span class="p">)</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;path&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify path once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify id once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="Volume">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Volume">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Volume</span><span class="p">(</span><span class="n">ipywidgets</span><span class="o">.</span><span class="n">Widget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a Volume model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ipywidgets.Widget : A widget representing a volume model and its data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span>
+    <span class="p">)</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">colormap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">colorbar_visible</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cal_min</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cal_max</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">frame4D</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;path&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify path once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify id once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="Drawing">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Drawing">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Drawing</span><span class="p">(</span><span class="n">ipywidgets</span><span class="o">.</span><span class="n">Widget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a Drawing model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ipywidgets.Widget : A widget representing a drawing model and its data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span>
+    <span class="p">)</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">colormap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">colorbar_visible</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;path&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify path once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify id once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="NiiVue">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NiiVue</span><span class="p">(</span><span class="n">OptionsMixin</span><span class="p">,</span> <span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a NiiVue widget instance.</span>
+
+<span class="sd">    This class provides a Jupyter widget for visualizing neuroimaging data using</span>
+<span class="sd">    NiiVue. It inherits from `OptionsMixin` for default options.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_esm</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;static&quot;</span> <span class="o">/</span> <span class="s2">&quot;widget.js&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">height</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">()</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_opts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Dict</span><span class="p">({})</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_options</span><span class="p">)</span>
+    <span class="n">_volumes</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">Volume</span><span class="p">),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">ipywidgets</span><span class="o">.</span><span class="n">widget_serialization</span>
+    <span class="p">)</span>
+    <span class="n">_meshes</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">Mesh</span><span class="p">),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">ipywidgets</span><span class="o">.</span><span class="n">widget_serialization</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="NiiVue.__init__">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the NiiVue widget.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        height : int, optional</span>
+<span class="sd">            The height of the widget in pixels (default: 300).</span>
+<span class="sd">        options : dict, optional</span>
+<span class="sd">            Additional keyword arguments to configure the NiiVue widget.</span>
+<span class="sd">            See :class:`ipyniivue.options_mixin.OptionsMixin` for all options.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># convert to JS camelCase options</span>
+        <span class="n">_opts</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">_SNAKE_TO_CAMEL_OVERRIDES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">snake_to_camel</span><span class="p">(</span><span class="n">k</span><span class="p">)):</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">_opts</span><span class="o">=</span><span class="n">_opts</span><span class="p">,</span> <span class="n">_volumes</span><span class="o">=</span><span class="p">[],</span> <span class="n">_meshes</span><span class="o">=</span><span class="p">[])</span>
+
+        <span class="c1"># handle messages coming from frontend</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_custom_msg</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_register_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">CallbackDispatcher</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span><span class="o">.</span><span class="n">register_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handle_custom_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">buffers</span><span class="p">):</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="c1"># handle add_volume and add_mesh events separately</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;add_volume&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_volume_from_frontend</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;add_mesh&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_mesh_from_frontend</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># check if the event has a registered handler</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">handler</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># handle events that require specific processing</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;azimuth_elevation_change&quot;</span><span class="p">:</span>
+            <span class="n">handler</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;azimuth&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;elevation&quot;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;frame_change&quot;</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;frame_index&quot;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">event</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;image_loaded&quot;</span><span class="p">,</span> <span class="s2">&quot;intensity_change&quot;</span><span class="p">}:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">handler</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;mesh_loaded&quot;</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_index_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">handler</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;mesh_added_from_url&quot;</span><span class="p">:</span>
+            <span class="n">mesh_options</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span> <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">]}</span>
+            <span class="n">handler</span><span class="p">(</span><span class="n">mesh_options</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;mesh&quot;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;volume_added_from_url&quot;</span><span class="p">:</span>
+            <span class="n">image_options</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span> <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">]}</span>
+            <span class="n">handler</span><span class="p">(</span><span class="n">image_options</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;volume&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">handler</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_volume_from_frontend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume_data</span><span class="p">):</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">volume_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">volume</span> <span class="o">=</span> <span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">volume_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">volume</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">,</span> <span class="n">volume</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_mesh_from_frontend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_data</span><span class="p">):</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">mesh_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="o">**</span><span class="n">mesh_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">mesh</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">,</span> <span class="n">mesh</span><span class="p">]</span>
+
+<div class="viewcode-block" id="NiiVue.get_volume_index_by_id">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.get_volume_index_by_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_volume_index_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the index of the volume with the given id.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        volume_id : str</span>
+<span class="sd">            The id of the volume.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">vol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">vol</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">volume_id</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">idx</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.get_mesh_index_by_id">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.get_mesh_index_by_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mesh_index_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the index of the mesh with the given id.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mesh_id : str</span>
+<span class="sd">            The id of the mesh.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mesh</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">mesh</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">mesh_id</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">idx</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.load_volumes">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.load_volumes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volumes</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a list of volume objects.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        volumes : list</span>
+<span class="sd">            A list of dictionaries containing the volume information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv = NiiVue()</span>
+<span class="sd">            nv.load_volumes([{&quot;path&quot;: &quot;mni152.nii.gz&quot;}])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">volumes</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span> <span class="o">=</span> <span class="n">volumes</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.add_volume">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.add_volume">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a new volume to the widget.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        volume : dict</span>
+<span class="sd">            A dictionary containing the volume information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv = NiiVue()</span>
+<span class="sd">            nv.add_volume({&quot;path&quot;: &quot;mni152.nii.gz&quot;})</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">,</span> <span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">volume</span><span class="p">)]</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the list of volumes.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            A list of dictionairies containing the volume information.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            print(nv.volumes)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NiiVue.load_drawings">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.load_drawings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_drawings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drawings</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a list of drawings objects.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        drawings : list</span>
+<span class="sd">            A list of dictionaries containing the drawing information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv = NiiVue()</span>
+<span class="sd">            nv.load_drawings([{&quot;path&quot;: &quot;lesion.nii.gz&quot;}])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">drawings</span> <span class="o">=</span> <span class="p">[</span><span class="n">Drawing</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">drawings</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drawings</span> <span class="o">=</span> <span class="n">drawings</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">drawings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the list of drawings.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            A list of dictionairies containing the drawing information.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            print(nv.drawings)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drawings</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NiiVue.load_meshes">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.load_meshes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_meshes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meshes</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a list of meshes objects.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        meshes : list</span>
+<span class="sd">            A list of dictionaries containing the mesh information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv = NiiVue()</span>
+<span class="sd">            nv.load_meshes([{&quot;path&quot;: &quot;BrainMesh_ICBM152.lh.mz3&quot;}])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Mesh</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">meshes</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="n">meshes</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.add_mesh">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.add_mesh">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh</span><span class="p">:</span> <span class="n">Mesh</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a single mesh to the widget.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mesh : dict</span>
+<span class="sd">            A dictionary containing the mesh information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv = NiiVue()</span>
+<span class="sd">            nv.add_mesh({&quot;path&quot;: &quot;BrainMesh_ICBM152.lh.mz3&quot;})</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">,</span> <span class="n">mesh</span><span class="p">]</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">meshes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the list of meshes.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            A list of dictionairies containing the mesh information.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            print(nv.meshes)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NiiVue.save_document">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.save_document">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_document</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;document.nvd&quot;</span><span class="p">,</span> <span class="n">compress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the entire scene with settings as a document.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            The file name to save the document as.</span>
+<span class="sd">        compress : bool</span>
+<span class="sd">            A value represneing if the file should be compressed.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.save_document(&quot;mydoc.nvd&quot;, False)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;save_document&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">file_name</span><span class="p">,</span> <span class="n">compress</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.save_html">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.save_html">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;untitled.html&quot;</span><span class="p">,</span> <span class="n">canvas_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gl1&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the current instance as an html page.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            The file name to save the page as.</span>
+<span class="sd">        canvas_id : str</span>
+<span class="sd">            The id of the canvas that NiiVue will be attached to.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.save_html(&quot;mypage.html&quot;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;save_html&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">file_name</span><span class="p">,</span> <span class="n">canvas_id</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.save_image">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.save_image">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_image</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;image.nii.gz&quot;</span><span class="p">,</span>
+        <span class="n">save_drawing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">index_volume</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the current image as a nii file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            The file name to save the image as.</span>
+<span class="sd">        save_drawing : bool</span>
+<span class="sd">            A value representing if the drawings should be saved.</span>
+<span class="sd">        index_volume : int</span>
+<span class="sd">            The volume layer which should be saved (0 for background)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.save_image(&quot;myimage.nii.gz&quot;, True, 2)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;save_image&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">file_name</span><span class="p">,</span> <span class="n">save_drawing</span><span class="p">,</span> <span class="n">index_volume</span><span class="p">]}</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.save_scene">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.save_scene">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;scene.png&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the current scene with the provided file name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            The file name to save the scene as.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.save_scene(&quot;myscene.png&quot;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;save_scene&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">file_name</span><span class="p">]})</span></div>
+
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom event callbacks</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NiiVue.on_azimuth_elevation_change">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_azimuth_elevation_change">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_azimuth_elevation_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;azimuth_elevation_change&#39; event.</span>
+
+<span class="sd">        Set a callback function to run when the user changes the rotation of the 3D</span>
+<span class="sd">        rendering.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes two arguments:</span>
+
+<span class="sd">            - **azimuth** (float): The azimuth angle in degrees.</span>
+<span class="sd">            - **elevation** (float): The elevation angle in degrees.</span>
+
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(azimuth, elevation):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Azimuth:&#39;, azimuth)</span>
+<span class="sd">                    print(&#39;Elevation:&#39;, elevation)</span>
+
+<span class="sd">            nv.on_azimuth_elevation_change(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;azimuth_elevation_change&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_click_to_segment">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_click_to_segment">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_click_to_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;click_to_segment&#39; event.</span>
+
+<span class="sd">        Set a callback function when ``clickToSegment`` is enabled and the user clicks</span>
+<span class="sd">        on the image.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes one argument—a ``dict`` with the following keys:</span>
+
+<span class="sd">            - **mm3** (float): The segmented volume in cubic millimeters.</span>
+<span class="sd">            - **mL** (float): The segmented volume in milliliters.</span>
+
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(data):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Clicked to segment&#39;)</span>
+<span class="sd">                    print(&#39;Volume mm3:&#39;, data[&#39;mm3&#39;])</span>
+<span class="sd">                    print(&#39;Volume mL:&#39;, data[&#39;mL&#39;])</span>
+
+<span class="sd">            nv.on_click_to_segment(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;click_to_segment&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_clip_plane_change">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_clip_plane_change">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_clip_plane_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;clip_plane_change&#39; event.</span>
+
+<span class="sd">        Set a callback function to run when the user changes the clip plane.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes one argument—a list of numbers representing the</span>
+<span class="sd">            clip plane.</span>
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(clip_plane):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Clip plane changed:&#39;, clip_plane)</span>
+
+<span class="sd">            nv.on_clip_plane_change(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;clip_plane_change&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+    <span class="c1"># todo: make volumes be a list of Volumes and meshes be a list of Meshes</span>
+<div class="viewcode-block" id="NiiVue.on_document_loaded">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_document_loaded">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_document_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;document_loaded&#39; event.</span>
+
+<span class="sd">        Set a callback function to run when the user loads a new NiiVue document.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes one argument—a ``dict`` representing the loaded</span>
+<span class="sd">            document with the following keys:</span>
+
+<span class="sd">            - **title** (str): The title of the loaded document.</span>
+<span class="sd">            - **opts** (dict): Options associated with the document.</span>
+<span class="sd">            - **volumes** (list of str): A list of volume IDs loaded in the document.</span>
+<span class="sd">            - **meshes** (list of str): A list of mesh IDs loaded in the document.</span>
+
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(document):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Document loaded:&#39;)</span>
+<span class="sd">                    print(&#39;Title:&#39;, document[&#39;title&#39;])</span>
+<span class="sd">                    print(&#39;Options:&#39;, document[&#39;opts&#39;])</span>
+<span class="sd">                    print(&#39;Volumes:&#39;, document[&#39;volumes&#39;])</span>
+<span class="sd">                    print(&#39;Meshes:&#39;, document[&#39;meshes&#39;])</span>
+
+<span class="sd">            nv.on_document_loaded(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;document_loaded&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_image_loaded">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_image_loaded">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_image_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;image_loaded&#39; event.</span>
+
+<span class="sd">        Set a callback function to run when a new volume is loaded.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes one argument—a ``Volume`` object.</span>
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(volume):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Image loaded:&#39;, volume.id)</span>
+
+<span class="sd">            nv.on_image_loaded(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;image_loaded&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_drag_release">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_drag_release">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_drag_release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;drag_release&#39; event.</span>
+
+<span class="sd">        Set a callback function to run when the right mouse button is released</span>
+<span class="sd">        after dragging.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes one argument—a ``dict`` containing drag release</span>
+<span class="sd">            parameters with the following keys:</span>
+
+<span class="sd">            - **frac_start** (list of float): Starting fractional coordinates</span>
+<span class="sd">                ``[X, Y, Z]`` before the drag.</span>
+<span class="sd">            - **frac_end** (list of float): Ending fractional coordinates</span>
+<span class="sd">                ``[X, Y, Z]`` after the drag.</span>
+<span class="sd">            - **vox_start** (list of float): Starting voxel coordinates ``[X, Y, Z]``</span>
+<span class="sd">                before the drag.</span>
+<span class="sd">            - **vox_end** (list of float): Ending voxel coordinates ``[X, Y, Z]``</span>
+<span class="sd">                after the drag.</span>
+<span class="sd">            - **mm_start** (list of float): Starting coordinates in millimeters</span>
+<span class="sd">                ``[X, Y, Z]`` before the drag.</span>
+<span class="sd">            - **mm_end** (list of float): Ending coordinates in millimeters</span>
+<span class="sd">                ``[X, Y, Z]`` after the drag.</span>
+<span class="sd">            - **mm_length** (float): Length of the drag in millimeters.</span>
+<span class="sd">            - **tile_idx** (int): Index of the image tile where the drag occurred.</span>
+<span class="sd">            - **ax_cor_sag** (int): View index (axial=0, coronal=1, sagittal=2) where</span>
+<span class="sd">                the drag occurred.</span>
+
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(params):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Drag release event:&#39;, params)</span>
+
+<span class="sd">            nv.on_drag_release(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;drag_release&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_frame_change">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_frame_change">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_frame_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;frame_change&#39; event.</span>
+
+<span class="sd">        Set a callback function to run whenever the current frame (timepoint) of a</span>
+<span class="sd">        4D image volume changes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes two arguments:</span>
+
+<span class="sd">            - **volume** (``Volume``): The image volume object that has changed frame.</span>
+<span class="sd">            - **frame_index** (int): The index of the new frame.</span>
+
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(volume, frame_index):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Frame changed&#39;)</span>
+<span class="sd">                    print(&#39;Volume:&#39;, volume)</span>
+<span class="sd">                    print(&#39;Frame index:&#39;, frame_index)</span>
+
+<span class="sd">            nv.on_frame_change(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;frame_change&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_intensity_change">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_intensity_change">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_intensity_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;intensity_change&#39; event.</span>
+
+<span class="sd">        Set a callback function to run when the user changes the intensity range</span>
+<span class="sd">        with the selection-box action (right click).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes one argument—a ``Volume`` object.</span>
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(volume):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Intensity changed for volume:&#39;, volume)</span>
+
+<span class="sd">            nv.on_intensity_change(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;intensity_change&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+    <span class="c1"># todo: maybe create NiiVueLocation and NiiVueLocationValue classes?</span>
+<div class="viewcode-block" id="NiiVue.on_location_change">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_location_change">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_location_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;location_change&#39; event.</span>
+
+<span class="sd">        Set a callback function to run when the crosshair location changes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes one argument—a ``dict`` containing the new</span>
+<span class="sd">            location data—with the following keys:</span>
+
+<span class="sd">            - **ax_cor_sag** (int): The view index where the location changed.</span>
+<span class="sd">            - **frac** (list of float): The fractional coordinates ``[X, Y, Z]``</span>
+<span class="sd">                in the volume.</span>
+<span class="sd">            - **mm** (list of float): The coordinates ``[X, Y, Z]`` in millimeters.</span>
+<span class="sd">            - **vox** (list of int): The voxel coordinates ``[X, Y, Z]``.</span>
+<span class="sd">            - **values** (list of float): Intensity values at the current location</span>
+<span class="sd">                for each volume.</span>
+<span class="sd">            - **string** (str): Formatted string representing the location and</span>
+<span class="sd">                intensity values.</span>
+<span class="sd">            - **xy** (list of float): The canvas coordinates ``[X, Y]``.</span>
+
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(location):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Location changed&#39;, location)</span>
+
+<span class="sd">            nv.on_location_change(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;location_change&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_mesh_added_from_url">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_mesh_added_from_url">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_mesh_added_from_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;mesh_added_from_url&#39; event.</span>
+
+<span class="sd">        Set a callback function to run when a mesh is added from a URL.</span>
+
+<span class="sd">        **Note:** This is called before the ``mesh_loaded`` event is emitted, so</span>
+<span class="sd">        the mesh object will **not** be available in the callback.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes two arguments:</span>
+
+<span class="sd">            - **mesh_options** (dict): Dictionary containing:</span>
+<span class="sd">                - **url** (str): The URL from which the mesh was loaded.</span>
+<span class="sd">                - **headers** (dict): HTTP headers used when loading the mesh.</span>
+
+<span class="sd">            - **mesh** (dict): Dictionary containing:</span>
+<span class="sd">                - **id** (str): The ID of the mesh.</span>
+<span class="sd">                - **name** (str): The name of the mesh.</span>
+<span class="sd">                - **rgba255** (list of int): RGBA color values (0-255) of the mesh.</span>
+<span class="sd">                - **opacity** (float): The opacity of the mesh.</span>
+<span class="sd">                - **visible** (bool): Whether the mesh is visible.</span>
+
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(mesh_options, mesh):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Mesh added from URL&#39;)</span>
+<span class="sd">                    print(&#39;URL:&#39;, mesh_options[&#39;url&#39;])</span>
+<span class="sd">                    print(&#39;Headers:&#39;, mesh_options[&#39;headers&#39;])</span>
+<span class="sd">                    print(&#39;Mesh ID:&#39;, mesh[&#39;id&#39;])</span>
+
+<span class="sd">            nv.on_mesh_added_from_url(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;mesh_added_from_url&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_mesh_loaded">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_mesh_loaded">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_mesh_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;mesh_loaded&#39; event.</span>
+
+<span class="sd">        Set a callback function to run when a new mesh is loaded.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes one argument—the loaded mesh (``Mesh`` object).</span>
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(mesh):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Mesh loaded&#39;, mesh)</span>
+
+<span class="sd">            nv.on_mesh_loaded(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;mesh_loaded&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_mouse_up">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_mouse_up">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_mouse_up</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;mouse_up&#39; event.</span>
+
+<span class="sd">        Set a callback function to run when the left mouse button is released.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes one argument—a ``dict`` containing mouse event data</span>
+<span class="sd">            with the following keys:</span>
+
+<span class="sd">            - **is_dragging** (bool): Indicates if a drag action is in progress</span>
+<span class="sd">                (``True``) or not (``False``).</span>
+<span class="sd">            - **mouse_pos** (tuple of int): The ``(x, y)`` pixel coordinates of the</span>
+<span class="sd">                mouse on the canvas when the button was released.</span>
+<span class="sd">            - **frac_pos** (tuple of float): The fractional position ``(X, Y, Z)``</span>
+<span class="sd">                within the volume, with each coordinate ranging from ``0.0`` to ``1.0``.</span>
+
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(data):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Mouse button released&#39;, data)</span>
+
+<span class="sd">            nv.on_mouse_up(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;mouse_up&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_volume_added_from_url">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_volume_added_from_url">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_volume_added_from_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;volume_added_from_url&#39; event.</span>
+
+<span class="sd">        Set a callback function to run when a volume is added from a URL.</span>
+
+<span class="sd">        **Note:** This is called before the ``image_loaded`` event is emitted, so</span>
+<span class="sd">        the volume object will **not** be available in the callback.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes two arguments:</span>
+
+<span class="sd">            - **image_options** (dict): Dictionary containing:</span>
+
+<span class="sd">                - **url** (str): The URL from which the volume was loaded.</span>
+<span class="sd">                - **url_image_data** (str): The URL to the image data associated with</span>
+<span class="sd">                    the volume (if separate from header).</span>
+<span class="sd">                - **headers** (dict): HTTP headers used when loading the volume.</span>
+<span class="sd">                - **name** (str): A name for this image (default is an empty string).</span>
+<span class="sd">                - **colormap** (str): A colormap to use (default is &#39;gray&#39;).</span>
+<span class="sd">                - **opacity** (float): The opacity for this image (default is 1).</span>
+<span class="sd">                - **cal_min** (float): Minimum intensity for color brightness/contrast.</span>
+<span class="sd">                - **cal_max** (float): Maximum intensity for color brightness/contrast.</span>
+<span class="sd">                - **trust_cal_min_max** (bool): Whether to trust `cal_min` and `cal_max`</span>
+<span class="sd">                    from the NIfTI header (default is True).</span>
+<span class="sd">                - **percentile_frac** (float): The percentile to use for setting the</span>
+<span class="sd">                    robust range of the display values (default is 0.02).</span>
+<span class="sd">                - **use_qform_not_sform** (bool): Whether to use QForm instead of SForm</span>
+<span class="sd">                    during construction (default is False).</span>
+<span class="sd">                - **alpha_threshold** (bool): Whether to use alpha thresholding</span>
+<span class="sd">                    (default is False).</span>
+<span class="sd">                - **colormap_negative** (str): Colormap for negative values.</span>
+<span class="sd">                - **cal_min_neg** (float): Minimum intensity for negative color</span>
+<span class="sd">                    brightness/contrast.</span>
+<span class="sd">                - **cal_max_neg** (float): Maximum intensity for negative color</span>
+<span class="sd">                    brightness/contrast.</span>
+<span class="sd">                - **colorbar_visible** (bool): Visibility of the colorbar</span>
+<span class="sd">                    (default is True).</span>
+<span class="sd">                - **ignore_zero_voxels** (bool): Whether to ignore zero voxels when</span>
+<span class="sd">                    setting the display range (default is False).</span>
+<span class="sd">                - **image_type** (int): The image type (default is 0).</span>
+<span class="sd">                - **frame4D** (int): Frame number for 4D images (default is 0).</span>
+<span class="sd">                - **colormap_label** (str or None): Label for the colormap.</span>
+<span class="sd">                - **limit_frames4D** (int): Limit the number of frames for 4D images.</span>
+<span class="sd">                - **is_manifest** (bool): Whether the image is loaded from a manifest</span>
+<span class="sd">                    (default is False).</span>
+
+<span class="sd">            - **volume** (dict): Dictionary containing:</span>
+
+<span class="sd">                - **id** (str): The ID of the volume.</span>
+<span class="sd">                - **name** (str): The name of the volume.</span>
+<span class="sd">                - **colormap** (str): The colormap used for the volume.</span>
+<span class="sd">                - **opacity** (float): The opacity of the volume.</span>
+<span class="sd">                - **colorbar_visible** (bool): Visibility of the colorbar.</span>
+<span class="sd">                - **cal_min** (float or None): Minimum calibration value.</span>
+<span class="sd">                - **cal_max** (float or None): Maximum calibration value.</span>
+
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback(image_options, volume):</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Volume added from URL&#39;)</span>
+<span class="sd">                    print(&#39;URL:&#39;, image_options[&#39;url&#39;])</span>
+<span class="sd">                    print(&#39;Headers:&#39;, image_options[&#39;headers&#39;])</span>
+<span class="sd">                    print(&#39;Volume ID:&#39;, volume[&#39;id&#39;])</span>
+
+<span class="sd">            nv.on_volume_added_from_url(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;volume_added_from_url&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_volume_updated">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_volume_updated">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_volume_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;volume_updated&#39; event.</span>
+
+<span class="sd">        Sets a callback function to run when `updateGLVolume` is called.</span>
+<span class="sd">        Most users will not need to use this directly.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes no arguments.</span>
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If True, remove the callback. Defaults to False.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            from ipywidgets import Output</span>
+<span class="sd">            from IPython.display import display</span>
+
+<span class="sd">            out = Output()</span>
+<span class="sd">            display(out)</span>
+
+<span class="sd">            def my_callback():</span>
+<span class="sd">                with out:</span>
+<span class="sd">                    print(&#39;Volumes updated&#39;)</span>
+
+<span class="sd">            nv.on_volume_updated(my_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;volume_updated&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WidgetObserver</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates an observer on the `attribute` of `object` for a `widget`.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span> <span class="o">=</span> <span class="n">attribute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_observe</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_widget_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change</span><span class="p">):</span>
+        <span class="c1"># Converts string to float because negative 0 as a float</span>
+        <span class="c1"># with ipywidgets does not work as expected.</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">change</span><span class="p">[</span><span class="s2">&quot;new&quot;</span><span class="p">]))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_observe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_widget_change</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Jan-Hendrik Müller, Trevor Manz, Bradley Alford, Anthony Androulakis, Taylor Hanayik, Christian O&#39;Reilly
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=20623aea"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
+</html>
