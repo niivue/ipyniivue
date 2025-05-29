@@ -158,6 +158,7 @@ export async function create_mesh(
 					layerModel.get("use_negative_cmap") ?? false,
 					layerModel.get("cal_min") ?? null,
 					layerModel.get("cal_max") ?? null,
+					layerModel.get("outline_border") ?? 0,
 				);
 
 				layer.id = uuidv4();

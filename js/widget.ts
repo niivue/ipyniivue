@@ -143,7 +143,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 					use_negative_cmap: layer.useNegativeCmap,
 					cal_min: layer.cal_min,
 					cal_max: layer.cal_max,
-					frame4D: layer.frame4D,
+					outline_border: layer.outlineBorder,
 					id: layer.id,
 				};
 			});

@@ -37,6 +37,7 @@ class MeshLayer(ipywidgets.Widget):
     use_negative_cmap = t.Bool(False).tag(sync=True)
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
+    outline_border = t.Int(0).tag(sync=True)
 
     @t.validate("path")
     def _validate_path(self, proposal):

@@ -37,6 +37,7 @@ export type MeshLayerModel = AnyModel<{
 	use_negative_cmap: boolean;
 	cal_min: number;
 	cal_max: number;
+	outline_border: number;
 }>;
 
 export type Model = AnyModel<{
