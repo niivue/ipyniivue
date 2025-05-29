@@ -150,7 +150,7 @@ export async function create_mesh(
 			) {
 				layer = await niivue.NVMeshLoaders.readLayer(
 					layerModel.get("path").name,
-					layerModel.get("path").data.buffer,
+					layerModel.get("path").data.buffer as ArrayBuffer,
 					mesh,
 					layerModel.get("opacity") ?? 0.5,
 					layerModel.get("colormap") ?? "warm",
