@@ -250,8 +250,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         sync=True, **ipywidgets.widget_serialization
     )
 
-    def __init__(self, height: int = 300, **options):
-        """
+    def __init__(self, height: int = 300, **options):  # noqa: D417
+        r"""
         Initialize the NiiVue widget.
 
         Parameters
