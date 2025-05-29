@@ -246,6 +246,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">anywidget</span>
@@ -257,12 +258,68 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.options_mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptionsMixin</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">file_serializer</span><span class="p">,</span>
-    <span class="n">mesh_layers_serializer</span><span class="p">,</span>
     <span class="n">serialize_options</span><span class="p">,</span>
     <span class="n">snake_to_camel</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NiiVue&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="MeshLayer">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.MeshLayer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeshLayer</span><span class="p">(</span><span class="n">ipywidgets</span><span class="o">.</span><span class="n">Widget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a layer within a Mesh model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str or pathlib.Path</span>
+<span class="sd">        Path to the layer data file. Cannot be modified once set.</span>
+<span class="sd">    opacity : float, optional</span>
+<span class="sd">        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 0.5.</span>
+<span class="sd">    colormap : str, optional</span>
+<span class="sd">        Colormap name for rendering. Default is &#39;gray&#39;.</span>
+<span class="sd">    colormap_negative : str, optional</span>
+<span class="sd">        Colormap for negative values if `use_negative_cmap` is True.</span>
+<span class="sd">        Default is &#39;winter&#39;.</span>
+<span class="sd">    use_negative_cmap : bool, optional</span>
+<span class="sd">        Use negative colormap for negative values. Default is False.</span>
+<span class="sd">    cal_min : float or None, optional</span>
+<span class="sd">        Minimum intensity value for brightness/contrast mapping.</span>
+<span class="sd">    cal_max : float or None, optional</span>
+<span class="sd">        Maximum intensity value for brightness/contrast mapping.</span>
+<span class="sd">    outline_border : int, optional</span>
+<span class="sd">        Outline border thickness. Default is 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span>
+    <span class="p">)</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">colormap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">colormap_negative</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;winter&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">use_negative_cmap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cal_min</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cal_max</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">outline_border</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;path&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify path once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify id once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
+
 
 
 <div class="viewcode-block" id="Mesh">
@@ -273,7 +330,19 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ipywidgets.Widget : A widget representing a mesh model and its data.</span>
+<span class="sd">    path : str or pathlib.Path</span>
+<span class="sd">        Path to the mesh file. Cannot be modified once set.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name of the mesh.</span>
+<span class="sd">    rgba255 : list of int, optional</span>
+<span class="sd">        RGBA color as a list of four integers (0 to 255).</span>
+<span class="sd">    opacity : float, optional</span>
+<span class="sd">        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.</span>
+<span class="sd">    visible : bool, optional</span>
+<span class="sd">        Mesh visibility. Default is True.</span>
+<span class="sd">    layers : list of dict, optional</span>
+<span class="sd">        List of layer data dictionaries.</span>
+<span class="sd">        See :class:`MeshLayer` for attribute options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
@@ -284,7 +353,17 @@
     <span class="n">rgba255</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">visible</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">layers</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">([])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">mesh_layers_serializer</span><span class="p">)</span>
+    <span class="n">layers</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">MeshLayer</span><span class="p">),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">ipywidgets</span><span class="o">.</span><span class="n">widget_serialization</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="Mesh.__init__">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Mesh.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">layers_data</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;layers&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">MeshLayer</span><span class="p">(</span><span class="o">**</span><span class="n">layer_data</span><span class="p">)</span> <span class="k">for</span> <span class="n">layer_data</span> <span class="ow">in</span> <span class="n">layers_data</span><span class="p">]</span></div>
+
 
     <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
@@ -312,7 +391,22 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ipywidgets.Widget : A widget representing a volume model and its data.</span>
+<span class="sd">    path : str or pathlib.Path</span>
+<span class="sd">        Path to the volume data file; cannot be modified once set.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name of the volume.</span>
+<span class="sd">    opacity : float, optional</span>
+<span class="sd">        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.</span>
+<span class="sd">    colormap : str, optional</span>
+<span class="sd">        Colormap name for rendering. Default is &#39;gray&#39;.</span>
+<span class="sd">    colorbar_visible : bool, optional</span>
+<span class="sd">        Show colorbar associated with the colormap. Default is True.</span>
+<span class="sd">    cal_min : float or None, optional</span>
+<span class="sd">        Minimum intensity value for brightness/contrast mapping.</span>
+<span class="sd">    cal_max : float or None, optional</span>
+<span class="sd">        Maximum intensity value for brightness/contrast mapping.</span>
+<span class="sd">    frame4D : int, optional</span>
+<span class="sd">        Frame index for 4D volume data. Default is 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
@@ -353,7 +447,14 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ipywidgets.Widget : A widget representing a drawing model and its data.</span>
+<span class="sd">    path : str or pathlib.Path</span>
+<span class="sd">        Path to the drawing data file; cannot be modified once set.</span>
+<span class="sd">    opacity : float, optional</span>
+<span class="sd">        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.</span>
+<span class="sd">    colormap : list of int, optional</span>
+<span class="sd">        RGBA color as a list of four integers (0 to 255). Default is [0, 0, 0, 0].</span>
+<span class="sd">    colorbar_visible : bool, optional</span>
+<span class="sd">        Show colorbar associated with the drawing. Default is True.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
@@ -407,15 +508,15 @@
 
 <div class="viewcode-block" id="NiiVue.__init__">
 <a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>  <span class="c1"># noqa: D417</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the NiiVue widget.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        height : int, optional</span>
 <span class="sd">            The height of the widget in pixels (default: 300).</span>
-<span class="sd">        options : dict, optional</span>
+<span class="sd">        \*\*options : dict, optional</span>
 <span class="sd">            Additional keyword arguments to configure the NiiVue widget.</span>
 <span class="sd">            See :class:`ipyniivue.options_mixin.OptionsMixin` for all options.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -494,7 +595,9 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_mesh_from_frontend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_data</span><span class="p">):</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">mesh_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">layers_data</span> <span class="o">=</span> <span class="n">mesh_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;layers&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="o">**</span><span class="n">mesh_data</span><span class="p">)</span>
+        <span class="n">mesh</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">MeshLayer</span><span class="p">(</span><span class="o">**</span><span class="n">layer_data</span><span class="p">)</span> <span class="k">for</span> <span class="n">layer_data</span> <span class="ow">in</span> <span class="n">layers_data</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">mesh</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -835,6 +938,63 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;save_scene&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">file_name</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_mesh_layer_property">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_mesh_layer_property">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_mesh_layer_property</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">mesh_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">layer_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a property of a mesh layer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mesh_id : str</span>
+<span class="sd">            Identifier of the mesh to change (mesh id).</span>
+<span class="sd">        layer_index : int</span>
+<span class="sd">            The index of the layer within the mesh.</span>
+<span class="sd">        attribute : str</span>
+<span class="sd">            The attribute to change.</span>
+<span class="sd">        value : Any</span>
+<span class="sd">            The value to set.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the attribute is not allowed or the mesh is not found.</span>
+<span class="sd">        IndexError</span>
+<span class="sd">            If the layer index is out of range.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_mesh_layer_property(nv.meshes[0].id, 0, &#39;opacity&#39;, 0.5)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">allowed_attributes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">name</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">trait</span> <span class="ow">in</span> <span class="n">MeshLayer</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trait</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitType</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">}</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_attributes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Attribute &#39;</span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s2">&#39; is not allowed. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Allowed attributes are: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_index_by_id</span><span class="p">(</span><span class="n">mesh_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh with id &#39;</span><span class="si">{</span><span class="n">mesh_id</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+
+        <span class="n">mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">layer_index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">layer_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layer index </span><span class="si">{</span><span class="n">layer_index</span><span class="si">}</span><span class="s2"> out of range.&quot;</span><span class="p">)</span>
+
+        <span class="n">layer</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">layer_index</span><span class="p">]</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
