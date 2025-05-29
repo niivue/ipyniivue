@@ -1,8 +1,7 @@
 import type { AnyModel } from "@anywidget/types";
-import type { Model, VolumeModel } from "./types.ts";
 
 export function gather_models<T extends AnyModel>(
-	model: Model,
+	model: AnyModel,
 	ids: Array<string>,
 ): Promise<Array<T>> {
 	// biome-ignore lint/suspicious/noExplicitAny:  we know the type of the models
