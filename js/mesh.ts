@@ -51,6 +51,12 @@ function setup_layer_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	function outline_border_changed() {
+		layer.outlineBorder = layerModel.get("outline_border");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
 	// Set up the event listeners
 	layerModel.on("change:opacity", opacity_changed);
 	layerModel.on("change:colormap", colormap_changed);
@@ -58,6 +64,7 @@ function setup_layer_property_listeners(
 	layerModel.on("change:use_negative_cmap", use_negative_cmap_changed);
 	layerModel.on("change:cal_min", cal_min_changed);
 	layerModel.on("change:cal_max", cal_max_changed);
+	layerModel.on("change:outline_border", outline_border_changed);
 
 	// Return a cleanup function
 	return () => {
@@ -67,6 +74,7 @@ function setup_layer_property_listeners(
 		layerModel.off("change:use_negative_cmap", use_negative_cmap_changed);
 		layerModel.off("change:cal_min", cal_min_changed);
 		layerModel.off("change:cal_max", cal_max_changed);
+		layerModel.off("change:outline_border", outline_border_changed);
 	};
 }
 
