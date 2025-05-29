@@ -688,7 +688,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         if attribute not in allowed_attributes:
             raise ValueError(
                 f"Attribute '{attribute}' is not allowed. "
-                f"Allowed attributes are: {', '.join(allowed_attributes)}"
+                f"Allowed attributes are: {', '.join(allowed_attributes)}."
             )
 
         idx = self.get_mesh_index_by_id(mesh_id)
