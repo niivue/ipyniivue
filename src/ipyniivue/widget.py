@@ -27,6 +27,30 @@ __all__ = ["NiiVue"]
 
 
 class MeshLayer(ipywidgets.Widget):
+    """
+    Represents a layer within a Mesh model.
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+        Path to the layer data file. Cannot be modified once set.
+    opacity : float, optional
+        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 0.5.
+    colormap : str, optional
+        Colormap name for rendering. Default is 'gray'.
+    colormap_negative : str, optional
+        Colormap for negative values if `use_negative_cmap` is True.
+        Default is 'winter'.
+    use_negative_cmap : bool, optional
+        Use negative colormap for negative values. Default is False.
+    cal_min : float or None, optional
+        Minimum intensity value for brightness/contrast mapping.
+    cal_max : float or None, optional
+        Maximum intensity value for brightness/contrast mapping.
+    outline_border : int, optional
+        Outline border thickness. Default is 0.
+    """
+
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
         sync=True, to_json=file_serializer
     )
@@ -62,7 +86,19 @@ class Mesh(ipywidgets.Widget):
 
     Parameters
     ----------
-    ipywidgets.Widget : A widget representing a mesh model and its data.
+    path : str or pathlib.Path
+        Path to the mesh file. Cannot be modified once set.
+    name : str, optional
+        Name of the mesh.
+    rgba255 : list of int, optional
+        RGBA color as a list of four integers (0 to 255).
+    opacity : float, optional
+        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.
+    visible : bool, optional
+        Mesh visibility. Default is True.
+    layers : list of dict, optional
+        List of layer data dictionaries.
+        See :class:`MeshLayer` for attribute options.
     """
 
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
@@ -105,7 +141,22 @@ class Volume(ipywidgets.Widget):
 
     Parameters
     ----------
-    ipywidgets.Widget : A widget representing a volume model and its data.
+    path : str or pathlib.Path
+        Path to the volume data file; cannot be modified once set.
+    name : str, optional
+        Name of the volume.
+    opacity : float, optional
+        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.
+    colormap : str, optional
+        Colormap name for rendering. Default is 'gray'.
+    colorbar_visible : bool, optional
+        Show colorbar associated with the colormap. Default is True.
+    cal_min : float or None, optional
+        Minimum intensity value for brightness/contrast mapping.
+    cal_max : float or None, optional
+        Maximum intensity value for brightness/contrast mapping.
+    frame4D : int, optional
+        Frame index for 4D volume data. Default is 0.
     """
 
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
@@ -143,7 +194,14 @@ class Drawing(ipywidgets.Widget):
 
     Parameters
     ----------
-    ipywidgets.Widget : A widget representing a drawing model and its data.
+    path : str or pathlib.Path
+        Path to the drawing data file; cannot be modified once set.
+    opacity : float, optional
+        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.
+    colormap : list of int, optional
+        RGBA color as a list of four integers (0 to 255). Default is [0, 0, 0, 0].
+    colorbar_visible : bool, optional
+        Show colorbar associated with the drawing. Default is True.
     """
 
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
@@ -200,7 +258,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         ----------
         height : int, optional
             The height of the widget in pixels (default: 300).
-        options : dict, optional
+        \*\*options : dict, optional
             Additional keyword arguments to configure the NiiVue widget.
             See :class:`ipyniivue.options_mixin.OptionsMixin` for all options.
         """
