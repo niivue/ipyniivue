@@ -20,7 +20,7 @@ function setup_volume_property_listeners(
 		nv.updateGLVolume();
 	}
 	function cal_max_changed() {
-		volume.cal_min = vmodel.get("cal_min");
+		volume.cal_max = vmodel.get("cal_max");
 		nv.updateGLVolume();
 	}
 	function colormap_changed() {

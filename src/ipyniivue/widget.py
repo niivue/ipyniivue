@@ -7,6 +7,7 @@ to load objects in, change attributes of this instance, and more.
 """
 
 import pathlib
+import typing
 import uuid
 
 import anywidget
@@ -18,12 +19,40 @@ from .constants import _SNAKE_TO_CAMEL_OVERRIDES
 from .options_mixin import OptionsMixin
 from .utils import (
     file_serializer,
-    mesh_layers_serializer,
     serialize_options,
     snake_to_camel,
 )
 
 __all__ = ["NiiVue"]
+
+
+class MeshLayer(ipywidgets.Widget):
+    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
+        sync=True, to_json=file_serializer
+    )
+    id = t.Unicode(default_value="").tag(sync=True)
+    opacity = t.Float(0.5).tag(sync=True)
+    colormap = t.Unicode("gray").tag(sync=True)
+    colormap_negative = t.Unicode("winter").tag(sync=True)
+    use_negative_cmap = t.Bool(False).tag(sync=True)
+    cal_min = t.Float(None, allow_none=True).tag(sync=True)
+    cal_max = t.Float(None, allow_none=True).tag(sync=True)
+
+    @t.validate("path")
+    def _validate_path(self, proposal):
+        if (
+            "path" in self._trait_values
+            and self.path
+            and self.path != proposal["value"]
+        ):
+            raise t.TraitError("Cannot modify path once set.")
+        return proposal["value"]
+
+    @t.validate("id")
+    def _validate_id(self, proposal):
+        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
+            raise t.TraitError("Cannot modify id once set.")
+        return proposal["value"]
 
 
 class Mesh(ipywidgets.Widget):
@@ -43,7 +72,14 @@ class Mesh(ipywidgets.Widget):
     rgba255 = t.List([0, 0, 0, 0]).tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     visible = t.Bool(True).tag(sync=True)
-    layers = t.List([]).tag(sync=True, to_json=mesh_layers_serializer)
+    layers = t.List(t.Instance(MeshLayer), default_value=[]).tag(
+        sync=True, **ipywidgets.widget_serialization
+    )
+
+    def __init__(self, **kwargs):
+        layers_data = kwargs.pop("layers", [])
+        super().__init__(**kwargs)
+        self.layers = [MeshLayer(**layer_data) for layer_data in layers_data]
 
     @t.validate("path")
     def _validate_path(self, proposal):
@@ -241,7 +277,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
     def _add_mesh_from_frontend(self, mesh_data):
         index = mesh_data.pop("index", None)
+        layers_data = mesh_data.pop("layers", [])
         mesh = Mesh(**mesh_data)
+        mesh.layers = [MeshLayer(**layer_data) for layer_data in layers_data]
         if index is not None and 0 <= index <= len(self._meshes):
             self._meshes = self._meshes[:index] + [mesh] + self._meshes[index:]
         else:
@@ -550,6 +588,51 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
         """
         self.send({"type": "save_scene", "data": [file_name]})
+
+    def set_mesh_layer_property(
+        self, mesh_id: str, layer_index: int, attribute: str, value: typing.Any
+    ):
+        """Set a property of a mesh layer.
+
+        Parameters
+        ----------
+        mesh_id : str
+            Identifier of the mesh to change (mesh id).
+        layer_index : int
+            The index of the layer within the mesh.
+        attribute : str
+            The attribute to change.
+        value : Any
+            The value to set.
+
+        Raises
+        ------
+        ValueError
+            If the attribute is not allowed or the mesh is not found.
+        IndexError
+            If the layer index is out of range.
+
+        Examples
+        --------
+        ::
+
+            nv.set_mesh_layer_property(nv.meshes[0].id, 0, 'opacity', 0.5)
+        """
+        allowed_attributes = set(MeshLayer.class_traits().keys())
+
+        if attribute not in allowed_attributes:
+            raise ValueError(f"Attribute '{attribute}' is not allowed.")
+
+        idx = self.get_mesh_index_by_id(mesh_id)
+        if idx == -1:
+            raise ValueError(f"Mesh with id '{mesh_id}' not found.")
+
+        mesh = self._meshes[idx]
+        if layer_index < 0 or layer_index >= len(mesh.layers):
+            raise IndexError(f"Layer index {layer_index} out of range.")
+
+        layer = mesh.layers[layer_index]
+        setattr(layer, attribute, value)
 
     """
     Custom event callbacks

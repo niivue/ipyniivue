@@ -1,6 +1,74 @@
 import * as niivue from "@niivue/niivue";
 import * as lib from "./lib.ts";
-import type { MeshModel, Model } from "./types.ts";
+import type { MeshLayerModel, MeshModel, Model } from "./types.ts";
+
+import { v4 as uuidv4 } from "@lukeed/uuid";
+
+/**
+ * Set up event listeners to handle changes to the layer properties.
+ * Returns a function to clean up the event listeners.
+ */
+function setup_layer_property_listeners(
+	// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
+	layer: any,
+	layerModel: MeshLayerModel,
+	mesh: niivue.NVMesh,
+	nv: niivue.Niivue,
+): () => void {
+	function opacity_changed() {
+		layer.opacity = layerModel.get("opacity");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function colormap_changed() {
+		layer.colormap = layerModel.get("colormap");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function colormap_negative_changed() {
+		layer.colormapNegative = layerModel.get("colormap_negative");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function use_negative_cmap_changed() {
+		layer.useNegativeCmap = layerModel.get("use_negative_cmap");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function cal_min_changed() {
+		layer.cal_min = layerModel.get("cal_min");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function cal_max_changed() {
+		layer.cal_max = layerModel.get("cal_max");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	// Set up the event listeners
+	layerModel.on("change:opacity", opacity_changed);
+	layerModel.on("change:colormap", colormap_changed);
+	layerModel.on("change:colormap_negative", colormap_negative_changed);
+	layerModel.on("change:use_negative_cmap", use_negative_cmap_changed);
+	layerModel.on("change:cal_min", cal_min_changed);
+	layerModel.on("change:cal_max", cal_max_changed);
+
+	// Return a cleanup function
+	return () => {
+		layerModel.off("change:opacity", opacity_changed);
+		layerModel.off("change:colormap", colormap_changed);
+		layerModel.off("change:colormap_negative", colormap_negative_changed);
+		layerModel.off("change:use_negative_cmap", use_negative_cmap_changed);
+		layerModel.off("change:cal_min", cal_min_changed);
+		layerModel.off("change:cal_max", cal_max_changed);
+	};
+}
 
 /**
  * Set up event listeners to handle changes to the mesh properties.
@@ -48,6 +116,8 @@ export async function create_mesh(
 	mmodel: MeshModel,
 ): Promise<[niivue.NVMesh, () => void]> {
 	let mesh: niivue.NVMesh;
+	const layerCleanupFunctions: (() => void)[] = [];
+
 	if (mmodel.get("path").name === "<fromfrontend>") {
 		const idx = nv.meshes.findIndex((m) => m.id === mmodel.get("id"));
 		mesh = nv.meshes[idx];
@@ -62,19 +132,58 @@ export async function create_mesh(
 		);
 	}
 
-	for (const layer of mmodel.get("layers")) {
-		// https://github.com/niivue/niivue/blob/10d71baf346b23259570d7b2aa463749adb5c95b/src/nvmesh.ts#L1432C5-L1455C6
-		niivue.NVMeshLoaders.readLayer(
-			layer.path.name,
-			layer.path.data.buffer as ArrayBuffer,
-			mesh,
-			layer.opacity ?? 0.5,
-			layer.colormap ?? "warm",
-			layer.colormapNegative ?? "winter",
-			layer.useNegativeCmap ?? false,
-			layer.cal_min ?? null,
-			layer.cal_max ?? null,
-		);
+	// Gather MeshLayer models
+	const layerIDs = mmodel.get("layers");
+
+	if (layerIDs.length > 0) {
+		// Use gather_models to fetch the MeshLayerModel instances
+		const layerModels: MeshLayerModel[] =
+			await lib.gather_models<MeshLayerModel>(mmodel, layerIDs);
+
+		// Add layers to the mesh
+		layerModels.forEach(async (layerModel, layerIndex) => {
+			// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
+			let layer: any;
+			if (
+				layerModel.get("path").name !== "<fromfrontend>" &&
+				layerModel.get("id") === ""
+			) {
+				layer = await niivue.NVMeshLoaders.readLayer(
+					layerModel.get("path").name,
+					layerModel.get("path").data.buffer,
+					mesh,
+					layerModel.get("opacity") ?? 0.5,
+					layerModel.get("colormap") ?? "warm",
+					layerModel.get("colormap_negative") ?? "winter",
+					layerModel.get("use_negative_cmap") ?? false,
+					layerModel.get("cal_min") ?? null,
+					layerModel.get("cal_max") ?? null,
+				);
+
+				layer.id = uuidv4();
+				mesh.layers.push(layer);
+				layerModel.set("id", layer.id);
+				layerModel.save_changes();
+			} else {
+				const idx = mesh.layers.findIndex(
+					// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
+					(l: any) => l.id === layerModel.get("id"),
+				);
+				layer = mesh.layers[idx];
+			}
+			if (!layer) {
+				return;
+			}
+
+			// Set up event listeners for the layer properties
+			const cleanup_layer_listeners = setup_layer_property_listeners(
+				layer,
+				layerModel,
+				mesh,
+				nv,
+			);
+			layerCleanupFunctions.push(cleanup_layer_listeners);
+		});
 	}
 
 	mesh.updateMesh(nv.gl);

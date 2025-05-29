@@ -1,8 +1,9 @@
+import { v4 as uuidv4 } from "@lukeed/uuid";
 import * as niivue from "@niivue/niivue";
-import type { CustomMessagePayload, Model } from "./types.ts";
 
 import { Disposer } from "./lib.ts";
 import { render_meshes } from "./mesh.ts";
+import type { CustomMessagePayload, Model } from "./types.ts";
 import { render_volumes } from "./volume.ts";
 
 // store all nv objects for the page
@@ -127,13 +128,33 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 
 		if (!backendMeshIds.includes(meshID)) {
 			// Mesh is new; create a new MeshModel in the backend
+
+			// Prepare layers data
+			// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
+			const layersData = mesh.layers.map((layer: any) => {
+				if (!layer.id) {
+					layer.id = uuidv4();
+				}
+				return {
+					path: "<fromfrontend>",
+					opacity: layer.opacity,
+					colormap: layer.colormap,
+					colormap_negative: layer.colormapNegative,
+					use_negative_cmap: layer.useNegativeCmap,
+					cal_min: layer.cal_min,
+					cal_max: layer.cal_max,
+					frame4D: layer.frame4D,
+					id: layer.id,
+				};
+			});
+
 			const meshData = {
 				path: "<fromfrontend>",
 				id: mesh.id,
 				name: mesh.name,
 				rgba255: Array.from(mesh.rgba255),
 				opacity: mesh.opacity,
-				layers: [], //don't send layers for now
+				layers: layersData,
 				visible: mesh.visible,
 				index: nv.meshes.findIndex((m) => m.id === mesh.id),
 			};

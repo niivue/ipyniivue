@@ -49,23 +49,6 @@ def file_serializer(instance: typing.Union[pathlib.Path, str], widget: object):
     return {"name": instance.name, "data": instance.read_bytes()}
 
 
-def mesh_layers_serializer(instance: list, widget: object):
-    """
-    Serialize each layer of a mesh instance.
-
-    Parameters
-    ----------
-    instance : list
-        The mesh instance containing the layers.
-    widget : object
-        The NiiVue widget the instance is a part of.
-    """
-    return [
-        {**mesh_layer, "path": file_serializer(mesh_layer["path"], widget)}
-        for mesh_layer in instance
-    ]
-
-
 def serialize_options(instance: dict, widget: object):
     """
     Serialize the options for a NiiVue instance.
