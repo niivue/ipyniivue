@@ -18,7 +18,7 @@ run the following command:
 
 As a result, the hooks will automatically check and fix some issues before
 pushing with git. If changes are made after committing with git, you will need
-to commit again afterwords. Alternatively, you can just run the following
+to commit again afterwards. Alternatively, you can just run the following
 command beforehand:
 
 .. code-block:: console
