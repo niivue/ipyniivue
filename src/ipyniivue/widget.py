@@ -619,10 +619,19 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
             nv.set_mesh_layer_property(nv.meshes[0].id, 0, 'opacity', 0.5)
         """
-        allowed_attributes = set(MeshLayer.class_traits().keys())
+        allowed_attributes = [
+            name
+            for name, trait in MeshLayer.__dict__.items()
+            if isinstance(trait, t.TraitType)
+            and not name.startswith("_")
+            and name not in {"id", "path"}
+        ]
 
         if attribute not in allowed_attributes:
-            raise ValueError(f"Attribute '{attribute}' is not allowed.")
+            raise ValueError(
+                f"Attribute '{attribute}' is not allowed. "
+                f"Allowed attributes are: {', '.join(allowed_attributes)}"
+            )
 
         idx = self.get_mesh_index_by_id(mesh_id)
         if idx == -1:
