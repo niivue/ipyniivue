@@ -125,16 +125,20 @@ export async function render_volumes(
 	const frontend_volume_map = new Map<string, niivue.NVImage>();
 
 	// create backend volume map, use 'id' value if available, otherwise use temp key
-	backend_volumes.forEach((vmodel, index) => {
-		const id = vmodel.get("id") || `__temp_id__${index}`;
+	let backendIndex = 0;
+	for (const vmodel of backend_volumes) {
+		const id = vmodel.get("id") || `__temp_id__${backendIndex}`;
 		backend_volume_map.set(id, vmodel);
-	});
+		backendIndex++;
+	}
 
 	// create frontend volume map
-	frontend_volumes.forEach((volume, index) => {
-		const id = volume.id || `__temp_id__${index}`;
+	let frontendIndex = 0;
+	for (const volume of frontend_volumes) {
+		const id = volume.id || `__temp_id__${frontendIndex}`;
 		frontend_volume_map.set(id, volume);
-	});
+		frontendIndex++;
+	}
 
 	console.log("render_volumes called");
 	console.log("backend_volumes:", backend_volumes, backend_volumes.length);

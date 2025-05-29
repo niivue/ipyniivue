@@ -140,10 +140,11 @@ export async function create_mesh(
 		const layerModels: MeshLayerModel[] =
 			await lib.gather_models<MeshLayerModel>(mmodel, layerIDs);
 
-		// Add layers to the mesh
-		layerModels.forEach(async (layerModel, layerIndex) => {
+		// Collect layer addition promises
+		const layerPromises = layerModels.map(async (layerModel) => {
 			// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
 			let layer: any;
+
 			if (
 				layerModel.get("path").name !== "<fromfrontend>" &&
 				layerModel.get("id") === ""
@@ -185,6 +186,9 @@ export async function create_mesh(
 			);
 			layerCleanupFunctions.push(cleanup_layer_listeners);
 		});
+
+		// Wait for all layers to be added concurrently
+		await Promise.all(layerPromises);
 	}
 
 	mesh.updateMesh(nv.gl);
@@ -203,8 +207,11 @@ export async function create_mesh(
 	return [
 		mesh,
 		() => {
-			// Remove event listeners for mesh properties
+			// Remove event listeners for mesh properties and layers
 			cleanup_mesh_listeners();
+			for (const cleanup of layerCleanupFunctions) {
+				cleanup();
+			}
 		},
 	];
 }
