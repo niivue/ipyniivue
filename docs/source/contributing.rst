@@ -39,7 +39,7 @@ All commands are run from the root of the project, from a terminal:
 +--------------------+-----------------------------------+
 | $ hatch run test   | Run unit tests with pytest        |
 +--------------------+-----------------------------------+
-| $ hatch run docs   | Build docs with  Sphinx           |
+| $ hatch run docs   | Build docs with Sphinx            |
 +--------------------+-----------------------------------+
 
 Alternatively, you can develop ipyniivue by manually creating a virtual environment and managing installation and dependencies with pip.
