@@ -1233,7 +1233,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``dict`` with the following keys:
+            A function that takes one argument - a ``dict`` with the following keys:
 
             - **mm3** (float): The segmented volume in cubic millimeters.
             - **mL** (float): The segmented volume in milliliters.
@@ -1270,7 +1270,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a list of numbers representing the
+            A function that takes one argument - a list of numbers representing the
             clip plane.
         remove : bool, optional
             If ``True``, remove the callback. Defaults to ``False``.
@@ -1284,11 +1284,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_clip_plane_change
             def my_callback(clip_plane):
                 with out:
                     print('Clip plane changed:', clip_plane)
-
-            nv.on_clip_plane_change(my_callback)
 
         """
         self._register_callback("clip_plane_change", callback, remove=remove)
@@ -1303,7 +1302,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``dict`` representing the loaded
+            A function that takes one argument - a ``dict`` representing the loaded
             document with the following keys:
 
             - **title** (str): The title of the loaded document.
@@ -1323,6 +1322,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_document_loaded
             def my_callback(document):
                 with out:
                     print('Document loaded:')
@@ -1330,8 +1330,6 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
                     print('Options:', document['opts'])
                     print('Volumes:', document['volumes'])
                     print('Meshes:', document['meshes'])
-
-            nv.on_document_loaded(my_callback)
 
         """
         self._register_callback("document_loaded", callback, remove=remove)
@@ -1345,7 +1343,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``Volume`` object.
+            A function that takes one argument - a ``Volume`` object.
         remove : bool, optional
             If ``True``, remove the callback. Defaults to ``False``.
 
@@ -1358,11 +1356,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_image_loaded
             def my_callback(volume):
                 with out:
                     print('Image loaded:', volume.id)
-
-            nv.on_image_loaded(my_callback)
 
         """
         self._register_callback("image_loaded", callback, remove=remove)
@@ -1377,7 +1374,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``dict`` containing drag release
+            A function that takes one argument - a ``dict`` containing drag release
             parameters with the following keys:
 
             - **frac_start** (list of float): Starting fractional coordinates
@@ -1409,11 +1406,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_drag_release
             def my_callback(params):
                 with out:
                     print('Drag release event:', params)
-
-            nv.on_drag_release(my_callback)
 
         """
         self._register_callback("drag_release", callback, remove=remove)
@@ -1445,13 +1441,12 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_frame_change
             def my_callback(volume, frame_index):
                 with out:
                     print('Frame changed')
                     print('Volume:', volume)
                     print('Frame index:', frame_index)
-
-            nv.on_frame_change(my_callback)
 
         """
         self._register_callback("frame_change", callback, remove=remove)
@@ -1466,7 +1461,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``Volume`` object.
+            A function that takes one argument - a ``Volume`` object.
         remove : bool, optional
             If ``True``, remove the callback. Defaults to ``False``.
 
@@ -1479,11 +1474,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_intensity_change
             def my_callback(volume):
                 with out:
                     print('Intensity changed for volume:', volume)
-
-            nv.on_intensity_change(my_callback)
 
         """
         self._register_callback("intensity_change", callback, remove=remove)
@@ -1498,8 +1492,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``dict`` containing the new
-            location data—with the following keys:
+            A function that takes one argument - a ``dict`` containing the new
+            location data - with the following keys:
 
             - **ax_cor_sag** (int): The view index where the location changed.
             - **frac** (list of float): The fractional coordinates ``[X, Y, Z]``
@@ -1524,11 +1518,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_location_change
             def my_callback(location):
                 with out:
                     print('Location changed', location)
-
-            nv.on_location_change(my_callback)
 
         """
         self._register_callback("location_change", callback, remove=remove)
@@ -1570,14 +1563,13 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_mesh_added_from_url
             def my_callback(mesh_options, mesh):
                 with out:
                     print('Mesh added from URL')
                     print('URL:', mesh_options['url'])
                     print('Headers:', mesh_options['headers'])
                     print('Mesh ID:', mesh['id'])
-
-            nv.on_mesh_added_from_url(my_callback)
 
         """
         self._register_callback("mesh_added_from_url", callback, remove=remove)
@@ -1591,7 +1583,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—the loaded mesh (``Mesh`` object).
+            A function that takes one argument - the loaded mesh (``Mesh`` object).
         remove : bool, optional
             If ``True``, remove the callback. Defaults to ``False``.
 
@@ -1604,11 +1596,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_mesh_loaded
             def my_callback(mesh):
                 with out:
                     print('Mesh loaded', mesh)
-
-            nv.on_mesh_loaded(my_callback)
 
         """
         self._register_callback("mesh_loaded", callback, remove=remove)
@@ -1622,7 +1613,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``dict`` containing mouse event data
+            A function that takes one argument - a ``dict`` containing mouse event data
             with the following keys:
 
             - **is_dragging** (bool): Indicates if a drag action is in progress
@@ -1644,11 +1635,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_mouse_up
             def my_callback(data):
                 with out:
                     print('Mouse button released', data)
-
-            nv.on_mouse_up(my_callback)
 
         """
         self._register_callback("mouse_up", callback, remove=remove)
@@ -1724,14 +1714,13 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_volume_added_from_url
             def my_callback(image_options, volume):
                 with out:
                     print('Volume added from URL')
                     print('URL:', image_options['url'])
                     print('Headers:', image_options['headers'])
                     print('Volume ID:', volume['id'])
-
-            nv.on_volume_added_from_url(my_callback)
 
         """
         self._register_callback("volume_added_from_url", callback, remove=remove)
@@ -1760,11 +1749,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_volume_updated
             def my_callback():
                 with out:
                     print('Volumes updated')
-
-            nv.on_volume_updated(my_callback)
 
         """
         self._register_callback("volume_updated", callback, remove=remove)
