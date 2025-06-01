@@ -7,7 +7,8 @@ import typing
 from ipyniivue.constants import (
     _SNAKE_TO_CAMEL_OVERRIDES,
     DragMode,
-    MuliplanarType,
+    MultiplanarType,
+    ShowRender,
     SliceType,
 )
 
@@ -35,10 +36,12 @@ def type_hint(value: typing.Any):
         return "dict"
     elif isinstance(value, SliceType):
         return "SliceType"
-    elif isinstance(value, MuliplanarType):
-        return "MuliplanarType"
+    elif isinstance(value, MultiplanarType):
+        return "MultiplanarType"
     elif isinstance(value, DragMode):
         return "DragMode"
+    elif isinstance(value, ShowRender):
+        return "ShowRender"
     else:
         return "typing.Any"
 
@@ -50,10 +53,12 @@ def get_value(value: typing.Any):
         return 'float("nan")'
     if isinstance(value, SliceType):
         return f"SliceType.{value.name}"
-    if isinstance(value, MuliplanarType):
-        return f"MuliplanarType.{value.name}"
+    if isinstance(value, MultiplanarType):
+        return f"MultiplanarType.{value.name}"
     if isinstance(value, DragMode):
         return f"DragMode.{value.name}"
+    if isinstance(value, ShowRender):
+        return f"ShowRender.{value.name}"
     if isinstance(value, str):
         # double quote
         return f'"{value}"'
@@ -71,7 +76,7 @@ def generate_mixin(options: dict[str, typing.Any]):
         "",
         "import typing",
         "",
-        "from .constants import DragMode, MuliplanarType, SliceType",
+        "from .constants import DragMode, MultiplanarType, ShowRender, SliceType",
         "",
         '__all__ = ["OptionsMixin"]',
         "",
@@ -129,6 +134,7 @@ if __name__ == "__main__":
         "isOrientCube": False,
         "multiplanarPadPixels": 0,
         "multiplanarForceRender": False,
+        "multiplanarShowRender": ShowRender.AUTO,
         "isRadiologicalConvention": False,
         "meshThicknessOn2D": float("inf"),
         "dragMode": DragMode.CONTRAST,
@@ -157,7 +163,7 @@ if __name__ == "__main__":
         "showLegend": True,
         "legendBackgroundColor": (0.3, 0.3, 0.3, 0.5),
         "legendTextColor": (1.0, 1.0, 1.0, 1.0),
-        "multiplanarLayout": MuliplanarType.AUTO,
+        "multiplanarLayout": MultiplanarType.AUTO,
         "renderOverlayBlend": 1.0,
         "sliceMosaicString": "",
         "centerMosaic": False,

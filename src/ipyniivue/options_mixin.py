@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import typing
 
-from .constants import DragMode, MuliplanarType, SliceType
+from .constants import DragMode, MultiplanarType, ShowRender, SliceType
 
 __all__ = ["OptionsMixin"]
 
@@ -274,6 +274,16 @@ class OptionsMixin:
     def multiplanar_force_render(self, value: bool):
         """Automatically generated property. See generate_options_mixin.py."""
         self._opts = {**self._opts, "multiplanarForceRender": value}
+
+    @property
+    def multiplanar_show_render(self) -> ShowRender:
+        """Automatically generated property. See generate_options_mixin.py."""
+        return self._opts.get("multiplanarShowRender", ShowRender.AUTO)
+
+    @multiplanar_show_render.setter
+    def multiplanar_show_render(self, value: ShowRender):
+        """Automatically generated property. See generate_options_mixin.py."""
+        self._opts = {**self._opts, "multiplanarShowRender": value}
 
     @property
     def is_radiological_convention(self) -> bool:
@@ -556,12 +566,12 @@ class OptionsMixin:
         self._opts = {**self._opts, "legendTextColor": value}
 
     @property
-    def multiplanar_layout(self) -> MuliplanarType:
+    def multiplanar_layout(self) -> MultiplanarType:
         """Automatically generated property. See generate_options_mixin.py."""
-        return self._opts.get("multiplanarLayout", MuliplanarType.AUTO)
+        return self._opts.get("multiplanarLayout", MultiplanarType.AUTO)
 
     @multiplanar_layout.setter
-    def multiplanar_layout(self, value: MuliplanarType):
+    def multiplanar_layout(self, value: MultiplanarType):
         """Automatically generated property. See generate_options_mixin.py."""
         self._opts = {**self._opts, "multiplanarLayout": value}
 

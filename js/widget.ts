@@ -33,33 +33,62 @@ function attachModelEventHandlers(
 		nv.updateGLVolume();
 	});
 
+	// Other nv prop changes
+	model.on("change:background_masks_overlays", () => {
+		const backgroundMasksOverlays = model.get("background_masks_overlays");
+		if (typeof backgroundMasksOverlays === "boolean") {
+			nv.backgroundMasksOverlays = Number(backgroundMasksOverlays);
+			nv.updateGLVolume();
+		}
+	});
+
 	// Handle any message directions from the nv object.
 	model.on("msg:custom", (payload: CustomMessagePayload) => {
 		const { type, data } = payload;
 		switch (type) {
 			case "save_document": {
-				const { fileName, compress } = data;
+				const [fileName, compress] = data;
 				nv.saveDocument(fileName, compress);
 				break;
 			}
 			case "save_html": {
-				const { fileName, canvasId } = data;
-				// Note: currently fails as esm is inaccesbile.
+				const [fileName, canvasId] = data;
+				// Note: currently fails as esm is inaccessible.
 				// nv.saveHTML(fileName, canvasId, esm);
 				break;
 			}
 			case "save_image": {
-				const { fileName, saveDrawing, indexVolume } = data;
+				const [filename, isSaveDrawing, volumeByIndex] = data;
 				nv.saveImage({
-					filename: fileName,
-					isSaveDrawing: saveDrawing,
-					volumeByIndex: indexVolume,
+					filename,
+					isSaveDrawing,
+					volumeByIndex,
 				});
 				break;
 			}
 			case "save_scene": {
-				const { fileName } = data;
+				const [fileName] = data;
 				nv.saveScene(fileName);
+				break;
+			}
+			case "add_colormap": {
+				const [name, cmap] = data;
+				nv.addColormap(name, cmap);
+				break;
+			}
+			case "set_gamma": {
+				const [gamma] = data;
+				nv.setGamma(gamma);
+				break;
+			}
+			case "set_clip_plane": {
+				const [clipPlane] = data;
+				nv.setClipPlane(clipPlane);
+				break;
+			}
+			case "set_mesh_shader": {
+				const [meshId, shader] = data;
+				nv.setMeshShader(meshId, shader);
 				break;
 			}
 		}
@@ -370,6 +399,8 @@ export default {
 			model.off("change:_opts");
 			model.off("change:height");
 			model.off("msg:custom");
+
+			model.off("change:background_masks_overlays");
 
 			// remove the nv instance
 			nvMap.delete(model.get("id"));
