@@ -68,6 +68,7 @@ async function build(isWatchMode) {
 		outfile: "src/ipyniivue/static/widget.js",
 		plugins: [generateColormapsPlugin, generateShaderNamesPlugin],
 		format: "esm",
+		minify: true,
 	};
 
 	if (isWatchMode) {
