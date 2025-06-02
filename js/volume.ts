@@ -78,7 +78,7 @@ async function create_volume(
 			0.02, // percentileFrac
 			false, // ignoreZeroVoxels
 			false, // useQFormNotSForm
-			'', // colormapNegative
+			"", // colormapNegative
 			vmodel.get("frame4D"), // frame4D
 			0, // imageType
 			NaN, // cal_minNeg
