@@ -81,8 +81,8 @@ async function create_volume(
 			"", // colormapNegative
 			vmodel.get("frame4D"), // frame4D
 			0, // imageType
-			NaN, // cal_minNeg
-			NaN, // cal_maxNeg
+			Number.NaN, // cal_minNeg
+			Number.NaN, // cal_maxNeg
 			vmodel.get("colorbar_visible"), // colorbarVisible
 			null, // colormapLabel
 			0, //colormapType
