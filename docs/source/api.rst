@@ -25,8 +25,3 @@ API Documentation
    :members:
    :undoc-members:
    :show-inheritance:
-
-.. autoclass:: ipyniivue.options_mixin.OptionsMixin
-   :members:
-   :undoc-members:
-   :show-inheritance:

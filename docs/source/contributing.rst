@@ -4,7 +4,7 @@ Contributing
 We are glad you are here! Contributions to this package are always welcome.
 Read on to learn more about the contribution process and package design.
 
-ipyniivue uses `the reccomended <https://pre-commit.com/>`__ hatchling build-system, which is convenient to use via the `hatch CLI <https://hatch.pypa.io/latest/>`__. We recommend installing hatch globally (e.g., via pipx) and running the various commands defined within pyproject.toml. hatch will take care of creating and synchronizing a virtual environment with all dependencies defined in pyproject.toml.
+ipyniivue uses `the recommended <https://pre-commit.com/>`__ hatchling build-system, which is convenient to use via the `hatch CLI <https://hatch.pypa.io/latest/>`__. We recommend installing hatch globally (e.g., via pipx) and running the various commands defined within pyproject.toml. hatch will take care of creating and synchronizing a virtual environment with all dependencies defined in pyproject.toml.
 
 Install Pre-Commit hooks
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -25,7 +25,7 @@ command beforehand:
 
     $ nb-clean clean --remove-empty-cells
 
-Command Cheatsheat
+Command Cheatsheet
 ^^^^^^^^^^^^^^^^^^
 All commands are run from the root of the project, from a terminal:
 
@@ -38,6 +38,8 @@ All commands are run from the root of the project, from a terminal:
 | $ hatch run lint   | Lint project with ruff check .    |
 +--------------------+-----------------------------------+
 | $ hatch run test   | Run unit tests with pytest        |
++--------------------+-----------------------------------+
+| $ hatch run docs   | Build docs with Sphinx            |
 +--------------------+-----------------------------------+
 
 Alternatively, you can develop ipyniivue by manually creating a virtual environment and managing installation and dependencies with pip.

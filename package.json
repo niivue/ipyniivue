@@ -1,8 +1,8 @@
 {
 	"type": "module",
 	"scripts": {
-		"dev": "npm run build -- --sourcemap=inline --watch",
-		"build": "esbuild js/widget.ts --minify --external:fs --external:path --format=esm --bundle --outdir=src/ipyniivue/static",
+		"dev": "node build.js --watch",
+		"build": "node build.js",
 		"lint": "biome ci .",
 		"fix": "biome check --fix .",
 		"typecheck": "tsc"

@@ -15,7 +15,7 @@ import ipywidgets
 import traitlets as t
 from ipywidgets import CallbackDispatcher
 
-from .constants import _SNAKE_TO_CAMEL_OVERRIDES
+from .constants import _SNAKE_TO_CAMEL_OVERRIDES, SliceType
 from .options_mixin import OptionsMixin
 from .utils import (
     file_serializer,
@@ -62,6 +62,17 @@ class MeshLayer(ipywidgets.Widget):
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     outline_border = t.Int(0).tag(sync=True)
+
+    # other properties that aren't in init
+    colormap_invert = t.Bool(False).tag(sync=True)
+    frame4D = t.Int(0).tag(sync=True)
+
+    def __init__(self, **kwargs):
+        if "colormap_invert" in kwargs:
+            kwargs.pop("colormap_invert")
+        if "frame4D" in kwargs:
+            kwargs.pop("frame4D")
+        super().__init__(**kwargs)
 
     @t.validate("path")
     def _validate_path(self, proposal):
@@ -113,7 +124,12 @@ class Mesh(ipywidgets.Widget):
         sync=True, **ipywidgets.widget_serialization
     )
 
+    # other properties that aren't in init
+    colormap_invert = t.Bool(False).tag(sync=True)
+
     def __init__(self, **kwargs):
+        if "colormap_invert" in kwargs:
+            kwargs.pop("colormap_invert")
         layers_data = kwargs.pop("layers", [])
         super().__init__(**kwargs)
         self.layers = [MeshLayer(**layer_data) for layer_data in layers_data]
@@ -170,6 +186,14 @@ class Volume(ipywidgets.Widget):
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     frame4D = t.Int(0).tag(sync=True)
+
+    # other properties that aren't in init
+    colormap_invert = t.Bool(False).tag(sync=True)
+
+    def __init__(self, **kwargs):
+        if "colormap_invert" in kwargs:
+            kwargs.pop("colormap_invert")
+        super().__init__(**kwargs)
 
     @t.validate("path")
     def _validate_path(self, proposal):
@@ -250,6 +274,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         sync=True, **ipywidgets.widget_serialization
     )
 
+    # other props
+    background_masks_overlays = t.Int(0).tag(sync=True)
+
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
         Initialize the NiiVue widget.
@@ -272,6 +299,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         # handle messages coming from frontend
         self._event_handlers = {}
         self.on_msg(self._handle_custom_msg)
+
+        # extras
+        self._added_colormaps = set()
 
     def _register_callback(self, event_name, callback, remove=False):
         if event_name not in self._event_handlers:
@@ -545,6 +575,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """
         return list(self._meshes)
 
+    """
+    Other functions
+    """
+
     def save_document(self, file_name: str = "document.nvd", compress: bool = True):
         """
         Save the entire scene with settings as a document.
@@ -702,6 +736,463 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         layer = mesh.layers[layer_index]
         setattr(layer, attribute, value)
 
+    def colormaps(self):
+        """Retrieve the list of available colormap names.
+
+        Returns
+        -------
+        list of str
+            A list containing the names of all available colormaps
+
+        Examples
+        --------
+        ::
+
+            colormaps = nv.colormaps()
+        """
+        fallback_colormaps = [
+            "actc",
+            "afni_blues_inv",
+            "afni_reds_inv",
+            "batlow",
+            "bcgwhw",
+            "bcgwhw_dark",
+            "blue",
+            "blue2cyan",
+            "blue2magenta",
+            "blue2red",
+            "bluegrn",
+            "bone",
+            "bronze",
+            "cet_l17",
+            "cividis",
+            "cool",
+            "copper",
+            "copper2",
+            "ct_airways",
+            "ct_artery",
+            "ct_bones",
+            "ct_brain",
+            "ct_brain_gray",
+            "ct_cardiac",
+            "ct_head",
+            "ct_kidneys",
+            "ct_liver",
+            "ct_muscles",
+            "ct_scalp",
+            "ct_skull",
+            "ct_soft",
+            "ct_soft_tissue",
+            "ct_surface",
+            "ct_vessels",
+            "ct_w_contrast",
+            "cubehelix",
+            "electric_blue",
+            "freesurfer",
+            "ge_color",
+            "gold",
+            "gray",
+            "green",
+            "green2cyan",
+            "green2orange",
+            "hot",
+            "hotiron",
+            "hsv",
+            "inferno",
+            "jet",
+            "kry",
+            "linspecer",
+            "lipari",
+            "magma",
+            "mako",
+            "navia",
+            "nih",
+            "plasma",
+            "random",
+            "red",
+            "redyell",
+            "rocket",
+            "roi_i256",
+            "surface",
+            "thermal",
+            "turbo",
+            "violet",
+            "viridis",
+            "warm",
+            "winter",
+            "x_rain",
+        ]
+        colormaps_path = pathlib.Path(__file__).parent / "static" / "colormaps.txt"
+        try:
+            with open(colormaps_path) as f:
+                colormaps_list = f.read().splitlines()
+        except FileNotFoundError:
+            return fallback_colormaps
+
+        # add custom colormap names
+        for key in self._added_colormaps:
+            if key not in colormaps_list:
+                colormaps_list.append(key)
+
+        return colormaps_list
+
+    def add_colormap(self, name: str, color_map: dict):
+        """Add a colormap to the widget.
+
+        Parameters
+        ----------
+        name : str
+            The name of the colormap.
+        color_map : dict
+            A dictionary containing the colormap information.
+            It must have the following keys:
+
+            **Required keys**:
+                - `'R'`: list of numbers
+                - `'G'`: list of numbers
+                - `'B'`: list of numbers
+                - `'A'`: list of numbers
+                - `'I'`: list of numbers
+
+            **Optional keys**:
+                - `'min'`: number
+                - `'max'`: number
+                - `'labels'`: list of strings
+
+            All the `'R'`, `'G'`, `'B'`, `'A'`, `'I'` lists must have the same length.
+
+        Raises
+        ------
+        ValueError
+            If the colormap does not meet the required format.
+        TypeError
+            If the colormap values are not of the correct type.
+
+        Examples
+        --------
+        ::
+
+            nv.add_colormap("custom_color_map", {
+                "R": [0, 255, 0],
+                "G": [0, 0, 255],
+                "B": [0, 0, 0],
+                "A": [0, 64, 64],
+                "I": [0, 85, 255]
+            })
+            nv.set_colormap(nv.volumes[0].id, "custom_color_map")
+        """
+        # Validate that required keys are present and are lists of numbers
+        required_keys = ["R", "G", "B", "A", "I"]
+        for key in required_keys:
+            if key not in color_map:
+                raise ValueError(f"ColorMap must include required key '{key}'")
+            if not isinstance(color_map[key], list):
+                raise TypeError(f"ColorMap key '{key}' must be a list")
+            if not all(isinstance(x, (int, float)) for x in color_map[key]):
+                raise TypeError(f"All elements in ColorMap key '{key}' must be numbers")
+
+        # Check that all required lists have the same length
+        lengths = [len(color_map[key]) for key in required_keys]
+        if len(set(lengths)) != 1:
+            raise ValueError(
+                "All 'R', 'G', 'B', 'A', 'I' lists must have the same length"
+            )
+
+        # Validate optional keys
+        if "min" in color_map and not isinstance(color_map["min"], (int, float)):
+            raise TypeError("ColorMap 'min' must be a number")
+
+        if "max" in color_map and not isinstance(color_map["max"], (int, float)):
+            raise TypeError("ColorMap 'max' must be a number")
+
+        if "labels" in color_map:
+            if not isinstance(color_map["labels"], list):
+                raise TypeError("ColorMap 'labels' must be a list of strings")
+            if not all(isinstance(label, str) for label in color_map["labels"]):
+                raise TypeError("All elements in ColorMap 'labels' must be strings")
+            if len(color_map["labels"]) != lengths[0]:
+                raise ValueError(
+                    "ColorMap 'labels' must have the same length "
+                    "as 'R', 'G', 'B', 'A', 'I' lists"
+                )
+
+        # Save the colormap name
+        self._added_colormaps.add(name)
+
+        # Send the colormap to the frontend
+        self.send({"type": "add_colormap", "data": [name, color_map]})
+
+    def set_colormap(self, imageID: str, colormap: str):
+        """Set the colormap for a volume.
+
+        Parameters
+        ----------
+        imageID : str
+            The ID of the volume.
+        colormap : str
+            The name of the colormap to set.
+
+        Raises
+        ------
+        ValueError
+            If the volume with the given ID is not found.
+
+        Examples
+        --------
+        ::
+
+            nv.set_colormap(nv.volumes[0].id, "green2cyan")
+        """
+        idx = self.get_volume_index_by_id(imageID)
+        if idx != -1:
+            self._volumes[idx].colormap = colormap
+        else:
+            raise ValueError(f"Volume with ID '{imageID}' not found")
+
+    def set_selection_box_color(self, color: tuple):
+        """Set the selection box color.
+
+        Parameters
+        ----------
+        color : tuple of floats
+            An RGBA array with values ranging from 0 to 1.
+
+        Raises
+        ------
+        ValueError
+            If the color is not a list of four numeric values.
+
+        Examples
+        --------
+        ::
+
+            nv.set_selection_box_color((0, 1, 0, 0.7))
+        """
+        if not isinstance(color, (list, tuple)) or len(color) != 4:
+            raise ValueError(
+                "Color must be a list or tuple of four numeric values (RGBA)."
+            )
+        if not all(isinstance(c, (int, float)) and 0 <= c <= 1 for c in color):
+            raise ValueError("Each color component must be a number between 0 and 1.")
+
+        self.selection_box_color = tuple(color)
+
+    def set_crosshair_color(self, color: tuple):
+        """Set the crosshair and colorbar outline color.
+
+        Parameters
+        ----------
+        color : tuple of floats
+            An RGBA array with values ranging from 0 to 1.
+
+        Raises
+        ------
+        ValueError
+            If the color is not a list of four numeric values.
+
+        Examples
+        --------
+        ::
+
+            nv.set_crosshair_color((0, 1, 0, 1))
+        """
+        if not isinstance(color, (list, tuple)) or len(color) != 4:
+            raise ValueError(
+                "Color must be a list or tuple of four numeric values (RGBA)."
+            )
+        if not all(isinstance(c, (int, float)) and 0 <= c <= 1 for c in color):
+            raise ValueError("Each color component must be a number between 0 and 1.")
+
+        self.crosshair_color = tuple(color)
+
+    def set_crosshair_width(self, width: int):
+        """Set the crosshair width.
+
+        Parameters
+        ----------
+        width : int
+            The width of the crosshair in pixels.
+
+        Examples
+        --------
+        ::
+
+            nv.set_crosshair_width(3)
+        """
+        self.crosshair_width = width
+
+    def set_gamma(self, gamma: float = 1.0):
+        """Adjust screen gamma.
+
+        Parameters
+        ----------
+        gamma : float
+            Selects luminance
+
+        Raises
+        ------
+        TypeError
+            If gamma is not a number
+
+        Examples
+        --------
+        ::
+
+            nv.set_gamma(3.0)
+        """
+        if not isinstance(gamma, (int, float)):
+            raise TypeError("gamma must be a number")
+
+        self.send({"type": "set_gamma", "data": [gamma]})
+
+    def set_slice_type(self, slice_type: SliceType):
+        """Set the type of slice display.
+
+        Parameters
+        ----------
+        slice_type : SliceType
+            The type of slice display.
+
+        Raises
+        ------
+        TypeError
+            If slice_type is not a valid SliceType.
+
+        Examples
+        --------
+        ::
+
+            nv.set_slice_type(SliceType.AXIAL)
+        """
+        if slice_type not in SliceType:
+            raise TypeError("slice_type must be a valid SliceType")
+
+        self.slice_type = slice_type
+
+    def set_clip_plane(self, depth: float, azimuth: float, elevation: float):
+        """Update the clip plane orientation in 3D view mode.
+
+        Parameters
+        ----------
+        depth : float
+            distance of clip plane from the center of the volume
+        azimuth : float
+            camera position in degrees around the object
+        elevation : float
+            camera height in degrees
+
+        Raises
+        ------
+        TypeError
+            If any of the inputs are not a number.
+
+        Examples
+        --------
+        ::
+
+            nv.set_clip_plane(2.0, 42.0, 42.0)
+        """
+        # Verify that all inputs are numeric types
+        if not all(isinstance(x, (int, float)) for x in [depth, azimuth, elevation]):
+            raise TypeError("depth, azimuth, and elevation must all be numeric values.")
+
+        self.send({"type": "set_clip_plane", "data": [depth, azimuth, elevation]})
+
+    def set_render_azimuth_elevation(self, azimuth: float, elevation: float):
+        """Set the rotation of the 3D render view.
+
+        Parameters
+        ----------
+        azimuth : float
+            The azimuth angle in degrees around the object.
+        elevation : float
+            The elevation angle in degrees.
+
+        Raises
+        ------
+        TypeError
+            If azimuth or elevation is not a number.
+
+        Examples
+        --------
+        ::
+
+            nv.set_render_azimuth_elevation(45, 15)
+        """
+        if not isinstance(azimuth, (int, float)):
+            raise TypeError("Azimuth must be a number.")
+        if not isinstance(elevation, (int, float)):
+            raise TypeError("Elevation must be a number.")
+        self.send(
+            {"type": "set_render_azimuth_elevation", "data": [azimuth, elevation]}
+        )
+
+    def set_mesh_shader(self, mesh_id: str, mesh_shader: str):
+        """Set the shader for a mesh.
+
+        Parameters
+        ----------
+        mesh_id : str
+            Identifier of the mesh to change (mesh id).
+        mesh_shader : str
+            The name of the shader to set.
+
+        Raises
+        ------
+        ValueError
+            If the mesh is not found.
+
+        Examples
+        --------
+        ::
+
+            nv.set_mesh_shader(nv.meshes[0].id, 'toon')
+        """
+        idx = self.get_mesh_index_by_id(mesh_id)
+        if idx == -1:
+            raise ValueError(f"Mesh with id '{mesh_id}' not found.")
+
+        self.send({"type": "set_mesh_shader", "data": [mesh_id, mesh_shader]})
+
+    def mesh_shader_names(self):
+        """Retrieve the list of available mesh shader names.
+
+        Returns
+        -------
+        list of str
+            A list containing the names of all available mesh shader names
+
+        Examples
+        --------
+        ::
+
+            shaders = nv.mesh_shader_names()
+        """
+        fallback_shader_names = [
+            "Crevice",
+            "Diffuse",
+            "Edge",
+            "Flat",
+            "Harmonic",
+            "Hemispheric",
+            "Matcap",
+            "Matte",
+            "Outline",
+            "Phong",
+            "Specular",
+            "Toon",
+        ]
+        shader_names_path = (
+            pathlib.Path(__file__).parent / "static" / "meshShaderNames.txt"
+        )
+        try:
+            with open(shader_names_path) as f:
+                shader_names_list = f.read().splitlines()
+        except FileNotFoundError:
+            return fallback_shader_names
+
+        return shader_names_list
+
     """
     Custom event callbacks
     """
@@ -753,7 +1244,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``dict`` with the following keys:
+            A function that takes one argument - a ``dict`` with the following keys:
 
             - **mm3** (float): The segmented volume in cubic millimeters.
             - **mL** (float): The segmented volume in milliliters.
@@ -790,7 +1281,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a list of numbers representing the
+            A function that takes one argument - a list of numbers representing the
             clip plane.
         remove : bool, optional
             If ``True``, remove the callback. Defaults to ``False``.
@@ -804,11 +1295,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_clip_plane_change
             def my_callback(clip_plane):
                 with out:
                     print('Clip plane changed:', clip_plane)
-
-            nv.on_clip_plane_change(my_callback)
 
         """
         self._register_callback("clip_plane_change", callback, remove=remove)
@@ -823,7 +1313,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``dict`` representing the loaded
+            A function that takes one argument - a ``dict`` representing the loaded
             document with the following keys:
 
             - **title** (str): The title of the loaded document.
@@ -843,6 +1333,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_document_loaded
             def my_callback(document):
                 with out:
                     print('Document loaded:')
@@ -850,8 +1341,6 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
                     print('Options:', document['opts'])
                     print('Volumes:', document['volumes'])
                     print('Meshes:', document['meshes'])
-
-            nv.on_document_loaded(my_callback)
 
         """
         self._register_callback("document_loaded", callback, remove=remove)
@@ -865,7 +1354,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``Volume`` object.
+            A function that takes one argument - a ``Volume`` object.
         remove : bool, optional
             If ``True``, remove the callback. Defaults to ``False``.
 
@@ -878,11 +1367,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_image_loaded
             def my_callback(volume):
                 with out:
                     print('Image loaded:', volume.id)
-
-            nv.on_image_loaded(my_callback)
 
         """
         self._register_callback("image_loaded", callback, remove=remove)
@@ -897,7 +1385,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``dict`` containing drag release
+            A function that takes one argument - a ``dict`` containing drag release
             parameters with the following keys:
 
             - **frac_start** (list of float): Starting fractional coordinates
@@ -929,11 +1417,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_drag_release
             def my_callback(params):
                 with out:
                     print('Drag release event:', params)
-
-            nv.on_drag_release(my_callback)
 
         """
         self._register_callback("drag_release", callback, remove=remove)
@@ -965,13 +1452,12 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_frame_change
             def my_callback(volume, frame_index):
                 with out:
                     print('Frame changed')
                     print('Volume:', volume)
                     print('Frame index:', frame_index)
-
-            nv.on_frame_change(my_callback)
 
         """
         self._register_callback("frame_change", callback, remove=remove)
@@ -986,7 +1472,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``Volume`` object.
+            A function that takes one argument - a ``Volume`` object.
         remove : bool, optional
             If ``True``, remove the callback. Defaults to ``False``.
 
@@ -999,11 +1485,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_intensity_change
             def my_callback(volume):
                 with out:
                     print('Intensity changed for volume:', volume)
-
-            nv.on_intensity_change(my_callback)
 
         """
         self._register_callback("intensity_change", callback, remove=remove)
@@ -1018,8 +1503,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``dict`` containing the new
-            location data—with the following keys:
+            A function that takes one argument - a ``dict`` containing the new
+            location data - with the following keys:
 
             - **ax_cor_sag** (int): The view index where the location changed.
             - **frac** (list of float): The fractional coordinates ``[X, Y, Z]``
@@ -1044,11 +1529,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_location_change
             def my_callback(location):
                 with out:
                     print('Location changed', location)
-
-            nv.on_location_change(my_callback)
 
         """
         self._register_callback("location_change", callback, remove=remove)
@@ -1090,14 +1574,13 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_mesh_added_from_url
             def my_callback(mesh_options, mesh):
                 with out:
                     print('Mesh added from URL')
                     print('URL:', mesh_options['url'])
                     print('Headers:', mesh_options['headers'])
                     print('Mesh ID:', mesh['id'])
-
-            nv.on_mesh_added_from_url(my_callback)
 
         """
         self._register_callback("mesh_added_from_url", callback, remove=remove)
@@ -1111,7 +1594,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—the loaded mesh (``Mesh`` object).
+            A function that takes one argument - the loaded mesh (``Mesh`` object).
         remove : bool, optional
             If ``True``, remove the callback. Defaults to ``False``.
 
@@ -1124,11 +1607,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_mesh_loaded
             def my_callback(mesh):
                 with out:
                     print('Mesh loaded', mesh)
-
-            nv.on_mesh_loaded(my_callback)
 
         """
         self._register_callback("mesh_loaded", callback, remove=remove)
@@ -1142,7 +1624,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         callback : callable
-            A function that takes one argument—a ``dict`` containing mouse event data
+            A function that takes one argument - a ``dict`` containing mouse event data
             with the following keys:
 
             - **is_dragging** (bool): Indicates if a drag action is in progress
@@ -1164,11 +1646,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_mouse_up
             def my_callback(data):
                 with out:
                     print('Mouse button released', data)
-
-            nv.on_mouse_up(my_callback)
 
         """
         self._register_callback("mouse_up", callback, remove=remove)
@@ -1244,14 +1725,13 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_volume_added_from_url
             def my_callback(image_options, volume):
                 with out:
                     print('Volume added from URL')
                     print('URL:', image_options['url'])
                     print('Headers:', image_options['headers'])
                     print('Volume ID:', volume['id'])
-
-            nv.on_volume_added_from_url(my_callback)
 
         """
         self._register_callback("volume_added_from_url", callback, remove=remove)
@@ -1280,11 +1760,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             out = Output()
             display(out)
 
+            @nv.on_volume_updated
             def my_callback():
                 with out:
                     print('Volumes updated')
-
-            nv.on_volume_updated(my_callback)
 
         """
         self._register_callback("volume_updated", callback, remove=remove)
@@ -1300,9 +1779,7 @@ class WidgetObserver:
         self._observe()
 
     def _widget_change(self, change):
-        # Converts string to float because negative 0 as a float
-        # with ipywidgets does not work as expected.
-        setattr(self.object, self.attribute, float(change["new"]))
+        setattr(self.object, self.attribute, change["new"])
 
     def _observe(self):
         self.widget.observe(self._widget_change, names=["value"])

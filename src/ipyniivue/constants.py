@@ -9,19 +9,27 @@ import enum
 
 __all__ = [
     "DragMode",
-    "MuliplanarType",
+    "MultiplanarType",
     "SliceType",
 ]
 
 
 class SliceType(enum.Enum):
     """
-    Defines the number value equivalents for each SliceType of a NiiVue instance.
+    An enumeration of slice types for NiiVue instances.
 
-    Parameters
-    ----------
-    enum.Enum
-        A new enumeration for this class to store members.
+    Members
+    -------
+    AXIAL : int
+        Axial slice type (value 0).
+    CORONAL : int
+        Coronal slice type (value 1).
+    SAGITTAL : int
+        Sagittal slice type (value 2).
+    MULTIPLANAR : int
+        Multiplanar view type (value 3).
+    RENDER : int
+        Render view type (value 4).
     """
 
     AXIAL = 0
@@ -33,12 +41,16 @@ class SliceType(enum.Enum):
 
 class DragMode(enum.Enum):
     """
-    Defines the number value equivalents for each DragMode of a NiiVue instance.
+    An enumeration of drag modes for NiiVue instances.
 
-    Parameters
-    ----------
-    enum.Enum
-        A new enumeration for this class to store members.
+    Members
+    -------
+    CONTRAST : int
+        Contrast adjustment mode (value 1).
+    MEASUREMENT : int
+        Measurement mode for taking measurements (value 2).
+    PAN : int
+        Pan mode for moving around the image (value 3).
     """
 
     CONTRAST = 1
@@ -46,20 +58,45 @@ class DragMode(enum.Enum):
     PAN = 3
 
 
-class MuliplanarType(enum.Enum):
+class MultiplanarType(enum.Enum):
     """
-    Defines the number value equivalents for each MultiplanarType of a NiiVue instance.
+    An enumeration of multiplanar types for NiiVue instances.
 
-    Parameters
-    ----------
-    enum.Enum
-        A new enumeration for this class to store members.
+    Members
+    -------
+    AUTO : int
+        Automatic multiplanar type (value 0).
+    COLUMN : int
+        Column multiplanar type (value 1).
+    GRID : int
+        Grid multiplanar type (value 2).
+    ROW : int
+        Row multiplanar type (value 3).
     """
 
     AUTO = 0
     COLUMN = 1
     GRID = 2
     ROW = 3
+
+
+class ShowRender(enum.Enum):
+    """
+    An enumeration for specifying when to show rendering in NiiVue instances.
+
+    Members
+    -------
+    NEVER : int
+        Never show rendering (value 0).
+    ALWAYS : int
+        Always show rendering (value 1).
+    AUTO : int
+        Automatically determine whether to show rendering (value 2).
+    """
+
+    NEVER = 0
+    ALWAYS = 1
+    AUTO = 2
 
 
 _SNAKE_TO_CAMEL_OVERRIDES = {

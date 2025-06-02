@@ -57,6 +57,19 @@ function setup_layer_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	// other props
+	function colormap_invert_changed() {
+		layer.colormapInvert = layerModel.get("colormap_invert");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function frame4D_changed() {
+		layer.frame4D = layerModel.get("frame4D");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
 	// Set up the event listeners
 	layerModel.on("change:opacity", opacity_changed);
 	layerModel.on("change:colormap", colormap_changed);
@@ -65,6 +78,9 @@ function setup_layer_property_listeners(
 	layerModel.on("change:cal_min", cal_min_changed);
 	layerModel.on("change:cal_max", cal_max_changed);
 	layerModel.on("change:outline_border", outline_border_changed);
+
+	layerModel.on("change:colormap_invert", colormap_invert_changed);
+	layerModel.on("change:frame4D", frame4D_changed);
 
 	// Return a cleanup function
 	return () => {
@@ -75,6 +91,9 @@ function setup_layer_property_listeners(
 		layerModel.off("change:cal_min", cal_min_changed);
 		layerModel.off("change:cal_max", cal_max_changed);
 		layerModel.off("change:outline_border", outline_border_changed);
+
+		layerModel.off("change:colormap_invert", colormap_invert_changed);
+		layerModel.off("change:frame4D", frame4D_changed);
 	};
 }
 
@@ -92,14 +111,22 @@ function setup_mesh_property_listeners(
 		mesh.updateMesh(nv.gl);
 		nv.updateGLVolume();
 	}
+
 	function rgba255_changed() {
 		mesh.rgba255 = new Uint8Array(mmodel.get("rgba255"));
 		mesh.updateMesh(nv.gl);
 		nv.updateGLVolume();
 	}
+
 	function visible_changed() {
 		mesh.visible = mmodel.get("visible");
 		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	// other props
+	function colormap_invert_changed() {
+		mesh.colormapInvert = mmodel.get("colormap_invert");
 		nv.updateGLVolume();
 	}
 
@@ -107,11 +134,15 @@ function setup_mesh_property_listeners(
 	mmodel.on("change:rgba255", rgba255_changed);
 	mmodel.on("change:visible", visible_changed);
 
+	mmodel.on("change:colormap_invert", colormap_invert_changed);
+
 	// Return a function to remove the event listeners
 	return () => {
 		mmodel.off("change:opacity", opacity_changed);
 		mmodel.off("change:rgba255", rgba255_changed);
 		mmodel.off("change:visible", visible_changed);
+
+		mmodel.off("change:colormap_invert", colormap_invert_changed);
 	};
 }
 

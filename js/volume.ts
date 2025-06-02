@@ -15,24 +15,35 @@ function setup_volume_property_listeners(
 		volume.colorbarVisible = vmodel.get("colorbar_visible");
 		nv.updateGLVolume();
 	}
+
 	function cal_min_changed() {
 		volume.cal_min = vmodel.get("cal_min");
 		nv.updateGLVolume();
 	}
+
 	function cal_max_changed() {
 		volume.cal_max = vmodel.get("cal_max");
 		nv.updateGLVolume();
 	}
+
 	function colormap_changed() {
 		volume.colormap = vmodel.get("colormap");
 		nv.updateGLVolume();
 	}
+
 	function opacity_changed() {
 		volume.opacity = vmodel.get("opacity");
 		nv.updateGLVolume();
 	}
+
 	function frame4D_changed() {
 		volume.frame4D = vmodel.get("frame4D");
+		nv.updateGLVolume();
+	}
+
+	// other props
+	function colormap_invert_changed() {
+		volume.colormapInvert = vmodel.get("colormap_invert");
 		nv.updateGLVolume();
 	}
 
@@ -43,6 +54,8 @@ function setup_volume_property_listeners(
 	vmodel.on("change:opacity", opacity_changed);
 	vmodel.on("change:frame4D", frame4D_changed);
 
+	vmodel.on("change:colormap_invert", colormap_invert_changed);
+
 	return () => {
 		vmodel.off("change:colorbar_visible", colorbar_visible_changed);
 		vmodel.off("change:cal_min", cal_min_changed);
@@ -50,6 +63,8 @@ function setup_volume_property_listeners(
 		vmodel.off("change:colormap", colormap_changed);
 		vmodel.off("change:opacity", opacity_changed);
 		vmodel.off("change:frame4D", frame4D_changed);
+
+		vmodel.off("change:colormap_invert", colormap_invert_changed);
 	};
 }
 
