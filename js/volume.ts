@@ -85,6 +85,8 @@ async function create_volume(
 			undefined, // cal_maxNeg
 			vmodel.get("colorbar_visible"), // colorbarVisible
 			undefined, // colormapLabel
+			undefined, //colormapType
+			undefined, //zarrData
 		);
 	}
 
