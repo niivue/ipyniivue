@@ -275,7 +275,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     )
 
     # other props
-    background_masks_overlays = t.Bool(False).tag(sync=True)
+    background_masks_overlays = t.Int(0).tag(sync=True)
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""

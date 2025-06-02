@@ -65,7 +65,7 @@ export type Model = AnyModel<{
 	_meshes: Array<string>;
 	_opts: Record<string, unknown>;
 
-	background_masks_overlays: boolean;
+	background_masks_overlays: number;
 }>;
 
 // Custom message datas

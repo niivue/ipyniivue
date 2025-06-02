@@ -35,11 +35,8 @@ function attachModelEventHandlers(
 
 	// Other nv prop changes
 	model.on("change:background_masks_overlays", () => {
-		const backgroundMasksOverlays = model.get("background_masks_overlays");
-		if (typeof backgroundMasksOverlays === "boolean") {
-			nv.backgroundMasksOverlays = Number(backgroundMasksOverlays);
-			nv.updateGLVolume();
-		}
+		nv.backgroundMasksOverlays = model.get("background_masks_overlays");
+		nv.updateGLVolume();
 	});
 
 	// Handle any message directions from the nv object.
