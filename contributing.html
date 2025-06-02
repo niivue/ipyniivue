@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="API Documentation" href="api.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Enums" href="enums.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>Contributing - IPyNiiVue 2.1.0 documentation</title>
@@ -202,6 +202,8 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enums.html">Enums</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Contributing</a></li>
 </ul>
 
@@ -247,7 +249,7 @@
 <h1>Contributing<a class="headerlink" href="#contributing" title="Link to this heading">¶</a></h1>
 <p>We are glad you are here! Contributions to this package are always welcome.
 Read on to learn more about the contribution process and package design.</p>
-<p>ipyniivue uses <a class="reference external" href="https://pre-commit.com/">the reccomended</a> hatchling build-system, which is convenient to use via the <a class="reference external" href="https://hatch.pypa.io/latest/">hatch CLI</a>. We recommend installing hatch globally (e.g., via pipx) and running the various commands defined within pyproject.toml. hatch will take care of creating and synchronizing a virtual environment with all dependencies defined in pyproject.toml.</p>
+<p>ipyniivue uses <a class="reference external" href="https://pre-commit.com/">the recommended</a> hatchling build-system, which is convenient to use via the <a class="reference external" href="https://hatch.pypa.io/latest/">hatch CLI</a>. We recommend installing hatch globally (e.g., via pipx) and running the various commands defined within pyproject.toml. hatch will take care of creating and synchronizing a virtual environment with all dependencies defined in pyproject.toml.</p>
 <section id="install-pre-commit-hooks">
 <h2>Install Pre-Commit hooks<a class="headerlink" href="#install-pre-commit-hooks" title="Link to this heading">¶</a></h2>
 <p>We use <a class="reference external" href="https://packaging.python.org/en/latest/flow/#">pre-commit</a> to run code checks and clear
@@ -264,8 +266,8 @@ command beforehand:</p>
 </pre></div>
 </div>
 </section>
-<section id="command-cheatsheat">
-<h2>Command Cheatsheat<a class="headerlink" href="#command-cheatsheat" title="Link to this heading">¶</a></h2>
+<section id="command-cheatsheet">
+<h2>Command Cheatsheet<a class="headerlink" href="#command-cheatsheet" title="Link to this heading">¶</a></h2>
 <p>All commands are run from the root of the project, from a terminal:</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
@@ -284,6 +286,9 @@ and apply linting with ruff –fix</p></td>
 </tr>
 <tr class="row-even"><td><p>$ hatch run test</p></td>
 <td><p>Run unit tests with pytest</p></td>
+</tr>
+<tr class="row-odd"><td><p>$ hatch run docs</p></td>
+<td><p>Build docs with Sphinx</p></td>
 </tr>
 </tbody>
 </table>
@@ -316,14 +321,14 @@ and apply linting with ruff –fix</p></td>
         
         <div class="related-pages">
           
-          <a class="prev-page" href="api.html">
+          <a class="prev-page" href="enums.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">API Documentation</div>
+                <div class="title">Enums</div>
                 
               </div>
             </a>
@@ -359,7 +364,7 @@ and apply linting with ruff –fix</p></td>
             <ul>
 <li><a class="reference internal" href="#">Contributing</a><ul>
 <li><a class="reference internal" href="#install-pre-commit-hooks">Install Pre-Commit hooks</a></li>
-<li><a class="reference internal" href="#command-cheatsheat">Command Cheatsheat</a></li>
+<li><a class="reference internal" href="#command-cheatsheet">Command Cheatsheet</a></li>
 <li><a class="reference internal" href="#making-changes-to-the-javascript-code">Making Changes to the JavaScript Code</a></li>
 </ul>
 </li>

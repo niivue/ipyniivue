@@ -202,6 +202,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enums.html">Enums</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
 
@@ -256,8 +258,11 @@
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue"><code class="docutils literal notranslate"><span class="pre">NiiVue</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.__init__"><code class="docutils literal notranslate"><span class="pre">NiiVue.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.add_colormap"><code class="docutils literal notranslate"><span class="pre">NiiVue.add_colormap()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.add_mesh"><code class="docutils literal notranslate"><span class="pre">NiiVue.add_mesh()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.add_volume"><code class="docutils literal notranslate"><span class="pre">NiiVue.add_volume()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.background_masks_overlays"><code class="docutils literal notranslate"><span class="pre">NiiVue.background_masks_overlays</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.colormaps"><code class="docutils literal notranslate"><span class="pre">NiiVue.colormaps()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.drawings"><code class="docutils literal notranslate"><span class="pre">NiiVue.drawings</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.get_mesh_index_by_id"><code class="docutils literal notranslate"><span class="pre">NiiVue.get_mesh_index_by_id()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.get_volume_index_by_id"><code class="docutils literal notranslate"><span class="pre">NiiVue.get_volume_index_by_id()</span></code></a></li>
@@ -266,6 +271,7 @@
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.load_drawings"><code class="docutils literal notranslate"><span class="pre">NiiVue.load_drawings()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.load_meshes"><code class="docutils literal notranslate"><span class="pre">NiiVue.load_meshes()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.load_volumes"><code class="docutils literal notranslate"><span class="pre">NiiVue.load_volumes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.mesh_shader_names"><code class="docutils literal notranslate"><span class="pre">NiiVue.mesh_shader_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.meshes"><code class="docutils literal notranslate"><span class="pre">NiiVue.meshes</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.on_azimuth_elevation_change"><code class="docutils literal notranslate"><span class="pre">NiiVue.on_azimuth_elevation_change()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.on_click_to_segment"><code class="docutils literal notranslate"><span class="pre">NiiVue.on_click_to_segment()</span></code></a></li>
@@ -285,15 +291,26 @@
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.save_html"><code class="docutils literal notranslate"><span class="pre">NiiVue.save_html()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.save_image"><code class="docutils literal notranslate"><span class="pre">NiiVue.save_image()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.save_scene"><code class="docutils literal notranslate"><span class="pre">NiiVue.save_scene()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.set_clip_plane"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_clip_plane()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.set_colormap"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_colormap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.set_crosshair_color"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_crosshair_color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.set_crosshair_width"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_crosshair_width()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.set_gamma"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_gamma()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.set_mesh_layer_property"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_mesh_layer_property()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.set_mesh_shader"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_mesh_shader()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.set_render_azimuth_elevation"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_render_azimuth_elevation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.set_selection_box_color"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_selection_box_color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.set_slice_type"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_slice_type()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.NiiVue.volumes"><code class="docutils literal notranslate"><span class="pre">NiiVue.volumes</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#ipyniivue.widget.Volume"><code class="docutils literal notranslate"><span class="pre">Volume</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Volume.__init__"><code class="docutils literal notranslate"><span class="pre">Volume.__init__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Volume.cal_max"><code class="docutils literal notranslate"><span class="pre">Volume.cal_max</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Volume.cal_min"><code class="docutils literal notranslate"><span class="pre">Volume.cal_min</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Volume.colorbar_visible"><code class="docutils literal notranslate"><span class="pre">Volume.colorbar_visible</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Volume.colormap"><code class="docutils literal notranslate"><span class="pre">Volume.colormap</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Volume.colormap_invert"><code class="docutils literal notranslate"><span class="pre">Volume.colormap_invert</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Volume.frame4D"><code class="docutils literal notranslate"><span class="pre">Volume.frame4D</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Volume.id"><code class="docutils literal notranslate"><span class="pre">Volume.id</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Volume.name"><code class="docutils literal notranslate"><span class="pre">Volume.name</span></code></a></li>
@@ -303,6 +320,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#ipyniivue.widget.Mesh"><code class="docutils literal notranslate"><span class="pre">Mesh</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Mesh.__init__"><code class="docutils literal notranslate"><span class="pre">Mesh.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Mesh.colormap_invert"><code class="docutils literal notranslate"><span class="pre">Mesh.colormap_invert</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Mesh.id"><code class="docutils literal notranslate"><span class="pre">Mesh.id</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Mesh.layers"><code class="docutils literal notranslate"><span class="pre">Mesh.layers</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Mesh.name"><code class="docutils literal notranslate"><span class="pre">Mesh.name</span></code></a></li>
@@ -313,10 +331,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#ipyniivue.widget.MeshLayer"><code class="docutils literal notranslate"><span class="pre">MeshLayer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.MeshLayer.__init__"><code class="docutils literal notranslate"><span class="pre">MeshLayer.__init__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.MeshLayer.cal_max"><code class="docutils literal notranslate"><span class="pre">MeshLayer.cal_max</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.MeshLayer.cal_min"><code class="docutils literal notranslate"><span class="pre">MeshLayer.cal_min</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.MeshLayer.colormap"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.MeshLayer.colormap_invert"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap_invert</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.MeshLayer.colormap_negative"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap_negative</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.MeshLayer.frame4D"><code class="docutils literal notranslate"><span class="pre">MeshLayer.frame4D</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.MeshLayer.id"><code class="docutils literal notranslate"><span class="pre">MeshLayer.id</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.MeshLayer.opacity"><code class="docutils literal notranslate"><span class="pre">MeshLayer.opacity</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.MeshLayer.outline_border"><code class="docutils literal notranslate"><span class="pre">MeshLayer.outline_border</span></code></a></li>
@@ -332,72 +353,106 @@
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.widget.Drawing.path"><code class="docutils literal notranslate"><span class="pre">Drawing.path</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin"><code class="docutils literal notranslate"><span class="pre">OptionsMixin</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.back_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.back_color</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.center_mosaic"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.center_mosaic</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.clip_plane_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.clip_plane_color</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.clip_plane_hot_key"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.clip_plane_hot_key</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.colorbar_height"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.colorbar_height</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.colorbar_margin"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.colorbar_margin</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.crosshair_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.crosshair_color</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.crosshair_width"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.crosshair_width</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.double_touch_timeout"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.double_touch_timeout</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.drag_and_drop_enabled"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.drag_and_drop_enabled</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.drag_mode"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.drag_mode</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.drawing_enabled"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.drawing_enabled</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.flood_fill_neighbors"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.flood_fill_neighbors</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.font_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.font_color</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_additive_blend"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_additive_blend</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_anti_alias"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_anti_alias</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_atlas_outline"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_atlas_outline</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_colorbar"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_colorbar</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_corner_orientation_text"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_corner_orientation_text</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_depth_pick_mesh"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_depth_pick_mesh</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_filled_pen"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_filled_pen</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_force_mouse_click_to_voxel_centers"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_force_mouse_click_to_voxel_centers</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_high_resolution_capable"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_high_resolution_capable</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_nearest_interpolation"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_nearest_interpolation</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_orient_cube"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_orient_cube</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_radiological_convention"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_radiological_convention</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_resize_canvas"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_resize_canvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_ruler"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_ruler</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_slice_mm"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_slice_mm</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.is_v1_slice_shader"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_v1_slice_shader</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.key_debounce_time"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.key_debounce_time</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.legend_background_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.legend_background_color</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.legend_text_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.legend_text_color</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.limit_frames_4d"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.limit_frames_4d</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.loading_text"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.loading_text</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.log_level"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.log_level</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.long_touch_timeout"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.long_touch_timeout</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.max_draw_undo_bitmaps"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.max_draw_undo_bitmaps</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.mesh_thickness_on_2d"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.mesh_thickness_on_2d</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.mesh_x_ray"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.mesh_x_ray</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_force_render"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.multiplanar_force_render</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_layout"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.multiplanar_layout</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_pad_pixels"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.multiplanar_pad_pixels</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.pen_value"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.pen_value</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.render_overlay_blend"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.render_overlay_blend</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.ruler_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.ruler_color</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.ruler_width"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.ruler_width</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.sagittal_nose_left"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.sagittal_nose_left</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.selection_box_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.selection_box_color</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.show_3d_crosshair"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.show_3d_crosshair</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.show_legend"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.show_legend</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.slice_mosaic_string"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.slice_mosaic_string</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.slice_type"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.slice_type</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.text_height"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.text_height</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.thumbnail"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.thumbnail</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.trust_cal_min_max"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.trust_cal_min_max</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.view_mode_hot_key"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.view_mode_hot_key</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.options_mixin.OptionsMixin.yoke_3d_to_2d_zoom"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.yoke_3d_to_2d_zoom</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin"><code class="docutils literal notranslate"><span class="pre">OptionsMixin</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.back_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.back_color</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.center_mosaic"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.center_mosaic</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.clip_plane_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.clip_plane_color</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.clip_plane_hot_key"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.clip_plane_hot_key</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.colorbar_height"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.colorbar_height</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.colorbar_margin"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.colorbar_margin</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.crosshair_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.crosshair_color</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.crosshair_width"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.crosshair_width</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.double_touch_timeout"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.double_touch_timeout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.drag_and_drop_enabled"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.drag_and_drop_enabled</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.drag_mode"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.drag_mode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.drawing_enabled"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.drawing_enabled</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.flood_fill_neighbors"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.flood_fill_neighbors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.font_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.font_color</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_additive_blend"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_additive_blend</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_anti_alias"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_anti_alias</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_atlas_outline"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_atlas_outline</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_colorbar"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_colorbar</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_corner_orientation_text"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_corner_orientation_text</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_depth_pick_mesh"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_depth_pick_mesh</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_filled_pen"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_filled_pen</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_force_mouse_click_to_voxel_centers"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_force_mouse_click_to_voxel_centers</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_high_resolution_capable"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_high_resolution_capable</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_nearest_interpolation"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_nearest_interpolation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_orient_cube"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_orient_cube</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_radiological_convention"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_radiological_convention</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_resize_canvas"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_resize_canvas</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_ruler"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_ruler</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_slice_mm"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_slice_mm</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.is_v1_slice_shader"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.is_v1_slice_shader</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.key_debounce_time"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.key_debounce_time</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.legend_background_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.legend_background_color</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.legend_text_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.legend_text_color</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.limit_frames_4d"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.limit_frames_4d</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.loading_text"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.loading_text</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.log_level"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.log_level</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.long_touch_timeout"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.long_touch_timeout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.max_draw_undo_bitmaps"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.max_draw_undo_bitmaps</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.mesh_thickness_on_2d"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.mesh_thickness_on_2d</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.mesh_x_ray"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.mesh_x_ray</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_force_render"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.multiplanar_force_render</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_layout"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.multiplanar_layout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_pad_pixels"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.multiplanar_pad_pixels</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_show_render"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.multiplanar_show_render</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.pen_value"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.pen_value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.render_overlay_blend"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.render_overlay_blend</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.ruler_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.ruler_color</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.ruler_width"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.ruler_width</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.sagittal_nose_left"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.sagittal_nose_left</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.selection_box_color"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.selection_box_color</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.show_3d_crosshair"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.show_3d_crosshair</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.show_legend"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.show_legend</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.slice_mosaic_string"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.slice_mosaic_string</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.slice_type"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.slice_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.text_height"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.text_height</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.thumbnail"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.thumbnail</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.trust_cal_min_max"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.trust_cal_min_max</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.view_mode_hot_key"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.view_mode_hot_key</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html#ipyniivue.options_mixin.OptionsMixin.yoke_3d_to_2d_zoom"><code class="docutils literal notranslate"><span class="pre">OptionsMixin.yoke_3d_to_2d_zoom</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="enums.html">Enums</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="enums.html#ipyniivue.constants.DragMode"><code class="docutils literal notranslate"><span class="pre">DragMode</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.DragMode.CONTRAST"><code class="docutils literal notranslate"><span class="pre">DragMode.CONTRAST</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.DragMode.MEASUREMENT"><code class="docutils literal notranslate"><span class="pre">DragMode.MEASUREMENT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.DragMode.PAN"><code class="docutils literal notranslate"><span class="pre">DragMode.PAN</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="enums.html#ipyniivue.constants.MultiplanarType"><code class="docutils literal notranslate"><span class="pre">MultiplanarType</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.MultiplanarType.AUTO"><code class="docutils literal notranslate"><span class="pre">MultiplanarType.AUTO</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.MultiplanarType.COLUMN"><code class="docutils literal notranslate"><span class="pre">MultiplanarType.COLUMN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.MultiplanarType.GRID"><code class="docutils literal notranslate"><span class="pre">MultiplanarType.GRID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.MultiplanarType.ROW"><code class="docutils literal notranslate"><span class="pre">MultiplanarType.ROW</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="enums.html#ipyniivue.constants.SliceType"><code class="docutils literal notranslate"><span class="pre">SliceType</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.SliceType.AXIAL"><code class="docutils literal notranslate"><span class="pre">SliceType.AXIAL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.SliceType.CORONAL"><code class="docutils literal notranslate"><span class="pre">SliceType.CORONAL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.SliceType.MULTIPLANAR"><code class="docutils literal notranslate"><span class="pre">SliceType.MULTIPLANAR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.SliceType.RENDER"><code class="docutils literal notranslate"><span class="pre">SliceType.RENDER</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.SliceType.SAGITTAL"><code class="docutils literal notranslate"><span class="pre">SliceType.SAGITTAL</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="enums.html#ipyniivue.constants.ShowRender"><code class="docutils literal notranslate"><span class="pre">ShowRender</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.ShowRender.ALWAYS"><code class="docutils literal notranslate"><span class="pre">ShowRender.ALWAYS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.ShowRender.AUTO"><code class="docutils literal notranslate"><span class="pre">ShowRender.AUTO</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.constants.ShowRender.NEVER"><code class="docutils literal notranslate"><span class="pre">ShowRender.NEVER</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#install-pre-commit-hooks">Install Pre-Commit hooks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#command-cheatsheat">Command Cheatsheat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#command-cheatsheet">Command Cheatsheet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#making-changes-to-the-javascript-code">Making Changes to the JavaScript Code</a></li>
 </ul>
 </li>

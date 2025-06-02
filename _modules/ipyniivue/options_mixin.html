@@ -201,6 +201,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../options.html">Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../enums.html">Enums</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 </ul>
 
@@ -246,13 +248,13 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">DragMode</span><span class="p">,</span> <span class="n">MuliplanarType</span><span class="p">,</span> <span class="n">SliceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">DragMode</span><span class="p">,</span> <span class="n">MultiplanarType</span><span class="p">,</span> <span class="n">ShowRender</span><span class="p">,</span> <span class="n">SliceType</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;OptionsMixin&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="OptionsMixin">
-<a class="viewcode-back" href="../../api.html#ipyniivue.options_mixin.OptionsMixin">[docs]</a>
+<a class="viewcode-back" href="../../options.html#ipyniivue.options_mixin.OptionsMixin">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">OptionsMixin</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class implementing NiiVue properties.&quot;&quot;&quot;</span>
 
@@ -515,6 +517,16 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">multiplanar_force_render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="p">,</span> <span class="s2">&quot;multiplanarForceRender&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">multiplanar_show_render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ShowRender</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;multiplanarShowRender&quot;</span><span class="p">,</span> <span class="n">ShowRender</span><span class="o">.</span><span class="n">AUTO</span><span class="p">)</span>
+
+    <span class="nd">@multiplanar_show_render</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">multiplanar_show_render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">ShowRender</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="p">,</span> <span class="s2">&quot;multiplanarShowRender&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_radiological_convention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -797,12 +809,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="p">,</span> <span class="s2">&quot;legendTextColor&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">multiplanar_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MuliplanarType</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">multiplanar_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiplanarType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;multiplanarLayout&quot;</span><span class="p">,</span> <span class="n">MuliplanarType</span><span class="o">.</span><span class="n">AUTO</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;multiplanarLayout&quot;</span><span class="p">,</span> <span class="n">MultiplanarType</span><span class="o">.</span><span class="n">AUTO</span><span class="p">)</span>
 
     <span class="nd">@multiplanar_layout</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">multiplanar_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">MuliplanarType</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">multiplanar_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">MultiplanarType</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="p">,</span> <span class="s2">&quot;multiplanarLayout&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
 

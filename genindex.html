@@ -200,6 +200,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enums.html">Enums</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
 
@@ -247,7 +249,11 @@
         <li><a href="api.html#ipyniivue.widget.Mesh.__init__">__init__() (ipyniivue.widget.Mesh method)</a>
 
         <ul>
+          <li><a href="api.html#ipyniivue.widget.MeshLayer.__init__">(ipyniivue.widget.MeshLayer method)</a>
+</li>
           <li><a href="api.html#ipyniivue.widget.NiiVue.__init__">(ipyniivue.widget.NiiVue method)</a>
+</li>
+          <li><a href="api.html#ipyniivue.widget.Volume.__init__">(ipyniivue.widget.Volume method)</a>
 </li>
         </ul></li>
     </ul></td>
@@ -258,11 +264,23 @@
   <h2>A</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.add_colormap">add_colormap() (ipyniivue.widget.NiiVue method)</a>
+</li>
         <li><a href="api.html#ipyniivue.widget.NiiVue.add_mesh">add_mesh() (ipyniivue.widget.NiiVue method)</a>
+</li>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.add_volume">add_volume() (ipyniivue.widget.NiiVue method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.widget.NiiVue.add_volume">add_volume() (ipyniivue.widget.NiiVue method)</a>
+        <li><a href="enums.html#ipyniivue.constants.ShowRender.ALWAYS">ALWAYS (ipyniivue.constants.ShowRender attribute)</a>
+</li>
+        <li><a href="enums.html#ipyniivue.constants.MultiplanarType.AUTO">AUTO (ipyniivue.constants.MultiplanarType attribute)</a>
+
+        <ul>
+          <li><a href="enums.html#ipyniivue.constants.ShowRender.AUTO">(ipyniivue.constants.ShowRender attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="enums.html#ipyniivue.constants.SliceType.AXIAL">AXIAL (ipyniivue.constants.SliceType attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -272,7 +290,11 @@
   <h2>B</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.back_color">back_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.back_color">back_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.background_masks_overlays">background_masks_overlays (ipyniivue.widget.NiiVue attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -294,17 +316,15 @@
           <li><a href="api.html#ipyniivue.widget.Volume.cal_min">(ipyniivue.widget.Volume attribute)</a>
 </li>
         </ul></li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.center_mosaic">center_mosaic (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.center_mosaic">center_mosaic (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.clip_plane_color">clip_plane_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.clip_plane_color">clip_plane_color (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.clip_plane_hot_key">clip_plane_hot_key (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.clip_plane_hot_key">clip_plane_hot_key (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.colorbar_height">colorbar_height (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.colorbar_height">colorbar_height (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.colorbar_margin">colorbar_margin (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.colorbar_margin">colorbar_margin (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
         <li><a href="api.html#ipyniivue.widget.Drawing.colorbar_visible">colorbar_visible (ipyniivue.widget.Drawing attribute)</a>
 
@@ -320,11 +340,29 @@
           <li><a href="api.html#ipyniivue.widget.Volume.colormap">(ipyniivue.widget.Volume attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api.html#ipyniivue.widget.Mesh.colormap_invert">colormap_invert (ipyniivue.widget.Mesh attribute)</a>
+
+        <ul>
+          <li><a href="api.html#ipyniivue.widget.MeshLayer.colormap_invert">(ipyniivue.widget.MeshLayer attribute)</a>
+</li>
+          <li><a href="api.html#ipyniivue.widget.Volume.colormap_invert">(ipyniivue.widget.Volume attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api.html#ipyniivue.widget.MeshLayer.colormap_negative">colormap_negative (ipyniivue.widget.MeshLayer attribute)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.crosshair_color">crosshair_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.colormaps">colormaps() (ipyniivue.widget.NiiVue method)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.crosshair_width">crosshair_width (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="enums.html#ipyniivue.constants.MultiplanarType.COLUMN">COLUMN (ipyniivue.constants.MultiplanarType attribute)</a>
+</li>
+        <li><a href="enums.html#ipyniivue.constants.DragMode.CONTRAST">CONTRAST (ipyniivue.constants.DragMode attribute)</a>
+</li>
+        <li><a href="enums.html#ipyniivue.constants.SliceType.CORONAL">CORONAL (ipyniivue.constants.SliceType attribute)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.crosshair_color">crosshair_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.crosshair_width">crosshair_width (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -334,17 +372,19 @@
   <h2>D</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.double_touch_timeout">double_touch_timeout (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.double_touch_timeout">double_touch_timeout (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.drag_and_drop_enabled">drag_and_drop_enabled (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.drag_and_drop_enabled">drag_and_drop_enabled (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.drag_mode">drag_mode (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.drag_mode">drag_mode (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="enums.html#ipyniivue.constants.DragMode">DragMode (class in ipyniivue.constants)</a>
+</li>
         <li><a href="api.html#ipyniivue.widget.Drawing">Drawing (class in ipyniivue.widget)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.drawing_enabled">drawing_enabled (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.drawing_enabled">drawing_enabled (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
         <li><a href="api.html#ipyniivue.widget.NiiVue.drawings">drawings (ipyniivue.widget.NiiVue property)</a>
 </li>
@@ -356,14 +396,18 @@
   <h2>F</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.flood_fill_neighbors">flood_fill_neighbors (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.flood_fill_neighbors">flood_fill_neighbors (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.font_color">font_color (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.font_color">font_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="api.html#ipyniivue.widget.MeshLayer.frame4D">frame4D (ipyniivue.widget.MeshLayer attribute)</a>
+
+        <ul>
+          <li><a href="api.html#ipyniivue.widget.Volume.frame4D">(ipyniivue.widget.Volume attribute)</a>
 </li>
-        <li><a href="api.html#ipyniivue.widget.Volume.frame4D">frame4D (ipyniivue.widget.Volume attribute)</a>
-</li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -377,6 +421,8 @@
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api.html#ipyniivue.widget.NiiVue.get_volume_index_by_id">get_volume_index_by_id() (ipyniivue.widget.NiiVue method)</a>
+</li>
+        <li><a href="enums.html#ipyniivue.constants.MultiplanarType.GRID">GRID (ipyniivue.constants.MultiplanarType attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -408,39 +454,39 @@
           <li><a href="api.html#ipyniivue.widget.Volume.id">(ipyniivue.widget.Volume attribute)</a>
 </li>
         </ul></li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_additive_blend">is_additive_blend (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_additive_blend">is_additive_blend (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_anti_alias">is_anti_alias (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_anti_alias">is_anti_alias (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_atlas_outline">is_atlas_outline (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_atlas_outline">is_atlas_outline (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_colorbar">is_colorbar (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_colorbar">is_colorbar (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_corner_orientation_text">is_corner_orientation_text (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_corner_orientation_text">is_corner_orientation_text (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_depth_pick_mesh">is_depth_pick_mesh (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_depth_pick_mesh">is_depth_pick_mesh (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_filled_pen">is_filled_pen (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_filled_pen">is_filled_pen (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_force_mouse_click_to_voxel_centers">is_force_mouse_click_to_voxel_centers (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_force_mouse_click_to_voxel_centers">is_force_mouse_click_to_voxel_centers (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_high_resolution_capable">is_high_resolution_capable (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_high_resolution_capable">is_high_resolution_capable (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_nearest_interpolation">is_nearest_interpolation (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_nearest_interpolation">is_nearest_interpolation (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_orient_cube">is_orient_cube (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_orient_cube">is_orient_cube (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_radiological_convention">is_radiological_convention (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_radiological_convention">is_radiological_convention (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_resize_canvas">is_resize_canvas (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_resize_canvas">is_resize_canvas (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_ruler">is_ruler (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_ruler">is_ruler (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_slice_mm">is_slice_mm (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_slice_mm">is_slice_mm (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.is_v1_slice_shader">is_v1_slice_shader (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.is_v1_slice_shader">is_v1_slice_shader (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -450,7 +496,7 @@
   <h2>K</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.key_debounce_time">key_debounce_time (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.key_debounce_time">key_debounce_time (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -462,11 +508,11 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api.html#ipyniivue.widget.Mesh.layers">layers (ipyniivue.widget.Mesh attribute)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.legend_background_color">legend_background_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.legend_background_color">legend_background_color (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.legend_text_color">legend_text_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.legend_text_color">legend_text_color (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.limit_frames_4d">limit_frames_4d (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.limit_frames_4d">limit_frames_4d (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
         <li><a href="api.html#ipyniivue.widget.NiiVue.load_drawings">load_drawings() (ipyniivue.widget.NiiVue method)</a>
 </li>
@@ -476,11 +522,11 @@
 </li>
         <li><a href="api.html#ipyniivue.widget.NiiVue.load_volumes">load_volumes() (ipyniivue.widget.NiiVue method)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.loading_text">loading_text (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.loading_text">loading_text (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.log_level">log_level (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.log_level">log_level (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.long_touch_timeout">long_touch_timeout (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.long_touch_timeout">long_touch_timeout (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -490,25 +536,35 @@
   <h2>M</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.max_draw_undo_bitmaps">max_draw_undo_bitmaps (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.max_draw_undo_bitmaps">max_draw_undo_bitmaps (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="enums.html#ipyniivue.constants.DragMode.MEASUREMENT">MEASUREMENT (ipyniivue.constants.DragMode attribute)</a>
 </li>
         <li><a href="api.html#ipyniivue.widget.Mesh">Mesh (class in ipyniivue.widget)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.mesh_thickness_on_2d">mesh_thickness_on_2d (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.mesh_shader_names">mesh_shader_names() (ipyniivue.widget.NiiVue method)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.mesh_x_ray">mesh_x_ray (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.mesh_thickness_on_2d">mesh_thickness_on_2d (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.mesh_x_ray">mesh_x_ray (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.meshes">meshes (ipyniivue.widget.NiiVue property)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.widget.NiiVue.meshes">meshes (ipyniivue.widget.NiiVue property)</a>
-</li>
         <li><a href="api.html#ipyniivue.widget.MeshLayer">MeshLayer (class in ipyniivue.widget)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_force_render">multiplanar_force_render (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="enums.html#ipyniivue.constants.SliceType.MULTIPLANAR">MULTIPLANAR (ipyniivue.constants.SliceType attribute)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_layout">multiplanar_layout (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_force_render">multiplanar_force_render (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_pad_pixels">multiplanar_pad_pixels (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_layout">multiplanar_layout (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_pad_pixels">multiplanar_pad_pixels (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.multiplanar_show_render">multiplanar_show_render (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="enums.html#ipyniivue.constants.MultiplanarType">MultiplanarType (class in ipyniivue.constants)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -526,6 +582,8 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="enums.html#ipyniivue.constants.ShowRender.NEVER">NEVER (ipyniivue.constants.ShowRender attribute)</a>
+</li>
         <li><a href="api.html#ipyniivue.widget.NiiVue">NiiVue (class in ipyniivue.widget)</a>
 </li>
     </ul></td>
@@ -576,7 +634,7 @@
           <li><a href="api.html#ipyniivue.widget.Volume.opacity">(ipyniivue.widget.Volume attribute)</a>
 </li>
         </ul></li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin">OptionsMixin (class in ipyniivue.options_mixin)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin">OptionsMixin (class in ipyniivue.options_mixin)</a>
 </li>
         <li><a href="api.html#ipyniivue.widget.MeshLayer.outline_border">outline_border (ipyniivue.widget.MeshLayer attribute)</a>
 </li>
@@ -588,6 +646,8 @@
   <h2>P</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="enums.html#ipyniivue.constants.DragMode.PAN">PAN (ipyniivue.constants.DragMode attribute)</a>
+</li>
         <li><a href="api.html#ipyniivue.widget.Drawing.path">path (ipyniivue.widget.Drawing attribute)</a>
 
         <ul>
@@ -600,7 +660,7 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.pen_value">pen_value (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.pen_value">pen_value (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -610,15 +670,19 @@
   <h2>R</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.render_overlay_blend">render_overlay_blend (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="enums.html#ipyniivue.constants.SliceType.RENDER">RENDER (ipyniivue.constants.SliceType attribute)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.render_overlay_blend">render_overlay_blend (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
         <li><a href="api.html#ipyniivue.widget.Mesh.rgba255">rgba255 (ipyniivue.widget.Mesh attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.ruler_color">ruler_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="enums.html#ipyniivue.constants.MultiplanarType.ROW">ROW (ipyniivue.constants.MultiplanarType attribute)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.ruler_width">ruler_width (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.ruler_color">ruler_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.ruler_width">ruler_width (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -628,7 +692,9 @@
   <h2>S</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.sagittal_nose_left">sagittal_nose_left (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="enums.html#ipyniivue.constants.SliceType.SAGITTAL">SAGITTAL (ipyniivue.constants.SliceType attribute)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.sagittal_nose_left">sagittal_nose_left (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
         <li><a href="api.html#ipyniivue.widget.NiiVue.save_document">save_document() (ipyniivue.widget.NiiVue method)</a>
 </li>
@@ -638,19 +704,41 @@
 </li>
         <li><a href="api.html#ipyniivue.widget.NiiVue.save_scene">save_scene() (ipyniivue.widget.NiiVue method)</a>
 </li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.selection_box_color">selection_box_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.set_clip_plane">set_clip_plane() (ipyniivue.widget.NiiVue method)</a>
+</li>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.set_colormap">set_colormap() (ipyniivue.widget.NiiVue method)</a>
+</li>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.set_crosshair_color">set_crosshair_color() (ipyniivue.widget.NiiVue method)</a>
+</li>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.set_crosshair_width">set_crosshair_width() (ipyniivue.widget.NiiVue method)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.selection_box_color">selection_box_color (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.set_gamma">set_gamma() (ipyniivue.widget.NiiVue method)</a>
 </li>
         <li><a href="api.html#ipyniivue.widget.NiiVue.set_mesh_layer_property">set_mesh_layer_property() (ipyniivue.widget.NiiVue method)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.show_3d_crosshair">show_3d_crosshair (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.set_mesh_shader">set_mesh_shader() (ipyniivue.widget.NiiVue method)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.show_legend">show_legend (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.set_render_azimuth_elevation">set_render_azimuth_elevation() (ipyniivue.widget.NiiVue method)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.slice_mosaic_string">slice_mosaic_string (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.set_selection_box_color">set_selection_box_color() (ipyniivue.widget.NiiVue method)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.slice_type">slice_type (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="api.html#ipyniivue.widget.NiiVue.set_slice_type">set_slice_type() (ipyniivue.widget.NiiVue method)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.show_3d_crosshair">show_3d_crosshair (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.show_legend">show_legend (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="enums.html#ipyniivue.constants.ShowRender">ShowRender (class in ipyniivue.constants)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.slice_mosaic_string">slice_mosaic_string (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.slice_type">slice_type (ipyniivue.options_mixin.OptionsMixin property)</a>
+</li>
+        <li><a href="enums.html#ipyniivue.constants.SliceType">SliceType (class in ipyniivue.constants)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -660,13 +748,13 @@
   <h2>T</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.text_height">text_height (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.text_height">text_height (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.thumbnail">thumbnail (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.thumbnail">thumbnail (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.trust_cal_min_max">trust_cal_min_max (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.trust_cal_min_max">trust_cal_min_max (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -686,7 +774,7 @@
   <h2>V</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.view_mode_hot_key">view_mode_hot_key (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.view_mode_hot_key">view_mode_hot_key (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
         <li><a href="api.html#ipyniivue.widget.Mesh.visible">visible (ipyniivue.widget.Mesh attribute)</a>
 </li>
@@ -704,7 +792,7 @@
   <h2>Y</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api.html#ipyniivue.options_mixin.OptionsMixin.yoke_3d_to_2d_zoom">yoke_3d_to_2d_zoom (ipyniivue.options_mixin.OptionsMixin property)</a>
+        <li><a href="options.html#ipyniivue.options_mixin.OptionsMixin.yoke_3d_to_2d_zoom">yoke_3d_to_2d_zoom (ipyniivue.options_mixin.OptionsMixin property)</a>
 </li>
     </ul></td>
   </tr></table>

@@ -1,14 +1,14 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="../">
+<html class="no-js" lang="en" data-content_root="../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
-        <title>Overview: module code - IPyNiiVue 2.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
+        <title>ipyniivue.constants - IPyNiiVue 2.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
     
 
@@ -165,7 +165,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">IPyNiiVue 2.1.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">IPyNiiVue 2.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -186,12 +186,12 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
   <span class="sidebar-brand-text">IPyNiiVue 2.1.0 documentation</span>
   
-</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
@@ -199,11 +199,11 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api.html">API Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../options.html">Options</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../enums.html">Enums</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../options.html">Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../enums.html">Enums</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 </ul>
 
 </div>
@@ -238,11 +238,128 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>All modules for which code is available</h1>
-<ul><li><a href="ipyniivue/constants.html">ipyniivue.constants</a></li>
-<li><a href="ipyniivue/options_mixin.html">ipyniivue.options_mixin</a></li>
-<li><a href="ipyniivue/widget.html">ipyniivue.widget</a></li>
-</ul>
+          <h1>Source code for ipyniivue.constants</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Provides classes for reusable, readable versions of important data.</span>
+
+<span class="sd">This module uses enum to enumerate important constants for slice types,</span>
+<span class="sd">drag modes, and multiplanar types in more readable formats for use in notebooks.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;DragMode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MultiplanarType&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SliceType&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="SliceType">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.constants.SliceType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SliceType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of slice types for NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    AXIAL : int</span>
+<span class="sd">        Axial slice type (value 0).</span>
+<span class="sd">    CORONAL : int</span>
+<span class="sd">        Coronal slice type (value 1).</span>
+<span class="sd">    SAGITTAL : int</span>
+<span class="sd">        Sagittal slice type (value 2).</span>
+<span class="sd">    MULTIPLANAR : int</span>
+<span class="sd">        Multiplanar view type (value 3).</span>
+<span class="sd">    RENDER : int</span>
+<span class="sd">        Render view type (value 4).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">AXIAL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">CORONAL</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">SAGITTAL</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">MULTIPLANAR</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">RENDER</span> <span class="o">=</span> <span class="mi">4</span></div>
+
+
+
+<div class="viewcode-block" id="DragMode">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.constants.DragMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DragMode</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of drag modes for NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    CONTRAST : int</span>
+<span class="sd">        Contrast adjustment mode (value 1).</span>
+<span class="sd">    MEASUREMENT : int</span>
+<span class="sd">        Measurement mode for taking measurements (value 2).</span>
+<span class="sd">    PAN : int</span>
+<span class="sd">        Pan mode for moving around the image (value 3).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">CONTRAST</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">MEASUREMENT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">PAN</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+
+<div class="viewcode-block" id="MultiplanarType">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.constants.MultiplanarType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MultiplanarType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of multiplanar types for NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    AUTO : int</span>
+<span class="sd">        Automatic multiplanar type (value 0).</span>
+<span class="sd">    COLUMN : int</span>
+<span class="sd">        Column multiplanar type (value 1).</span>
+<span class="sd">    GRID : int</span>
+<span class="sd">        Grid multiplanar type (value 2).</span>
+<span class="sd">    ROW : int</span>
+<span class="sd">        Row multiplanar type (value 3).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">AUTO</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">COLUMN</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">GRID</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">ROW</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+
+<div class="viewcode-block" id="ShowRender">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.constants.ShowRender">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShowRender</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration for specifying when to show rendering in NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    NEVER : int</span>
+<span class="sd">        Never show rendering (value 0).</span>
+<span class="sd">    ALWAYS : int</span>
+<span class="sd">        Always show rendering (value 1).</span>
+<span class="sd">    AUTO : int</span>
+<span class="sd">        Automatically determine whether to show rendering (value 2).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NEVER</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ALWAYS</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">AUTO</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+
+<span class="n">_SNAKE_TO_CAMEL_OVERRIDES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;show_3d_crosshair&quot;</span><span class="p">:</span> <span class="s2">&quot;show3Dcrosshair&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mesh_thickness_on_2d&quot;</span><span class="p">:</span> <span class="s2">&quot;meshThicknessOn2D&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;yoke_3d_to_2d_zoom&quot;</span><span class="p">:</span> <span class="s2">&quot;yoke3Dto2DZoom&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_slice_mm&quot;</span><span class="p">:</span> <span class="s2">&quot;isSliceMM&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;limit_frames_4d&quot;</span><span class="p">:</span> <span class="s2">&quot;limitFrames4D&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
         </article>
       </div>
       <footer>
@@ -274,9 +391,9 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=20623aea"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+</div><script src="../../_static/documentation_options.js?v=20623aea"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>
 </html>
