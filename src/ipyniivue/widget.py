@@ -300,6 +300,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         self._event_handlers = {}
         self.on_msg(self._handle_custom_msg)
 
+        # extras
+        self._added_colormaps = set()
+
     def _register_callback(self, event_name, callback, remove=False):
         if event_name not in self._event_handlers:
             self._event_handlers[event_name] = CallbackDispatcher()
@@ -826,6 +829,11 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         except FileNotFoundError:
             return fallback_colormaps
 
+        # add custom colormap names
+        for key in self._added_colormaps:
+            if key not in colormaps_list:
+                colormaps_list.append(key)
+
         return colormaps_list
 
     def add_colormap(self, name: str, color_map: dict):
@@ -907,6 +915,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
                     "ColorMap 'labels' must have the same length "
                     "as 'R', 'G', 'B', 'A', 'I' lists"
                 )
+
+        # Save the colormap name
+        self._added_colormaps.add(name)
 
         # Send the colormap to the frontend
         self.send({"type": "add_colormap", "data": [name, color_map]})
