@@ -71,22 +71,22 @@ async function create_volume(
 			vmodel.get("path").name, // name
 			vmodel.get("colormap"), // colormap
 			vmodel.get("opacity"), // opacity
-			undefined, // pairedImgData
+			null, // pairedImgData
 			vmodel.get("cal_min"), // cal_min
 			vmodel.get("cal_max"), // cal_max
-			undefined, // trustMinCalMinMax
-			undefined, // percentileFrac
-			undefined, // ignoreZeroVoxels
-			undefined, // useQFormNotSForm
-			undefined, // colormapNegative
+			true, // trustCalMinMax
+			0.02, // percentileFrac
+			false, // ignoreZeroVoxels
+			false, // useQFormNotSForm
+			'', // colormapNegative
 			vmodel.get("frame4D"), // frame4D
-			undefined, // imageType
-			undefined, // cal_minNeg
-			undefined, // cal_maxNeg
+			0, // imageType
+			NaN, // cal_minNeg
+			NaN, // cal_maxNeg
 			vmodel.get("colorbar_visible"), // colorbarVisible
-			undefined, // colormapLabel
-			undefined, //colormapType
-			undefined, //zarrData
+			null, // colormapLabel
+			0, //colormapType
+			null, //zarrData
 		);
 	}
 

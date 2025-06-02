@@ -13,8 +13,8 @@ export type VolumeModel = AnyModel<{
 	opacity: number;
 	visible: boolean;
 	colorbar_visible: boolean;
-	cal_min?: number;
-	cal_max?: number;
+	cal_min: number;
+	cal_max: number;
 	frame4D: number;
 }>;
 
