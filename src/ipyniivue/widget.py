@@ -1768,9 +1768,7 @@ class WidgetObserver:
         self._observe()
 
     def _widget_change(self, change):
-        # Converts string to float because negative 0 as a float
-        # with ipywidgets does not work as expected.
-        setattr(self.object, self.attribute, float(change["new"]))
+        setattr(self.object, self.attribute, change["new"])
 
     def _observe(self):
         self.widget.observe(self._widget_change, names=["value"])
