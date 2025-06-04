@@ -70,6 +70,17 @@ function setup_layer_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	function colorbar_visible_changed() {
+		layer.colorbarVisible = layerModel.get("colorbar_visible");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	// set values not set by kwargs
+	colormap_invert_changed();
+	frame4D_changed();
+	colorbar_visible_changed();
+
 	// Set up the event listeners
 	layerModel.on("change:opacity", opacity_changed);
 	layerModel.on("change:colormap", colormap_changed);
@@ -81,6 +92,7 @@ function setup_layer_property_listeners(
 
 	layerModel.on("change:colormap_invert", colormap_invert_changed);
 	layerModel.on("change:frame4D", frame4D_changed);
+	layerModel.on("change:colorbar_visible", colorbar_visible_changed);
 
 	// Return a cleanup function
 	return () => {
@@ -94,6 +106,7 @@ function setup_layer_property_listeners(
 
 		layerModel.off("change:colormap_invert", colormap_invert_changed);
 		layerModel.off("change:frame4D", frame4D_changed);
+		layerModel.off("change:colorbar_visible", colorbar_visible_changed);
 	};
 }
 
@@ -129,6 +142,9 @@ function setup_mesh_property_listeners(
 		mesh.colormapInvert = mmodel.get("colormap_invert");
 		nv.updateGLVolume();
 	}
+
+	// set values not set by kwargs
+	colormap_invert_changed();
 
 	mmodel.on("change:opacity", opacity_changed);
 	mmodel.on("change:rgba255", rgba255_changed);

@@ -47,6 +47,9 @@ function setup_volume_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	// set values not set by kwargs
+	colormap_invert_changed();
+
 	vmodel.on("change:colorbar_visible", colorbar_visible_changed);
 	vmodel.on("change:cal_min", cal_min_changed);
 	vmodel.on("change:cal_max", cal_max_changed);
