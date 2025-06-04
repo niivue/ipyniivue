@@ -76,6 +76,11 @@ function setup_layer_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	// set values not set by kwargs
+	colormap_invert_changed();
+	frame4D_changed();
+	colorbar_visible_changed();
+
 	// Set up the event listeners
 	layerModel.on("change:opacity", opacity_changed);
 	layerModel.on("change:colormap", colormap_changed);
@@ -137,6 +142,9 @@ function setup_mesh_property_listeners(
 		mesh.colormapInvert = mmodel.get("colormap_invert");
 		nv.updateGLVolume();
 	}
+
+	// set values not set by kwargs
+	colormap_invert_changed();
 
 	mmodel.on("change:opacity", opacity_changed);
 	mmodel.on("change:rgba255", rgba255_changed);
