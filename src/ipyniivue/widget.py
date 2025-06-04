@@ -66,12 +66,15 @@ class MeshLayer(ipywidgets.Widget):
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
     frame4D = t.Int(0).tag(sync=True)
+    colorbar_visible = t.Bool(True).tag(sync=True)
 
     def __init__(self, **kwargs):
         if "colormap_invert" in kwargs:
             kwargs.pop("colormap_invert")
         if "frame4D" in kwargs:
             kwargs.pop("frame4D")
+        if "colorbar_visible" in kwargs:
+            kwargs.pop("colorbar_visible")
         super().__init__(**kwargs)
 
     @t.validate("path")
