@@ -1,9 +1,14 @@
 import { v4 as uuidv4 } from "@lukeed/uuid";
 import * as niivue from "@niivue/niivue";
 
-import { Disposer } from "./lib.ts";
+import { Disposer, gather_models } from "./lib.ts";
 import { render_meshes } from "./mesh.ts";
-import type { CustomMessagePayload, Model } from "./types.ts";
+import type {
+	CustomMessagePayload,
+	MeshModel,
+	Model,
+	VolumeModel,
+} from "./types.ts";
 import { render_volumes } from "./volume.ts";
 
 // store all nv objects for the page
@@ -97,12 +102,9 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 	nv.onImageLoaded = async (volume: niivue.NVImage) => {
 		// Check if the volume is already in the backend
 		const volumeID = volume.id;
-		const volumeModels = await Promise.all(
-			model.get("_volumes").map(async (v: string) => {
-				const modelID = v.slice("IPY_MODEL_".length);
-				const vmodel = await model.widget_manager.get_model(modelID);
-				return vmodel;
-			}),
+		const volumeModels = await gather_models<VolumeModel>(
+			model,
+			model.get("_volumes"),
 		);
 
 		const backendVolumeIds = volumeModels.map(
@@ -142,12 +144,9 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 	nv.onMeshLoaded = async (mesh: niivue.NVMesh) => {
 		// Check if the mesh is already in the backend
 		const meshID = mesh.id;
-		const meshModels = await Promise.all(
-			model.get("_meshes").map(async (m: string) => {
-				const modelID = m.slice("IPY_MODEL_".length);
-				const mmodel = await model.widget_manager.get_model(modelID);
-				return mmodel;
-			}),
+		const meshModels = await gather_models<MeshModel>(
+			model,
+			model.get("_meshes"),
 		);
 
 		const backendMeshIds = meshModels.map((mmodel) => mmodel?.get("id") || "");
