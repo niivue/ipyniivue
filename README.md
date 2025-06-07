@@ -38,7 +38,8 @@ This will render an interactive Niivue widget within your notebook.
 
 ## Documentation
 
-For detailed usage instructions and API reference, refer to the [docs](https://niivue.github.io/ipyniivue).
+See the [Documentation](https://niivue.github.io/ipyniivue) for usage.
+
 
 ---
 
