@@ -26,7 +26,7 @@ from .utils import (
 __all__ = ["NiiVue"]
 
 
-class MeshLayer(ipywidgets.Widget):
+class MeshLayer(anywidget.AnyWidget):
     """
     Represents a layer within a Mesh model.
 
@@ -94,7 +94,7 @@ class MeshLayer(ipywidgets.Widget):
         return proposal["value"]
 
 
-class Mesh(ipywidgets.Widget):
+class Mesh(anywidget.AnyWidget):
     """
     Represents a Mesh model.
 
@@ -154,7 +154,7 @@ class Mesh(ipywidgets.Widget):
         return proposal["value"]
 
 
-class Volume(ipywidgets.Widget):
+class Volume(anywidget.AnyWidget):
     """
     Represents a Volume model.
 
@@ -215,7 +215,7 @@ class Volume(ipywidgets.Widget):
         return proposal["value"]
 
 
-class Drawing(ipywidgets.Widget):
+class Drawing(anywidget.AnyWidget):
     """
     Represents a Drawing model.
 
