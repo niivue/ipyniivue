@@ -4,10 +4,25 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ipyniivue"
+license = { text = "BSD-2-Clause" }
 dynamic = ["version"]
 description = "A Jupyter Widget for Niivue based on anywidget."
 dependencies = ["anywidget", "requests"]
 readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Framework :: Jupyter",
+    "Framework :: Jupyter :: JupyterLab",
+    "Framework :: Jupyter :: JupyterLab :: 4",
+    "Framework :: Jupyter :: JupyterLab :: Extensions",
+    "Framework :: Jupyter :: JupyterLab :: Extensions :: Prebuilt",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+homepage = "https://github.com/niivue/ipyniivue"
 
 [project.optional-dependencies]
 dev = ["watchfiles", "jupyterlab", "ruff", "pytest", "sphinx", "furo"]
