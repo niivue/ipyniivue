@@ -1303,10 +1303,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         Parameters
         ----------
         force_device_pixel_ratio : int or bool
-            Determines how the device pixel ratio is handled:
-            - If a boolean:
-                - `True`: Allow high DPI (equivalent to `0`).
-                - `False`: Block high DPI (equivalent to `-1`).
+            Determines how the device pixel ratio is handled.
+            ``True`` allows high DPI (equivalent to ``0``).
+            ``False`` blocks high DPI (equivalent to ``-1``).
 
         Examples
         --------
