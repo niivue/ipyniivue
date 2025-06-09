@@ -453,9 +453,6 @@ export default {
 			// Load initial volumes and meshes
 			await render_volumes(nv, model, disposer);
 			await render_meshes(nv, model, disposer);
-
-			// Drawing setup
-			//nv.createEmptyDrawing();
 		} else {
 			console.log("moving render around");
 
@@ -467,6 +464,9 @@ export default {
 			// Attach
 			el.appendChild(nv.canvas.parentNode);
 		}
+
+		// Drawing setup
+		nv.setDrawingEnabled(nv.opts.drawingEnabled);
 
 		// Return cleanup function, runs when page reloaded or cell run again
 		return () => {
