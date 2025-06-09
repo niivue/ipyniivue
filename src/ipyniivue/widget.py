@@ -207,16 +207,14 @@ class Volume(anywidget.AnyWidget):
         ----------
         color_map : dict
             A dictionary containing the colormap information.
-            It must have the following keys:
+            It can have the following keys:
 
-            **Required keys**:
+            **Optional keys**:
                 - `'R'`: list of numbers
                 - `'G'`: list of numbers
                 - `'B'`: list of numbers
                 - `'A'`: list of numbers
                 - `'I'`: list of numbers
-
-            **Optional keys**:
                 - `'min'`: number
                 - `'max'`: number
                 - `'labels'`: list of strings
@@ -237,22 +235,25 @@ class Volume(anywidget.AnyWidget):
             nv.volumes[0].set_colormap_label(color_map)
 
         """
-        # Validate that required keys are present and are lists of numbers
-        required_keys = ["R", "G", "B", "A", "I"]
-        for key in required_keys:
-            if key not in color_map:
-                raise ValueError(f"ColorMap must include required key '{key}'")
-            if not isinstance(color_map[key], list):
-                raise TypeError(f"ColorMap key '{key}' must be a list")
-            if not all(isinstance(x, (int, float)) for x in color_map[key]):
-                raise TypeError(f"All elements in ColorMap key '{key}' must be numbers")
+        list_keys = ["R", "G", "B", "A", "I"]
+        lengths = []
 
-        # Check that all required lists have the same length
-        lengths = [len(color_map[key]) for key in required_keys]
-        if len(set(lengths)) != 1:
+        # Validate that any present list keys are lists of numbers, and collect lengths
+        for key in list_keys:
+            if key in color_map:
+                if not isinstance(color_map[key], list):
+                    raise TypeError(f"ColorMap key '{key}' must be a list")
+                if not all(isinstance(x, (int, float)) for x in color_map[key]):
+                    raise TypeError(f"All elements in ColorMap '{key}' must be numbers")
+                lengths.append(len(color_map[key]))
+
+        # If more than one list is present, check that all lengths are equal
+        if lengths and len(set(lengths)) != 1:
             raise ValueError(
                 "All 'R', 'G', 'B', 'A', 'I' lists must have the same length"
             )
+
+        common_length = lengths[0] if lengths else None
 
         # Validate optional keys
         if "min" in color_map and not isinstance(color_map["min"], (int, float)):
@@ -266,10 +267,10 @@ class Volume(anywidget.AnyWidget):
                 raise TypeError("ColorMap 'labels' must be a list of strings")
             if not all(isinstance(label, str) for label in color_map["labels"]):
                 raise TypeError("All elements in ColorMap 'labels' must be strings")
-            if len(color_map["labels"]) != lengths[0]:
+            # Ensure labels length matches
+            if common_length is not None and len(color_map["labels"]) != common_length:
                 raise ValueError(
-                    "ColorMap 'labels' must have the same length "
-                    "as 'R', 'G', 'B', 'A', 'I' lists"
+                    "ColorMap 'labels' must have the same length as other lists"
                 )
 
         self.send({"type": "set_colormap_label", "data": [color_map]})
