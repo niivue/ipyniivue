@@ -167,6 +167,9 @@ if __name__ == "__main__":
         "renderOverlayBlend": 1.0,
         "sliceMosaicString": "",
         "centerMosaic": False,
+        "gradientAmount": 0.0,
+        "gradientOpacity": 0.0,
+        "forceDevicePixelRatio": 0,
     }
     code = generate_mixin(DEFAULT_OPTIONS)
     loc = pathlib.Path(__file__).parent / "../src/ipyniivue/options_mixin.py"

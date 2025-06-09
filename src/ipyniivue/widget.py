@@ -6,6 +6,7 @@ contains many of the classes needed to make NiiVue instances work, such as class
 to load objects in, change attributes of this instance, and more.
 """
 
+import math
 import pathlib
 import typing
 import uuid
@@ -189,6 +190,7 @@ class Volume(anywidget.AnyWidget):
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     frame4D = t.Int(0).tag(sync=True)
+    colormap_negative = t.Unicode("").tag(sync=True)
 
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
@@ -197,6 +199,80 @@ class Volume(anywidget.AnyWidget):
         if "colormap_invert" in kwargs:
             kwargs.pop("colormap_invert")
         super().__init__(**kwargs)
+
+    def set_colormap_label(self, color_map: dict):
+        """Set colormap label for the volume.
+
+        Parameters
+        ----------
+        color_map : dict
+            A dictionary containing the colormap information.
+            It must have the following keys:
+
+            **Required keys**:
+                - `'R'`: list of numbers
+                - `'G'`: list of numbers
+                - `'B'`: list of numbers
+                - `'A'`: list of numbers
+                - `'I'`: list of numbers
+
+            **Optional keys**:
+                - `'min'`: number
+                - `'max'`: number
+                - `'labels'`: list of strings
+
+            All the `'R'`, `'G'`, `'B'`, `'A'`, `'I'` lists must have the same length.
+
+        Raises
+        ------
+        ValueError
+            If the colormap does not meet the required format.
+        TypeError
+            If the colormap values are not of the correct type.
+
+        Examples
+        --------
+        ::
+
+            nv.volumes[0].set_colormap_label(color_map)
+
+        """
+        # Validate that required keys are present and are lists of numbers
+        required_keys = ["R", "G", "B", "A", "I"]
+        for key in required_keys:
+            if key not in color_map:
+                raise ValueError(f"ColorMap must include required key '{key}'")
+            if not isinstance(color_map[key], list):
+                raise TypeError(f"ColorMap key '{key}' must be a list")
+            if not all(isinstance(x, (int, float)) for x in color_map[key]):
+                raise TypeError(f"All elements in ColorMap key '{key}' must be numbers")
+
+        # Check that all required lists have the same length
+        lengths = [len(color_map[key]) for key in required_keys]
+        if len(set(lengths)) != 1:
+            raise ValueError(
+                "All 'R', 'G', 'B', 'A', 'I' lists must have the same length"
+            )
+
+        # Validate optional keys
+        if "min" in color_map and not isinstance(color_map["min"], (int, float)):
+            raise TypeError("ColorMap 'min' must be a number")
+
+        if "max" in color_map and not isinstance(color_map["max"], (int, float)):
+            raise TypeError("ColorMap 'max' must be a number")
+
+        if "labels" in color_map:
+            if not isinstance(color_map["labels"], list):
+                raise TypeError("ColorMap 'labels' must be a list of strings")
+            if not all(isinstance(label, str) for label in color_map["labels"]):
+                raise TypeError("All elements in ColorMap 'labels' must be strings")
+            if len(color_map["labels"]) != lengths[0]:
+                raise ValueError(
+                    "ColorMap 'labels' must have the same length "
+                    "as 'R', 'G', 'B', 'A', 'I' lists"
+                )
+
+        self.send({"type": "set_colormap_label", "data": [color_map]})
 
     @t.validate("path")
     def _validate_path(self, proposal):
@@ -1195,6 +1271,53 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             return fallback_shader_names
 
         return shader_names_list
+
+    def set_volume_render_illumination(self, gradient_amount: float):
+        """Set proportion of volume rendering influenced by selected matcap.
+
+        Parameters
+        ----------
+        gradient_amount : float
+            Amount of matcap (``NaN`` or ``0..1``).
+            Default is ``0.0`` (matte, surface normal does not influence color).
+            ``NaN`` renders the gradients.
+
+        Examples
+        --------
+        ::
+
+            nv.set_volume_render_illumination(0.6)
+        """
+        if not isinstance(gradient_amount, (int, float)):
+            raise TypeError("gradient_amount must be a number.")
+        if not math.isnan(gradient_amount):
+            self.gradient_amount = gradient_amount
+        self.send({"type": "set_volume_render_illumination", "data": [gradient_amount]})
+
+    def set_high_resolution_capable(
+        self, force_device_pixel_ratio: typing.Union[int, bool]
+    ):
+        """Force the rendering canvas to use a high-resolution display.
+
+        Parameters
+        ----------
+        force_device_pixel_ratio : int or bool
+            Determines how the device pixel ratio is handled:
+            - If a boolean:
+                - `True`: Allow high DPI (equivalent to `0`).
+                - `False`: Block high DPI (equivalent to `-1`).
+
+        Examples
+        --------
+        ::
+
+            nv.set_high_resolution_capable(True)
+        """
+        if isinstance(force_device_pixel_ratio, bool):
+            force_device_pixel_ratio = 0 if force_device_pixel_ratio else -1
+        self.force_device_pixel_ratio = force_device_pixel_ratio
+        self.send({"type": "resize_listener", "data": []})
+        self.send({"type": "draw_scene", "data": []})
 
     """
     Custom event callbacks

@@ -1,6 +1,10 @@
 import * as niivue from "@niivue/niivue";
 import * as lib from "./lib.ts";
-import type { Model, VolumeModel } from "./types.ts";
+import type {
+	CustomMessagePayloadVolume,
+	Model,
+	VolumeModel,
+} from "./types.ts";
 
 /**
  * Set up event listeners to handle changes to the volume properties.
@@ -41,6 +45,24 @@ function setup_volume_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	function colormap_negative_changed() {
+		volume.colormapNegative = vmodel.get("colormap_negative");
+		nv.updateGLVolume();
+	}
+
+	// custom msgs
+	function custom_msg_callback(payload: CustomMessagePayloadVolume) {
+		const { type, data } = payload;
+		switch (type) {
+			case "set_colormap_label": {
+				const [cm] = data;
+				volume.setColormapLabel(cm);
+				nv.updateGLVolume();
+				break;
+			}
+		}
+	}
+
 	// other props
 	function colormap_invert_changed() {
 		volume.colormapInvert = vmodel.get("colormap_invert");
@@ -56,6 +78,9 @@ function setup_volume_property_listeners(
 	vmodel.on("change:colormap", colormap_changed);
 	vmodel.on("change:opacity", opacity_changed);
 	vmodel.on("change:frame4D", frame4D_changed);
+	vmodel.on("change:colormap_negative", colormap_negative_changed);
+
+	vmodel.on("msg:custom", custom_msg_callback);
 
 	vmodel.on("change:colormap_invert", colormap_invert_changed);
 
@@ -66,6 +91,9 @@ function setup_volume_property_listeners(
 		vmodel.off("change:colormap", colormap_changed);
 		vmodel.off("change:opacity", opacity_changed);
 		vmodel.off("change:frame4D", frame4D_changed);
+		vmodel.off("change:colormap_negative", colormap_negative_changed);
+
+		vmodel.off("msg:custom", custom_msg_callback);
 
 		vmodel.off("change:colormap_invert", colormap_invert_changed);
 	};
@@ -96,7 +124,7 @@ async function create_volume(
 			0.02, // percentileFrac
 			false, // ignoreZeroVoxels
 			false, // useQFormNotSForm
-			"", // colormapNegative
+			vmodel.get("colormap_negative"), // colormapNegative
 			vmodel.get("frame4D"), // frame4D
 			0, // imageType
 			Number.NaN, // cal_minNeg

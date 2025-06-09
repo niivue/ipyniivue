@@ -33,7 +33,7 @@ function attachModelEventHandlers(
 
 	// Any time we change the options, we need to update the nv gl
 	model.on("change:_opts", () => {
-		console.log("Updating opts callback");
+		console.log("Updating opts");
 		nv.document.opts = { ...nv.opts, ...model.get("_opts") };
 		nv.updateGLVolume();
 	});
@@ -91,6 +91,24 @@ function attachModelEventHandlers(
 			case "set_mesh_shader": {
 				const [meshId, shader] = data;
 				nv.setMeshShader(meshId, shader);
+				break;
+			}
+			case "resize_listener": {
+				nv.resizeListener();
+				break;
+			}
+			case "draw_scene": {
+				nv.drawScene();
+				break;
+			}
+			case "set_volume_render_illumination": {
+				let [gradientAmount] = data;
+				if (gradientAmount === null) {
+					gradientAmount = Number.NaN;
+				} else {
+					gradientAmount = Number(gradientAmount);
+				}
+				nv.setVolumeRenderIllumination(gradientAmount);
 				break;
 			}
 		}
@@ -424,19 +442,20 @@ export default {
 			container.appendChild(canvas);
 
 			// Handle height changes
+			model.off("change:height");
 			model.on("change:height", () => {
 				container.style.height = `${model.get("height")}px`;
 			});
 
 			// Attach nv to canvas
-			nv.attachToCanvas(canvas);
+			nv.attachToCanvas(canvas, nv.opts.isAntiAlias);
 
 			// Load initial volumes and meshes
 			await render_volumes(nv, model, disposer);
 			await render_meshes(nv, model, disposer);
 
 			// Drawing setup
-			nv.createEmptyDrawing();
+			//nv.createEmptyDrawing();
 		} else {
 			console.log("moving render around");
 
