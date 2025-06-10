@@ -321,6 +321,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         r"""
         Initialize the NiiVue widget.
 
+        **Note:** See the :meth:`NiiVue.close` method to close
+        the NiiVue widget and free up resources.
+
         Parameters
         ----------
         height : int, optional
@@ -413,6 +416,23 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             self._meshes = self._meshes[:index] + [mesh] + self._meshes[index:]
         else:
             self._meshes = [*self._meshes, mesh]
+
+    def close(self):
+        """
+        Close the NiiVue widget and free up resources.
+
+        This method disposes of the widget on both the frontend and backend.
+        After calling this method, the widget will no longer be usable.
+
+        Examples
+        --------
+        ::
+
+            nv = NiiVue()
+            # use nv ...
+            nv.close()
+        """
+        super().close()
 
     def get_volume_index_by_id(self, volume_id: str) -> int:
         """Return the index of the volume with the given id.
