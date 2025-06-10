@@ -149,15 +149,15 @@ async function create_volume(
 			0, //colormapType
 			null, //zarrData
 		);
-	}
 
-	// Set colormap label
-	const newColormapLabel = vmodel.get("colormap_label");
-	if (Object.keys(newColormapLabel).length > 0) {
-		if (newColormapLabel.lut) {
-			volume.colormapLabel = newColormapLabel;
-		} else {
-			volume.setColormapLabel(newColormapLabel);
+		// Set colormap label
+		const newColormapLabel = vmodel.get("colormap_label");
+		if (Object.keys(newColormapLabel).length > 0) {
+			if (newColormapLabel.lut) {
+				volume.colormapLabel = newColormapLabel;
+			} else {
+				volume.setColormapLabel(newColormapLabel);
+			}
 		}
 	}
 
