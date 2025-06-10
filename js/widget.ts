@@ -136,11 +136,14 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				path: "<fromfrontend>",
 				id: volume.id,
 				name: volume.name,
-				colormap: volume.colormap,
 				opacity: volume.opacity,
+				colormap: volume.colormap,
 				colorbar_visible: volume.colorbarVisible,
 				cal_min: volume.cal_min,
 				cal_max: volume.cal_max,
+				frame4D: volume.frame4D,
+				colormap_negative: volume.colormapNegative,
+				colormap_label: volume.colormapLabel,
 				index: nv.getVolumeIndexByID(volume.id),
 			};
 

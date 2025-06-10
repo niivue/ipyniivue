@@ -191,6 +191,7 @@ class Volume(anywidget.AnyWidget):
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     frame4D = t.Int(0).tag(sync=True)
     colormap_negative = t.Unicode("").tag(sync=True)
+    colormap_label = t.Dict(None, allow_none=True).tag(sync=True)
 
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
@@ -200,80 +201,39 @@ class Volume(anywidget.AnyWidget):
             kwargs.pop("colormap_invert")
         super().__init__(**kwargs)
 
-    def set_colormap_label(self, color_map: dict):
+    def set_colormap_label(self, colormaplabel: t.Dict):
         """Set colormap label for the volume.
 
         Parameters
         ----------
-        color_map : dict
-            A dictionary containing the colormap information.
-            It can have the following keys:
+        colormaplabel : dict
+            The colormap or colormap label.
 
-            **Optional keys**:
-                - `'R'`: list of numbers
-                - `'G'`: list of numbers
-                - `'B'`: list of numbers
-                - `'A'`: list of numbers
-                - `'I'`: list of numbers
-                - `'min'`: number
-                - `'max'`: number
-                - `'labels'`: list of strings
+            Colormaps contain the following keys ('R', 'G', 'B' are required):
 
-            All the `'R'`, `'G'`, `'B'`, `'A'`, `'I'` lists must have the same length.
+            - R
+            - G
+            - B
+            - A
+            - I
+            - min
+            - max
+            - labels
 
-        Raises
-        ------
-        ValueError
-            If the colormap does not meet the required format.
-        TypeError
-            If the colormap values are not of the correct type.
+            Colormap labels contain the following keys (only 'lut' is required):
+
+            - lut
+            - min
+            - max
+            - labels
 
         Examples
         --------
         ::
 
-            nv.volumes[0].set_colormap_label(color_map)
-
+            nv.volumes[0].set_colormap_label(colormap_label)
         """
-        list_keys = ["R", "G", "B", "A", "I"]
-        lengths = []
-
-        # Validate that any present list keys are lists of numbers, and collect lengths
-        for key in list_keys:
-            if key in color_map:
-                if not isinstance(color_map[key], list):
-                    raise TypeError(f"ColorMap key '{key}' must be a list")
-                if not all(isinstance(x, (int, float)) for x in color_map[key]):
-                    raise TypeError(f"All elements in ColorMap '{key}' must be numbers")
-                lengths.append(len(color_map[key]))
-
-        # If more than one list is present, check that all lengths are equal
-        if lengths and len(set(lengths)) != 1:
-            raise ValueError(
-                "All 'R', 'G', 'B', 'A', 'I' lists must have the same length"
-            )
-
-        common_length = lengths[0] if lengths else None
-
-        # Validate optional keys
-        if "min" in color_map and not isinstance(color_map["min"], (int, float)):
-            raise TypeError("ColorMap 'min' must be a number")
-
-        if "max" in color_map and not isinstance(color_map["max"], (int, float)):
-            raise TypeError("ColorMap 'max' must be a number")
-
-        if "labels" in color_map:
-            if not isinstance(color_map["labels"], list):
-                raise TypeError("ColorMap 'labels' must be a list of strings")
-            if not all(isinstance(label, str) for label in color_map["labels"]):
-                raise TypeError("All elements in ColorMap 'labels' must be strings")
-            # Ensure labels length matches
-            if common_length is not None and len(color_map["labels"]) != common_length:
-                raise ValueError(
-                    "ColorMap 'labels' must have the same length as other lists"
-                )
-
-        self.send({"type": "set_colormap_label", "data": [color_map]})
+        self.colormap_label = colormaplabel
 
     @t.validate("path")
     def _validate_path(self, proposal):

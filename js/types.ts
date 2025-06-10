@@ -28,6 +28,8 @@ export type VolumeModel = AnyModel<{
 	cal_max: number;
 	frame4D: number;
 	colormap_negative: string;
+	// biome-ignore lint/suspicious/noExplicitAny: LUT or ColorMap type
+	colormap_label: any;
 
 	colormap_invert: boolean;
 }>;

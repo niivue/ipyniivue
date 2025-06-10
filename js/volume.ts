@@ -50,6 +50,19 @@ function setup_volume_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	// Accept either LUT or colormap as input
+	function colormap_label_changed() {
+		const newColormapLabel = vmodel.get("colormap_label");
+		if (Object.keys(newColormapLabel).length > 0) {
+			if (newColormapLabel.lut) {
+				volume.colormapLabel = newColormapLabel;
+			} else {
+				volume.setColormapLabel(newColormapLabel);
+			}
+		}
+		nv.updateGLVolume();
+	}
+
 	// custom msgs
 	function custom_msg_callback(payload: CustomMessagePayloadVolume) {
 		const { type, data } = payload;
@@ -79,6 +92,7 @@ function setup_volume_property_listeners(
 	vmodel.on("change:opacity", opacity_changed);
 	vmodel.on("change:frame4D", frame4D_changed);
 	vmodel.on("change:colormap_negative", colormap_negative_changed);
+	vmodel.on("change:colormap_label", colormap_label_changed);
 
 	vmodel.on("msg:custom", custom_msg_callback);
 
@@ -92,6 +106,7 @@ function setup_volume_property_listeners(
 		vmodel.off("change:opacity", opacity_changed);
 		vmodel.off("change:frame4D", frame4D_changed);
 		vmodel.off("change:colormap_negative", colormap_negative_changed);
+		vmodel.off("change:colormap_label", colormap_label_changed);
 
 		vmodel.off("msg:custom", custom_msg_callback);
 
@@ -134,6 +149,16 @@ async function create_volume(
 			0, //colormapType
 			null, //zarrData
 		);
+	}
+
+	// Set colormap label
+	const newColormapLabel = vmodel.get("colormap_label");
+	if (Object.keys(newColormapLabel).length > 0) {
+		if (newColormapLabel.lut) {
+			volume.colormapLabel = newColormapLabel;
+		} else {
+			volume.setColormapLabel(newColormapLabel);
+		}
 	}
 
 	vmodel.set("id", volume.id);
