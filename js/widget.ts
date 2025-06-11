@@ -113,6 +113,10 @@ function attachModelEventHandlers(
 				}
 				break;
 			}
+			case "load_png_as_texture": {
+				const [pngUrl, textureNum] = data;
+				nv.loadPngAsTexture(pngUrl, textureNum);
+			}
 		}
 	});
 }

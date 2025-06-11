@@ -6,6 +6,7 @@ contains many of the classes needed to make NiiVue instances work, such as class
 to load objects in, change attributes of this instance, and more.
 """
 
+import base64
 import math
 import pathlib
 import typing
@@ -57,7 +58,7 @@ class MeshLayer(anywidget.AnyWidget):
     )
     id = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(0.5).tag(sync=True)
-    colormap = t.Unicode("gray").tag(sync=True)
+    colormap = t.Unicode("warm").tag(sync=True)
     colormap_negative = t.Unicode("winter").tag(sync=True)
     use_negative_cmap = t.Bool(False).tag(sync=True)
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
@@ -121,7 +122,7 @@ class Mesh(anywidget.AnyWidget):
     )
     id = t.Unicode(default_value="").tag(sync=True)
     name = t.Unicode(default_value="").tag(sync=True)
-    rgba255 = t.List([0, 0, 0, 0]).tag(sync=True)
+    rgba255 = t.List([255, 255, 255, 255]).tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     visible = t.Bool(True).tag(sync=True)
     layers = t.List(t.Instance(MeshLayer), default_value=[]).tag(
@@ -130,10 +131,13 @@ class Mesh(anywidget.AnyWidget):
 
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
+    colorbar_visible = t.Bool(True).tag(sync=True)
 
     def __init__(self, **kwargs):
         if "colormap_invert" in kwargs:
             kwargs.pop("colormap_invert")
+        if "colorbar_visible" in kwargs:
+            kwargs.pop("colorbar_visible")
         layers_data = kwargs.pop("layers", [])
         super().__init__(**kwargs)
         self.layers = [MeshLayer(**layer_data) for layer_data in layers_data]
@@ -1298,6 +1302,30 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         self.force_device_pixel_ratio = force_device_pixel_ratio
         self.send({"type": "resize_listener", "data": []})
         self.send({"type": "draw_scene", "data": []})
+
+    def _load_png_as_texture(self, png_url: str, texture_num: int):
+        self.send({"type": "load_png_as_texture", "data": [png_url, texture_num]})
+
+    def load_mat_cap_texture(self, png_data: bytes):
+        """Load matcap for illumination model.
+
+        Parameters
+        ----------
+        png_data : bytes
+            Image data binary.
+
+        Examples
+        --------
+        ::
+
+            matcap_path = './matcaps/gold.jpg'
+            with open(matcap_path, 'rb') as f:
+                matcap_data = f.read()
+            nv.load_mat_cap_texture(matcap_data)
+        """
+        base64_data = base64.b64encode(png_data).decode("utf-8")
+        data_url = f"data:image/png;base64,{base64_data}"
+        self._load_png_as_texture(data_url, 5)
 
     """
     Custom event callbacks
