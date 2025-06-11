@@ -247,6 +247,7 @@
 <span class="sd">to load objects in, change attributes of this instance, and more.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
@@ -444,6 +445,8 @@
     <span class="n">cal_min</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">cal_max</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">frame4D</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">colormap_negative</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">colormap_label</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># other properties that aren&#39;t in init</span>
     <span class="n">colormap_invert</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -454,6 +457,43 @@
         <span class="k">if</span> <span class="s2">&quot;colormap_invert&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;colormap_invert&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Volume.set_colormap_label">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Volume.set_colormap_label">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_colormap_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colormaplabel</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set colormap label for the volume.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        colormaplabel : dict</span>
+<span class="sd">            The colormap or colormap label.</span>
+
+<span class="sd">            Colormaps contain the following keys (&#39;R&#39;, &#39;G&#39;, &#39;B&#39; are required):</span>
+
+<span class="sd">            - R</span>
+<span class="sd">            - G</span>
+<span class="sd">            - B</span>
+<span class="sd">            - A</span>
+<span class="sd">            - I</span>
+<span class="sd">            - min</span>
+<span class="sd">            - max</span>
+<span class="sd">            - labels</span>
+
+<span class="sd">            Colormap labels contain the following keys (only &#39;lut&#39; is required):</span>
+
+<span class="sd">            - lut</span>
+<span class="sd">            - min</span>
+<span class="sd">            - max</span>
+<span class="sd">            - labels</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.volumes[0].set_colormap_label(colormap_label)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">colormap_label</span> <span class="o">=</span> <span class="n">colormaplabel</span></div>
 
 
     <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
@@ -550,6 +590,9 @@
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the NiiVue widget.</span>
 
+<span class="sd">        **Note:** See the :meth:`NiiVue.close` method to close</span>
+<span class="sd">        the NiiVue widget and free up resources.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        height : int, optional</span>
@@ -643,6 +686,26 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">mesh</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">,</span> <span class="n">mesh</span><span class="p">]</span>
+
+<div class="viewcode-block" id="NiiVue.close">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close the NiiVue widget and free up resources.</span>
+
+<span class="sd">        This method disposes of the widget on both the frontend and backend.</span>
+<span class="sd">        After calling this method, the widget will no longer be usable.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv = NiiVue()</span>
+<span class="sd">            # use nv ...</span>
+<span class="sd">            nv.close()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
 
 <div class="viewcode-block" id="NiiVue.get_volume_index_by_id">
 <a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.get_volume_index_by_id">[docs]</a>
@@ -1533,6 +1596,58 @@
             <span class="k">return</span> <span class="n">fallback_shader_names</span>
 
         <span class="k">return</span> <span class="n">shader_names_list</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_volume_render_illumination">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_volume_render_illumination">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_volume_render_illumination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gradient_amount</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set proportion of volume rendering influenced by selected matcap.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gradient_amount : float</span>
+<span class="sd">            Amount of matcap (``NaN`` or ``0..1``).</span>
+<span class="sd">            Default is ``0.0`` (matte, surface normal does not influence color).</span>
+<span class="sd">            ``NaN`` renders the gradients.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_volume_render_illumination(0.6)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gradient_amount</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;gradient_amount must be a number.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">gradient_amount</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gradient_amount</span> <span class="o">=</span> <span class="n">gradient_amount</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_volume_render_illumination&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">gradient_amount</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_high_resolution_capable">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_high_resolution_capable">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_high_resolution_capable</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">force_device_pixel_ratio</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Force the rendering canvas to use a high-resolution display.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        force_device_pixel_ratio : int or bool</span>
+<span class="sd">            Determines how the device pixel ratio is handled.</span>
+<span class="sd">            ``True`` allows high DPI (equivalent to ``0``).</span>
+<span class="sd">            ``False`` blocks high DPI (equivalent to ``-1``).</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_high_resolution_capable(True)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">force_device_pixel_ratio</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="n">force_device_pixel_ratio</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">force_device_pixel_ratio</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">force_device_pixel_ratio</span> <span class="o">=</span> <span class="n">force_device_pixel_ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resize_listener&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;draw_scene&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span></div>
 
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
