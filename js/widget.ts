@@ -102,13 +102,15 @@ function attachModelEventHandlers(
 				break;
 			}
 			case "set_volume_render_illumination": {
-				let [gradientAmount] = data;
-				if (gradientAmount === null) {
-					gradientAmount = Number.NaN;
-				} else {
-					gradientAmount = Number(gradientAmount);
+				if (nv.gl) {
+					let [gradientAmount] = data;
+					if (gradientAmount === null) {
+						gradientAmount = Number.NaN;
+					} else {
+						gradientAmount = Number(gradientAmount);
+					}
+					nv.setVolumeRenderIllumination(gradientAmount);
 				}
-				nv.setVolumeRenderIllumination(gradientAmount);
 				break;
 			}
 		}
