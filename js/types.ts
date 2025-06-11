@@ -27,6 +27,9 @@ export type VolumeModel = AnyModel<{
 	cal_min: number;
 	cal_max: number;
 	frame4D: number;
+	colormap_negative: string;
+	// biome-ignore lint/suspicious/noExplicitAny: LUT or ColorMap type
+	colormap_label: any;
 
 	colormap_invert: boolean;
 }>;
@@ -90,6 +93,8 @@ type SetClipPlaneData = [clipPlane: number[]];
 
 type SetMeshShaderData = [meshId: string, shader: string];
 
+type SetVolumeRenderIlluminationData = [gradientAmount: number];
+
 export type CustomMessagePayload =
 	| { type: "save_document"; data: SaveDocumentData }
 	| { type: "save_html"; data: SaveHTMLData }
@@ -98,4 +103,17 @@ export type CustomMessagePayload =
 	| { type: "add_colormap"; data: AddColormapData }
 	| { type: "set_gamma"; data: SetGammaData }
 	| { type: "set_clip_plane"; data: SetClipPlaneData }
-	| { type: "set_mesh_shader"; data: SetMeshShaderData };
+	| { type: "set_mesh_shader"; data: SetMeshShaderData }
+	| { type: "resize_listener"; data: [] }
+	| { type: "draw_scene"; data: [] }
+	| {
+			type: "set_volume_render_illumination";
+			data: SetVolumeRenderIlluminationData;
+	  };
+
+type SetColormapLabelData = [cm: ColorMap];
+
+export type CustomMessagePayloadVolume = {
+	type: "set_colormap_label";
+	data: SetColormapLabelData;
+};

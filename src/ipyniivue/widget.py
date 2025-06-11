@@ -6,6 +6,7 @@ contains many of the classes needed to make NiiVue instances work, such as class
 to load objects in, change attributes of this instance, and more.
 """
 
+import math
 import pathlib
 import typing
 import uuid
@@ -189,6 +190,8 @@ class Volume(anywidget.AnyWidget):
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     frame4D = t.Int(0).tag(sync=True)
+    colormap_negative = t.Unicode("").tag(sync=True)
+    colormap_label = t.Dict(None, allow_none=True).tag(sync=True)
 
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
@@ -197,6 +200,40 @@ class Volume(anywidget.AnyWidget):
         if "colormap_invert" in kwargs:
             kwargs.pop("colormap_invert")
         super().__init__(**kwargs)
+
+    def set_colormap_label(self, colormaplabel: t.Dict):
+        """Set colormap label for the volume.
+
+        Parameters
+        ----------
+        colormaplabel : dict
+            The colormap or colormap label.
+
+            Colormaps contain the following keys ('R', 'G', 'B' are required):
+
+            - R
+            - G
+            - B
+            - A
+            - I
+            - min
+            - max
+            - labels
+
+            Colormap labels contain the following keys (only 'lut' is required):
+
+            - lut
+            - min
+            - max
+            - labels
+
+        Examples
+        --------
+        ::
+
+            nv.volumes[0].set_colormap_label(colormap_label)
+        """
+        self.colormap_label = colormaplabel
 
     @t.validate("path")
     def _validate_path(self, proposal):
@@ -283,6 +320,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
         Initialize the NiiVue widget.
+
+        **Note:** See the :meth:`NiiVue.close` method to close
+        the NiiVue widget and free up resources.
 
         Parameters
         ----------
@@ -376,6 +416,23 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             self._meshes = self._meshes[:index] + [mesh] + self._meshes[index:]
         else:
             self._meshes = [*self._meshes, mesh]
+
+    def close(self):
+        """
+        Close the NiiVue widget and free up resources.
+
+        This method disposes of the widget on both the frontend and backend.
+        After calling this method, the widget will no longer be usable.
+
+        Examples
+        --------
+        ::
+
+            nv = NiiVue()
+            # use nv ...
+            nv.close()
+        """
+        super().close()
 
     def get_volume_index_by_id(self, volume_id: str) -> int:
         """Return the index of the volume with the given id.
@@ -1195,6 +1252,52 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             return fallback_shader_names
 
         return shader_names_list
+
+    def set_volume_render_illumination(self, gradient_amount: float):
+        """Set proportion of volume rendering influenced by selected matcap.
+
+        Parameters
+        ----------
+        gradient_amount : float
+            Amount of matcap (``NaN`` or ``0..1``).
+            Default is ``0.0`` (matte, surface normal does not influence color).
+            ``NaN`` renders the gradients.
+
+        Examples
+        --------
+        ::
+
+            nv.set_volume_render_illumination(0.6)
+        """
+        if not isinstance(gradient_amount, (int, float)):
+            raise TypeError("gradient_amount must be a number.")
+        if not math.isnan(gradient_amount):
+            self.gradient_amount = gradient_amount
+        self.send({"type": "set_volume_render_illumination", "data": [gradient_amount]})
+
+    def set_high_resolution_capable(
+        self, force_device_pixel_ratio: typing.Union[int, bool]
+    ):
+        """Force the rendering canvas to use a high-resolution display.
+
+        Parameters
+        ----------
+        force_device_pixel_ratio : int or bool
+            Determines how the device pixel ratio is handled.
+            ``True`` allows high DPI (equivalent to ``0``).
+            ``False`` blocks high DPI (equivalent to ``-1``).
+
+        Examples
+        --------
+        ::
+
+            nv.set_high_resolution_capable(True)
+        """
+        if isinstance(force_device_pixel_ratio, bool):
+            force_device_pixel_ratio = 0 if force_device_pixel_ratio else -1
+        self.force_device_pixel_ratio = force_device_pixel_ratio
+        self.send({"type": "resize_listener", "data": []})
+        self.send({"type": "draw_scene", "data": []})
 
     """
     Custom event callbacks

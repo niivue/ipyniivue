@@ -604,3 +604,33 @@ class OptionsMixin:
     def center_mosaic(self, value: bool):
         """Automatically generated property. See generate_options_mixin.py."""
         self._opts = {**self._opts, "centerMosaic": value}
+
+    @property
+    def gradient_amount(self) -> float:
+        """Automatically generated property. See generate_options_mixin.py."""
+        return self._opts.get("gradientAmount", 0.0)
+
+    @gradient_amount.setter
+    def gradient_amount(self, value: float):
+        """Automatically generated property. See generate_options_mixin.py."""
+        self._opts = {**self._opts, "gradientAmount": value}
+
+    @property
+    def gradient_opacity(self) -> float:
+        """Automatically generated property. See generate_options_mixin.py."""
+        return self._opts.get("gradientOpacity", 0.0)
+
+    @gradient_opacity.setter
+    def gradient_opacity(self, value: float):
+        """Automatically generated property. See generate_options_mixin.py."""
+        self._opts = {**self._opts, "gradientOpacity": value}
+
+    @property
+    def force_device_pixel_ratio(self) -> int:
+        """Automatically generated property. See generate_options_mixin.py."""
+        return self._opts.get("forceDevicePixelRatio", 0)
+
+    @force_device_pixel_ratio.setter
+    def force_device_pixel_ratio(self, value: int):
+        """Automatically generated property. See generate_options_mixin.py."""
+        self._opts = {**self._opts, "forceDevicePixelRatio": value}

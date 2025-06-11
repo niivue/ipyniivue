@@ -33,7 +33,7 @@ function attachModelEventHandlers(
 
 	// Any time we change the options, we need to update the nv gl
 	model.on("change:_opts", () => {
-		console.log("Updating opts callback");
+		console.log("Updating opts");
 		nv.document.opts = { ...nv.opts, ...model.get("_opts") };
 		nv.updateGLVolume();
 	});
@@ -93,6 +93,26 @@ function attachModelEventHandlers(
 				nv.setMeshShader(meshId, shader);
 				break;
 			}
+			case "resize_listener": {
+				nv.resizeListener();
+				break;
+			}
+			case "draw_scene": {
+				nv.drawScene();
+				break;
+			}
+			case "set_volume_render_illumination": {
+				if (nv.gl) {
+					let [gradientAmount] = data;
+					if (gradientAmount === null) {
+						gradientAmount = Number.NaN;
+					} else {
+						gradientAmount = Number(gradientAmount);
+					}
+					nv.setVolumeRenderIllumination(gradientAmount);
+				}
+				break;
+			}
 		}
 	});
 }
@@ -118,11 +138,14 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				path: "<fromfrontend>",
 				id: volume.id,
 				name: volume.name,
-				colormap: volume.colormap,
 				opacity: volume.opacity,
+				colormap: volume.colormap,
 				colorbar_visible: volume.colorbarVisible,
 				cal_min: volume.cal_min,
 				cal_max: volume.cal_max,
+				frame4D: volume.frame4D,
+				colormap_negative: volume.colormapNegative,
+				colormap_label: volume.colormapLabel,
 				index: nv.getVolumeIndexByID(volume.id),
 			};
 
@@ -424,19 +447,17 @@ export default {
 			container.appendChild(canvas);
 
 			// Handle height changes
+			model.off("change:height");
 			model.on("change:height", () => {
 				container.style.height = `${model.get("height")}px`;
 			});
 
 			// Attach nv to canvas
-			nv.attachToCanvas(canvas);
+			nv.attachToCanvas(canvas, nv.opts.isAntiAlias);
 
 			// Load initial volumes and meshes
 			await render_volumes(nv, model, disposer);
 			await render_meshes(nv, model, disposer);
-
-			// Drawing setup
-			nv.createEmptyDrawing();
 		} else {
 			console.log("moving render around");
 
@@ -448,6 +469,9 @@ export default {
 			// Attach
 			el.appendChild(nv.canvas.parentNode);
 		}
+
+		// Drawing setup
+		nv.setDrawingEnabled(nv.opts.drawingEnabled);
 
 		// Return cleanup function, runs when page reloaded or cell run again
 		return () => {
