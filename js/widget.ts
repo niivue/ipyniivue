@@ -44,6 +44,11 @@ function attachModelEventHandlers(
 		nv.updateGLVolume();
 	});
 
+	model.on("change:clip_plane_depth_azi_elev", () => {
+		const [depth, azimuth, elevation] = model.get("clip_plane_depth_azi_elev");
+		nv.setClipPlane([depth, azimuth, elevation]);
+	});
+
 	// Handle any message directions from the nv object.
 	model.on("msg:custom", (payload: CustomMessagePayload) => {
 		const { type, data } = payload;
@@ -81,11 +86,6 @@ function attachModelEventHandlers(
 			case "set_gamma": {
 				const [gamma] = data;
 				nv.setGamma(gamma);
-				break;
-			}
-			case "set_clip_plane": {
-				const [clipPlane] = data;
-				nv.setClipPlane(clipPlane);
 				break;
 			}
 			case "resize_listener": {

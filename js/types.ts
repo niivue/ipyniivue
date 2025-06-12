@@ -46,6 +46,12 @@ export type MeshModel = AnyModel<{
 	colormap_invert: boolean;
 	colorbar_visible: boolean;
 	mesh_shader_index: number;
+	fiber_radius: number;
+	fiber_length: number;
+	fiber_dither: number;
+	fiber_color: string;
+	fiber_decimation_stride: number;
+	colormap: string;
 }>;
 
 export type MeshLayerModel = AnyModel<{
@@ -72,6 +78,11 @@ export type Model = AnyModel<{
 	_opts: Record<string, unknown>;
 
 	background_masks_overlays: number;
+	clip_plane_depth_azi_elev: [
+		depth: number,
+		azimuth: number,
+		elevation: number,
+	];
 }>;
 
 // Custom message datas
@@ -91,8 +102,6 @@ type AddColormapData = [name: string, cmap: ColorMap];
 
 type SetGammaData = [gamma: number];
 
-type SetClipPlaneData = [clipPlane: number[]];
-
 type SetVolumeRenderIlluminationData = [gradientAmount: number];
 
 type LoadPngAsTextureData = [pngUrl: string, textureNum: number];
@@ -104,7 +113,6 @@ export type CustomMessagePayload =
 	| { type: "save_scene"; data: SaveSceneData }
 	| { type: "add_colormap"; data: AddColormapData }
 	| { type: "set_gamma"; data: SetGammaData }
-	| { type: "set_clip_plane"; data: SetClipPlaneData }
 	| { type: "resize_listener"; data: [] }
 	| { type: "draw_scene"; data: [] }
 	| {
