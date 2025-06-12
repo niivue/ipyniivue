@@ -133,8 +133,8 @@ async function create_volume(
 			vmodel.get("colormap"), // colormap
 			vmodel.get("opacity"), // opacity
 			null, // pairedImgData
-			vmodel.get("cal_min"), // cal_min
-			vmodel.get("cal_max"), // cal_max
+			vmodel.get("cal_min") ?? Number.NaN, // cal_min
+			vmodel.get("cal_max") ?? Number.NaN, // cal_max
 			true, // trustCalMinMax
 			0.02, // percentileFrac
 			false, // ignoreZeroVoxels
