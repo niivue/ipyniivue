@@ -88,11 +88,6 @@ function attachModelEventHandlers(
 				nv.setClipPlane(clipPlane);
 				break;
 			}
-			case "set_mesh_shader": {
-				const [meshId, shader] = data;
-				nv.setMeshShader(meshId, shader);
-				break;
-			}
 			case "resize_listener": {
 				nv.resizeListener();
 				break;
@@ -112,6 +107,10 @@ function attachModelEventHandlers(
 					nv.setVolumeRenderIllumination(gradientAmount);
 				}
 				break;
+			}
+			case "load_png_as_texture": {
+				const [pngUrl, textureNum] = data;
+				nv.loadPngAsTexture(pngUrl, textureNum);
 			}
 		}
 	});
@@ -204,7 +203,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				opacity: mesh.opacity,
 				layers: layersData,
 				visible: mesh.visible,
-				index: nv.meshes.findIndex((m) => m.id === mesh.id),
+				index: nv.getMeshIndexByID(mesh.id),
 			};
 
 			// Send a custom message to the backend to add the mesh

@@ -41,7 +41,7 @@ const generateShaderNamesPlugin = {
 		build.onEnd((result) => {
 			if (result?.errors?.length === 0) {
 				const nv = new niivue.Niivue();
-				const shaderNames = nv.meshShaderNames();
+				const shaderNames = nv.meshShaders.map((shader) => shader.Name);
 				const shaderNamesTxtContent = shaderNames.join("\n");
 
 				const outputPath = path.join(

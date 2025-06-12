@@ -44,6 +44,8 @@ export type MeshModel = AnyModel<{
 	visible: boolean;
 
 	colormap_invert: boolean;
+	colorbar_visible: boolean;
+	mesh_shader_index: number;
 }>;
 
 export type MeshLayerModel = AnyModel<{
@@ -91,9 +93,9 @@ type SetGammaData = [gamma: number];
 
 type SetClipPlaneData = [clipPlane: number[]];
 
-type SetMeshShaderData = [meshId: string, shader: string];
-
 type SetVolumeRenderIlluminationData = [gradientAmount: number];
+
+type LoadPngAsTextureData = [pngUrl: string, textureNum: number];
 
 export type CustomMessagePayload =
 	| { type: "save_document"; data: SaveDocumentData }
@@ -103,13 +105,13 @@ export type CustomMessagePayload =
 	| { type: "add_colormap"; data: AddColormapData }
 	| { type: "set_gamma"; data: SetGammaData }
 	| { type: "set_clip_plane"; data: SetClipPlaneData }
-	| { type: "set_mesh_shader"; data: SetMeshShaderData }
 	| { type: "resize_listener"; data: [] }
 	| { type: "draw_scene"; data: [] }
 	| {
 			type: "set_volume_render_illumination";
 			data: SetVolumeRenderIlluminationData;
-	  };
+	  }
+	| { type: "load_png_as_texture"; data: LoadPngAsTextureData };
 
 type SetColormapLabelData = [cm: ColorMap];
 
