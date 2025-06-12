@@ -155,10 +155,50 @@ function setup_mesh_property_listeners(
 		nv.onMeshShaderChanged(meshIndex, mesh.meshShaderIndex);
 	}
 
+	function fiber_radius_changed() {
+		mesh.fiberRadius = mmodel.get("fiber_radius");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function fiber_length_changed() {
+		mesh.fiberLength = mmodel.get("fiber_length");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function fiber_dither_changed() {
+		mesh.fiberDither = mmodel.get("fiber_dither");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function fiber_color_changed() {
+		mesh.fiberColor = mmodel.get("fiber_color");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function fiber_decimation_stride_changed() {
+		mesh.fiberDecimationStride = mmodel.get("fiber_decimation_stride");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function colormap_changed() {
+		mesh.colormap = mmodel.get("colormap");
+		nv.updateGLVolume();
+	}
+
 	// set values not set by kwargs
 	colormap_invert_changed();
 	colorbar_visible_changed();
 	mesh_shader_index_changed();
+	fiber_radius_changed();
+	fiber_length_changed();
+	fiber_dither_changed();
+	fiber_color_changed();
+	fiber_decimation_stride_changed();
 
 	mmodel.on("change:opacity", opacity_changed);
 	mmodel.on("change:rgba255", rgba255_changed);
@@ -167,6 +207,12 @@ function setup_mesh_property_listeners(
 	mmodel.on("change:colormap_invert", colormap_invert_changed);
 	mmodel.on("change:colorbar_visible", colorbar_visible_changed);
 	mmodel.on("change:mesh_shader_index", mesh_shader_index_changed);
+	mmodel.on("change:fiber_radius", fiber_radius_changed);
+	mmodel.on("change:fiber_length", fiber_length_changed);
+	mmodel.on("change:fiber_dither", fiber_dither_changed);
+	mmodel.on("change:fiber_color", fiber_color_changed);
+	mmodel.on("change:fiber_decimation_stride", fiber_decimation_stride_changed);
+	mmodel.on("change:colormap", colormap_changed);
 
 	// Return a function to remove the event listeners
 	return () => {
@@ -177,6 +223,15 @@ function setup_mesh_property_listeners(
 		mmodel.off("change:colormap_invert", colormap_invert_changed);
 		mmodel.off("change:colorbar_visible", colorbar_visible_changed);
 		mmodel.off("change:mesh_shader_index", mesh_shader_index_changed);
+		mmodel.off("change:fiber_radius", fiber_radius_changed);
+		mmodel.off("change:fiber_length", fiber_length_changed);
+		mmodel.off("change:fiber_dither", fiber_dither_changed);
+		mmodel.off("change:fiber_color", fiber_color_changed);
+		mmodel.off(
+			"change:fiber_decimation_stride",
+			fiber_decimation_stride_changed,
+		);
+		mmodel.off("change:colormap", colormap_changed);
 	};
 }
 

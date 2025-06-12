@@ -71,13 +71,19 @@ class MeshLayer(anywidget.AnyWidget):
     colorbar_visible = t.Bool(True).tag(sync=True)
 
     def __init__(self, **kwargs):
-        if "colormap_invert" in kwargs:
-            kwargs.pop("colormap_invert")
-        if "frame4D" in kwargs:
-            kwargs.pop("frame4D")
-        if "colorbar_visible" in kwargs:
-            kwargs.pop("colorbar_visible")
-        super().__init__(**kwargs)
+        include_keys = {
+            "path",
+            "id",
+            "opacity",
+            "colormap",
+            "colormap_negative",
+            "use_negative_cmap",
+            "cal_min",
+            "cal_max",
+            "outline_border",
+        }
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
+        super().__init__(**filtered_kwargs)
 
     @t.validate("path")
     def _validate_path(self, proposal):
@@ -133,16 +139,18 @@ class Mesh(anywidget.AnyWidget):
     colormap_invert = t.Bool(False).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
     mesh_shader_index = t.Int(default_value=0).tag(sync=True)
+    fiber_radius = t.Float(0.0).tag(sync=True)
+    fiber_length = t.Float(2.0).tag(sync=True)
+    fiber_dither = t.Float(0.1).tag(sync=True)
+    fiber_color = t.Unicode("Global").tag(sync=True)
+    fiber_decimation_stride = t.Int(1).tag(sync=True)
+    colormap = t.Unicode(None, allow_none=True).tag(sync=True)
 
     def __init__(self, **kwargs):
-        if "colormap_invert" in kwargs:
-            kwargs.pop("colormap_invert")
-        if "colorbar_visible" in kwargs:
-            kwargs.pop("colorbar_visible")
-        if "mesh_shader_index" in kwargs:
-            kwargs.pop("mesh_shader_index")
+        include_keys = {"path", "id", "name", "rgba255", "opacity", "visible"}
         layers_data = kwargs.pop("layers", [])
-        super().__init__(**kwargs)
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
+        super().__init__(**filtered_kwargs)
         self.layers = [MeshLayer(**layer_data) for layer_data in layers_data]
 
     @t.validate("path")
@@ -204,9 +212,21 @@ class Volume(anywidget.AnyWidget):
     colormap_invert = t.Bool(False).tag(sync=True)
 
     def __init__(self, **kwargs):
-        if "colormap_invert" in kwargs:
-            kwargs.pop("colormap_invert")
-        super().__init__(**kwargs)
+        include_keys = {
+            "path",
+            "id",
+            "name",
+            "opacity",
+            "colormap",
+            "colormap_visible",
+            "cal_min",
+            "cal_max",
+            "frame4D",
+            "colormap_negative",
+            "colormap_label",
+        }
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
+        super().__init__(**filtered_kwargs)
 
     def set_colormap_label(self, colormaplabel: t.Dict):
         """Set colormap label for the volume.
@@ -323,6 +343,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
     # other props
     background_masks_overlays = t.Int(0).tag(sync=True)
+    clip_plane_depth_azi_elev = t.List(
+        t.Float(), default_value=[2, 0, 0], minlen=3, maxlen=3
+    ).tag(sync=True)
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
@@ -749,6 +772,50 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """
         self.send({"type": "save_scene", "data": [file_name]})
 
+    def set_mesh_property(self, mesh_id: str, attribute: str, value: typing.Any):
+        """Set a property of a mesh.
+
+        Parameters
+        ----------
+        mesh_id : str
+            Identifier of the mesh to change (mesh id).
+        attribute : str
+            The attribute to change.
+        value : Any
+            The value to set.
+
+        Raises
+        ------
+        ValueError
+            If the attribute is not allowed or the mesh is not found.
+
+        Examples
+        --------
+        ::
+
+            nv.set_mesh_property(nv.meshes[0].id, 'opacity', 0.5)
+        """
+        allowed_attributes = [
+            name
+            for name, trait in Mesh.__dict__.items()
+            if isinstance(trait, t.TraitType)
+            and not name.startswith("_")
+            and name not in {"id", "path"}
+        ]
+
+        if attribute not in allowed_attributes:
+            raise ValueError(
+                f"Attribute '{attribute}' is not allowed. "
+                f"Allowed attributes are: {', '.join(allowed_attributes)}."
+            )
+
+        idx = self.get_mesh_index_by_id(mesh_id)
+        if idx == -1:
+            raise ValueError(f"Mesh with id '{mesh_id}' not found.")
+
+        mesh = self._meshes[idx]
+        setattr(mesh, attribute, value)
+
     def set_mesh_layer_property(
         self, mesh_id: str, layer_index: int, attribute: str, value: typing.Any
     ):
@@ -1163,7 +1230,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         if not all(isinstance(x, (int, float)) for x in [depth, azimuth, elevation]):
             raise TypeError("depth, azimuth, and elevation must all be numeric values.")
 
-        self.send({"type": "set_clip_plane", "data": [depth, azimuth, elevation]})
+        self.clip_plane_depth_azi_elev = [depth, azimuth, elevation]
 
     def set_render_azimuth_elevation(self, azimuth: float, elevation: float):
         """Set the rotation of the 3D render view.
