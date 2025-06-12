@@ -132,12 +132,15 @@ class Mesh(anywidget.AnyWidget):
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
+    mesh_shader_index = t.Int(default_value=0).tag(sync=True)
 
     def __init__(self, **kwargs):
         if "colormap_invert" in kwargs:
             kwargs.pop("colormap_invert")
         if "colorbar_visible" in kwargs:
             kwargs.pop("colorbar_visible")
+        if "mesh_shader_index" in kwargs:
+            kwargs.pop("mesh_shader_index")
         layers_data = kwargs.pop("layers", [])
         super().__init__(**kwargs)
         self.layers = [MeshLayer(**layer_data) for layer_data in layers_data]
@@ -1191,20 +1194,31 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             {"type": "set_render_azimuth_elevation", "data": [azimuth, elevation]}
         )
 
-    def set_mesh_shader(self, mesh_id: str, mesh_shader: str):
+    def _mesh_shader_name_to_number(self, mesh_shader_name: str) -> int:
+        name = mesh_shader_name.lower()
+        mesh_names = self.mesh_shader_names()
+        for i in range(len(mesh_names)):
+            if name == mesh_names[i].lower():
+                return i
+        return -1
+
+    def set_mesh_shader(self, mesh_id: str, mesh_shader: typing.Union[str, int]):
         """Set the shader for a mesh.
 
         Parameters
         ----------
         mesh_id : str
             Identifier of the mesh to change (mesh id).
-        mesh_shader : str
-            The name of the shader to set.
+        mesh_shader : str or int
+            The name or index of the shader to set.
 
         Raises
         ------
         ValueError
             If the mesh is not found.
+            If the mesh shader is not found.
+        TypeError
+            If the mesh_shader is not a string nor integer.
 
         Examples
         --------
@@ -1216,7 +1230,16 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         if idx == -1:
             raise ValueError(f"Mesh with id '{mesh_id}' not found.")
 
-        self.send({"type": "set_mesh_shader", "data": [mesh_id, mesh_shader]})
+        if isinstance(mesh_shader, str):
+            mesh_shader_idx = self._mesh_shader_name_to_number(mesh_shader)
+            if mesh_shader_idx == -1:
+                raise ValueError(f"Mesh shader with name '{mesh_shader}' not found.")
+        elif isinstance(mesh_shader, int):
+            mesh_shader_idx = mesh_shader
+        else:
+            raise TypeError("shader_name must be a string or integer.")
+
+        self.meshes[idx].mesh_shader_index = mesh_shader_idx
 
     def mesh_shader_names(self):
         """Retrieve the list of available mesh shader names.

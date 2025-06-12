@@ -148,9 +148,17 @@ function setup_mesh_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	function mesh_shader_index_changed() {
+		mesh.meshShaderIndex = mmodel.get("mesh_shader_index");
+		nv.updateGLVolume();
+		const meshIndex = nv.getMeshIndexByID(mesh.id);
+		nv.onMeshShaderChanged(meshIndex, mesh.meshShaderIndex);
+	}
+
 	// set values not set by kwargs
 	colormap_invert_changed();
 	colorbar_visible_changed();
+	mesh_shader_index_changed();
 
 	mmodel.on("change:opacity", opacity_changed);
 	mmodel.on("change:rgba255", rgba255_changed);
@@ -158,6 +166,7 @@ function setup_mesh_property_listeners(
 
 	mmodel.on("change:colormap_invert", colormap_invert_changed);
 	mmodel.on("change:colorbar_visible", colorbar_visible_changed);
+	mmodel.on("change:mesh_shader_index", mesh_shader_index_changed);
 
 	// Return a function to remove the event listeners
 	return () => {
@@ -167,6 +176,7 @@ function setup_mesh_property_listeners(
 
 		mmodel.off("change:colormap_invert", colormap_invert_changed);
 		mmodel.off("change:colorbar_visible", colorbar_visible_changed);
+		mmodel.off("change:mesh_shader_index", mesh_shader_index_changed);
 	};
 }
 

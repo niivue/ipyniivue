@@ -208,7 +208,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				opacity: mesh.opacity,
 				layers: layersData,
 				visible: mesh.visible,
-				index: nv.meshes.findIndex((m) => m.id === mesh.id),
+				index: nv.getMeshIndexByID(mesh.id),
 			};
 
 			// Send a custom message to the backend to add the mesh

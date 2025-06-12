@@ -45,6 +45,7 @@ export type MeshModel = AnyModel<{
 
 	colormap_invert: boolean;
 	colorbar_visible: boolean;
+	mesh_shader_index: number;
 }>;
 
 export type MeshLayerModel = AnyModel<{
