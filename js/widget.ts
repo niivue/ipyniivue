@@ -88,11 +88,6 @@ function attachModelEventHandlers(
 				nv.setClipPlane(clipPlane);
 				break;
 			}
-			case "set_mesh_shader": {
-				const [meshId, shader] = data;
-				nv.setMeshShader(meshId, shader);
-				break;
-			}
 			case "resize_listener": {
 				nv.resizeListener();
 				break;

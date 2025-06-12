@@ -93,8 +93,6 @@ type SetGammaData = [gamma: number];
 
 type SetClipPlaneData = [clipPlane: number[]];
 
-type SetMeshShaderData = [meshId: string, shader: string];
-
 type SetVolumeRenderIlluminationData = [gradientAmount: number];
 
 type LoadPngAsTextureData = [pngUrl: string, textureNum: number];
@@ -107,7 +105,6 @@ export type CustomMessagePayload =
 	| { type: "add_colormap"; data: AddColormapData }
 	| { type: "set_gamma"; data: SetGammaData }
 	| { type: "set_clip_plane"; data: SetClipPlaneData }
-	| { type: "set_mesh_shader"; data: SetMeshShaderData }
 	| { type: "resize_listener"; data: [] }
 	| { type: "draw_scene"; data: [] }
 	| {
