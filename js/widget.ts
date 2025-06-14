@@ -3,6 +3,7 @@ import * as niivue from "@niivue/niivue";
 
 import { Disposer, gather_models } from "./lib.ts";
 import { render_meshes } from "./mesh.ts";
+import { nvMap } from "./nvmanager.ts";
 import type {
 	CustomMessagePayload,
 	MeshModel,
@@ -10,9 +11,6 @@ import type {
 	VolumeModel,
 } from "./types.ts";
 import { render_volumes } from "./volume.ts";
-
-// store all nv objects for the page
-const nvMap = new Map<string, niivue.Niivue>();
 
 // Attach model event handlers
 function attachModelEventHandlers(
@@ -47,6 +45,17 @@ function attachModelEventHandlers(
 	model.on("change:clip_plane_depth_azi_elev", () => {
 		const [depth, azimuth, elevation] = model.get("clip_plane_depth_azi_elev");
 		nv.setClipPlane([depth, azimuth, elevation]);
+	});
+
+	model.on("change:other_nv_ids", () => {
+		const otherNVIDs = model.get("other_nv_ids");
+		nv.otherNV = otherNVIDs
+			.map((id: string) => nvMap.get(id))
+			.filter((otherNV) => otherNV !== undefined);
+	});
+
+	model.on("change:sync_opts", () => {
+		nv.syncOpts = model.get("sync_opts");
 	});
 
 	// Handle any message directions from the nv object.
@@ -419,6 +428,9 @@ export default {
 			model.off("msg:custom");
 
 			model.off("change:background_masks_overlays");
+			model.off("change:clip_plane_depth_azi_elev");
+			model.off("change:other_nv_ids");
+			model.off("change:sync_opts");
 
 			// remove the nv instance
 			nvMap.delete(model.get("id"));

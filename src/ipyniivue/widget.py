@@ -17,7 +17,7 @@ import ipywidgets
 import traitlets as t
 from ipywidgets import CallbackDispatcher
 
-from .constants import _SNAKE_TO_CAMEL_OVERRIDES, SliceType
+from .constants import _SNAKE_TO_CAMEL_OVERRIDES, MultiplanarType, SliceType
 from .options_mixin import OptionsMixin
 from .utils import (
     file_serializer,
@@ -330,7 +330,11 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
 
-    id = t.Unicode(default_value=str(uuid.uuid4()), read_only=True).tag(sync=True)
+    id = t.Unicode(read_only=True).tag(sync=True)
+
+    @t.default("id")
+    def _default_id(self):
+        return str(uuid.uuid4())
 
     height = t.Int().tag(sync=True)
     _opts = t.Dict({}).tag(sync=True, to_json=serialize_options)
@@ -346,6 +350,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     clip_plane_depth_azi_elev = t.List(
         t.Float(), default_value=[2, 0, 0], minlen=3, maxlen=3
     ).tag(sync=True)
+    other_nv_ids = t.List(None, allow_none=True).tag(sync=True)
+    sync_opts = t.Dict().tag(sync=True)
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
@@ -1416,6 +1422,47 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         base64_data = base64.b64encode(png_data).decode("utf-8")
         data_url = f"data:image/png;base64,{base64_data}"
         self._load_png_as_texture(data_url, 5)
+
+    def broadcast_to(self, other_nv: list["NiiVue"], sync_opts=None):
+        """Sync the scene controls from this NiiVue instance to others.
+
+        Parameters
+        ----------
+        other_nv : list of NiiVue instances
+            The other NiiVue instances to sync with.
+        sync_opts : dict, optional
+            Options to specify what to sync.
+            Keys are ``'2d'`` and ``'3d'`` with boolean values.
+            By default, both 2D and 3D views are synchronized.
+
+        Examples
+        --------
+        ::
+
+            nv1.broadcast_to([nv2], sync_opts={'2d': True, '3d': False})
+
+        """
+        if sync_opts is None:
+            sync_opts = {"2d": True, "3d": True}
+
+        self.other_nv_ids = [nv.id for nv in other_nv if isinstance(nv, NiiVue)]
+        self.sync_opts = sync_opts
+
+    def set_multiplanar_layout(self, layout: MultiplanarType):
+        """Control the placement of 2D slices in multiplanar view.
+
+        Parameters
+        ----------
+        layout : MultiplanarType
+            The layout of the 2D slices.
+
+        Examples
+        --------
+        ::
+
+            nv.set_multiplanar_layout(MultiplanarType.COLUMN)
+        """
+        self.multiplanar_layout = layout
 
     """
     Custom event callbacks
