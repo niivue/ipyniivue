@@ -106,6 +106,8 @@ type SetVolumeRenderIlluminationData = [gradientAmount: number];
 
 type LoadPngAsTextureData = [pngUrl: string, textureNum: number];
 
+type SetRenderAzimuthElevationData = [azimuth: number, elevation: number];
+
 export type CustomMessagePayload =
 	| { type: "save_document"; data: SaveDocumentData }
 	| { type: "save_html"; data: SaveHTMLData }
@@ -119,7 +121,11 @@ export type CustomMessagePayload =
 			type: "set_volume_render_illumination";
 			data: SetVolumeRenderIlluminationData;
 	  }
-	| { type: "load_png_as_texture"; data: LoadPngAsTextureData };
+	| { type: "load_png_as_texture"; data: LoadPngAsTextureData }
+	| {
+			type: "set_render_azimuth_elevation";
+			data: SetRenderAzimuthElevationData;
+	  };
 
 type SetColormapLabelData = [cm: ColorMap];
 
