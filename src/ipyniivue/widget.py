@@ -330,7 +330,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
 
-    id = t.Unicode(default_value=str(uuid.uuid4()), read_only=True).tag(sync=True)
+    id = t.Unicode(read_only=True).tag(sync=True)
 
     height = t.Int().tag(sync=True)
     _opts = t.Dict({}).tag(sync=True, to_json=serialize_options)
@@ -346,6 +346,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     clip_plane_depth_azi_elev = t.List(
         t.Float(), default_value=[2, 0, 0], minlen=3, maxlen=3
     ).tag(sync=True)
+
+    @t.default("id")
+    def _default_id(self):
+        return str(uuid.uuid4())
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
