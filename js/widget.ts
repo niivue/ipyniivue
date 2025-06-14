@@ -110,6 +110,12 @@ function attachModelEventHandlers(
 			case "load_png_as_texture": {
 				const [pngUrl, textureNum] = data;
 				nv.loadPngAsTexture(pngUrl, textureNum);
+				break;
+			}
+			case "set_render_azimuth_elevation": {
+				const [azimuth, elevation] = data;
+				nv.setRenderAzimuthElevation(azimuth, elevation);
+				break;
 			}
 		}
 	});
