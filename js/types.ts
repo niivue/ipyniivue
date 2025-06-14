@@ -16,6 +16,19 @@ type ColorMap = {
 	labels?: string[];
 };
 
+type SyncOpts = {
+	"3d"?: boolean;
+	"2d"?: boolean;
+	zoomPan?: boolean;
+	cal_min?: boolean;
+	cal_max?: boolean;
+	gamma?: boolean;
+	useSliceOffset?: boolean;
+	sliceType?: boolean;
+	crosshair?: boolean;
+	clipPlane?: boolean;
+};
+
 export type VolumeModel = AnyModel<{
 	path: File;
 	id: string;
@@ -83,6 +96,8 @@ export type Model = AnyModel<{
 		azimuth: number,
 		elevation: number,
 	];
+	other_nv_ids: Array<string>;
+	sync_opts: SyncOpts;
 }>;
 
 // Custom message datas
