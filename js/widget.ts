@@ -11,7 +11,6 @@ import type {
 } from "./types.ts";
 import { render_volumes } from "./volume.ts";
 
-// store all nv objects for the page
 const nvMap = new Map<string, niivue.Niivue>();
 
 // Attach model event handlers
