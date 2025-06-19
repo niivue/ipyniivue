@@ -260,8 +260,12 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SNAKE_TO_CAMEL_OVERRIDES</span><span class="p">,</span> <span class="n">SliceType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.options_mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptionsMixin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.traits</span><span class="w"> </span><span class="kn">import</span> <span class="n">LUT</span><span class="p">,</span> <span class="n">ColorMap</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">deserialize_colormap_label</span><span class="p">,</span>
     <span class="n">file_serializer</span><span class="p">,</span>
+    <span class="n">make_label_lut</span><span class="p">,</span>
+    <span class="n">serialize_colormap_label</span><span class="p">,</span>
     <span class="n">serialize_options</span><span class="p">,</span>
     <span class="n">snake_to_camel</span><span class="p">,</span>
 <span class="p">)</span>
@@ -282,7 +286,7 @@
 <span class="sd">    opacity : float, optional</span>
 <span class="sd">        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 0.5.</span>
 <span class="sd">    colormap : str, optional</span>
-<span class="sd">        Colormap name for rendering. Default is &#39;gray&#39;.</span>
+<span class="sd">        Colormap name for rendering. Default is &#39;warm&#39;.</span>
 <span class="sd">    colormap_negative : str, optional</span>
 <span class="sd">        Colormap for negative values if `use_negative_cmap` is True.</span>
 <span class="sd">        Default is &#39;winter&#39;.</span>
@@ -461,7 +465,11 @@
     <span class="n">cal_max</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">frame4D</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">colormap_negative</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">colormap_label</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">colormap_label</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">LUT</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_colormap_label</span><span class="p">,</span>
+        <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_colormap_label</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># other properties that aren&#39;t in init</span>
     <span class="n">colormap_invert</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -486,15 +494,26 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">filtered_kwargs</span><span class="p">)</span></div>
 
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_notify_colormap_label_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify_change</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;colormap_label&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;old&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">colormap_label</span><span class="p">,</span>
+                <span class="s2">&quot;new&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">colormap_label</span><span class="p">,</span>
+                <span class="s2">&quot;owner&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
 <div class="viewcode-block" id="Volume.set_colormap_label">
 <a class="viewcode-back" href="../../api.html#ipyniivue.widget.Volume.set_colormap_label">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_colormap_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colormaplabel</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_colormap_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colormap_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set colormap label for the volume.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        colormaplabel : dict</span>
-<span class="sd">            The colormap or colormap label.</span>
+<span class="sd">        colormap_data : dict</span>
+<span class="sd">            The colormap dict data.</span>
 
 <span class="sd">            Colormaps contain the following keys (&#39;R&#39;, &#39;G&#39;, &#39;B&#39; are required):</span>
 
@@ -507,20 +526,19 @@
 <span class="sd">            - max</span>
 <span class="sd">            - labels</span>
 
-<span class="sd">            Colormap labels contain the following keys (only &#39;lut&#39; is required):</span>
-
-<span class="sd">            - lut</span>
-<span class="sd">            - min</span>
-<span class="sd">            - max</span>
-<span class="sd">            - labels</span>
-
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        ::</span>
 
-<span class="sd">            nv.volumes[0].set_colormap_label(colormap_label)</span>
+<span class="sd">            nv.volumes[0].set_colormap_label(colormap_data)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">colormap_label</span> <span class="o">=</span> <span class="n">colormaplabel</span></div>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">colormap</span> <span class="o">=</span> <span class="n">ColorMap</span><span class="p">(</span><span class="o">**</span><span class="n">colormap_data</span><span class="p">)</span>
+            <span class="n">lut</span> <span class="o">=</span> <span class="n">make_label_lut</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span>
+            <span class="n">lut</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">colormap_label</span> <span class="o">=</span> <span class="n">lut</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;colormap_data must be a dict.&quot;</span><span class="p">)</span></div>
 
 
     <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
@@ -707,7 +725,7 @@
         <span class="n">index</span> <span class="o">=</span> <span class="n">volume_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">volume</span> <span class="o">=</span> <span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">volume_data</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">volume</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[:</span><span class="n">index</span><span class="p">],</span> <span class="n">volume</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[</span><span class="n">index</span><span class="p">:]]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">,</span> <span class="n">volume</span><span class="p">]</span>
 
@@ -717,7 +735,7 @@
         <span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="o">**</span><span class="n">mesh_data</span><span class="p">)</span>
         <span class="n">mesh</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">MeshLayer</span><span class="p">(</span><span class="o">**</span><span class="n">layer_data</span><span class="p">)</span> <span class="k">for</span> <span class="n">layer_data</span> <span class="ow">in</span> <span class="n">layers_data</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">mesh</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[:</span><span class="n">index</span><span class="p">],</span> <span class="n">mesh</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[</span><span class="n">index</span><span class="p">:]]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">,</span> <span class="n">mesh</span><span class="p">]</span>
 
@@ -1299,22 +1317,7 @@
 <span class="sd">        name : str</span>
 <span class="sd">            The name of the colormap.</span>
 <span class="sd">        color_map : dict</span>
-<span class="sd">            A dictionary containing the colormap information.</span>
-<span class="sd">            It must have the following keys:</span>
-
-<span class="sd">            **Required keys**:</span>
-<span class="sd">                - `&#39;R&#39;`: list of numbers</span>
-<span class="sd">                - `&#39;G&#39;`: list of numbers</span>
-<span class="sd">                - `&#39;B&#39;`: list of numbers</span>
-<span class="sd">                - `&#39;A&#39;`: list of numbers</span>
-<span class="sd">                - `&#39;I&#39;`: list of numbers</span>
-
-<span class="sd">            **Optional keys**:</span>
-<span class="sd">                - `&#39;min&#39;`: number</span>
-<span class="sd">                - `&#39;max&#39;`: number</span>
-<span class="sd">                - `&#39;labels&#39;`: list of strings</span>
-
-<span class="sd">            All the `&#39;R&#39;`, `&#39;G&#39;`, `&#39;B&#39;`, `&#39;A&#39;`, `&#39;I&#39;` lists must have the same length.</span>
+<span class="sd">            The colormap data.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1337,7 +1340,7 @@
 <span class="sd">            nv.set_colormap(nv.volumes[0].id, &quot;custom_color_map&quot;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Validate that required keys are present and are lists of numbers</span>
-        <span class="n">required_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">]</span>
+        <span class="n">required_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">required_keys</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">color_map</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ColorMap must include required key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
@@ -1349,9 +1352,7 @@
         <span class="c1"># Check that all required lists have the same length</span>
         <span class="n">lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">color_map</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">required_keys</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">lengths</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;All &#39;R&#39;, &#39;G&#39;, &#39;B&#39;, &#39;A&#39;, &#39;I&#39; lists must have the same length&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All &#39;R&#39;, &#39;G&#39;, &#39;B&#39; lists must have the same length&quot;</span><span class="p">)</span>
 
         <span class="c1"># Validate optional keys</span>
         <span class="k">if</span> <span class="s2">&quot;min&quot;</span> <span class="ow">in</span> <span class="n">color_map</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color_map</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
@@ -1367,8 +1368,7 @@
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;All elements in ColorMap &#39;labels&#39; must be strings&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">color_map</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="n">lengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;ColorMap &#39;labels&#39; must have the same length &quot;</span>
-                    <span class="s2">&quot;as &#39;R&#39;, &#39;G&#39;, &#39;B&#39;, &#39;A&#39;, &#39;I&#39; lists&quot;</span>
+                    <span class="s2">&quot;ColorMap &#39;labels&#39; must have the same length as &#39;R&#39;, &#39;G&#39;, &#39;B&#39; lists&quot;</span>
                 <span class="p">)</span>
 
         <span class="c1"># Save the colormap name</span>
@@ -1776,6 +1776,47 @@
         <span class="n">base64_data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">png_data</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
         <span class="n">data_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;data:image/png;base64,</span><span class="si">{</span><span class="n">base64_data</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_png_as_texture</span><span class="p">(</span><span class="n">data_url</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_atlas_outline">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_atlas_outline">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_atlas_outline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outline</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the outline thickness for atlas label regions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outline : float</span>
+<span class="sd">            The width of the outline to apply to atlas label regions.</span>
+<span class="sd">            A value of `0` disables the outline.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_atlas_outline(2.0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atlas_outline</span> <span class="o">=</span> <span class="n">outline</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_interpolation">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_interpolation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_interpolation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_nearest</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Select between nearest neighbor and linear interpolation for images.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        is_nearest : bool</span>
+<span class="sd">            If True, use nearest neighbor interpolation.</span>
+<span class="sd">            If False, use linear interpolation.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_interpolation(True)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_nearest_interpolation</span> <span class="o">=</span> <span class="n">is_nearest</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_interpolation&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">is_nearest</span><span class="p">]})</span></div>
 
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2393,6 +2434,52 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;volume_updated&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_hover_idx_change">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_hover_idx_change">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_hover_idx_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for the &#39;hover_idx_change&#39; event.</span>
+
+<span class="sd">        Set a callback function to run whenever the mouse moves over the canvas</span>
+<span class="sd">        and the index (`idx`) values under the cursor position change.</span>
+
+<span class="sd">        This event provides the index (`idx`) values of the data under the cursor</span>
+<span class="sd">        for all volumes. The callback function receives a dictionary containing</span>
+<span class="sd">        the index values for each volume.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            The function to call when the event occurs. It should accept one argument:</span>
+
+<span class="sd">            - **data** (dict): A dictionary containing idx values for each volume.</span>
+
+<span class="sd">            The dictionary has a key `&#39;idx_values&#39;`, which is a list of dictionaries</span>
+<span class="sd">            with the following keys:</span>
+
+<span class="sd">            - **id** (str): The ID of the volume.</span>
+<span class="sd">            - **idx** (float or None): The index of the cursor position for the volume.</span>
+
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If `True`, remove the callback. Defaults to `False`.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            def hover_idx_callback(data):</span>
+<span class="sd">                idx_values = data[&#39;idx_values&#39;]</span>
+<span class="sd">                for idx_info in idx_values:</span>
+<span class="sd">                    volume_id = idx_info[&#39;id&#39;]</span>
+<span class="sd">                    idx = idx_info[&#39;idx&#39;]</span>
+<span class="sd">                    print(f&#39;Volume ID: {volume_id}, Index: {idx}&#39;)</span>
+
+<span class="sd">            nv.on_hover_idx_change(hover_idx_callback)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;hover_idx_change&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
 </div>
 
 
