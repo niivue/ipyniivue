@@ -14,6 +14,7 @@ import uuid
 
 import anywidget
 import ipywidgets
+import requests
 import traitlets as t
 from ipywidgets import CallbackDispatcher
 
@@ -279,6 +280,25 @@ class Volume(anywidget.AnyWidget):
             self.colormap_label = lut
         else:
             raise TypeError("colormap_data must be a dict.")
+
+    def set_colormap_label_from_url(self, url):
+        """Set colormap label from a URL.
+
+        Parameters
+        ----------
+        url : str
+            The colormap json url.
+
+        Examples
+        --------
+        ::
+
+            nv.volumes[0].set_colormap_label_from_url(url)
+        """
+        response = requests.get(url)
+        response.raise_for_status()
+        cmap = response.json()
+        self.set_colormap_label(cmap)
 
     @t.validate("path")
     def _validate_path(self, proposal):
