@@ -210,13 +210,7 @@ class Volume(anywidget.AnyWidget):
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     frame4D = t.Int(0).tag(sync=True)
     colormap_negative = t.Unicode("").tag(sync=True)
-    colormap_label = t.Union(
-        [
-            t.Instance(LUT, allow_none=True),
-        ],
-        default_value=None,
-        allow_none=True,
-    ).tag(
+    colormap_label = t.Instance(LUT, allow_none=True).tag(
         sync=True,
         to_json=serialize_colormap_label,
         from_json=deserialize_colormap_label,
@@ -2052,12 +2046,15 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         ----------
         callback : callable
             The function to call when the event occurs. It should accept one argument:
+
             - **data** (dict): A dictionary containing idx values for each volume.
-            The dictionary has a key 'idx_values', which is a list of dictionaries
+
+            The dictionary has a key `'idx_values'`, which is a list of dictionaries
             with the following keys:
-                - **id** (str): The ID of the volume.
-                - **idx** (float or None): The index value at the cursor position
-                for the volume. It can be `None` if the index is not finite.
+
+            - **id** (str): The ID of the volume.
+            - **idx** (float or None): The index of the cursor position for the volume.
+
         remove : bool, optional
             If `True`, remove the callback. Defaults to `False`.
 
