@@ -120,7 +120,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: biomejs/setup-biome@v2
         with:
-          version: latest
+          version: 1.9.4
       - run: biome ci .
 
   TypecheckJavaScript:
