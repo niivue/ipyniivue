@@ -279,7 +279,7 @@ class Volume(anywidget.AnyWidget):
             nv.volumes[0].set_colormap_label(colormap_label)
         """
         if isinstance(colormap_label_data, dict):
-            colormap = ColorMap(**colormap_label_data, parent=self)
+            colormap = ColorMap(**colormap_label_data)
             lut = make_label_lut(colormap)
             lut._parent = self
             self.colormap_label = lut

@@ -49,31 +49,9 @@ function setup_volume_property_listeners(
 	// Accept either LUT or colormap as input
 	function colormap_label_changed() {
 		const newColormapLabel = vmodel.get("colormap_label");
-		if (newColormapLabel) {
-			if ("lut" in newColormapLabel) {
-				console.log("colormap label changed", newColormapLabel);
-				// It's a LUT
-				if (Array.isArray(newColormapLabel.lut)) {
-					newColormapLabel.lut = new Uint8ClampedArray(newColormapLabel.lut);
-				}
-				volume.colormapLabel = newColormapLabel;
-			} else if (
-				"R" in newColormapLabel &&
-				"G" in newColormapLabel &&
-				"B" in newColormapLabel
-			) {
-				// It's a ColorMap
-				volume.setColormapLabel(newColormapLabel);
-				if (volume.colormapLabel) {
-					const processedColormapLabel = {
-						lut: Array.from(volume.colormapLabel.lut),
-						min: volume.colormapLabel.min,
-						max: volume.colormapLabel.max,
-						labels: volume.colormapLabel.labels,
-					};
-					vmodel.set("colormap_label", processedColormapLabel);
-				}
-			}
+		if (newColormapLabel && Array.isArray(newColormapLabel.lut)) {
+			newColormapLabel.lut = new Uint8ClampedArray(newColormapLabel.lut);
+			volume.colormapLabel = newColormapLabel;
 		}
 		nv.updateGLVolume();
 	}
@@ -150,30 +128,9 @@ async function create_volume(
 
 		// Set colormap label
 		const newColormapLabel = vmodel.get("colormap_label");
-		if (newColormapLabel) {
-			if ("lut" in newColormapLabel) {
-				// It's a LUT
-				if (Array.isArray(newColormapLabel.lut)) {
-					newColormapLabel.lut = new Uint8ClampedArray(newColormapLabel.lut);
-				}
-				volume.colormapLabel = newColormapLabel;
-			} else if (
-				"R" in newColormapLabel &&
-				"G" in newColormapLabel &&
-				"B" in newColormapLabel
-			) {
-				// It's a ColorMap
-				volume.setColormapLabel(newColormapLabel);
-				if (volume.colormapLabel) {
-					const processedColormapLabel = {
-						lut: Array.from(volume.colormapLabel.lut),
-						min: volume.colormapLabel.min,
-						max: volume.colormapLabel.max,
-						labels: volume.colormapLabel.labels,
-					};
-					vmodel.set("colormap_label", processedColormapLabel);
-				}
-			}
+		if (newColormapLabel && Array.isArray(newColormapLabel.lut)) {
+			newColormapLabel.lut = new Uint8ClampedArray(newColormapLabel.lut);
+			volume.colormapLabel = newColormapLabel;
 		}
 	}
 
