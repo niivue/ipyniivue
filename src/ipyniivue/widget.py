@@ -461,7 +461,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         index = volume_data.pop("index", None)
         volume = Volume(**volume_data)
         if index is not None and 0 <= index <= len(self._volumes):
-            self._volumes = self._volumes[:index] + [volume] + self._volumes[index:]
+            self._volumes = [*self._volumes[:index], volume, *self._volumes[index:]]
         else:
             self._volumes = [*self._volumes, volume]
 
@@ -471,7 +471,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         mesh = Mesh(**mesh_data)
         mesh.layers = [MeshLayer(**layer_data) for layer_data in layers_data]
         if index is not None and 0 <= index <= len(self._meshes):
-            self._meshes = self._meshes[:index] + [mesh] + self._meshes[index:]
+            self._meshes = [*self._meshes[:index], mesh, *self._meshes[index:]]
         else:
             self._meshes = [*self._meshes, mesh]
 
