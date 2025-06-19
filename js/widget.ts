@@ -422,7 +422,7 @@ function attachCanvasEventHandlers(nv: niivue.Niivue, model: Model) {
 						const idx = volume.getValue(vox[0], vox[1], vox[2], volume.frame4D);
 						return {
 							id: volume.id,
-							idx: Number.isFinite(idx) && Number.isInteger(idx) ? idx : null,
+							idx: Number.isInteger(idx) ? idx : null,
 						};
 					});
 					// Send idxValues to backend
