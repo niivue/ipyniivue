@@ -19,8 +19,12 @@ from ipywidgets import CallbackDispatcher
 
 from .constants import _SNAKE_TO_CAMEL_OVERRIDES, SliceType
 from .options_mixin import OptionsMixin
+from .traits import LUT, ColorMap
 from .utils import (
+    deserialize_colormap_label,
     file_serializer,
+    make_label_lut,
+    serialize_colormap_label,
     serialize_options,
     snake_to_camel,
 )
@@ -39,7 +43,7 @@ class MeshLayer(anywidget.AnyWidget):
     opacity : float, optional
         Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 0.5.
     colormap : str, optional
-        Colormap name for rendering. Default is 'gray'.
+        Colormap name for rendering. Default is 'warm'.
     colormap_negative : str, optional
         Colormap for negative values if `use_negative_cmap` is True.
         Default is 'winter'.
@@ -206,7 +210,17 @@ class Volume(anywidget.AnyWidget):
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     frame4D = t.Int(0).tag(sync=True)
     colormap_negative = t.Unicode("").tag(sync=True)
-    colormap_label = t.Dict(None, allow_none=True).tag(sync=True)
+    colormap_label = t.Union(
+        [
+            t.Instance(LUT, allow_none=True),
+        ],
+        default_value=None,
+        allow_none=True,
+    ).tag(
+        sync=True,
+        to_json=serialize_colormap_label,
+        from_json=deserialize_colormap_label,
+    )
 
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
@@ -228,13 +242,24 @@ class Volume(anywidget.AnyWidget):
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
 
-    def set_colormap_label(self, colormaplabel: t.Dict):
+    def _notify_colormap_label_changed(self):
+        self.notify_change(
+            {
+                "name": "colormap_label",
+                "old": self.colormap_label,
+                "new": self.colormap_label,
+                "owner": self,
+                "type": "change",
+            }
+        )
+
+    def set_colormap_label(self, colormap_label_data: dict):
         """Set colormap label for the volume.
 
         Parameters
         ----------
-        colormaplabel : dict
-            The colormap or colormap label.
+        colormap_label_data : dict
+            The colormap.
 
             Colormaps contain the following keys ('R', 'G', 'B' are required):
 
@@ -247,20 +272,19 @@ class Volume(anywidget.AnyWidget):
             - max
             - labels
 
-            Colormap labels contain the following keys (only 'lut' is required):
-
-            - lut
-            - min
-            - max
-            - labels
-
         Examples
         --------
         ::
 
             nv.volumes[0].set_colormap_label(colormap_label)
         """
-        self.colormap_label = colormaplabel
+        if isinstance(colormap_label_data, dict):
+            colormap = ColorMap(**colormap_label_data, parent=self)
+            lut = make_label_lut(colormap)
+            lut._parent = self
+            self.colormap_label = lut
+        else:
+            raise TypeError("colormap_label must be a dict.")
 
     @t.validate("path")
     def _validate_path(self, proposal):
@@ -982,22 +1006,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         name : str
             The name of the colormap.
         color_map : dict
-            A dictionary containing the colormap information.
-            It must have the following keys:
-
-            **Required keys**:
-                - `'R'`: list of numbers
-                - `'G'`: list of numbers
-                - `'B'`: list of numbers
-                - `'A'`: list of numbers
-                - `'I'`: list of numbers
-
-            **Optional keys**:
-                - `'min'`: number
-                - `'max'`: number
-                - `'labels'`: list of strings
-
-            All the `'R'`, `'G'`, `'B'`, `'A'`, `'I'` lists must have the same length.
+            The colormap data.
 
         Raises
         ------
@@ -1020,7 +1029,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             nv.set_colormap(nv.volumes[0].id, "custom_color_map")
         """
         # Validate that required keys are present and are lists of numbers
-        required_keys = ["R", "G", "B", "A", "I"]
+        required_keys = ["R", "G", "B"]
         for key in required_keys:
             if key not in color_map:
                 raise ValueError(f"ColorMap must include required key '{key}'")
@@ -1032,9 +1041,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         # Check that all required lists have the same length
         lengths = [len(color_map[key]) for key in required_keys]
         if len(set(lengths)) != 1:
-            raise ValueError(
-                "All 'R', 'G', 'B', 'A', 'I' lists must have the same length"
-            )
+            raise ValueError("All 'R', 'G', 'B' lists must have the same length")
 
         # Validate optional keys
         if "min" in color_map and not isinstance(color_map["min"], (int, float)):
@@ -1050,8 +1057,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
                 raise TypeError("All elements in ColorMap 'labels' must be strings")
             if len(color_map["labels"]) != lengths[0]:
                 raise ValueError(
-                    "ColorMap 'labels' must have the same length "
-                    "as 'R', 'G', 'B', 'A', 'I' lists"
+                    "ColorMap 'labels' must have the same length as 'R', 'G', 'B' lists"
                 )
 
         # Save the colormap name
@@ -1420,6 +1426,41 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         base64_data = base64.b64encode(png_data).decode("utf-8")
         data_url = f"data:image/png;base64,{base64_data}"
         self._load_png_as_texture(data_url, 5)
+
+    def set_atlas_outline(self, outline: float):
+        """Set the outline thickness for atlas label regions.
+
+        Parameters
+        ----------
+        outline : float
+            The width of the outline to apply to atlas label regions.
+            A value of `0` disables the outline.
+
+        Examples
+        --------
+        ::
+
+            nv.set_atlas_outline(2.0)
+        """
+        self.atlas_outline = outline
+
+    def set_interpolation(self, is_nearest: bool):
+        """Select between nearest neighbor and linear interpolation for images.
+
+        Parameters
+        ----------
+        is_nearest : bool
+            If True, use nearest neighbor interpolation.
+            If False, use linear interpolation.
+
+        Examples
+        --------
+        ::
+
+            nv.set_interpolation(True)
+        """
+        self.is_nearest_interpolation = is_nearest
+        self.send({"type": "set_interpolation", "data": [is_nearest]})
 
     """
     Custom event callbacks
@@ -1995,6 +2036,46 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
         """
         self._register_callback("volume_updated", callback, remove=remove)
+
+    def on_hover_idx_change(self, callback, remove=False):
+        """
+        Register a callback for the 'hover_idx_change' event.
+
+        Set a callback function to run whenever the mouse moves over the canvas
+        and the index (`idx`) values under the cursor position change.
+
+        This event provides the index (`idx`) values of the data under the cursor
+        for all volumes. The callback function receives a dictionary containing
+        the index values for each volume.
+
+        Parameters
+        ----------
+        callback : callable
+            The function to call when the event occurs. It should accept one argument:
+            - **data** (dict): A dictionary containing idx values for each volume.
+            The dictionary has a key 'idx_values', which is a list of dictionaries
+            with the following keys:
+                - **id** (str): The ID of the volume.
+                - **idx** (float or None): The index value at the cursor position
+                for the volume. It can be `None` if the index is not finite.
+        remove : bool, optional
+            If `True`, remove the callback. Defaults to `False`.
+
+        Examples
+        --------
+        ::
+
+            def hover_idx_callback(data):
+                idx_values = data['idx_values']
+                for idx_info in idx_values:
+                    volume_id = idx_info['id']
+                    idx = idx_info['idx']
+                    print(f'Volume ID: {volume_id}, Index: {idx}')
+
+            nv.on_hover_idx_change(hover_idx_callback)
+
+        """
+        self._register_callback("hover_idx_change", callback, remove=remove)
 
 
 class WidgetObserver:

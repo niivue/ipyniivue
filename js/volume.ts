@@ -1,10 +1,6 @@
 import * as niivue from "@niivue/niivue";
 import * as lib from "./lib.ts";
-import type {
-	CustomMessagePayloadVolume,
-	Model,
-	VolumeModel,
-} from "./types.ts";
+import type { Model, VolumeModel } from "./types.ts";
 
 /**
  * Set up event listeners to handle changes to the volume properties.
@@ -53,27 +49,33 @@ function setup_volume_property_listeners(
 	// Accept either LUT or colormap as input
 	function colormap_label_changed() {
 		const newColormapLabel = vmodel.get("colormap_label");
-		if (Object.keys(newColormapLabel).length > 0) {
-			if (newColormapLabel.lut) {
+		if (newColormapLabel) {
+			if ("lut" in newColormapLabel) {
+				console.log("colormap label changed", newColormapLabel);
+				// It's a LUT
+				if (Array.isArray(newColormapLabel.lut)) {
+					newColormapLabel.lut = new Uint8ClampedArray(newColormapLabel.lut);
+				}
 				volume.colormapLabel = newColormapLabel;
-			} else {
+			} else if (
+				"R" in newColormapLabel &&
+				"G" in newColormapLabel &&
+				"B" in newColormapLabel
+			) {
+				// It's a ColorMap
 				volume.setColormapLabel(newColormapLabel);
+				if (volume.colormapLabel) {
+					const processedColormapLabel = {
+						lut: Array.from(volume.colormapLabel.lut),
+						min: volume.colormapLabel.min,
+						max: volume.colormapLabel.max,
+						labels: volume.colormapLabel.labels,
+					};
+					vmodel.set("colormap_label", processedColormapLabel);
+				}
 			}
 		}
 		nv.updateGLVolume();
-	}
-
-	// custom msgs
-	function custom_msg_callback(payload: CustomMessagePayloadVolume) {
-		const { type, data } = payload;
-		switch (type) {
-			case "set_colormap_label": {
-				const [cm] = data;
-				volume.setColormapLabel(cm);
-				nv.updateGLVolume();
-				break;
-			}
-		}
 	}
 
 	// other props
@@ -94,8 +96,6 @@ function setup_volume_property_listeners(
 	vmodel.on("change:colormap_negative", colormap_negative_changed);
 	vmodel.on("change:colormap_label", colormap_label_changed);
 
-	vmodel.on("msg:custom", custom_msg_callback);
-
 	vmodel.on("change:colormap_invert", colormap_invert_changed);
 
 	return () => {
@@ -107,8 +107,6 @@ function setup_volume_property_listeners(
 		vmodel.off("change:frame4D", frame4D_changed);
 		vmodel.off("change:colormap_negative", colormap_negative_changed);
 		vmodel.off("change:colormap_label", colormap_label_changed);
-
-		vmodel.off("msg:custom", custom_msg_callback);
 
 		vmodel.off("change:colormap_invert", colormap_invert_changed);
 	};
@@ -152,11 +150,29 @@ async function create_volume(
 
 		// Set colormap label
 		const newColormapLabel = vmodel.get("colormap_label");
-		if (Object.keys(newColormapLabel).length > 0) {
-			if (newColormapLabel.lut) {
+		if (newColormapLabel) {
+			if ("lut" in newColormapLabel) {
+				// It's a LUT
+				if (Array.isArray(newColormapLabel.lut)) {
+					newColormapLabel.lut = new Uint8ClampedArray(newColormapLabel.lut);
+				}
 				volume.colormapLabel = newColormapLabel;
-			} else {
+			} else if (
+				"R" in newColormapLabel &&
+				"G" in newColormapLabel &&
+				"B" in newColormapLabel
+			) {
+				// It's a ColorMap
 				volume.setColormapLabel(newColormapLabel);
+				if (volume.colormapLabel) {
+					const processedColormapLabel = {
+						lut: Array.from(volume.colormapLabel.lut),
+						min: volume.colormapLabel.min,
+						max: volume.colormapLabel.max,
+						labels: volume.colormapLabel.labels,
+					};
+					vmodel.set("colormap_label", processedColormapLabel);
+				}
 			}
 		}
 	}

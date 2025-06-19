@@ -108,6 +108,8 @@ type LoadPngAsTextureData = [pngUrl: string, textureNum: number];
 
 type SetRenderAzimuthElevationData = [azimuth: number, elevation: number];
 
+type SetInterpolationData = [isNearest: boolean];
+
 export type CustomMessagePayload =
 	| { type: "save_document"; data: SaveDocumentData }
 	| { type: "save_html"; data: SaveHTMLData }
@@ -125,11 +127,5 @@ export type CustomMessagePayload =
 	| {
 			type: "set_render_azimuth_elevation";
 			data: SetRenderAzimuthElevationData;
-	  };
-
-type SetColormapLabelData = [cm: ColorMap];
-
-export type CustomMessagePayloadVolume = {
-	type: "set_colormap_label";
-	data: SetColormapLabelData;
-};
+	  }
+	| { type: "set_interpolation"; data: SetInterpolationData };

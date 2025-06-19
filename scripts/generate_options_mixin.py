@@ -111,6 +111,7 @@ if __name__ == "__main__":
         "textHeight": 0.06,
         "colorbarHeight": 0.05,
         "crosshairWidth": 1,
+        "crosshairGap": 0,
         "rulerWidth": 4,
         "show3Dcrosshair": False,
         "backColor": (0, 0, 0, 1),
@@ -128,7 +129,8 @@ if __name__ == "__main__":
         "keyDebounceTime": 50,
         "isNearestInterpolation": False,
         "isResizeCanvas": True,
-        "isAtlasOutline": False,
+        "isAtlasOutline": False,  # for old versions of niivue?
+        "atlasOutline": 0.0,
         "isRuler": False,
         "isColorbar": False,
         "isOrientCube": False,
