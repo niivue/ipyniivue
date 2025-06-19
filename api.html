@@ -1929,6 +1929,25 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </section>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.Volume.set_colormap_label_from_url">
+<span class="sig-name descname"><span class="pre">set_colormap_label_from_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume.set_colormap_label_from_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.Volume.set_colormap_label_from_url" title="Link to this definition">¶</a></dt>
+<dd><p>Set colormap label from a URL.</p>
+<section id="id116">
+<h3>Parameters<a class="headerlink" href="#id116" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>url<span class="classifier">str</span></dt><dd><p>The colormap json url.</p>
+</dd>
+</dl>
+</section>
+<section id="id117">
+<h3>Examples<a class="headerlink" href="#id117" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_colormap_label_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
 </section>
 </dd></dl>
 
@@ -1937,8 +1956,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.widget.</span></span><span class="sig-name descname"><span class="pre">Mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.Mesh" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AnyWidget</span></code></p>
 <p>Represents a Mesh model.</p>
-<section id="id116">
-<h2>Parameters<a class="headerlink" href="#id116" title="Link to this heading">¶</a></h2>
+<section id="id118">
+<h2>Parameters<a class="headerlink" href="#id118" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>path<span class="classifier">str or pathlib.Path</span></dt><dd><p>Path to the mesh file. Cannot be modified once set.</p>
 </dd>
@@ -2064,8 +2083,8 @@ See <a class="reference internal" href="#ipyniivue.widget.MeshLayer" title="ipyn
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.widget.</span></span><span class="sig-name descname"><span class="pre">MeshLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#MeshLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.MeshLayer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AnyWidget</span></code></p>
 <p>Represents a layer within a Mesh model.</p>
-<section id="id117">
-<h2>Parameters<a class="headerlink" href="#id117" title="Link to this heading">¶</a></h2>
+<section id="id119">
+<h2>Parameters<a class="headerlink" href="#id119" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>path<span class="classifier">str or pathlib.Path</span></dt><dd><p>Path to the layer data file. Cannot be modified once set.</p>
 </dd>
@@ -2171,8 +2190,8 @@ Default is ‘winter’.</p>
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.widget.</span></span><span class="sig-name descname"><span class="pre">Drawing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Drawing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.Drawing" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AnyWidget</span></code></p>
 <p>Represents a Drawing model.</p>
-<section id="id118">
-<h2>Parameters<a class="headerlink" href="#id118" title="Link to this heading">¶</a></h2>
+<section id="id120">
+<h2>Parameters<a class="headerlink" href="#id120" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>path<span class="classifier">str or pathlib.Path</span></dt><dd><p>Path to the drawing data file; cannot be modified once set.</p>
 </dd>
@@ -2221,8 +2240,8 @@ Default is ‘winter’.</p>
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.traits.</span></span><span class="sig-name descname"><span class="pre">ColorMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/traits.html#ColorMap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.traits.ColorMap" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">HasTraits</span></code></p>
 <p>Represents a ColorMap.</p>
-<section id="id119">
-<h2>Parameters<a class="headerlink" href="#id119" title="Link to this heading">¶</a></h2>
+<section id="id121">
+<h2>Parameters<a class="headerlink" href="#id121" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>R<span class="classifier">list of float</span></dt><dd><p>The red channel values.</p>
 </dd>
@@ -2309,8 +2328,8 @@ Default is None.</p>
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.traits.</span></span><span class="sig-name descname"><span class="pre">LUT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/traits.html#LUT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.traits.LUT" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">HasTraits</span></code></p>
 <p>Represents a Lookup Table (LUT / Colormap Label).</p>
-<section id="id120">
-<h2>Parameters<a class="headerlink" href="#id120" title="Link to this heading">¶</a></h2>
+<section id="id122">
+<h2>Parameters<a class="headerlink" href="#id122" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>lut<span class="classifier">list of int</span></dt><dd><p>A flat list representing the RGBA values of the lookup table.</p>
 </dd>
@@ -2490,6 +2509,7 @@ Default is None.</p>
 <li><a class="reference internal" href="#ipyniivue.widget.Volume.opacity"><code class="docutils literal notranslate"><span class="pre">Volume.opacity</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.Volume.path"><code class="docutils literal notranslate"><span class="pre">Volume.path</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.Volume.set_colormap_label"><code class="docutils literal notranslate"><span class="pre">Volume.set_colormap_label()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.Volume.set_colormap_label_from_url"><code class="docutils literal notranslate"><span class="pre">Volume.set_colormap_label_from_url()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ipyniivue.widget.Mesh"><code class="docutils literal notranslate"><span class="pre">Mesh</span></code></a><ul>

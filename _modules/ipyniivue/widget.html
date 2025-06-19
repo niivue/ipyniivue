@@ -255,6 +255,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">anywidget</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">ipywidgets</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">traitlets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">CallbackDispatcher</span>
 
@@ -539,6 +540,28 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">colormap_label</span> <span class="o">=</span> <span class="n">lut</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;colormap_data must be a dict.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Volume.set_colormap_label_from_url">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Volume.set_colormap_label_from_url">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_colormap_label_from_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set colormap label from a URL.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        url : str</span>
+<span class="sd">            The colormap json url.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.volumes[0].set_colormap_label_from_url(url)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_colormap_label</span><span class="p">(</span><span class="n">cmap</span><span class="p">)</span></div>
 
 
     <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
