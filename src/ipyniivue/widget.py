@@ -247,13 +247,13 @@ class Volume(anywidget.AnyWidget):
             }
         )
 
-    def set_colormap_label(self, colormap_label_data: dict):
+    def set_colormap_label(self, colormap_data: dict):
         """Set colormap label for the volume.
 
         Parameters
         ----------
-        colormap_label_data : dict
-            The colormap.
+        colormap_data : dict
+            The colormap dict data.
 
             Colormaps contain the following keys ('R', 'G', 'B' are required):
 
@@ -270,15 +270,15 @@ class Volume(anywidget.AnyWidget):
         --------
         ::
 
-            nv.volumes[0].set_colormap_label(colormap_label)
+            nv.volumes[0].set_colormap_label(colormap_data)
         """
-        if isinstance(colormap_label_data, dict):
-            colormap = ColorMap(**colormap_label_data)
+        if isinstance(colormap_data, dict):
+            colormap = ColorMap(**colormap_data)
             lut = make_label_lut(colormap)
             lut._parent = self
             self.colormap_label = lut
         else:
-            raise TypeError("colormap_label must be a dict.")
+            raise TypeError("colormap_data must be a dict.")
 
     @t.validate("path")
     def _validate_path(self, proposal):
