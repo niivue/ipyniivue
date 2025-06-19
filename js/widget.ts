@@ -117,6 +117,11 @@ function attachModelEventHandlers(
 				nv.setRenderAzimuthElevation(azimuth, elevation);
 				break;
 			}
+			case "set_interpolation": {
+				const [isNearest] = data;
+				nv.setInterpolation(isNearest);
+				break;
+			}
 		}
 	});
 }
@@ -393,6 +398,46 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 	};
 }
 
+function attachCanvasEventHandlers(nv: niivue.Niivue, model: Model) {
+	let isThrottling = false;
+	if (nv.canvas) {
+		nv.canvas.addEventListener("mousemove", (e) => {
+			if (isThrottling) return;
+			isThrottling = true;
+			setTimeout(() => {
+				isThrottling = false;
+			}, 40);
+			if (nv.canvas && nv.uiData?.dpr) {
+				const rect = nv.canvas.getBoundingClientRect();
+				const x = e.clientX - rect.left;
+				const y = e.clientY - rect.top;
+
+				// Get fractional position
+				const frac = nv.canvasPos2frac([x * nv.uiData.dpr, y * nv.uiData.dpr]);
+
+				if (frac[0] >= 0) {
+					const mm = nv.frac2mm(frac);
+					const idxValues = nv.volumes.map((volume) => {
+						const vox = volume.mm2vox(mm as number[]);
+						const idx = volume.getValue(vox[0], vox[1], vox[2], volume.frame4D);
+						return {
+							id: volume.id,
+							idx: Number.isInteger(idx) ? idx : null,
+						};
+					});
+					// Send idxValues to backend
+					model.send({
+						event: "hover_idx_change",
+						data: {
+							idxValues,
+						},
+					});
+				}
+			}
+		});
+	}
+}
+
 export default {
 	async initialize({ model }: { model: Model }) {
 		const id = model.get("id");
@@ -462,6 +507,8 @@ export default {
 			// Load initial volumes and meshes
 			await render_volumes(nv, model, disposer);
 			await render_meshes(nv, model, disposer);
+
+			attachCanvasEventHandlers(nv, model);
 		} else {
 			console.log("moving render around");
 

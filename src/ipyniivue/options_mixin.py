@@ -46,6 +46,16 @@ class OptionsMixin:
         self._opts = {**self._opts, "crosshairWidth": value}
 
     @property
+    def crosshair_gap(self) -> int:
+        """Automatically generated property. See generate_options_mixin.py."""
+        return self._opts.get("crosshairGap", 0)
+
+    @crosshair_gap.setter
+    def crosshair_gap(self, value: int):
+        """Automatically generated property. See generate_options_mixin.py."""
+        self._opts = {**self._opts, "crosshairGap": value}
+
+    @property
     def ruler_width(self) -> int:
         """Automatically generated property. See generate_options_mixin.py."""
         return self._opts.get("rulerWidth", 4)
@@ -224,6 +234,16 @@ class OptionsMixin:
     def is_atlas_outline(self, value: bool):
         """Automatically generated property. See generate_options_mixin.py."""
         self._opts = {**self._opts, "isAtlasOutline": value}
+
+    @property
+    def atlas_outline(self) -> float:
+        """Automatically generated property. See generate_options_mixin.py."""
+        return self._opts.get("atlasOutline", 0.0)
+
+    @atlas_outline.setter
+    def atlas_outline(self, value: float):
+        """Automatically generated property. See generate_options_mixin.py."""
+        self._opts = {**self._opts, "atlasOutline": value}
 
     @property
     def is_ruler(self) -> bool:

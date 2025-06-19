@@ -25,3 +25,13 @@ API Documentation
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. autoclass:: ipyniivue.traits.ColorMap
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: ipyniivue.traits.LUT
+   :members:
+   :undoc-members:
+   :show-inheritance:
