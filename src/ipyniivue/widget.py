@@ -1,12 +1,14 @@
 """
-Widgets representing NiiVue model instances as well as volume, mesh, and drawing models.
+Widgets representing NiiVue, Volume, Mesh, and Mesh Model instances.
 
-Aside from setting up the Mesh, Volume, Drawing, and NiiVue widgets, this module
+Aside from setting up the Mesh, Volume, and NiiVue widgets, this module
 contains many of the classes needed to make NiiVue instances work, such as classes
 to load objects in, change attributes of this instance, and more.
 """
 
 import base64
+import glob
+import json
 import math
 import pathlib
 import typing
@@ -23,7 +25,9 @@ from .options_mixin import OptionsMixin
 from .traits import LUT, ColorMap
 from .utils import (
     deserialize_colormap_label,
+    deserialize_options,
     file_serializer,
+    make_draw_lut,
     make_label_lut,
     serialize_colormap_label,
     serialize_options,
@@ -317,47 +321,6 @@ class Volume(anywidget.AnyWidget):
         return proposal["value"]
 
 
-class Drawing(anywidget.AnyWidget):
-    """
-    Represents a Drawing model.
-
-    Parameters
-    ----------
-    path : str or pathlib.Path
-        Path to the drawing data file; cannot be modified once set.
-    opacity : float, optional
-        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.
-    colormap : list of int, optional
-        RGBA color as a list of four integers (0 to 255). Default is [0, 0, 0, 0].
-    colorbar_visible : bool, optional
-        Show colorbar associated with the drawing. Default is True.
-    """
-
-    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
-        sync=True, to_json=file_serializer
-    )
-    id = t.Unicode(default_value="").tag(sync=True)
-    opacity = t.Float(1.0).tag(sync=True)
-    colormap = t.List([0, 0, 0, 0]).tag(sync=True)
-    colorbar_visible = t.Bool(True).tag(sync=True)
-
-    @t.validate("path")
-    def _validate_path(self, proposal):
-        if (
-            "path" in self._trait_values
-            and self.path
-            and self.path != proposal["value"]
-        ):
-            raise t.TraitError("Cannot modify path once set.")
-        return proposal["value"]
-
-    @t.validate("id")
-    def _validate_id(self, proposal):
-        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
-            raise t.TraitError("Cannot modify id once set.")
-        return proposal["value"]
-
-
 class NiiVue(OptionsMixin, anywidget.AnyWidget):
     """
     Represents a NiiVue widget instance.
@@ -371,7 +334,9 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     id = t.Unicode(read_only=True).tag(sync=True)
 
     height = t.Int().tag(sync=True)
-    _opts = t.Dict({}).tag(sync=True, to_json=serialize_options)
+    _opts = t.Dict({}).tag(
+        sync=True, to_json=serialize_options, from_json=deserialize_options
+    )
     _volumes = t.List(t.Instance(Volume), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
     )
@@ -384,6 +349,13 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     clip_plane_depth_azi_elev = t.List(
         t.Float(), default_value=[2, 0, 0], minlen=3, maxlen=3
     ).tag(sync=True)
+    draw_lut = t.Instance(LUT, allow_none=True).tag(
+        sync=True,
+        to_json=serialize_colormap_label,
+        from_json=deserialize_colormap_label,
+    )
+    draw_opacity = t.Float(0.8).tag(sync=True)
+    draw_fill_overwrites = t.Bool(True).tag(sync=True)
 
     @t.default("id")
     def _default_id(self):
@@ -415,8 +387,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         self._event_handlers = {}
         self.on_msg(self._handle_custom_msg)
 
-        # extras
-        self._added_colormaps = set()
+        # colormaps
+        self._cluts = self._get_initial_colormaps()
 
     def _register_callback(self, event_name, callback, remove=False):
         if event_name not in self._event_handlers:
@@ -597,49 +569,6 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
         """
         return list(self._volumes)
-
-    def load_drawings(self, drawings: list):
-        """
-        Load a list of drawings objects.
-
-        Parameters
-        ----------
-        drawings : list
-            A list of dictionaries containing the drawing information.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        ::
-
-            nv = NiiVue()
-            nv.load_drawings([{"path": "lesion.nii.gz"}])
-
-        """
-        drawings = [Drawing(**item) for item in drawings]
-        self._drawings = drawings
-
-    @property
-    def drawings(self):
-        """
-        Returns the list of drawings.
-
-        Returns
-        -------
-        list
-            A list of dictionairies containing the drawing information.
-
-        Examples
-        --------
-        ::
-
-            print(nv.drawings)
-
-        """
-        return list(self._drawings)
 
     def load_meshes(self, meshes: list):
         """
@@ -912,6 +841,26 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         layer = mesh.layers[layer_index]
         setattr(layer, attribute, value)
 
+    def _get_initial_colormaps(self):
+        colormaps_dir = pathlib.Path(__file__).parent / "static" / "colormaps"
+
+        if not colormaps_dir.is_dir():
+            return {}
+
+        colormap_files = glob.glob(str(colormaps_dir / "*.json"))
+
+        cluts = {}
+        for f in colormap_files:
+            file = pathlib.Path(f)
+            cmap_name = file.stem
+            file_data = json.loads(file.read_text())
+            try:
+                cluts[cmap_name.lower()] = ColorMap(**file_data)
+            except t.TraitError:
+                pass
+
+        return cluts
+
     def colormaps(self):
         """Retrieve the list of available colormap names.
 
@@ -926,91 +875,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
             colormaps = nv.colormaps()
         """
-        fallback_colormaps = [
-            "actc",
-            "afni_blues_inv",
-            "afni_reds_inv",
-            "batlow",
-            "bcgwhw",
-            "bcgwhw_dark",
-            "blue",
-            "blue2cyan",
-            "blue2magenta",
-            "blue2red",
-            "bluegrn",
-            "bone",
-            "bronze",
-            "cet_l17",
-            "cividis",
-            "cool",
-            "copper",
-            "copper2",
-            "ct_airways",
-            "ct_artery",
-            "ct_bones",
-            "ct_brain",
-            "ct_brain_gray",
-            "ct_cardiac",
-            "ct_head",
-            "ct_kidneys",
-            "ct_liver",
-            "ct_muscles",
-            "ct_scalp",
-            "ct_skull",
-            "ct_soft",
-            "ct_soft_tissue",
-            "ct_surface",
-            "ct_vessels",
-            "ct_w_contrast",
-            "cubehelix",
-            "electric_blue",
-            "freesurfer",
-            "ge_color",
-            "gold",
-            "gray",
-            "green",
-            "green2cyan",
-            "green2orange",
-            "hot",
-            "hotiron",
-            "hsv",
-            "inferno",
-            "jet",
-            "kry",
-            "linspecer",
-            "lipari",
-            "magma",
-            "mako",
-            "navia",
-            "nih",
-            "plasma",
-            "random",
-            "red",
-            "redyell",
-            "rocket",
-            "roi_i256",
-            "surface",
-            "thermal",
-            "turbo",
-            "violet",
-            "viridis",
-            "warm",
-            "winter",
-            "x_rain",
-        ]
-        colormaps_path = pathlib.Path(__file__).parent / "static" / "colormaps.txt"
-        try:
-            with open(colormaps_path) as f:
-                colormaps_list = f.read().splitlines()
-        except FileNotFoundError:
-            return fallback_colormaps
-
-        # add custom colormap names
-        for key in self._added_colormaps:
-            if key not in colormaps_list:
-                colormaps_list.append(key)
-
-        return colormaps_list
+        return list(self._cluts.keys())
 
     def add_colormap(self, name: str, color_map: dict):
         """Add a colormap to the widget.
@@ -1042,43 +907,10 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             })
             nv.set_colormap(nv.volumes[0].id, "custom_color_map")
         """
-        # Validate that required keys are present and are lists of numbers
-        required_keys = ["R", "G", "B"]
-        for key in required_keys:
-            if key not in color_map:
-                raise ValueError(f"ColorMap must include required key '{key}'")
-            if not isinstance(color_map[key], list):
-                raise TypeError(f"ColorMap key '{key}' must be a list")
-            if not all(isinstance(x, (int, float)) for x in color_map[key]):
-                raise TypeError(f"All elements in ColorMap key '{key}' must be numbers")
-
-        # Check that all required lists have the same length
-        lengths = [len(color_map[key]) for key in required_keys]
-        if len(set(lengths)) != 1:
-            raise ValueError("All 'R', 'G', 'B' lists must have the same length")
-
-        # Validate optional keys
-        if "min" in color_map and not isinstance(color_map["min"], (int, float)):
-            raise TypeError("ColorMap 'min' must be a number")
-
-        if "max" in color_map and not isinstance(color_map["max"], (int, float)):
-            raise TypeError("ColorMap 'max' must be a number")
-
-        if "labels" in color_map:
-            if not isinstance(color_map["labels"], list):
-                raise TypeError("ColorMap 'labels' must be a list of strings")
-            if not all(isinstance(label, str) for label in color_map["labels"]):
-                raise TypeError("All elements in ColorMap 'labels' must be strings")
-            if len(color_map["labels"]) != lengths[0]:
-                raise ValueError(
-                    "ColorMap 'labels' must have the same length as 'R', 'G', 'B' lists"
-                )
-
-        # Save the colormap name
-        self._added_colormaps.add(name)
+        self._cluts[name.lower()] = ColorMap(**color_map)
 
         # Send the colormap to the frontend
-        self.send({"type": "add_colormap", "data": [name, color_map]})
+        self.send({"type": "add_colormap", "data": [name.lower(), color_map]})
 
     def set_colormap(self, imageID: str, colormap: str):
         """Set the colormap for a volume.
@@ -1475,6 +1307,215 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """
         self.is_nearest_interpolation = is_nearest
         self.send({"type": "set_interpolation", "data": [is_nearest]})
+
+    def set_pen_value(self, pen_value: int, is_filled_pen: bool):
+        """Determine color and style of drawing.
+
+        Parameters
+        ----------
+        pen_value : int
+            sets the color of the pen
+        is_filled_pen : bool
+            determines if dragging creates flood-filled shape
+
+        Examples
+        --------
+        ::
+
+            nv.set_pen_value(1, True)
+        """
+        self.pen_value = pen_value
+        self.is_filled_pen = is_filled_pen
+
+    def set_drawing_enabled(self, drawing_enabled: bool):
+        """Set/unset drawing state.
+
+        Parameters
+        ----------
+        drawing_enabled: bool
+            enabled or not
+
+        Examples
+        --------
+        ::
+
+            nv.set_drawing_enabled(True)
+        """
+        if drawing_enabled != self.drawing_enabled:
+            self.drawing_enabled = drawing_enabled
+            self.send({"type": "set_drawing_enabled", "data": [drawing_enabled]})
+
+    def colormap_from_key(self, colormap_name: str) -> ColorMap:
+        """Retrieve a colormap by name (case-insensitive).
+
+        Parameters
+        ----------
+        colormap_name : str
+            The name of the colormap to retrieve.
+
+        Returns
+        -------
+        ColorMap
+            An instance of `ColorMap` corresponding to the given colormap name.
+
+        Examples
+        --------
+        ::
+            cmap = nv.colormap_from_key('Hot')
+        """
+        return self._cluts[colormap_name.lower()]
+
+    def set_draw_colormap(self, colormap: typing.Union[str, ColorMap]):
+        """Set colors and labels for different drawing values.
+
+        Parameters
+        ----------
+        colormap : str or ColorMap
+            A colormap name (string) or a `ColorMap` instance.
+
+        Examples
+        --------
+        ::
+            cmap = {
+                'R': [0, 255, 0],
+                'G': [0, 20, 0],
+                'B': [0, 20, 80],
+                'A': [0, 255, 255],
+                'labels': ['', 'white-matter', 'delete T1'],
+            }
+            nv.set_draw_colormap(cmap)
+        """
+        if isinstance(colormap, str):
+            cmap = self.colormap_from_key(colormap)
+            self.draw_lut = make_draw_lut(cmap)
+        elif isinstance(colormap, ColorMap):
+            self.draw_lut = make_draw_lut(colormap)
+        else:
+            raise ValueError("Colormap must be string or type ColorMap.")
+
+    def draw_otsu(self, levels: int):
+        """Segment brain into specified number of levels using Otsu's method.
+
+        This method removes dark voxels by segmenting
+        the image into the specified number of levels.
+
+        Parameters
+        ----------
+        levels : int
+            Number of levels to segment the brain into (2-4).
+
+        Examples
+        --------
+        ::
+
+            nv.draw_otsu(3)
+        """
+        self.send({"type": "draw_otsu", "data": [levels]})
+
+    def draw_grow_cut(self):
+        """Dilate drawing so all voxels are colored.
+
+        Examples
+        --------
+        ::
+
+            nv.draw_grow_cut()
+        """
+        self.send({"type": "draw_grow_cut", "data": []})
+
+    def move_crosshair_in_vox(self, x: float, y: float, z: float):
+        """Move crosshair by a fixed number of voxels.
+
+        Parameters
+        ----------
+        x : float
+            Translate left (-) or right (+)
+        y : float
+            Translate posterior (-) or anterior (+)
+        z : float
+            Translate inferior (-) or superior (+)
+
+        Examples
+        --------
+        ::
+
+            nv.move_crosshair_in_vox(1, 0, 0)
+        """
+        # todo: update backend scene data
+        self.send({"type": "move_crosshair_in_vox", "data": [x, y, z]})
+
+    def remove_haze(self, level: int = 5, vol_index: int = 0):
+        """Remove dark voxels in air.
+
+        Parameters
+        ----------
+        level : int, optional
+            Level of dehazing (1-5); larger values preserve more voxels. Default is 5.
+        vol_index : int, optional
+            Index of the volume to dehaze. Default is 0.
+
+        Examples
+        --------
+        ::
+
+            nv.remove_haze(3, 0)
+        """
+        self.send({"type": "remove_haze", "data": [level, vol_index]})
+
+    def set_slice_mm(self, is_slice_mm: bool):
+        """Control 2D slice view mode.
+
+        Parameters
+        ----------
+        is_slice_mm : bool
+            Control whether 2D slices use world space (True) or voxel space (False).
+
+        Examples
+        --------
+        ::
+
+            nv.set_slice_mm(True)
+        """
+        self.is_slice_mm = is_slice_mm
+
+    def draw_undo(self):
+        """Restore drawing to previous state.
+
+        Examples
+        --------
+        ::
+
+            nv.draw_undo()
+        """
+        self.send({"type": "draw_undo", "data": []})
+
+    def close_drawing(self):
+        """Close the current drawing.
+
+        Examples
+        --------
+        ::
+
+            nv.close_drawing()
+        """
+        self.send({"type": "close_drawing", "data": []})
+
+    def set_radiological_convention(self, is_radiological_convention: bool):
+        """Set radiological or neurological convention for 2D slices.
+
+        Parameters
+        ----------
+        is_radiological_convention : bool
+            If True, use radiological convention.
+            If False, use neurological convention.
+
+        Examples
+        --------
+        ::
+
+            nv.set_radiological_convention(True)
+        """
+        self.is_radiological_convention = is_radiological_convention
 
     """
     Custom event callbacks

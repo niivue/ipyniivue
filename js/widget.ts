@@ -13,6 +13,32 @@ import { render_volumes } from "./volume.ts";
 
 const nvMap = new Map<string, niivue.Niivue>();
 
+function deserializeOptions(
+	options: Partial<Record<keyof niivue.NVConfigOptions, unknown>>,
+): niivue.NVConfigOptions {
+	const result: Partial<niivue.NVConfigOptions> = {};
+	const specialValues: Record<string, number> = {
+		Infinity: Number.POSITIVE_INFINITY,
+		"-Infinity": Number.NEGATIVE_INFINITY,
+		NaN: Number.NaN,
+	};
+
+	for (const [key, value] of Object.entries(options) as [
+		keyof niivue.NVConfigOptions,
+		unknown,
+	][]) {
+		if (typeof value === "string" && value in specialValues) {
+			// biome-ignore lint/suspicious/noExplicitAny: NVConfigOptions
+			(result as any)[key] = specialValues[value];
+		} else {
+			// biome-ignore lint/suspicious/noExplicitAny: NVConfigOptions
+			(result as any)[key] = value;
+		}
+	}
+
+	return result as niivue.NVConfigOptions;
+}
+
 // Attach model event handlers
 function attachModelEventHandlers(
 	nv: niivue.Niivue,
@@ -32,8 +58,10 @@ function attachModelEventHandlers(
 
 	// Any time we change the options, we need to update the nv gl
 	model.on("change:_opts", () => {
-		console.log("Updating opts");
-		nv.document.opts = { ...nv.opts, ...model.get("_opts") };
+		const serializedOpts = model.get("_opts");
+		const opts = deserializeOptions(serializedOpts);
+
+		nv.document.opts = { ...nv.opts, ...opts };
 		nv.updateGLVolume();
 	});
 
@@ -46,6 +74,24 @@ function attachModelEventHandlers(
 	model.on("change:clip_plane_depth_azi_elev", () => {
 		const [depth, azimuth, elevation] = model.get("clip_plane_depth_azi_elev");
 		nv.setClipPlane([depth, azimuth, elevation]);
+	});
+
+	model.on("change:draw_lut", () => {
+		const drawLut = model.get("draw_lut");
+		if (drawLut && Array.isArray(drawLut.lut)) {
+			drawLut.lut = new Uint8ClampedArray(drawLut.lut);
+			nv.drawLut = drawLut;
+		}
+		nv.updateGLVolume();
+	});
+
+	model.on("change:draw_opacity", () => {
+		nv.drawOpacity = model.get("draw_opacity");
+		nv.drawScene();
+	});
+
+	model.on("change:draw_fill_overwrites", () => {
+		nv.drawFillOverwrites = model.get("draw_fill_overwrites");
 	});
 
 	// Handle any message directions from the nv object.
@@ -120,6 +166,38 @@ function attachModelEventHandlers(
 			case "set_interpolation": {
 				const [isNearest] = data;
 				nv.setInterpolation(isNearest);
+				break;
+			}
+			case "set_drawing_enabled": {
+				const [drawingEnabled] = data;
+				nv.setDrawingEnabled(drawingEnabled);
+				break;
+			}
+			case "draw_otsu": {
+				const [levels] = data;
+				nv.drawOtsu(levels);
+				break;
+			}
+			case "draw_grow_cut": {
+				nv.drawGrowCut();
+				break;
+			}
+			case "move_crosshair_in_vox": {
+				const [x, y, z] = data;
+				nv.moveCrosshairInVox(x, y, z);
+				break;
+			}
+			case "remove_haze": {
+				const [level, volIndex] = data;
+				nv.removeHaze(level, volIndex);
+				break;
+			}
+			case "draw_undo": {
+				nv.drawUndo();
+				break;
+			}
+			case "close_drawing": {
+				nv.closeDrawing();
 				break;
 			}
 		}
@@ -448,7 +526,9 @@ export default {
 
 		if (!nv) {
 			console.log("Creating new Niivue instance");
-			nv = new niivue.Niivue(model.get("_opts") ?? {});
+			const serializedOpts = model.get("_opts") ?? {};
+			const opts = deserializeOptions(serializedOpts);
+			nv = new niivue.Niivue(opts);
 			nvMap.set(model.get("id"), nv);
 		}
 
@@ -469,6 +549,10 @@ export default {
 			model.off("msg:custom");
 
 			model.off("change:background_masks_overlays");
+			model.off("change:clip_plane_depth_azi_elev");
+			model.off("change:draw_lut");
+			model.off("change:draw_opacity");
+			model.off("change:change:draw_fill_overwrites");
 
 			// remove the nv instance
 			nvMap.delete(model.get("id"));

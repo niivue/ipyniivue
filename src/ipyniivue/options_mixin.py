@@ -418,7 +418,7 @@ class OptionsMixin:
     @property
     def loading_text(self) -> str:
         """Automatically generated property. See generate_options_mixin.py."""
-        return self._opts.get("loadingText", "waiting for images...")
+        return self._opts.get("loadingText", "loading ...")
 
     @loading_text.setter
     def loading_text(self, value: str):
@@ -654,3 +654,33 @@ class OptionsMixin:
     def force_device_pixel_ratio(self, value: int):
         """Automatically generated property. See generate_options_mixin.py."""
         self._opts = {**self._opts, "forceDevicePixelRatio": value}
+
+    @property
+    def click_to_segment(self) -> bool:
+        """Automatically generated property. See generate_options_mixin.py."""
+        return self._opts.get("clickToSegment", False)
+
+    @click_to_segment.setter
+    def click_to_segment(self, value: bool):
+        """Automatically generated property. See generate_options_mixin.py."""
+        self._opts = {**self._opts, "clickToSegment": value}
+
+    @property
+    def click_to_segment_auto_intensity(self) -> bool:
+        """Automatically generated property. See generate_options_mixin.py."""
+        return self._opts.get("clickToSegmentAutoIntensity", False)
+
+    @click_to_segment_auto_intensity.setter
+    def click_to_segment_auto_intensity(self, value: bool):
+        """Automatically generated property. See generate_options_mixin.py."""
+        self._opts = {**self._opts, "clickToSegmentAutoIntensity": value}
+
+    @property
+    def click_to_segment_is_2d(self) -> bool:
+        """Automatically generated property. See generate_options_mixin.py."""
+        return self._opts.get("clickToSegmentIs2D", False)
+
+    @click_to_segment_is_2d.setter
+    def click_to_segment_is_2d(self, value: bool):
+        """Automatically generated property. See generate_options_mixin.py."""
+        self._opts = {**self._opts, "clickToSegmentIs2D": value}

@@ -16,20 +16,32 @@ const generateColormapsPlugin = {
 			if (result?.errors?.length === 0) {
 				const nv = new niivue.Niivue();
 				const colormapNames = nv.colormaps();
-				const colormapsTxtContent = colormapNames.join("\n");
 
-				const outputPath = path.join(
+				const outputDir = path.join(
 					__dirname,
 					"src",
 					"ipyniivue",
 					"static",
-					"colormaps.txt",
+					"colormaps",
 				);
 
-				fs.writeFileSync(outputPath, colormapsTxtContent, "utf8");
-				console.log("Successfully generated colormaps.txt.");
+				if (fs.existsSync(outputDir)) {
+					fs.rmSync(outputDir, { recursive: true, force: true });
+				}
+
+				fs.mkdirSync(outputDir, { recursive: true });
+
+				for (const name of colormapNames) {
+					const data = nv.colormapFromKey(name);
+					const jsonContent = JSON.stringify(data);
+					const filePath = path.join(outputDir, `${name}.json`);
+
+					fs.writeFileSync(filePath, jsonContent, "utf8");
+				}
+
+				console.log("Successfully generated colormaps.");
 			} else {
-				console.error("Build failed, colormaps.txt not generated.");
+				console.error("Build failed, colormaps not generated.");
 			}
 		});
 	},

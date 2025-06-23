@@ -49,18 +49,22 @@ class ColorMap(t.HasTraits):
         super().__init__(*args, **kwargs)
         self._parent = parent
 
-    @t.validate("R", "G", "B", "A", "I", "labels")
-    def _validate_lists(self, proposal):
+    @t.validate("R", "G", "B", "A", "labels")
+    def _validate_color_lists(self, proposal):
         lengths = [len(self.R), len(self.G), len(self.B)]
         if self.A:
             lengths.append(len(self.A))
-        if self.I:
-            lengths.append(len(self.I))
         if self.labels:
             lengths.append(len(self.labels))
         if len(set(lengths)) != 1:
+            raise t.TraitError("R, G, B, A, and labels lists must be the same length.")
+        return proposal["value"]
+
+    @t.validate("I")
+    def _validate_I_list(self, proposal):
+        if self.I and len(self.I) not in (0, len(self.R)):
             raise t.TraitError(
-                "All lists (R, G, B, A, I, labels) must be the same length."
+                "I list must be either empty or match the length of R, G, and B."
             )
         return proposal["value"]
 

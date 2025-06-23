@@ -7,7 +7,6 @@ from .download_dataset import download_dataset  # noqa: F401
 from .widget import (  # noqa: F401
     LUT,
     ColorMap,
-    Drawing,
     Mesh,
     MeshLayer,
     NiiVue,
