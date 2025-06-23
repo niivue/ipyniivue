@@ -209,7 +209,6 @@ def make_draw_lut(cmap: ColorMap) -> LUT:
     LUT
         The resulting LUT object, including labels.
     """
-    # Generate the label LUT from the ColorMap
     cm = make_label_lut(cmap, alpha_fill=255)
 
     # Ensure labels exist and fill up to 256 entries
@@ -218,12 +217,10 @@ def make_draw_lut(cmap: ColorMap) -> LUT:
     if len(cm.labels) < 256:
         j = len(cm.labels)
         for i in range(j, 256):
-            # Assign default labels for unused slots
-            cm.labels.append(str(i))
+            cm.labels.append(str(i))  # default label
 
     # Initialize the LUT with default values (opaque red)
-    # Each color is represented by 4 bytes (RGBA)
-    lut = [255, 0, 0, 255] * 256  # 256 entries of [255, 0, 0, 255]
+    lut = [255, 0, 0, 255] * 256
     lut[3] = 0  # Make the first alpha value transparent
 
     # Copy the generated LUT values into the initial LUT, up to 256*4 bytes
