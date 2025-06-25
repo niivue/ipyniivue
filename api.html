@@ -386,38 +386,123 @@ After calling this method, the widget will no longer be usable.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.close_drawing">
+<span class="sig-name descname"><span class="pre">close_drawing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.close_drawing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.close_drawing" title="Link to this definition">¶</a></dt>
+<dd><p>Close the current drawing.</p>
+<section id="id8">
+<h2>Examples<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">close_drawing</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.colormap_from_key">
+<span class="sig-name descname"><span class="pre">colormap_from_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colormap_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ipyniivue.traits.ColorMap" title="ipyniivue.traits.ColorMap"><span class="pre">ColorMap</span></a></span></span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.colormap_from_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.colormap_from_key" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve a colormap by name (case-insensitive).</p>
+<section id="id9">
+<h2>Parameters<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>colormap_name<span class="classifier">str</span></dt><dd><p>The name of the colormap to retrieve.</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h2>Returns<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>ColorMap</dt><dd><p>An instance of <cite>ColorMap</cite> corresponding to the given colormap name.</p>
+</dd>
+</dl>
+</section>
+<section id="id11">
+<h2>Examples<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>::</dt><dd><p>cmap = nv.colormap_from_key(‘Hot’)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.colormaps">
 <span class="sig-name descname"><span class="pre">colormaps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.colormaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.colormaps" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieve the list of available colormap names.</p>
-<section id="id8">
-<h2>Returns<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
+<section id="id12">
+<h2>Returns<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>list of str</dt><dd><p>A list containing the names of all available colormaps</p>
 </dd>
 </dl>
 </section>
-<section id="id9">
-<h2>Examples<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
+<section id="id13">
+<h2>Examples<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">colormaps</span> <span class="o">=</span> <span class="n">nv</span><span class="o">.</span><span class="n">colormaps</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.drawings">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">drawings</span></span><a class="headerlink" href="#ipyniivue.widget.NiiVue.drawings" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the list of drawings.</p>
-<section id="id10">
-<h2>Returns<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h2>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.draw_fill_overwrites">
+<span class="sig-name descname"><span class="pre">draw_fill_overwrites</span></span><a class="headerlink" href="#ipyniivue.widget.NiiVue.draw_fill_overwrites" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.draw_grow_cut">
+<span class="sig-name descname"><span class="pre">draw_grow_cut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.draw_grow_cut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.draw_grow_cut" title="Link to this definition">¶</a></dt>
+<dd><p>Dilate drawing so all voxels are colored.</p>
+<section id="id14">
+<h2>Examples<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">draw_grow_cut</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.draw_lut">
+<span class="sig-name descname"><span class="pre">draw_lut</span></span><a class="headerlink" href="#ipyniivue.widget.NiiVue.draw_lut" title="Link to this definition">¶</a></dt>
+<dd><p>A trait whose value must be an instance of a specified class.</p>
+<p>The value can also be an instance of a subclass of the specified class.</p>
+<p>Subclasses can declare default classes by overriding the klass attribute</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.draw_opacity">
+<span class="sig-name descname"><span class="pre">draw_opacity</span></span><a class="headerlink" href="#ipyniivue.widget.NiiVue.draw_opacity" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.draw_otsu">
+<span class="sig-name descname"><span class="pre">draw_otsu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.draw_otsu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.draw_otsu" title="Link to this definition">¶</a></dt>
+<dd><p>Segment brain into specified number of levels using Otsu’s method.</p>
+<p>This method removes dark voxels by segmenting
+the image into the specified number of levels.</p>
+<section id="id15">
+<h2>Parameters<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h2>
 <dl class="simple">
-<dt>list</dt><dd><p>A list of dictionairies containing the drawing information.</p>
+<dt>levels<span class="classifier">int</span></dt><dd><p>Number of levels to segment the brain into (2-4).</p>
 </dd>
 </dl>
 </section>
-<section id="id11">
-<h2>Examples<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">drawings</span><span class="p">)</span>
+<section id="id16">
+<h2>Examples<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">draw_otsu</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.draw_undo">
+<span class="sig-name descname"><span class="pre">draw_undo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.draw_undo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.draw_undo" title="Link to this definition">¶</a></dt>
+<dd><p>Restore drawing to previous state.</p>
+<section id="id17">
+<h2>Examples<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">draw_undo</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
@@ -427,8 +512,8 @@ After calling this method, the widget will no longer be usable.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.get_mesh_index_by_id">
 <span class="sig-name descname"><span class="pre">get_mesh_index_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.get_mesh_index_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.get_mesh_index_by_id" title="Link to this definition">¶</a></dt>
 <dd><p>Return the index of the mesh with the given id.</p>
-<section id="id12">
-<h2>Parameters<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h2>
+<section id="id18">
+<h2>Parameters<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>mesh_id<span class="classifier">str</span></dt><dd><p>The id of the mesh.</p>
 </dd>
@@ -440,8 +525,8 @@ After calling this method, the widget will no longer be usable.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.get_volume_index_by_id">
 <span class="sig-name descname"><span class="pre">get_volume_index_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.get_volume_index_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.get_volume_index_by_id" title="Link to this definition">¶</a></dt>
 <dd><p>Return the index of the volume with the given id.</p>
-<section id="id13">
-<h2>Parameters<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h2>
+<section id="id19">
+<h2>Parameters<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>volume_id<span class="classifier">str</span></dt><dd><p>The id of the volume.</p>
 </dd>
@@ -462,42 +547,18 @@ After calling this method, the widget will no longer be usable.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.load_drawings">
-<span class="sig-name descname"><span class="pre">load_drawings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drawings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.load_drawings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.load_drawings" title="Link to this definition">¶</a></dt>
-<dd><p>Load a list of drawings objects.</p>
-<section id="id14">
-<h2>Parameters<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h2>
-<dl class="simple">
-<dt>drawings<span class="classifier">list</span></dt><dd><p>A list of dictionaries containing the drawing information.</p>
-</dd>
-</dl>
-</section>
-<section id="id15">
-<h2>Returns<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h2>
-<p>None</p>
-</section>
-<section id="id16">
-<h2>Examples<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span> <span class="o">=</span> <span class="n">NiiVue</span><span class="p">()</span>
-<span class="n">nv</span><span class="o">.</span><span class="n">load_drawings</span><span class="p">([{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;lesion.nii.gz&quot;</span><span class="p">}])</span>
-</pre></div>
-</div>
-</section>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.load_mat_cap_texture">
 <span class="sig-name descname"><span class="pre">load_mat_cap_texture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">png_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.load_mat_cap_texture"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.load_mat_cap_texture" title="Link to this definition">¶</a></dt>
 <dd><p>Load matcap for illumination model.</p>
-<section id="id17">
-<h2>Parameters<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h2>
+<section id="id20">
+<h2>Parameters<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>png_data<span class="classifier">bytes</span></dt><dd><p>Image data binary.</p>
 </dd>
 </dl>
 </section>
-<section id="id18">
-<h2>Examples<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h2>
+<section id="id21">
+<h2>Examples<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">matcap_path</span> <span class="o">=</span> <span class="s1">&#39;./matcaps/gold.jpg&#39;</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">matcap_path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">matcap_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -511,19 +572,19 @@ After calling this method, the widget will no longer be usable.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.load_meshes">
 <span class="sig-name descname"><span class="pre">load_meshes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meshes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.load_meshes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.load_meshes" title="Link to this definition">¶</a></dt>
 <dd><p>Load a list of meshes objects.</p>
-<section id="id19">
-<h2>Parameters<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h2>
+<section id="id22">
+<h2>Parameters<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>meshes<span class="classifier">list</span></dt><dd><p>A list of dictionaries containing the mesh information.</p>
 </dd>
 </dl>
 </section>
-<section id="id20">
-<h2>Returns<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h2>
+<section id="id23">
+<h2>Returns<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h2>
 <p>None</p>
 </section>
-<section id="id21">
-<h2>Examples<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h2>
+<section id="id24">
+<h2>Examples<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span> <span class="o">=</span> <span class="n">NiiVue</span><span class="p">()</span>
 <span class="n">nv</span><span class="o">.</span><span class="n">load_meshes</span><span class="p">([{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;BrainMesh_ICBM152.lh.mz3&quot;</span><span class="p">}])</span>
 </pre></div>
@@ -535,19 +596,19 @@ After calling this method, the widget will no longer be usable.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.load_volumes">
 <span class="sig-name descname"><span class="pre">load_volumes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volumes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.load_volumes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.load_volumes" title="Link to this definition">¶</a></dt>
 <dd><p>Load a list of volume objects.</p>
-<section id="id22">
-<h2>Parameters<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h2>
+<section id="id25">
+<h2>Parameters<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>volumes<span class="classifier">list</span></dt><dd><p>A list of dictionaries containing the volume information.</p>
 </dd>
 </dl>
 </section>
-<section id="id23">
-<h2>Returns<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h2>
+<section id="id26">
+<h2>Returns<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h2>
 <p>None</p>
 </section>
-<section id="id24">
-<h2>Examples<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h2>
+<section id="id27">
+<h2>Examples<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span> <span class="o">=</span> <span class="n">NiiVue</span><span class="p">()</span>
 <span class="n">nv</span><span class="o">.</span><span class="n">load_volumes</span><span class="p">([{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;mni152.nii.gz&quot;</span><span class="p">}])</span>
 </pre></div>
@@ -559,15 +620,15 @@ After calling this method, the widget will no longer be usable.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.mesh_shader_names">
 <span class="sig-name descname"><span class="pre">mesh_shader_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.mesh_shader_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.mesh_shader_names" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieve the list of available mesh shader names.</p>
-<section id="id25">
-<h2>Returns<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h2>
+<section id="id28">
+<h2>Returns<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>list of str</dt><dd><p>A list containing the names of all available mesh shader names</p>
 </dd>
 </dl>
 </section>
-<section id="id26">
-<h2>Examples<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h2>
+<section id="id29">
+<h2>Examples<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shaders</span> <span class="o">=</span> <span class="n">nv</span><span class="o">.</span><span class="n">mesh_shader_names</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -578,16 +639,39 @@ After calling this method, the widget will no longer be usable.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.meshes">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">meshes</span></span><a class="headerlink" href="#ipyniivue.widget.NiiVue.meshes" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the list of meshes.</p>
-<section id="id27">
-<h2>Returns<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h2>
+<section id="id30">
+<h2>Returns<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>list</dt><dd><p>A list of dictionairies containing the mesh information.</p>
 </dd>
 </dl>
 </section>
-<section id="id28">
-<h2>Examples<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h2>
+<section id="id31">
+<h2>Examples<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">meshes</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.move_crosshair_in_vox">
+<span class="sig-name descname"><span class="pre">move_crosshair_in_vox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.move_crosshair_in_vox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.move_crosshair_in_vox" title="Link to this definition">¶</a></dt>
+<dd><p>Move crosshair by a fixed number of voxels.</p>
+<section id="id32">
+<h2>Parameters<a class="headerlink" href="#id32" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>x<span class="classifier">float</span></dt><dd><p>Translate left (-) or right (+)</p>
+</dd>
+<dt>y<span class="classifier">float</span></dt><dd><p>Translate posterior (-) or anterior (+)</p>
+</dd>
+<dt>z<span class="classifier">float</span></dt><dd><p>Translate inferior (-) or superior (+)</p>
+</dd>
+</dl>
+</section>
+<section id="id33">
+<h2>Examples<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">move_crosshair_in_vox</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -599,8 +683,8 @@ After calling this method, the widget will no longer be usable.</p>
 <dd><p>Register a callback for the ‘azimuth_elevation_change’ event.</p>
 <p>Set a callback function to run when the user changes the rotation of the 3D
 rendering.</p>
-<section id="id29">
-<h2>Parameters<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h2>
+<section id="id34">
+<h2>Parameters<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes two arguments:</p>
 <ul class="simple">
@@ -612,8 +696,8 @@ rendering.</p>
 </dd>
 </dl>
 </section>
-<section id="id30">
-<h2>Examples<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h2>
+<section id="id35">
+<h2>Examples<a class="headerlink" href="#id35" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -636,8 +720,8 @@ rendering.</p>
 <dd><p>Register a callback for the ‘click_to_segment’ event.</p>
 <p>Set a callback function when <code class="docutils literal notranslate"><span class="pre">clickToSegment</span></code> is enabled and the user clicks
 on the image.</p>
-<section id="id31">
-<h2>Parameters<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h2>
+<section id="id36">
+<h2>Parameters<a class="headerlink" href="#id36" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes one argument - a <code class="docutils literal notranslate"><span class="pre">dict</span></code> with the following keys:</p>
 <ul class="simple">
@@ -649,8 +733,8 @@ on the image.</p>
 </dd>
 </dl>
 </section>
-<section id="id32">
-<h2>Examples<a class="headerlink" href="#id32" title="Link to this heading">¶</a></h2>
+<section id="id37">
+<h2>Examples<a class="headerlink" href="#id37" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -673,8 +757,8 @@ on the image.</p>
 <span class="sig-name descname"><span class="pre">on_clip_plane_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.on_clip_plane_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.on_clip_plane_change" title="Link to this definition">¶</a></dt>
 <dd><p>Register a callback for the ‘clip_plane_change’ event.</p>
 <p>Set a callback function to run when the user changes the clip plane.</p>
-<section id="id33">
-<h2>Parameters<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h2>
+<section id="id38">
+<h2>Parameters<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes one argument - a list of numbers representing the
 clip plane.</p>
@@ -683,8 +767,8 @@ clip plane.</p>
 </dd>
 </dl>
 </section>
-<section id="id34">
-<h2>Examples<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h2>
+<section id="id39">
+<h2>Examples<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -704,8 +788,8 @@ clip plane.</p>
 <span class="sig-name descname"><span class="pre">on_document_loaded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.on_document_loaded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.on_document_loaded" title="Link to this definition">¶</a></dt>
 <dd><p>Register a callback for the ‘document_loaded’ event.</p>
 <p>Set a callback function to run when the user loads a new NiiVue document.</p>
-<section id="id35">
-<h2>Parameters<a class="headerlink" href="#id35" title="Link to this heading">¶</a></h2>
+<section id="id40">
+<h2>Parameters<a class="headerlink" href="#id40" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes one argument - a <code class="docutils literal notranslate"><span class="pre">dict</span></code> representing the loaded
 document with the following keys:</p>
@@ -720,8 +804,8 @@ document with the following keys:</p>
 </dd>
 </dl>
 </section>
-<section id="id36">
-<h2>Examples<a class="headerlink" href="#id36" title="Link to this heading">¶</a></h2>
+<section id="id41">
+<h2>Examples<a class="headerlink" href="#id41" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -746,8 +830,8 @@ document with the following keys:</p>
 <dd><p>Register a callback for the ‘drag_release’ event.</p>
 <p>Set a callback function to run when the right mouse button is released
 after dragging.</p>
-<section id="id37">
-<h2>Parameters<a class="headerlink" href="#id37" title="Link to this heading">¶</a></h2>
+<section id="id42">
+<h2>Parameters<a class="headerlink" href="#id42" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes one argument - a <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing drag release
 parameters with the following keys:</p>
@@ -795,8 +879,8 @@ parameters with the following keys:</p>
 </dd>
 </dl>
 </section>
-<section id="id38">
-<h2>Examples<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h2>
+<section id="id43">
+<h2>Examples<a class="headerlink" href="#id43" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -817,8 +901,8 @@ parameters with the following keys:</p>
 <dd><p>Register a callback for the ‘frame_change’ event.</p>
 <p>Set a callback function to run whenever the current frame (timepoint) of a
 4D image volume changes.</p>
-<section id="id39">
-<h2>Parameters<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h2>
+<section id="id44">
+<h2>Parameters<a class="headerlink" href="#id44" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes two arguments:</p>
 <ul class="simple">
@@ -830,8 +914,8 @@ parameters with the following keys:</p>
 </dd>
 </dl>
 </section>
-<section id="id40">
-<h2>Examples<a class="headerlink" href="#id40" title="Link to this heading">¶</a></h2>
+<section id="id45">
+<h2>Examples<a class="headerlink" href="#id45" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -857,8 +941,8 @@ and the index (<cite>idx</cite>) values under the cursor position change.</p>
 <p>This event provides the index (<cite>idx</cite>) values of the data under the cursor
 for all volumes. The callback function receives a dictionary containing
 the index values for each volume.</p>
-<section id="id41">
-<h2>Parameters<a class="headerlink" href="#id41" title="Link to this heading">¶</a></h2>
+<section id="id46">
+<h2>Parameters<a class="headerlink" href="#id46" title="Link to this heading">¶</a></h2>
 <dl>
 <dt>callback<span class="classifier">callable</span></dt><dd><p>The function to call when the event occurs. It should accept one argument:</p>
 <ul class="simple">
@@ -875,8 +959,8 @@ with the following keys:</p>
 </dd>
 </dl>
 </section>
-<section id="id42">
-<h2>Examples<a class="headerlink" href="#id42" title="Link to this heading">¶</a></h2>
+<section id="id47">
+<h2>Examples<a class="headerlink" href="#id47" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">hover_idx_callback</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="n">idx_values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;idx_values&#39;</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">idx_info</span> <span class="ow">in</span> <span class="n">idx_values</span><span class="p">:</span>
@@ -895,8 +979,8 @@ with the following keys:</p>
 <span class="sig-name descname"><span class="pre">on_image_loaded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.on_image_loaded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.on_image_loaded" title="Link to this definition">¶</a></dt>
 <dd><p>Register a callback for the ‘image_loaded’ event.</p>
 <p>Set a callback function to run when a new volume is loaded.</p>
-<section id="id43">
-<h2>Parameters<a class="headerlink" href="#id43" title="Link to this heading">¶</a></h2>
+<section id="id48">
+<h2>Parameters<a class="headerlink" href="#id48" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes one argument - a <code class="docutils literal notranslate"><span class="pre">Volume</span></code> object.</p>
 </dd>
@@ -904,8 +988,8 @@ with the following keys:</p>
 </dd>
 </dl>
 </section>
-<section id="id44">
-<h2>Examples<a class="headerlink" href="#id44" title="Link to this heading">¶</a></h2>
+<section id="id49">
+<h2>Examples<a class="headerlink" href="#id49" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -926,8 +1010,8 @@ with the following keys:</p>
 <dd><p>Register a callback for the ‘intensity_change’ event.</p>
 <p>Set a callback function to run when the user changes the intensity range
 with the selection-box action (right click).</p>
-<section id="id45">
-<h2>Parameters<a class="headerlink" href="#id45" title="Link to this heading">¶</a></h2>
+<section id="id50">
+<h2>Parameters<a class="headerlink" href="#id50" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes one argument - a <code class="docutils literal notranslate"><span class="pre">Volume</span></code> object.</p>
 </dd>
@@ -935,8 +1019,8 @@ with the selection-box action (right click).</p>
 </dd>
 </dl>
 </section>
-<section id="id46">
-<h2>Examples<a class="headerlink" href="#id46" title="Link to this heading">¶</a></h2>
+<section id="id51">
+<h2>Examples<a class="headerlink" href="#id51" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -956,8 +1040,8 @@ with the selection-box action (right click).</p>
 <span class="sig-name descname"><span class="pre">on_location_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.on_location_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.on_location_change" title="Link to this definition">¶</a></dt>
 <dd><p>Register a callback for the ‘location_change’ event.</p>
 <p>Set a callback function to run when the crosshair location changes.</p>
-<section id="id47">
-<h2>Parameters<a class="headerlink" href="#id47" title="Link to this heading">¶</a></h2>
+<section id="id52">
+<h2>Parameters<a class="headerlink" href="#id52" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes one argument - a <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing the new
 location data - with the following keys:</p>
@@ -987,8 +1071,8 @@ location data - with the following keys:</p>
 </dd>
 </dl>
 </section>
-<section id="id48">
-<h2>Examples<a class="headerlink" href="#id48" title="Link to this heading">¶</a></h2>
+<section id="id53">
+<h2>Examples<a class="headerlink" href="#id53" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -1010,8 +1094,8 @@ location data - with the following keys:</p>
 <p>Set a callback function to run when a mesh is added from a URL.</p>
 <p><strong>Note:</strong> This is called before the <code class="docutils literal notranslate"><span class="pre">mesh_loaded</span></code> event is emitted, so
 the mesh object will <strong>not</strong> be available in the callback.</p>
-<section id="id49">
-<h2>Parameters<a class="headerlink" href="#id49" title="Link to this heading">¶</a></h2>
+<section id="id54">
+<h2>Parameters<a class="headerlink" href="#id54" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes two arguments:</p>
 <ul class="simple">
@@ -1040,8 +1124,8 @@ the mesh object will <strong>not</strong> be available in the callback.</p>
 </dd>
 </dl>
 </section>
-<section id="id50">
-<h2>Examples<a class="headerlink" href="#id50" title="Link to this heading">¶</a></h2>
+<section id="id55">
+<h2>Examples<a class="headerlink" href="#id55" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -1064,8 +1148,8 @@ the mesh object will <strong>not</strong> be available in the callback.</p>
 <span class="sig-name descname"><span class="pre">on_mesh_loaded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.on_mesh_loaded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.on_mesh_loaded" title="Link to this definition">¶</a></dt>
 <dd><p>Register a callback for the ‘mesh_loaded’ event.</p>
 <p>Set a callback function to run when a new mesh is loaded.</p>
-<section id="id51">
-<h2>Parameters<a class="headerlink" href="#id51" title="Link to this heading">¶</a></h2>
+<section id="id56">
+<h2>Parameters<a class="headerlink" href="#id56" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes one argument - the loaded mesh (<code class="docutils literal notranslate"><span class="pre">Mesh</span></code> object).</p>
 </dd>
@@ -1073,8 +1157,8 @@ the mesh object will <strong>not</strong> be available in the callback.</p>
 </dd>
 </dl>
 </section>
-<section id="id52">
-<h2>Examples<a class="headerlink" href="#id52" title="Link to this heading">¶</a></h2>
+<section id="id57">
+<h2>Examples<a class="headerlink" href="#id57" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -1094,8 +1178,8 @@ the mesh object will <strong>not</strong> be available in the callback.</p>
 <span class="sig-name descname"><span class="pre">on_mouse_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.on_mouse_up"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.on_mouse_up" title="Link to this definition">¶</a></dt>
 <dd><p>Register a callback for the ‘mouse_up’ event.</p>
 <p>Set a callback function to run when the left mouse button is released.</p>
-<section id="id53">
-<h2>Parameters<a class="headerlink" href="#id53" title="Link to this heading">¶</a></h2>
+<section id="id58">
+<h2>Parameters<a class="headerlink" href="#id58" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes one argument - a <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing mouse event data
 with the following keys:</p>
@@ -1121,8 +1205,8 @@ with the following keys:</p>
 </dd>
 </dl>
 </section>
-<section id="id54">
-<h2>Examples<a class="headerlink" href="#id54" title="Link to this heading">¶</a></h2>
+<section id="id59">
+<h2>Examples<a class="headerlink" href="#id59" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -1144,8 +1228,8 @@ with the following keys:</p>
 <p>Set a callback function to run when a volume is added from a URL.</p>
 <p><strong>Note:</strong> This is called before the <code class="docutils literal notranslate"><span class="pre">image_loaded</span></code> event is emitted, so
 the volume object will <strong>not</strong> be available in the callback.</p>
-<section id="id55">
-<h2>Parameters<a class="headerlink" href="#id55" title="Link to this heading">¶</a></h2>
+<section id="id60">
+<h2>Parameters<a class="headerlink" href="#id60" title="Link to this heading">¶</a></h2>
 <dl>
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes two arguments:</p>
 <ul>
@@ -1236,8 +1320,8 @@ the volume object will <strong>not</strong> be available in the callback.</p>
 </dd>
 </dl>
 </section>
-<section id="id56">
-<h2>Examples<a class="headerlink" href="#id56" title="Link to this heading">¶</a></h2>
+<section id="id61">
+<h2>Examples<a class="headerlink" href="#id61" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
@@ -1261,8 +1345,8 @@ the volume object will <strong>not</strong> be available in the callback.</p>
 <dd><p>Register a callback for the ‘volume_updated’ event.</p>
 <p>Sets a callback function to run when <cite>updateGLVolume</cite> is called.
 Most users will not need to use this directly.</p>
-<section id="id57">
-<h2>Parameters<a class="headerlink" href="#id57" title="Link to this heading">¶</a></h2>
+<section id="id62">
+<h2>Parameters<a class="headerlink" href="#id62" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>callback<span class="classifier">callable</span></dt><dd><p>A function that takes no arguments.</p>
 </dd>
@@ -1270,8 +1354,8 @@ Most users will not need to use this directly.</p>
 </dd>
 </dl>
 </section>
-<section id="id58">
-<h2>Examples<a class="headerlink" href="#id58" title="Link to this heading">¶</a></h2>
+<section id="id63">
+<h2>Examples<a class="headerlink" href="#id63" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 
@@ -1288,11 +1372,32 @@ Most users will not need to use this directly.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.remove_haze">
+<span class="sig-name descname"><span class="pre">remove_haze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vol_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.remove_haze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.remove_haze" title="Link to this definition">¶</a></dt>
+<dd><p>Remove dark voxels in air.</p>
+<section id="id64">
+<h2>Parameters<a class="headerlink" href="#id64" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>level<span class="classifier">int, optional</span></dt><dd><p>Level of dehazing (1-5); larger values preserve more voxels. Default is 5.</p>
+</dd>
+<dt>vol_index<span class="classifier">int, optional</span></dt><dd><p>Index of the volume to dehaze. Default is 0.</p>
+</dd>
+</dl>
+</section>
+<section id="id65">
+<h2>Examples<a class="headerlink" href="#id65" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">remove_haze</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.save_document">
 <span class="sig-name descname"><span class="pre">save_document</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'document.nvd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.save_document"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.save_document" title="Link to this definition">¶</a></dt>
 <dd><p>Save the entire scene with settings as a document.</p>
-<section id="id59">
-<h2>Parameters<a class="headerlink" href="#id59" title="Link to this heading">¶</a></h2>
+<section id="id66">
+<h2>Parameters<a class="headerlink" href="#id66" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>file_name<span class="classifier">str</span></dt><dd><p>The file name to save the document as.</p>
 </dd>
@@ -1300,12 +1405,12 @@ Most users will not need to use this directly.</p>
 </dd>
 </dl>
 </section>
-<section id="id60">
-<h2>Returns<a class="headerlink" href="#id60" title="Link to this heading">¶</a></h2>
+<section id="id67">
+<h2>Returns<a class="headerlink" href="#id67" title="Link to this heading">¶</a></h2>
 <p>None</p>
 </section>
-<section id="id61">
-<h2>Examples<a class="headerlink" href="#id61" title="Link to this heading">¶</a></h2>
+<section id="id68">
+<h2>Examples<a class="headerlink" href="#id68" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">save_document</span><span class="p">(</span><span class="s2">&quot;mydoc.nvd&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1316,8 +1421,8 @@ Most users will not need to use this directly.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.save_html">
 <span class="sig-name descname"><span class="pre">save_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'untitled.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">canvas_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gl1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.save_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.save_html" title="Link to this definition">¶</a></dt>
 <dd><p>Save the current instance as an html page.</p>
-<section id="id62">
-<h2>Parameters<a class="headerlink" href="#id62" title="Link to this heading">¶</a></h2>
+<section id="id69">
+<h2>Parameters<a class="headerlink" href="#id69" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>file_name<span class="classifier">str</span></dt><dd><p>The file name to save the page as.</p>
 </dd>
@@ -1325,12 +1430,12 @@ Most users will not need to use this directly.</p>
 </dd>
 </dl>
 </section>
-<section id="id63">
-<h2>Returns<a class="headerlink" href="#id63" title="Link to this heading">¶</a></h2>
+<section id="id70">
+<h2>Returns<a class="headerlink" href="#id70" title="Link to this heading">¶</a></h2>
 <p>None</p>
 </section>
-<section id="id64">
-<h2>Examples<a class="headerlink" href="#id64" title="Link to this heading">¶</a></h2>
+<section id="id71">
+<h2>Examples<a class="headerlink" href="#id71" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">save_html</span><span class="p">(</span><span class="s2">&quot;mypage.html&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1341,8 +1446,8 @@ Most users will not need to use this directly.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.save_image">
 <span class="sig-name descname"><span class="pre">save_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'image.nii.gz'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_drawing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.save_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.save_image" title="Link to this definition">¶</a></dt>
 <dd><p>Save the current image as a nii file.</p>
-<section id="id65">
-<h2>Parameters<a class="headerlink" href="#id65" title="Link to this heading">¶</a></h2>
+<section id="id72">
+<h2>Parameters<a class="headerlink" href="#id72" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>file_name<span class="classifier">str</span></dt><dd><p>The file name to save the image as.</p>
 </dd>
@@ -1352,12 +1457,12 @@ Most users will not need to use this directly.</p>
 </dd>
 </dl>
 </section>
-<section id="id66">
-<h2>Returns<a class="headerlink" href="#id66" title="Link to this heading">¶</a></h2>
+<section id="id73">
+<h2>Returns<a class="headerlink" href="#id73" title="Link to this heading">¶</a></h2>
 <p>None</p>
 </section>
-<section id="id67">
-<h2>Examples<a class="headerlink" href="#id67" title="Link to this heading">¶</a></h2>
+<section id="id74">
+<h2>Examples<a class="headerlink" href="#id74" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">save_image</span><span class="p">(</span><span class="s2">&quot;myimage.nii.gz&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1368,19 +1473,19 @@ Most users will not need to use this directly.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.save_scene">
 <span class="sig-name descname"><span class="pre">save_scene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scene.png'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.save_scene"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.save_scene" title="Link to this definition">¶</a></dt>
 <dd><p>Save the current scene with the provided file name.</p>
-<section id="id68">
-<h2>Parameters<a class="headerlink" href="#id68" title="Link to this heading">¶</a></h2>
+<section id="id75">
+<h2>Parameters<a class="headerlink" href="#id75" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>file_name<span class="classifier">str</span></dt><dd><p>The file name to save the scene as.</p>
 </dd>
 </dl>
 </section>
-<section id="id69">
-<h2>Returns<a class="headerlink" href="#id69" title="Link to this heading">¶</a></h2>
+<section id="id76">
+<h2>Returns<a class="headerlink" href="#id76" title="Link to this heading">¶</a></h2>
 <p>None</p>
 </section>
-<section id="id70">
-<h2>Examples<a class="headerlink" href="#id70" title="Link to this heading">¶</a></h2>
+<section id="id77">
+<h2>Examples<a class="headerlink" href="#id77" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">save_scene</span><span class="p">(</span><span class="s2">&quot;myscene.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1391,16 +1496,16 @@ Most users will not need to use this directly.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_atlas_outline">
 <span class="sig-name descname"><span class="pre">set_atlas_outline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_atlas_outline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_atlas_outline" title="Link to this definition">¶</a></dt>
 <dd><p>Set the outline thickness for atlas label regions.</p>
-<section id="id71">
-<h2>Parameters<a class="headerlink" href="#id71" title="Link to this heading">¶</a></h2>
+<section id="id78">
+<h2>Parameters<a class="headerlink" href="#id78" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>outline<span class="classifier">float</span></dt><dd><p>The width of the outline to apply to atlas label regions.
 A value of <cite>0</cite> disables the outline.</p>
 </dd>
 </dl>
 </section>
-<section id="id72">
-<h2>Examples<a class="headerlink" href="#id72" title="Link to this heading">¶</a></h2>
+<section id="id79">
+<h2>Examples<a class="headerlink" href="#id79" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_atlas_outline</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1411,8 +1516,8 @@ A value of <cite>0</cite> disables the outline.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_clip_plane">
 <span class="sig-name descname"><span class="pre">set_clip_plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimuth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elevation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_clip_plane"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_clip_plane" title="Link to this definition">¶</a></dt>
 <dd><p>Update the clip plane orientation in 3D view mode.</p>
-<section id="id73">
-<h2>Parameters<a class="headerlink" href="#id73" title="Link to this heading">¶</a></h2>
+<section id="id80">
+<h2>Parameters<a class="headerlink" href="#id80" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>depth<span class="classifier">float</span></dt><dd><p>distance of clip plane from the center of the volume</p>
 </dd>
@@ -1422,15 +1527,15 @@ A value of <cite>0</cite> disables the outline.</p>
 </dd>
 </dl>
 </section>
-<section id="id74">
-<h2>Raises<a class="headerlink" href="#id74" title="Link to this heading">¶</a></h2>
+<section id="id81">
+<h2>Raises<a class="headerlink" href="#id81" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>TypeError</dt><dd><p>If any of the inputs are not a number.</p>
 </dd>
 </dl>
 </section>
-<section id="id75">
-<h2>Examples<a class="headerlink" href="#id75" title="Link to this heading">¶</a></h2>
+<section id="id82">
+<h2>Examples<a class="headerlink" href="#id82" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_clip_plane</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">42.0</span><span class="p">,</span> <span class="mf">42.0</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1441,8 +1546,8 @@ A value of <cite>0</cite> disables the outline.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_colormap">
 <span class="sig-name descname"><span class="pre">set_colormap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imageID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_colormap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_colormap" title="Link to this definition">¶</a></dt>
 <dd><p>Set the colormap for a volume.</p>
-<section id="id76">
-<h2>Parameters<a class="headerlink" href="#id76" title="Link to this heading">¶</a></h2>
+<section id="id83">
+<h2>Parameters<a class="headerlink" href="#id83" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>imageID<span class="classifier">str</span></dt><dd><p>The ID of the volume.</p>
 </dd>
@@ -1450,15 +1555,15 @@ A value of <cite>0</cite> disables the outline.</p>
 </dd>
 </dl>
 </section>
-<section id="id77">
-<h2>Raises<a class="headerlink" href="#id77" title="Link to this heading">¶</a></h2>
+<section id="id84">
+<h2>Raises<a class="headerlink" href="#id84" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>ValueError</dt><dd><p>If the volume with the given ID is not found.</p>
 </dd>
 </dl>
 </section>
-<section id="id78">
-<h2>Examples<a class="headerlink" href="#id78" title="Link to this heading">¶</a></h2>
+<section id="id85">
+<h2>Examples<a class="headerlink" href="#id85" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_colormap</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">&quot;green2cyan&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1469,22 +1574,22 @@ A value of <cite>0</cite> disables the outline.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_crosshair_color">
 <span class="sig-name descname"><span class="pre">set_crosshair_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_crosshair_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_crosshair_color" title="Link to this definition">¶</a></dt>
 <dd><p>Set the crosshair and colorbar outline color.</p>
-<section id="id79">
-<h2>Parameters<a class="headerlink" href="#id79" title="Link to this heading">¶</a></h2>
+<section id="id86">
+<h2>Parameters<a class="headerlink" href="#id86" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>color<span class="classifier">tuple of floats</span></dt><dd><p>An RGBA array with values ranging from 0 to 1.</p>
 </dd>
 </dl>
 </section>
-<section id="id80">
-<h2>Raises<a class="headerlink" href="#id80" title="Link to this heading">¶</a></h2>
+<section id="id87">
+<h2>Raises<a class="headerlink" href="#id87" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>ValueError</dt><dd><p>If the color is not a list of four numeric values.</p>
 </dd>
 </dl>
 </section>
-<section id="id81">
-<h2>Examples<a class="headerlink" href="#id81" title="Link to this heading">¶</a></h2>
+<section id="id88">
+<h2>Examples<a class="headerlink" href="#id88" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_crosshair_color</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -1495,16 +1600,64 @@ A value of <cite>0</cite> disables the outline.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_crosshair_width">
 <span class="sig-name descname"><span class="pre">set_crosshair_width</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_crosshair_width"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_crosshair_width" title="Link to this definition">¶</a></dt>
 <dd><p>Set the crosshair width.</p>
-<section id="id82">
-<h2>Parameters<a class="headerlink" href="#id82" title="Link to this heading">¶</a></h2>
+<section id="id89">
+<h2>Parameters<a class="headerlink" href="#id89" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>width<span class="classifier">int</span></dt><dd><p>The width of the crosshair in pixels.</p>
 </dd>
 </dl>
 </section>
-<section id="id83">
-<h2>Examples<a class="headerlink" href="#id83" title="Link to this heading">¶</a></h2>
+<section id="id90">
+<h2>Examples<a class="headerlink" href="#id90" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_crosshair_width</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_draw_colormap">
+<span class="sig-name descname"><span class="pre">set_draw_colormap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#ipyniivue.traits.ColorMap" title="ipyniivue.traits.ColorMap"><span class="pre">ColorMap</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_draw_colormap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_draw_colormap" title="Link to this definition">¶</a></dt>
+<dd><p>Set colors and labels for different drawing values.</p>
+<section id="id91">
+<h2>Parameters<a class="headerlink" href="#id91" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>colormap<span class="classifier">str or ColorMap</span></dt><dd><p>A colormap name (string) or a <cite>ColorMap</cite> instance.</p>
+</dd>
+</dl>
+</section>
+<section id="id92">
+<h2>Examples<a class="headerlink" href="#id92" title="Link to this heading">¶</a></h2>
+<dl>
+<dt>::</dt><dd><dl class="simple">
+<dt>cmap = {</dt><dd><p>‘R’: [0, 255, 0],
+‘G’: [0, 20, 0],
+‘B’: [0, 20, 80],
+‘A’: [0, 255, 255],
+‘labels’: [‘’, ‘white-matter’, ‘delete T1’],</p>
+</dd>
+</dl>
+<p>}
+nv.set_draw_colormap(cmap)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_drawing_enabled">
+<span class="sig-name descname"><span class="pre">set_drawing_enabled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drawing_enabled</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_drawing_enabled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_drawing_enabled" title="Link to this definition">¶</a></dt>
+<dd><p>Set/unset drawing state.</p>
+<section id="id93">
+<h2>Parameters<a class="headerlink" href="#id93" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>drawing_enabled: bool</dt><dd><p>enabled or not</p>
+</dd>
+</dl>
+</section>
+<section id="id94">
+<h2>Examples<a class="headerlink" href="#id94" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_drawing_enabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1514,22 +1667,22 @@ A value of <cite>0</cite> disables the outline.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_gamma">
 <span class="sig-name descname"><span class="pre">set_gamma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_gamma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_gamma" title="Link to this definition">¶</a></dt>
 <dd><p>Adjust screen gamma.</p>
-<section id="id84">
-<h2>Parameters<a class="headerlink" href="#id84" title="Link to this heading">¶</a></h2>
+<section id="id95">
+<h2>Parameters<a class="headerlink" href="#id95" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>gamma<span class="classifier">float</span></dt><dd><p>Selects luminance</p>
 </dd>
 </dl>
 </section>
-<section id="id85">
-<h2>Raises<a class="headerlink" href="#id85" title="Link to this heading">¶</a></h2>
+<section id="id96">
+<h2>Raises<a class="headerlink" href="#id96" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>TypeError</dt><dd><p>If gamma is not a number</p>
 </dd>
 </dl>
 </section>
-<section id="id86">
-<h2>Examples<a class="headerlink" href="#id86" title="Link to this heading">¶</a></h2>
+<section id="id97">
+<h2>Examples<a class="headerlink" href="#id97" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_gamma</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1540,8 +1693,8 @@ A value of <cite>0</cite> disables the outline.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_high_resolution_capable">
 <span class="sig-name descname"><span class="pre">set_high_resolution_capable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force_device_pixel_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_high_resolution_capable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_high_resolution_capable" title="Link to this definition">¶</a></dt>
 <dd><p>Force the rendering canvas to use a high-resolution display.</p>
-<section id="id87">
-<h2>Parameters<a class="headerlink" href="#id87" title="Link to this heading">¶</a></h2>
+<section id="id98">
+<h2>Parameters<a class="headerlink" href="#id98" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>force_device_pixel_ratio<span class="classifier">int or bool</span></dt><dd><p>Determines how the device pixel ratio is handled.
 <code class="docutils literal notranslate"><span class="pre">True</span></code> allows high DPI (equivalent to <code class="docutils literal notranslate"><span class="pre">0</span></code>).
@@ -1549,8 +1702,8 @@ A value of <cite>0</cite> disables the outline.</p>
 </dd>
 </dl>
 </section>
-<section id="id88">
-<h2>Examples<a class="headerlink" href="#id88" title="Link to this heading">¶</a></h2>
+<section id="id99">
+<h2>Examples<a class="headerlink" href="#id99" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_high_resolution_capable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1561,16 +1714,16 @@ A value of <cite>0</cite> disables the outline.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_interpolation">
 <span class="sig-name descname"><span class="pre">set_interpolation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_nearest</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_interpolation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_interpolation" title="Link to this definition">¶</a></dt>
 <dd><p>Select between nearest neighbor and linear interpolation for images.</p>
-<section id="id89">
-<h2>Parameters<a class="headerlink" href="#id89" title="Link to this heading">¶</a></h2>
+<section id="id100">
+<h2>Parameters<a class="headerlink" href="#id100" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>is_nearest<span class="classifier">bool</span></dt><dd><p>If True, use nearest neighbor interpolation.
 If False, use linear interpolation.</p>
 </dd>
 </dl>
 </section>
-<section id="id90">
-<h2>Examples<a class="headerlink" href="#id90" title="Link to this heading">¶</a></h2>
+<section id="id101">
+<h2>Examples<a class="headerlink" href="#id101" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_interpolation</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1581,8 +1734,8 @@ If False, use linear interpolation.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_mesh_layer_property">
 <span class="sig-name descname"><span class="pre">set_mesh_layer_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_mesh_layer_property"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_mesh_layer_property" title="Link to this definition">¶</a></dt>
 <dd><p>Set a property of a mesh layer.</p>
-<section id="id91">
-<h2>Parameters<a class="headerlink" href="#id91" title="Link to this heading">¶</a></h2>
+<section id="id102">
+<h2>Parameters<a class="headerlink" href="#id102" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>mesh_id<span class="classifier">str</span></dt><dd><p>Identifier of the mesh to change (mesh id).</p>
 </dd>
@@ -1594,8 +1747,8 @@ If False, use linear interpolation.</p>
 </dd>
 </dl>
 </section>
-<section id="id92">
-<h2>Raises<a class="headerlink" href="#id92" title="Link to this heading">¶</a></h2>
+<section id="id103">
+<h2>Raises<a class="headerlink" href="#id103" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>ValueError</dt><dd><p>If the attribute is not allowed or the mesh is not found.</p>
 </dd>
@@ -1603,8 +1756,8 @@ If False, use linear interpolation.</p>
 </dd>
 </dl>
 </section>
-<section id="id93">
-<h2>Examples<a class="headerlink" href="#id93" title="Link to this heading">¶</a></h2>
+<section id="id104">
+<h2>Examples<a class="headerlink" href="#id104" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_mesh_layer_property</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;opacity&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1615,8 +1768,8 @@ If False, use linear interpolation.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_mesh_property">
 <span class="sig-name descname"><span class="pre">set_mesh_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_mesh_property"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_mesh_property" title="Link to this definition">¶</a></dt>
 <dd><p>Set a property of a mesh.</p>
-<section id="id94">
-<h2>Parameters<a class="headerlink" href="#id94" title="Link to this heading">¶</a></h2>
+<section id="id105">
+<h2>Parameters<a class="headerlink" href="#id105" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>mesh_id<span class="classifier">str</span></dt><dd><p>Identifier of the mesh to change (mesh id).</p>
 </dd>
@@ -1626,15 +1779,15 @@ If False, use linear interpolation.</p>
 </dd>
 </dl>
 </section>
-<section id="id95">
-<h2>Raises<a class="headerlink" href="#id95" title="Link to this heading">¶</a></h2>
+<section id="id106">
+<h2>Raises<a class="headerlink" href="#id106" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>ValueError</dt><dd><p>If the attribute is not allowed or the mesh is not found.</p>
 </dd>
 </dl>
 </section>
-<section id="id96">
-<h2>Examples<a class="headerlink" href="#id96" title="Link to this heading">¶</a></h2>
+<section id="id107">
+<h2>Examples<a class="headerlink" href="#id107" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_mesh_property</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s1">&#39;opacity&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1645,8 +1798,8 @@ If False, use linear interpolation.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_mesh_shader">
 <span class="sig-name descname"><span class="pre">set_mesh_shader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_shader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_mesh_shader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_mesh_shader" title="Link to this definition">¶</a></dt>
 <dd><p>Set the shader for a mesh.</p>
-<section id="id97">
-<h2>Parameters<a class="headerlink" href="#id97" title="Link to this heading">¶</a></h2>
+<section id="id108">
+<h2>Parameters<a class="headerlink" href="#id108" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>mesh_id<span class="classifier">str</span></dt><dd><p>Identifier of the mesh to change (mesh id).</p>
 </dd>
@@ -1654,8 +1807,8 @@ If False, use linear interpolation.</p>
 </dd>
 </dl>
 </section>
-<section id="id98">
-<h2>Raises<a class="headerlink" href="#id98" title="Link to this heading">¶</a></h2>
+<section id="id109">
+<h2>Raises<a class="headerlink" href="#id109" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>ValueError</dt><dd><p>If the mesh is not found.
 If the mesh shader is not found.</p>
@@ -1664,9 +1817,50 @@ If the mesh shader is not found.</p>
 </dd>
 </dl>
 </section>
-<section id="id99">
-<h2>Examples<a class="headerlink" href="#id99" title="Link to this heading">¶</a></h2>
+<section id="id110">
+<h2>Examples<a class="headerlink" href="#id110" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_mesh_shader</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s1">&#39;toon&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_pen_value">
+<span class="sig-name descname"><span class="pre">set_pen_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pen_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_filled_pen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_pen_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_pen_value" title="Link to this definition">¶</a></dt>
+<dd><p>Determine color and style of drawing.</p>
+<section id="id111">
+<h2>Parameters<a class="headerlink" href="#id111" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>pen_value<span class="classifier">int</span></dt><dd><p>sets the color of the pen</p>
+</dd>
+<dt>is_filled_pen<span class="classifier">bool</span></dt><dd><p>determines if dragging creates flood-filled shape</p>
+</dd>
+</dl>
+</section>
+<section id="id112">
+<h2>Examples<a class="headerlink" href="#id112" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_pen_value</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_radiological_convention">
+<span class="sig-name descname"><span class="pre">set_radiological_convention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_radiological_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_radiological_convention"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_radiological_convention" title="Link to this definition">¶</a></dt>
+<dd><p>Set radiological or neurological convention for 2D slices.</p>
+<section id="id113">
+<h2>Parameters<a class="headerlink" href="#id113" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>is_radiological_convention<span class="classifier">bool</span></dt><dd><p>If True, use radiological convention.
+If False, use neurological convention.</p>
+</dd>
+</dl>
+</section>
+<section id="id114">
+<h2>Examples<a class="headerlink" href="#id114" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_radiological_convention</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1676,8 +1870,8 @@ If the mesh shader is not found.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_render_azimuth_elevation">
 <span class="sig-name descname"><span class="pre">set_render_azimuth_elevation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">azimuth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elevation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_render_azimuth_elevation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_render_azimuth_elevation" title="Link to this definition">¶</a></dt>
 <dd><p>Set the rotation of the 3D render view.</p>
-<section id="id100">
-<h2>Parameters<a class="headerlink" href="#id100" title="Link to this heading">¶</a></h2>
+<section id="id115">
+<h2>Parameters<a class="headerlink" href="#id115" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>azimuth<span class="classifier">float</span></dt><dd><p>The azimuth angle in degrees around the object.</p>
 </dd>
@@ -1685,15 +1879,15 @@ If the mesh shader is not found.</p>
 </dd>
 </dl>
 </section>
-<section id="id101">
-<h2>Raises<a class="headerlink" href="#id101" title="Link to this heading">¶</a></h2>
+<section id="id116">
+<h2>Raises<a class="headerlink" href="#id116" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>TypeError</dt><dd><p>If azimuth or elevation is not a number.</p>
 </dd>
 </dl>
 </section>
-<section id="id102">
-<h2>Examples<a class="headerlink" href="#id102" title="Link to this heading">¶</a></h2>
+<section id="id117">
+<h2>Examples<a class="headerlink" href="#id117" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_render_azimuth_elevation</span><span class="p">(</span><span class="mi">45</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1704,23 +1898,42 @@ If the mesh shader is not found.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_selection_box_color">
 <span class="sig-name descname"><span class="pre">set_selection_box_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_selection_box_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_selection_box_color" title="Link to this definition">¶</a></dt>
 <dd><p>Set the selection box color.</p>
-<section id="id103">
-<h2>Parameters<a class="headerlink" href="#id103" title="Link to this heading">¶</a></h2>
+<section id="id118">
+<h2>Parameters<a class="headerlink" href="#id118" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>color<span class="classifier">tuple of floats</span></dt><dd><p>An RGBA array with values ranging from 0 to 1.</p>
 </dd>
 </dl>
 </section>
-<section id="id104">
-<h2>Raises<a class="headerlink" href="#id104" title="Link to this heading">¶</a></h2>
+<section id="id119">
+<h2>Raises<a class="headerlink" href="#id119" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>ValueError</dt><dd><p>If the color is not a list of four numeric values.</p>
 </dd>
 </dl>
 </section>
-<section id="id105">
-<h2>Examples<a class="headerlink" href="#id105" title="Link to this heading">¶</a></h2>
+<section id="id120">
+<h2>Examples<a class="headerlink" href="#id120" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_selection_box_color</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_slice_mm">
+<span class="sig-name descname"><span class="pre">set_slice_mm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_slice_mm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_slice_mm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_slice_mm" title="Link to this definition">¶</a></dt>
+<dd><p>Control 2D slice view mode.</p>
+<section id="id121">
+<h2>Parameters<a class="headerlink" href="#id121" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>is_slice_mm<span class="classifier">bool</span></dt><dd><p>Control whether 2D slices use world space (True) or voxel space (False).</p>
+</dd>
+</dl>
+</section>
+<section id="id122">
+<h2>Examples<a class="headerlink" href="#id122" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_slice_mm</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1730,22 +1943,22 @@ If the mesh shader is not found.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_slice_type">
 <span class="sig-name descname"><span class="pre">set_slice_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="enums.html#ipyniivue.constants.SliceType" title="ipyniivue.constants.SliceType"><span class="pre">SliceType</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_slice_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_slice_type" title="Link to this definition">¶</a></dt>
 <dd><p>Set the type of slice display.</p>
-<section id="id106">
-<h2>Parameters<a class="headerlink" href="#id106" title="Link to this heading">¶</a></h2>
+<section id="id123">
+<h2>Parameters<a class="headerlink" href="#id123" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>slice_type<span class="classifier">SliceType</span></dt><dd><p>The type of slice display.</p>
 </dd>
 </dl>
 </section>
-<section id="id107">
-<h2>Raises<a class="headerlink" href="#id107" title="Link to this heading">¶</a></h2>
+<section id="id124">
+<h2>Raises<a class="headerlink" href="#id124" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>TypeError</dt><dd><p>If slice_type is not a valid SliceType.</p>
 </dd>
 </dl>
 </section>
-<section id="id108">
-<h2>Examples<a class="headerlink" href="#id108" title="Link to this heading">¶</a></h2>
+<section id="id125">
+<h2>Examples<a class="headerlink" href="#id125" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_slice_type</span><span class="p">(</span><span class="n">SliceType</span><span class="o">.</span><span class="n">AXIAL</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1756,8 +1969,8 @@ If the mesh shader is not found.</p>
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_volume_render_illumination">
 <span class="sig-name descname"><span class="pre">set_volume_render_illumination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gradient_amount</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_volume_render_illumination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_volume_render_illumination" title="Link to this definition">¶</a></dt>
 <dd><p>Set proportion of volume rendering influenced by selected matcap.</p>
-<section id="id109">
-<h2>Parameters<a class="headerlink" href="#id109" title="Link to this heading">¶</a></h2>
+<section id="id126">
+<h2>Parameters<a class="headerlink" href="#id126" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>gradient_amount<span class="classifier">float</span></dt><dd><p>Amount of matcap (<code class="docutils literal notranslate"><span class="pre">NaN</span></code> or <code class="docutils literal notranslate"><span class="pre">0..1</span></code>).
 Default is <code class="docutils literal notranslate"><span class="pre">0.0</span></code> (matte, surface normal does not influence color).
@@ -1765,8 +1978,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd>
 </dl>
 </section>
-<section id="id110">
-<h2>Examples<a class="headerlink" href="#id110" title="Link to this heading">¶</a></h2>
+<section id="id127">
+<h2>Examples<a class="headerlink" href="#id127" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_volume_render_illumination</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1777,15 +1990,15 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.volumes">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">volumes</span></span><a class="headerlink" href="#ipyniivue.widget.NiiVue.volumes" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the list of volumes.</p>
-<section id="id111">
-<h2>Returns<a class="headerlink" href="#id111" title="Link to this heading">¶</a></h2>
+<section id="id128">
+<h2>Returns<a class="headerlink" href="#id128" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>list</dt><dd><p>A list of dictionairies containing the volume information.</p>
 </dd>
 </dl>
 </section>
-<section id="id112">
-<h2>Examples<a class="headerlink" href="#id112" title="Link to this heading">¶</a></h2>
+<section id="id129">
+<h2>Examples<a class="headerlink" href="#id129" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1799,8 +2012,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.widget.</span></span><span class="sig-name descname"><span class="pre">Volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.Volume" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AnyWidget</span></code></p>
 <p>Represents a Volume model.</p>
-<section id="id113">
-<h2>Parameters<a class="headerlink" href="#id113" title="Link to this heading">¶</a></h2>
+<section id="id130">
+<h2>Parameters<a class="headerlink" href="#id130" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>path<span class="classifier">str or pathlib.Path</span></dt><dd><p>Path to the volume data file; cannot be modified once set.</p>
 </dd>
@@ -1903,8 +2116,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <dt class="sig sig-object py" id="ipyniivue.widget.Volume.set_colormap_label">
 <span class="sig-name descname"><span class="pre">set_colormap_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colormap_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume.set_colormap_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.Volume.set_colormap_label" title="Link to this definition">¶</a></dt>
 <dd><p>Set colormap label for the volume.</p>
-<section id="id114">
-<h3>Parameters<a class="headerlink" href="#id114" title="Link to this heading">¶</a></h3>
+<section id="id131">
+<h3>Parameters<a class="headerlink" href="#id131" title="Link to this heading">¶</a></h3>
 <dl>
 <dt>colormap_data<span class="classifier">dict</span></dt><dd><p>The colormap dict data.</p>
 <p>Colormaps contain the following keys (‘R’, ‘G’, ‘B’ are required):</p>
@@ -1921,8 +2134,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd>
 </dl>
 </section>
-<section id="id115">
-<h3>Examples<a class="headerlink" href="#id115" title="Link to this heading">¶</a></h3>
+<section id="id132">
+<h3>Examples<a class="headerlink" href="#id132" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_colormap_label</span><span class="p">(</span><span class="n">colormap_data</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1933,15 +2146,15 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <dt class="sig sig-object py" id="ipyniivue.widget.Volume.set_colormap_label_from_url">
 <span class="sig-name descname"><span class="pre">set_colormap_label_from_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume.set_colormap_label_from_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.Volume.set_colormap_label_from_url" title="Link to this definition">¶</a></dt>
 <dd><p>Set colormap label from a URL.</p>
-<section id="id116">
-<h3>Parameters<a class="headerlink" href="#id116" title="Link to this heading">¶</a></h3>
+<section id="id133">
+<h3>Parameters<a class="headerlink" href="#id133" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>url<span class="classifier">str</span></dt><dd><p>The colormap json url.</p>
 </dd>
 </dl>
 </section>
-<section id="id117">
-<h3>Examples<a class="headerlink" href="#id117" title="Link to this heading">¶</a></h3>
+<section id="id134">
+<h3>Examples<a class="headerlink" href="#id134" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_colormap_label_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1956,8 +2169,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.widget.</span></span><span class="sig-name descname"><span class="pre">Mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.Mesh" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AnyWidget</span></code></p>
 <p>Represents a Mesh model.</p>
-<section id="id118">
-<h2>Parameters<a class="headerlink" href="#id118" title="Link to this heading">¶</a></h2>
+<section id="id135">
+<h2>Parameters<a class="headerlink" href="#id135" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>path<span class="classifier">str or pathlib.Path</span></dt><dd><p>Path to the mesh file. Cannot be modified once set.</p>
 </dd>
@@ -2083,8 +2296,8 @@ See <a class="reference internal" href="#ipyniivue.widget.MeshLayer" title="ipyn
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.widget.</span></span><span class="sig-name descname"><span class="pre">MeshLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#MeshLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.MeshLayer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AnyWidget</span></code></p>
 <p>Represents a layer within a Mesh model.</p>
-<section id="id119">
-<h2>Parameters<a class="headerlink" href="#id119" title="Link to this heading">¶</a></h2>
+<section id="id136">
+<h2>Parameters<a class="headerlink" href="#id136" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>path<span class="classifier">str or pathlib.Path</span></dt><dd><p>Path to the layer data file. Cannot be modified once set.</p>
 </dd>
@@ -2186,62 +2399,12 @@ Default is ‘winter’.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="ipyniivue.widget.Drawing">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.widget.</span></span><span class="sig-name descname"><span class="pre">Drawing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Drawing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.Drawing" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AnyWidget</span></code></p>
-<p>Represents a Drawing model.</p>
-<section id="id120">
-<h2>Parameters<a class="headerlink" href="#id120" title="Link to this heading">¶</a></h2>
-<dl class="simple">
-<dt>path<span class="classifier">str or pathlib.Path</span></dt><dd><p>Path to the drawing data file; cannot be modified once set.</p>
-</dd>
-<dt>opacity<span class="classifier">float, optional</span></dt><dd><p>Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.</p>
-</dd>
-<dt>colormap<span class="classifier">list of int, optional</span></dt><dd><p>RGBA color as a list of four integers (0 to 255). Default is [0, 0, 0, 0].</p>
-</dd>
-<dt>colorbar_visible<span class="classifier">bool, optional</span></dt><dd><p>Show colorbar associated with the drawing. Default is True.</p>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ipyniivue.widget.Drawing.colorbar_visible">
-<span class="sig-name descname"><span class="pre">colorbar_visible</span></span><a class="headerlink" href="#ipyniivue.widget.Drawing.colorbar_visible" title="Link to this definition">¶</a></dt>
-<dd><p>A boolean (True, False) trait.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ipyniivue.widget.Drawing.colormap">
-<span class="sig-name descname"><span class="pre">colormap</span></span><a class="headerlink" href="#ipyniivue.widget.Drawing.colormap" title="Link to this definition">¶</a></dt>
-<dd><p>An instance of a Python list.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ipyniivue.widget.Drawing.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#ipyniivue.widget.Drawing.id" title="Link to this definition">¶</a></dt>
-<dd><p>A trait for unicode strings.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ipyniivue.widget.Drawing.opacity">
-<span class="sig-name descname"><span class="pre">opacity</span></span><a class="headerlink" href="#ipyniivue.widget.Drawing.opacity" title="Link to this definition">¶</a></dt>
-<dd><p>A float trait.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ipyniivue.widget.Drawing.path">
-<span class="sig-name descname"><span class="pre">path</span></span><a class="headerlink" href="#ipyniivue.widget.Drawing.path" title="Link to this definition">¶</a></dt>
-<dd><p>A trait type representing a Union type.</p>
-</dd></dl>
-
-</section>
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="ipyniivue.traits.ColorMap">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.traits.</span></span><span class="sig-name descname"><span class="pre">ColorMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/traits.html#ColorMap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.traits.ColorMap" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">HasTraits</span></code></p>
 <p>Represents a ColorMap.</p>
-<section id="id121">
-<h2>Parameters<a class="headerlink" href="#id121" title="Link to this heading">¶</a></h2>
+<section id="id137">
+<h2>Parameters<a class="headerlink" href="#id137" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>R<span class="classifier">list of float</span></dt><dd><p>The red channel values.</p>
 </dd>
@@ -2328,8 +2491,8 @@ Default is None.</p>
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.traits.</span></span><span class="sig-name descname"><span class="pre">LUT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/traits.html#LUT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.traits.LUT" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">HasTraits</span></code></p>
 <p>Represents a Lookup Table (LUT / Colormap Label).</p>
-<section id="id122">
-<h2>Parameters<a class="headerlink" href="#id122" title="Link to this heading">¶</a></h2>
+<section id="id138">
+<h2>Parameters<a class="headerlink" href="#id138" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>lut<span class="classifier">list of int</span></dt><dd><p>A flat list representing the RGBA values of the lookup table.</p>
 </dd>
@@ -2445,18 +2608,25 @@ Default is None.</p>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.background_masks_overlays"><code class="docutils literal notranslate"><span class="pre">NiiVue.background_masks_overlays</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.clip_plane_depth_azi_elev"><code class="docutils literal notranslate"><span class="pre">NiiVue.clip_plane_depth_azi_elev</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.close"><code class="docutils literal notranslate"><span class="pre">NiiVue.close()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.close_drawing"><code class="docutils literal notranslate"><span class="pre">NiiVue.close_drawing()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.colormap_from_key"><code class="docutils literal notranslate"><span class="pre">NiiVue.colormap_from_key()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.colormaps"><code class="docutils literal notranslate"><span class="pre">NiiVue.colormaps()</span></code></a></li>
-<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.drawings"><code class="docutils literal notranslate"><span class="pre">NiiVue.drawings</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.draw_fill_overwrites"><code class="docutils literal notranslate"><span class="pre">NiiVue.draw_fill_overwrites</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.draw_grow_cut"><code class="docutils literal notranslate"><span class="pre">NiiVue.draw_grow_cut()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.draw_lut"><code class="docutils literal notranslate"><span class="pre">NiiVue.draw_lut</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.draw_opacity"><code class="docutils literal notranslate"><span class="pre">NiiVue.draw_opacity</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.draw_otsu"><code class="docutils literal notranslate"><span class="pre">NiiVue.draw_otsu()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.draw_undo"><code class="docutils literal notranslate"><span class="pre">NiiVue.draw_undo()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.get_mesh_index_by_id"><code class="docutils literal notranslate"><span class="pre">NiiVue.get_mesh_index_by_id()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.get_volume_index_by_id"><code class="docutils literal notranslate"><span class="pre">NiiVue.get_volume_index_by_id()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.height"><code class="docutils literal notranslate"><span class="pre">NiiVue.height</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.id"><code class="docutils literal notranslate"><span class="pre">NiiVue.id</span></code></a></li>
-<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.load_drawings"><code class="docutils literal notranslate"><span class="pre">NiiVue.load_drawings()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.load_mat_cap_texture"><code class="docutils literal notranslate"><span class="pre">NiiVue.load_mat_cap_texture()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.load_meshes"><code class="docutils literal notranslate"><span class="pre">NiiVue.load_meshes()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.load_volumes"><code class="docutils literal notranslate"><span class="pre">NiiVue.load_volumes()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.mesh_shader_names"><code class="docutils literal notranslate"><span class="pre">NiiVue.mesh_shader_names()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.meshes"><code class="docutils literal notranslate"><span class="pre">NiiVue.meshes</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.move_crosshair_in_vox"><code class="docutils literal notranslate"><span class="pre">NiiVue.move_crosshair_in_vox()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.on_azimuth_elevation_change"><code class="docutils literal notranslate"><span class="pre">NiiVue.on_azimuth_elevation_change()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.on_click_to_segment"><code class="docutils literal notranslate"><span class="pre">NiiVue.on_click_to_segment()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.on_clip_plane_change"><code class="docutils literal notranslate"><span class="pre">NiiVue.on_clip_plane_change()</span></code></a></li>
@@ -2472,6 +2642,7 @@ Default is None.</p>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.on_mouse_up"><code class="docutils literal notranslate"><span class="pre">NiiVue.on_mouse_up()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.on_volume_added_from_url"><code class="docutils literal notranslate"><span class="pre">NiiVue.on_volume_added_from_url()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.on_volume_updated"><code class="docutils literal notranslate"><span class="pre">NiiVue.on_volume_updated()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.remove_haze"><code class="docutils literal notranslate"><span class="pre">NiiVue.remove_haze()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.save_document"><code class="docutils literal notranslate"><span class="pre">NiiVue.save_document()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.save_html"><code class="docutils literal notranslate"><span class="pre">NiiVue.save_html()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.save_image"><code class="docutils literal notranslate"><span class="pre">NiiVue.save_image()</span></code></a></li>
@@ -2481,14 +2652,19 @@ Default is None.</p>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_colormap"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_colormap()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_crosshair_color"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_crosshair_color()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_crosshair_width"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_crosshair_width()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_draw_colormap"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_draw_colormap()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_drawing_enabled"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_drawing_enabled()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_gamma"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_gamma()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_high_resolution_capable"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_high_resolution_capable()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_interpolation"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_interpolation()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_mesh_layer_property"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_mesh_layer_property()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_mesh_property"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_mesh_property()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_mesh_shader"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_mesh_shader()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_pen_value"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_pen_value()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_radiological_convention"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_radiological_convention()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_render_azimuth_elevation"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_render_azimuth_elevation()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_selection_box_color"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_selection_box_color()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_slice_mm"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_slice_mm()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_slice_type"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_slice_type()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.set_volume_render_illumination"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_volume_render_illumination()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.NiiVue.volumes"><code class="docutils literal notranslate"><span class="pre">NiiVue.volumes</span></code></a></li>
@@ -2546,14 +2722,6 @@ Default is None.</p>
 <li><a class="reference internal" href="#ipyniivue.widget.MeshLayer.outline_border"><code class="docutils literal notranslate"><span class="pre">MeshLayer.outline_border</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.MeshLayer.path"><code class="docutils literal notranslate"><span class="pre">MeshLayer.path</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.widget.MeshLayer.use_negative_cmap"><code class="docutils literal notranslate"><span class="pre">MeshLayer.use_negative_cmap</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#ipyniivue.widget.Drawing"><code class="docutils literal notranslate"><span class="pre">Drawing</span></code></a><ul>
-<li><a class="reference internal" href="#ipyniivue.widget.Drawing.colorbar_visible"><code class="docutils literal notranslate"><span class="pre">Drawing.colorbar_visible</span></code></a></li>
-<li><a class="reference internal" href="#ipyniivue.widget.Drawing.colormap"><code class="docutils literal notranslate"><span class="pre">Drawing.colormap</span></code></a></li>
-<li><a class="reference internal" href="#ipyniivue.widget.Drawing.id"><code class="docutils literal notranslate"><span class="pre">Drawing.id</span></code></a></li>
-<li><a class="reference internal" href="#ipyniivue.widget.Drawing.opacity"><code class="docutils literal notranslate"><span class="pre">Drawing.opacity</span></code></a></li>
-<li><a class="reference internal" href="#ipyniivue.widget.Drawing.path"><code class="docutils literal notranslate"><span class="pre">Drawing.path</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ipyniivue.traits.ColorMap"><code class="docutils literal notranslate"><span class="pre">ColorMap</span></code></a><ul>

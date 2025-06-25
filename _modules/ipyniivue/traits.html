@@ -295,18 +295,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span></div>
 
 
-    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_color_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
         <span class="n">lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">)]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">:</span>
             <span class="n">lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">:</span>
-            <span class="n">lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
             <span class="n">lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">))</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">lengths</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;R, G, B, A, and labels lists must be the same length.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_I_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span>
-                <span class="s2">&quot;All lists (R, G, B, A, I, labels) must be the same length.&quot;</span>
+                <span class="s2">&quot;I list must be either empty or match the length of R, G, and B.&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
 

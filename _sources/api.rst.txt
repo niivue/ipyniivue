@@ -21,11 +21,6 @@ API Documentation
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: ipyniivue.widget.Drawing
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 .. autoclass:: ipyniivue.traits.ColorMap
    :members:
    :undoc-members:

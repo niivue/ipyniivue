@@ -240,14 +240,16 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ipyniivue.widget</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Widgets representing NiiVue model instances as well as volume, mesh, and drawing models.</span>
+<span class="sd">Widgets representing NiiVue, Volume, Mesh, and Mesh Model instances.</span>
 
-<span class="sd">Aside from setting up the Mesh, Volume, Drawing, and NiiVue widgets, this module</span>
+<span class="sd">Aside from setting up the Mesh, Volume, and NiiVue widgets, this module</span>
 <span class="sd">contains many of the classes needed to make NiiVue instances work, such as classes</span>
 <span class="sd">to load objects in, change attributes of this instance, and more.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
@@ -264,7 +266,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.traits</span><span class="w"> </span><span class="kn">import</span> <span class="n">LUT</span><span class="p">,</span> <span class="n">ColorMap</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">deserialize_colormap_label</span><span class="p">,</span>
+    <span class="n">deserialize_options</span><span class="p">,</span>
     <span class="n">file_serializer</span><span class="p">,</span>
+    <span class="n">make_draw_lut</span><span class="p">,</span>
     <span class="n">make_label_lut</span><span class="p">,</span>
     <span class="n">serialize_colormap_label</span><span class="p">,</span>
     <span class="n">serialize_options</span><span class="p">,</span>
@@ -582,50 +586,6 @@
 
 
 
-<div class="viewcode-block" id="Drawing">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Drawing">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Drawing</span><span class="p">(</span><span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents a Drawing model.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    path : str or pathlib.Path</span>
-<span class="sd">        Path to the drawing data file; cannot be modified once set.</span>
-<span class="sd">    opacity : float, optional</span>
-<span class="sd">        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.</span>
-<span class="sd">    colormap : list of int, optional</span>
-<span class="sd">        RGBA color as a list of four integers (0 to 255). Default is [0, 0, 0, 0].</span>
-<span class="sd">    colorbar_visible : bool, optional</span>
-<span class="sd">        Show colorbar associated with the drawing. Default is True.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
-        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span>
-    <span class="p">)</span>
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">colormap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">colorbar_visible</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="s2">&quot;path&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify path once set.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
-
-    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify id once set.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
-
-
-
 <div class="viewcode-block" id="NiiVue">
 <a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NiiVue</span><span class="p">(</span><span class="n">OptionsMixin</span><span class="p">,</span> <span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
@@ -641,7 +601,9 @@
     <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">height</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">()</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">_opts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Dict</span><span class="p">({})</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_options</span><span class="p">)</span>
+    <span class="n">_opts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Dict</span><span class="p">({})</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_options</span><span class="p">,</span> <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_options</span>
+    <span class="p">)</span>
     <span class="n">_volumes</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">Volume</span><span class="p">),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">ipywidgets</span><span class="o">.</span><span class="n">widget_serialization</span>
     <span class="p">)</span>
@@ -654,6 +616,13 @@
     <span class="n">clip_plane_depth_azi_elev</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
         <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">minlen</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">3</span>
     <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">draw_lut</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">LUT</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_colormap_label</span><span class="p">,</span>
+        <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_colormap_label</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">draw_opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">draw_fill_overwrites</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="nd">@t</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_default_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -687,8 +656,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">on_msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_custom_msg</span><span class="p">)</span>
 
-        <span class="c1"># extras</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_added_colormaps</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span></div>
+        <span class="c1"># colormaps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_initial_colormaps</span><span class="p">()</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_register_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -885,52 +854,6 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">)</span>
-
-<div class="viewcode-block" id="NiiVue.load_drawings">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.load_drawings">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">load_drawings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drawings</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Load a list of drawings objects.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        drawings : list</span>
-<span class="sd">            A list of dictionaries containing the drawing information.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        ::</span>
-
-<span class="sd">            nv = NiiVue()</span>
-<span class="sd">            nv.load_drawings([{&quot;path&quot;: &quot;lesion.nii.gz&quot;}])</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">drawings</span> <span class="o">=</span> <span class="p">[</span><span class="n">Drawing</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">drawings</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_drawings</span> <span class="o">=</span> <span class="n">drawings</span></div>
-
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">drawings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the list of drawings.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        list</span>
-<span class="sd">            A list of dictionairies containing the drawing information.</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        ::</span>
-
-<span class="sd">            print(nv.drawings)</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drawings</span><span class="p">)</span>
 
 <div class="viewcode-block" id="NiiVue.load_meshes">
 <a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.load_meshes">[docs]</a>
@@ -1227,6 +1150,26 @@
         <span class="nb">setattr</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_initial_colormaps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">colormaps_dir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;static&quot;</span> <span class="o">/</span> <span class="s2">&quot;colormaps&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">colormaps_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">colormap_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">colormaps_dir</span> <span class="o">/</span> <span class="s2">&quot;*.json&quot;</span><span class="p">))</span>
+
+        <span class="n">cluts</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">colormap_files</span><span class="p">:</span>
+            <span class="n">file</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">cmap_name</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">stem</span>
+            <span class="n">file_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cluts</span><span class="p">[</span><span class="n">cmap_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">ColorMap</span><span class="p">(</span><span class="o">**</span><span class="n">file_data</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">cluts</span>
+
 <div class="viewcode-block" id="NiiVue.colormaps">
 <a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.colormaps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">colormaps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1243,91 +1186,7 @@
 
 <span class="sd">            colormaps = nv.colormaps()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">fallback_colormaps</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;actc&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;afni_blues_inv&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;afni_reds_inv&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;batlow&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;bcgwhw&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;bcgwhw_dark&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;blue2cyan&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;blue2magenta&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;blue2red&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;bluegrn&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;bone&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;bronze&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;cet_l17&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;cividis&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;cool&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;copper&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;copper2&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_airways&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_artery&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_bones&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_brain&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_brain_gray&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_cardiac&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_head&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_kidneys&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_liver&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_muscles&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_scalp&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_skull&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_soft&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_soft_tissue&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_surface&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_vessels&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ct_w_contrast&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;cubehelix&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;electric_blue&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;freesurfer&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ge_color&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;gold&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;gray&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;green&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;green2cyan&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;green2orange&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;hot&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;hotiron&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;hsv&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;inferno&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;jet&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;kry&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;linspecer&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;lipari&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;magma&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;mako&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;navia&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;nih&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;plasma&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;random&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;red&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;redyell&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;rocket&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roi_i256&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;surface&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;thermal&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;turbo&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;violet&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;viridis&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;warm&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;winter&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;x_rain&quot;</span><span class="p">,</span>
-        <span class="p">]</span>
-        <span class="n">colormaps_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;static&quot;</span> <span class="o">/</span> <span class="s2">&quot;colormaps.txt&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">colormaps_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">colormaps_list</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">fallback_colormaps</span>
-
-        <span class="c1"># add custom colormap names</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_added_colormaps</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">colormaps_list</span><span class="p">:</span>
-                <span class="n">colormaps_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">colormaps_list</span></div>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.add_colormap">
@@ -1362,43 +1221,10 @@
 <span class="sd">            })</span>
 <span class="sd">            nv.set_colormap(nv.volumes[0].id, &quot;custom_color_map&quot;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Validate that required keys are present and are lists of numbers</span>
-        <span class="n">required_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">required_keys</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">color_map</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ColorMap must include required key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color_map</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ColorMap key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; must be a list&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">color_map</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All elements in ColorMap key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; must be numbers&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Check that all required lists have the same length</span>
-        <span class="n">lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">color_map</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">required_keys</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">lengths</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All &#39;R&#39;, &#39;G&#39;, &#39;B&#39; lists must have the same length&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Validate optional keys</span>
-        <span class="k">if</span> <span class="s2">&quot;min&quot;</span> <span class="ow">in</span> <span class="n">color_map</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color_map</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;ColorMap &#39;min&#39; must be a number&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="s2">&quot;max&quot;</span> <span class="ow">in</span> <span class="n">color_map</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color_map</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;ColorMap &#39;max&#39; must be a number&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="s2">&quot;labels&quot;</span> <span class="ow">in</span> <span class="n">color_map</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color_map</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;ColorMap &#39;labels&#39; must be a list of strings&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">color_map</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;All elements in ColorMap &#39;labels&#39; must be strings&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">color_map</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="n">lengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;ColorMap &#39;labels&#39; must have the same length as &#39;R&#39;, &#39;G&#39;, &#39;B&#39; lists&quot;</span>
-                <span class="p">)</span>
-
-        <span class="c1"># Save the colormap name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_added_colormaps</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span><span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">ColorMap</span><span class="p">(</span><span class="o">**</span><span class="n">color_map</span><span class="p">)</span>
 
         <span class="c1"># Send the colormap to the frontend</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;add_colormap&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">name</span><span class="p">,</span> <span class="n">color_map</span><span class="p">]})</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;add_colormap&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">color_map</span><span class="p">]})</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.set_colormap">
@@ -1840,6 +1666,251 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_nearest_interpolation</span> <span class="o">=</span> <span class="n">is_nearest</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_interpolation&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">is_nearest</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_pen_value">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_pen_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_pen_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pen_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">is_filled_pen</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine color and style of drawing.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pen_value : int</span>
+<span class="sd">            sets the color of the pen</span>
+<span class="sd">        is_filled_pen : bool</span>
+<span class="sd">            determines if dragging creates flood-filled shape</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_pen_value(1, True)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pen_value</span> <span class="o">=</span> <span class="n">pen_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_filled_pen</span> <span class="o">=</span> <span class="n">is_filled_pen</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_drawing_enabled">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_drawing_enabled">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_drawing_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drawing_enabled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set/unset drawing state.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        drawing_enabled: bool</span>
+<span class="sd">            enabled or not</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_drawing_enabled(True)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">drawing_enabled</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drawing_enabled</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drawing_enabled</span> <span class="o">=</span> <span class="n">drawing_enabled</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_drawing_enabled&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">drawing_enabled</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.colormap_from_key">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.colormap_from_key">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">colormap_from_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colormap_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColorMap</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a colormap by name (case-insensitive).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        colormap_name : str</span>
+<span class="sd">            The name of the colormap to retrieve.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ColorMap</span>
+<span class="sd">            An instance of `ColorMap` corresponding to the given colormap name.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+<span class="sd">            cmap = nv.colormap_from_key(&#39;Hot&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span><span class="p">[</span><span class="n">colormap_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_draw_colormap">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_draw_colormap">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_draw_colormap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colormap</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ColorMap</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set colors and labels for different drawing values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        colormap : str or ColorMap</span>
+<span class="sd">            A colormap name (string) or a `ColorMap` instance.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+<span class="sd">            cmap = {</span>
+<span class="sd">                &#39;R&#39;: [0, 255, 0],</span>
+<span class="sd">                &#39;G&#39;: [0, 20, 0],</span>
+<span class="sd">                &#39;B&#39;: [0, 20, 80],</span>
+<span class="sd">                &#39;A&#39;: [0, 255, 255],</span>
+<span class="sd">                &#39;labels&#39;: [&#39;&#39;, &#39;white-matter&#39;, &#39;delete T1&#39;],</span>
+<span class="sd">            }</span>
+<span class="sd">            nv.set_draw_colormap(cmap)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">colormap_from_key</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">draw_lut</span> <span class="o">=</span> <span class="n">make_draw_lut</span><span class="p">(</span><span class="n">cmap</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span> <span class="n">ColorMap</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">draw_lut</span> <span class="o">=</span> <span class="n">make_draw_lut</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Colormap must be string or type ColorMap.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.draw_otsu">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.draw_otsu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_otsu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Segment brain into specified number of levels using Otsu&#39;s method.</span>
+
+<span class="sd">        This method removes dark voxels by segmenting</span>
+<span class="sd">        the image into the specified number of levels.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        levels : int</span>
+<span class="sd">            Number of levels to segment the brain into (2-4).</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.draw_otsu(3)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;draw_otsu&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">levels</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.draw_grow_cut">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.draw_grow_cut">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_grow_cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dilate drawing so all voxels are colored.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.draw_grow_cut()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;draw_grow_cut&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.move_crosshair_in_vox">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.move_crosshair_in_vox">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">move_crosshair_in_vox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Move crosshair by a fixed number of voxels.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : float</span>
+<span class="sd">            Translate left (-) or right (+)</span>
+<span class="sd">        y : float</span>
+<span class="sd">            Translate posterior (-) or anterior (+)</span>
+<span class="sd">        z : float</span>
+<span class="sd">            Translate inferior (-) or superior (+)</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.move_crosshair_in_vox(1, 0, 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># todo: update backend scene data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;move_crosshair_in_vox&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.remove_haze">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.remove_haze">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_haze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">vol_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove dark voxels in air.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        level : int, optional</span>
+<span class="sd">            Level of dehazing (1-5); larger values preserve more voxels. Default is 5.</span>
+<span class="sd">        vol_index : int, optional</span>
+<span class="sd">            Index of the volume to dehaze. Default is 0.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.remove_haze(3, 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;remove_haze&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">level</span><span class="p">,</span> <span class="n">vol_index</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_slice_mm">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_slice_mm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_slice_mm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_slice_mm</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Control 2D slice view mode.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        is_slice_mm : bool</span>
+<span class="sd">            Control whether 2D slices use world space (True) or voxel space (False).</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_slice_mm(True)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_slice_mm</span> <span class="o">=</span> <span class="n">is_slice_mm</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.draw_undo">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.draw_undo">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restore drawing to previous state.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.draw_undo()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;draw_undo&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.close_drawing">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.close_drawing">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_drawing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the current drawing.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.close_drawing()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;close_drawing&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_radiological_convention">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_radiological_convention">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_radiological_convention</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_radiological_convention</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set radiological or neurological convention for 2D slices.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        is_radiological_convention : bool</span>
+<span class="sd">            If True, use radiological convention.</span>
+<span class="sd">            If False, use neurological convention.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_radiological_convention(True)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_radiological_convention</span> <span class="o">=</span> <span class="n">is_radiological_convention</span></div>
 
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>

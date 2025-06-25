@@ -661,7 +661,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">loading_text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;loadingText&quot;</span><span class="p">,</span> <span class="s2">&quot;waiting for images...&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;loadingText&quot;</span><span class="p">,</span> <span class="s2">&quot;loading ...&quot;</span><span class="p">)</span>
 
     <span class="nd">@loading_text</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">loading_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -896,7 +896,37 @@
     <span class="nd">@force_device_pixel_ratio</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">force_device_pixel_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="p">,</span> <span class="s2">&quot;forceDevicePixelRatio&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="p">,</span> <span class="s2">&quot;forceDevicePixelRatio&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">click_to_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;clickToSegment&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@click_to_segment</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">click_to_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="p">,</span> <span class="s2">&quot;clickToSegment&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">click_to_segment_auto_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;clickToSegmentAutoIntensity&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@click_to_segment_auto_intensity</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">click_to_segment_auto_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="p">,</span> <span class="s2">&quot;clickToSegmentAutoIntensity&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">click_to_segment_is_2d</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;clickToSegmentIs2D&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@click_to_segment_is_2d</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">click_to_segment_is_2d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically generated property. See generate_options_mixin.py.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_opts</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_opts</span><span class="p">,</span> <span class="s2">&quot;clickToSegmentIs2D&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span></div>
 
 </pre></div>
         </article>
