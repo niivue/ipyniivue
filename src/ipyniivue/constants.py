@@ -53,9 +53,13 @@ class DragMode(enum.Enum):
         Pan mode for moving around the image (value 3).
     """
 
+    NONE = 0
     CONTRAST = 1
     MEASUREMENT = 2
     PAN = 3
+    SLIDER_3D = 4
+    CALLBACK_ONLY = 5
+    ROI_SELECTION = 6
 
 
 class MultiplanarType(enum.Enum):
@@ -105,4 +109,5 @@ _SNAKE_TO_CAMEL_OVERRIDES = {
     "yoke_3d_to_2d_zoom": "yoke3Dto2DZoom",
     "is_slice_mm": "isSliceMM",
     "limit_frames_4d": "limitFrames4D",
+    "click_to_segment_is_2d": "clickToSegmentIs2D",
 }

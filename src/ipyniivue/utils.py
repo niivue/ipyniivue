@@ -6,6 +6,7 @@ classes the serialize data to work with JS.
 """
 
 import enum
+import math
 import pathlib
 import typing
 
@@ -49,21 +50,6 @@ def file_serializer(instance: typing.Union[pathlib.Path, str], widget: object):
         # Make sure we have a pathlib.Path instance
         instance = pathlib.Path(instance)
     return {"name": instance.name, "data": instance.read_bytes()}
-
-
-def serialize_options(instance: dict, widget: object):
-    """
-    Serialize the options for a NiiVue instance.
-
-    Parameters
-    ----------
-    instance : dict
-        The list of options to be serialized.
-    widget : object
-        The NiiVue widget the instance is a part of.
-    """
-    # Serialize enums as their value
-    return {k: v.value if isinstance(v, enum.Enum) else v for k, v in instance.items()}
 
 
 def serialize_colormap_label(instance: LUT, widget: object):
@@ -207,3 +193,100 @@ def make_label_lut(cm: ColorMap, alpha_fill: int = 255) -> LUT:
                 cmap.labels[idx] = cm.labels[i]
 
     return cmap
+
+
+def make_draw_lut(cmap: ColorMap) -> LUT:
+    """
+    Create a draw LUT based on the provided ColorMap.
+
+    Parameters
+    ----------
+    cmap: ColorMap
+        The colormap used to create the LUT.
+
+    Returns
+    -------
+    LUT
+        The resulting LUT object, including labels.
+    """
+    cm = make_label_lut(cmap, alpha_fill=255)
+
+    # Ensure labels exist and fill up to 256 entries
+    if cm.labels is None:
+        cm.labels = []
+    if len(cm.labels) < 256:
+        j = len(cm.labels)
+        for i in range(j, 256):
+            cm.labels.append(str(i))  # default label
+
+    # Initialize the LUT with default values (opaque red)
+    lut = [255, 0, 0, 255] * 256
+    lut[3] = 0  # Make the first alpha value transparent
+
+    # Copy the generated LUT values into the initial LUT, up to 256*4 bytes
+    explicit_lut_bytes = min(len(cm.lut), 256 * 4)
+    if explicit_lut_bytes > 0:
+        lut[:explicit_lut_bytes] = cm.lut[:explicit_lut_bytes]
+
+    return LUT(lut=lut, labels=cm.labels)
+
+
+def serialize_options(instance: dict, widget: object):
+    """
+    Serialize the options for a NiiVue instance, handling infinities and NaN.
+
+    Parameters
+    ----------
+    instance : dict
+        The list of options to be serialized.
+    widget : object
+        The NiiVue widget the instance is a part of.
+    """
+
+    def serialize_value(v):
+        if isinstance(v, enum.Enum):
+            return v.value
+        elif isinstance(v, float):
+            if math.isinf(v):
+                return "Infinity" if v > 0 else "-Infinity"
+            elif math.isnan(v):
+                return "NaN"
+            else:
+                return v
+        else:
+            return v
+
+    return {k: serialize_value(v) for k, v in instance.items()}
+
+
+def deserialize_options(serialized_options: dict, widget: object):
+    """
+    Deserialize the serialized options, converting special strings back to floats.
+
+    Parameters
+    ----------
+    serialized_options : dict
+        The serialized options dictionary from the frontend.
+    widget : object
+        The NiiVue widget the instance is a part of.
+
+    Returns
+    -------
+    dict
+        The deserialized options dictionary with proper float values.
+    """
+
+    def deserialize_value(v):
+        if isinstance(v, str):
+            if v == "Infinity":
+                return float("inf")
+            elif v == "-Infinity":
+                return float("-inf")
+            elif v == "NaN":
+                return float("nan")
+            else:
+                return v
+        else:
+            return v
+
+    return {k: deserialize_value(v) for k, v in serialized_options.items()}

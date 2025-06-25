@@ -148,7 +148,7 @@ if __name__ == "__main__":
         "isV1SliceShader": False,
         "isHighResolutionCapable": True,
         "logLevel": "info",
-        "loadingText": "waiting for images...",
+        "loadingText": "loading ...",
         "isForceMouseClickToVoxelCenters": False,
         "dragAndDropEnabled": True,
         "drawingEnabled": False,
@@ -172,6 +172,9 @@ if __name__ == "__main__":
         "gradientAmount": 0.0,
         "gradientOpacity": 0.0,
         "forceDevicePixelRatio": 0,
+        "clickToSegment": False,
+        "clickToSegmentAutoIntensity": False,
+        "clickToSegmentIs2D": False,
     }
     code = generate_mixin(DEFAULT_OPTIONS)
     loc = pathlib.Path(__file__).parent / "../src/ipyniivue/options_mixin.py"

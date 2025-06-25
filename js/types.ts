@@ -1,4 +1,5 @@
 import type { AnyModel } from "@anywidget/types";
+import type { NVConfigOptions } from "@niivue/niivue";
 
 interface File {
 	name: string;
@@ -16,6 +17,13 @@ type ColorMap = {
 	labels?: string[];
 };
 
+type LUT = {
+	lut: Uint8ClampedArray;
+	min?: number;
+	max?: number;
+	labels?: string[];
+};
+
 export type VolumeModel = AnyModel<{
 	path: File;
 	id: string;
@@ -28,8 +36,7 @@ export type VolumeModel = AnyModel<{
 	cal_max: number;
 	frame4D: number;
 	colormap_negative: string;
-	// biome-ignore lint/suspicious/noExplicitAny: LUT or ColorMap type
-	colormap_label: any;
+	colormap_label: LUT;
 
 	colormap_invert: boolean;
 }>;
@@ -75,7 +82,7 @@ export type Model = AnyModel<{
 	height: number;
 	_volumes: Array<string>;
 	_meshes: Array<string>;
-	_opts: Record<string, unknown>;
+	_opts: Partial<Record<keyof NVConfigOptions, unknown>>;
 
 	background_masks_overlays: number;
 	clip_plane_depth_azi_elev: [
@@ -83,6 +90,9 @@ export type Model = AnyModel<{
 		azimuth: number,
 		elevation: number,
 	];
+	draw_lut: LUT;
+	draw_opacity: number;
+	draw_fill_overwrites: boolean;
 }>;
 
 // Custom message datas
@@ -110,6 +120,14 @@ type SetRenderAzimuthElevationData = [azimuth: number, elevation: number];
 
 type SetInterpolationData = [isNearest: boolean];
 
+type SetDrawingEnabledData = [drawingEnabled: boolean];
+
+type DrawOtsuData = [levels: number];
+
+type MoveCrosshairInVoxData = [x: number, y: number, z: number];
+
+type RemoveHazeData = [level: number, volIndex: number];
+
 export type CustomMessagePayload =
 	| { type: "save_document"; data: SaveDocumentData }
 	| { type: "save_html"; data: SaveHTMLData }
@@ -128,4 +146,11 @@ export type CustomMessagePayload =
 			type: "set_render_azimuth_elevation";
 			data: SetRenderAzimuthElevationData;
 	  }
-	| { type: "set_interpolation"; data: SetInterpolationData };
+	| { type: "set_interpolation"; data: SetInterpolationData }
+	| { type: "set_drawing_enabled"; data: SetDrawingEnabledData }
+	| { type: "draw_otsu"; data: DrawOtsuData }
+	| { type: "draw_grow_cut"; data: [] }
+	| { type: "move_crosshair_in_vox"; data: MoveCrosshairInVoxData }
+	| { type: "remove_haze"; data: RemoveHazeData }
+	| { type: "draw_undo"; data: [] }
+	| { type: "close_drawing"; data: [] };
