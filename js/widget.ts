@@ -45,12 +45,12 @@ function attachModelEventHandlers(
 	model: Model,
 	disposer: Disposer,
 ) {
-	model.on("change:_volumes", () => {
+	model.on("change:volumes", () => {
 		if (nv.canvas) {
 			render_volumes(nv, model, disposer);
 		}
 	});
-	model.on("change:_meshes", () => {
+	model.on("change:meshes", () => {
 		if (nv.canvas) {
 			render_meshes(nv, model, disposer);
 		}
@@ -211,7 +211,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 		const volumeID = volume.id;
 		const volumeModels = await gather_models<VolumeModel>(
 			model,
-			model.get("_volumes"),
+			model.get("volumes"),
 		);
 
 		const backendVolumeIds = volumeModels.map(
@@ -256,7 +256,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 		const meshID = mesh.id;
 		const meshModels = await gather_models<MeshModel>(
 			model,
-			model.get("_meshes"),
+			model.get("meshes"),
 		);
 
 		const backendMeshIds = meshModels.map((mmodel) => mmodel?.get("id") || "");
@@ -542,8 +542,8 @@ export default {
 		return () => {
 			disposer.disposeAll();
 
-			model.off("change:_volumes");
-			model.off("change:_meshes");
+			model.off("change:volumes");
+			model.off("change:meshes");
 			model.off("change:opts");
 			model.off("change:height");
 			model.off("msg:custom");

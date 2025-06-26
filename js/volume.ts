@@ -161,7 +161,7 @@ export async function render_volumes(
 ) {
 	const vmodels = await lib.gather_models<VolumeModel>(
 		model,
-		model.get("_volumes"),
+		model.get("volumes"),
 	);
 
 	const backend_volumes = vmodels;

@@ -351,7 +351,7 @@ export async function render_meshes(
 ) {
 	const mmodels = await lib.gather_models<MeshModel>(
 		model,
-		model.get("_meshes"),
+		model.get("meshes"),
 	);
 
 	const backend_meshes = mmodels;

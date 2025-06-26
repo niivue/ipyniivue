@@ -337,10 +337,10 @@ class NiiVue(anywidget.AnyWidget):
     opts = t.Instance(ConfigOptions).tag(
         sync=True, to_json=serialize_options, from_json=deserialize_options
     )
-    _volumes = t.List(t.Instance(Volume), default_value=[]).tag(
+    volumes = t.List(t.Instance(Volume), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
     )
-    _meshes = t.List(t.Instance(Mesh), default_value=[]).tag(
+    meshes = t.List(t.Instance(Mesh), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
     )
 
@@ -378,7 +378,7 @@ class NiiVue(anywidget.AnyWidget):
         """
         # convert to JS camelCase options
         opts = ConfigOptions(parent=self, **options)
-        super().__init__(height=height, opts=opts, _volumes=[], _meshes=[])
+        super().__init__(height=height, opts=opts, volumes=[], meshes=[])
 
         # handle messages coming from frontend
         self._event_handlers = {}
@@ -441,17 +441,17 @@ class NiiVue(anywidget.AnyWidget):
         elif event == "frame_change":
             idx = self.get_volume_index_by_id(data["id"])
             if idx != -1:
-                handler(self._volumes[idx], data["frame_index"])
+                handler(self.volumes[idx], data["frame_index"])
         elif event in {"image_loaded", "intensity_change"}:
             idx = self.get_volume_index_by_id(data["id"])
             if idx != -1:
-                handler(self._volumes[idx])
+                handler(self.volumes[idx])
             else:
                 handler(data)
         elif event == "mesh_loaded":
             idx = self.get_mesh_index_by_id(data["id"])
             if idx != -1:
-                handler(self._meshes[idx])
+                handler(self.meshes[idx])
             else:
                 handler(data)
         elif event == "mesh_added_from_url":
@@ -466,20 +466,20 @@ class NiiVue(anywidget.AnyWidget):
     def _add_volume_from_frontend(self, volume_data):
         index = volume_data.pop("index", None)
         volume = Volume(**volume_data)
-        if index is not None and 0 <= index <= len(self._volumes):
-            self._volumes = [*self._volumes[:index], volume, *self._volumes[index:]]
+        if index is not None and 0 <= index <= len(self.volumes):
+            self.volumes = [*self.volumes[:index], volume, *self.volumes[index:]]
         else:
-            self._volumes = [*self._volumes, volume]
+            self.volumes = [*self.volumes, volume]
 
     def _add_mesh_from_frontend(self, mesh_data):
         index = mesh_data.pop("index", None)
         layers_data = mesh_data.pop("layers", [])
         mesh = Mesh(**mesh_data)
         mesh.layers = [MeshLayer(**layer_data) for layer_data in layers_data]
-        if index is not None and 0 <= index <= len(self._meshes):
-            self._meshes = [*self._meshes[:index], mesh, *self._meshes[index:]]
+        if index is not None and 0 <= index <= len(self.meshes):
+            self.meshes = [*self.meshes[:index], mesh, *self.meshes[index:]]
         else:
-            self._meshes = [*self._meshes, mesh]
+            self.meshes = [*self.meshes, mesh]
 
     def close(self):
         """
@@ -506,7 +506,7 @@ class NiiVue(anywidget.AnyWidget):
         volume_id : str
             The id of the volume.
         """
-        for idx, vol in enumerate(self._volumes):
+        for idx, vol in enumerate(self.volumes):
             if vol.id == volume_id:
                 return idx
         return -1
@@ -519,7 +519,7 @@ class NiiVue(anywidget.AnyWidget):
         mesh_id : str
             The id of the mesh.
         """
-        for idx, mesh in enumerate(self._meshes):
+        for idx, mesh in enumerate(self.meshes):
             if mesh.id == mesh_id:
                 return idx
         return -1
@@ -546,7 +546,7 @@ class NiiVue(anywidget.AnyWidget):
 
         """
         volumes = [Volume(**item) for item in volumes]
-        self._volumes = volumes
+        self.volumes = volumes
 
     def add_volume(self, volume: dict):
         """
@@ -569,26 +569,7 @@ class NiiVue(anywidget.AnyWidget):
             nv.add_volume({"path": "mni152.nii.gz"})
 
         """
-        self._volumes = [*self._volumes, Volume(**volume)]
-
-    @property
-    def volumes(self):
-        """
-        Returns the list of volumes.
-
-        Returns
-        -------
-        list
-            A list of dictionairies containing the volume information.
-
-        Examples
-        --------
-        ::
-
-            print(nv.volumes)
-
-        """
-        return list(self._volumes)
+        self.volumes = [*self.volumes, Volume(**volume)]
 
     def load_meshes(self, meshes: list):
         """
@@ -612,7 +593,7 @@ class NiiVue(anywidget.AnyWidget):
 
         """
         meshes = [Mesh(**item) for item in meshes]
-        self._meshes = meshes
+        self.meshes = meshes
 
     def add_mesh(self, mesh: Mesh):
         """
@@ -635,26 +616,7 @@ class NiiVue(anywidget.AnyWidget):
             nv.add_mesh({"path": "BrainMesh_ICBM152.lh.mz3"})
 
         """
-        self._meshes = [*self._meshes, mesh]
-
-    @property
-    def meshes(self):
-        """
-        Returns the list of meshes.
-
-        Returns
-        -------
-        list
-            A list of dictionairies containing the mesh information.
-
-        Examples
-        --------
-        ::
-
-            print(nv.meshes)
-
-        """
-        return list(self._meshes)
+        self.meshes = [*self.meshes, mesh]
 
     """
     Other functions
@@ -804,7 +766,7 @@ class NiiVue(anywidget.AnyWidget):
         if idx == -1:
             raise ValueError(f"Mesh with id '{mesh_id}' not found.")
 
-        mesh = self._meshes[idx]
+        mesh = self.meshes[idx]
         setattr(mesh, attribute, value)
 
     def set_mesh_layer_property(
@@ -854,7 +816,7 @@ class NiiVue(anywidget.AnyWidget):
         if idx == -1:
             raise ValueError(f"Mesh with id '{mesh_id}' not found.")
 
-        mesh = self._meshes[idx]
+        mesh = self.meshes[idx]
         if layer_index < 0 or layer_index >= len(mesh.layers):
             raise IndexError(f"Layer index {layer_index} out of range.")
 
@@ -955,7 +917,7 @@ class NiiVue(anywidget.AnyWidget):
         """
         idx = self.get_volume_index_by_id(imageID)
         if idx != -1:
-            self._volumes[idx].colormap = colormap
+            self.volumes[idx].colormap = colormap
         else:
             raise ValueError(f"Volume with ID '{imageID}' not found")
 

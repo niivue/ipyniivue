@@ -80,8 +80,8 @@ export type MeshLayerModel = AnyModel<{
 export type Model = AnyModel<{
 	id: string;
 	height: number;
-	_volumes: Array<string>;
-	_meshes: Array<string>;
+	volumes: Array<string>;
+	meshes: Array<string>;
 	opts: Partial<Record<keyof NVConfigOptions, unknown>>;
 
 	background_masks_overlays: number;
