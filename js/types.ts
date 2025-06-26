@@ -78,7 +78,6 @@ export type MeshLayerModel = AnyModel<{
 }>;
 
 export type Model = AnyModel<{
-	id: string;
 	height: number;
 	volumes: Array<string>;
 	meshes: Array<string>;

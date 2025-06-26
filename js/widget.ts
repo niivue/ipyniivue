@@ -11,7 +11,7 @@ import type {
 } from "./types.ts";
 import { render_volumes } from "./volume.ts";
 
-const nvMap = new Map<string, niivue.Niivue>();
+let nv: niivue.Niivue;
 
 function deserializeOptions(
 	options: Partial<Record<keyof niivue.NVConfigOptions, unknown>>,
@@ -518,18 +518,13 @@ function attachCanvasEventHandlers(nv: niivue.Niivue, model: Model) {
 
 export default {
 	async initialize({ model }: { model: Model }) {
-		const id = model.get("id");
-		console.log("Initializing called on model:", id);
 		const disposer = new Disposer();
-
-		let nv = nvMap.get(model.get("id"));
 
 		if (!nv) {
 			console.log("Creating new Niivue instance");
 			const serializedOpts = model.get("opts") ?? {};
 			const opts = deserializeOptions(serializedOpts);
 			nv = new niivue.Niivue(opts);
-			nvMap.set(model.get("id"), nv);
 		}
 
 		// Attach model event handlers
@@ -553,15 +548,11 @@ export default {
 			model.off("change:draw_lut");
 			model.off("change:draw_opacity");
 			model.off("change:change:draw_fill_overwrites");
-
-			// remove the nv instance
-			nvMap.delete(model.get("id"));
 		};
 	},
 	async render({ model, el }: { model: Model; el: HTMLElement }) {
-		const nv = nvMap.get(model.get("id"));
 		if (!nv) {
-			console.error("Niivue instance not found for model", model.get("id"));
+			console.error("Niivue instance not found for model", model);
 			return;
 		}
 

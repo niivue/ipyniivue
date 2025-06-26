@@ -12,7 +12,6 @@ import json
 import math
 import pathlib
 import typing
-import uuid
 import warnings
 
 import anywidget
@@ -331,8 +330,6 @@ class NiiVue(anywidget.AnyWidget):
 
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
 
-    id = t.Unicode(read_only=True).tag(sync=True)
-
     height = t.Int().tag(sync=True)
     opts = t.Instance(ConfigOptions).tag(
         sync=True, to_json=serialize_options, from_json=deserialize_options
@@ -356,10 +353,6 @@ class NiiVue(anywidget.AnyWidget):
     )
     draw_opacity = t.Float(0.8).tag(sync=True)
     draw_fill_overwrites = t.Bool(True).tag(sync=True)
-
-    @t.default("id")
-    def _default_id(self):
-        return str(uuid.uuid4())
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
