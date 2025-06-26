@@ -57,8 +57,8 @@ function attachModelEventHandlers(
 	});
 
 	// Any time we change the options, we need to update the nv gl
-	model.on("change:_opts", () => {
-		const serializedOpts = model.get("_opts");
+	model.on("change:opts", () => {
+		const serializedOpts = model.get("opts");
 		const opts = deserializeOptions(serializedOpts);
 
 		nv.document.opts = { ...nv.opts, ...opts };
@@ -526,7 +526,7 @@ export default {
 
 		if (!nv) {
 			console.log("Creating new Niivue instance");
-			const serializedOpts = model.get("_opts") ?? {};
+			const serializedOpts = model.get("opts") ?? {};
 			const opts = deserializeOptions(serializedOpts);
 			nv = new niivue.Niivue(opts);
 			nvMap.set(model.get("id"), nv);
@@ -544,7 +544,7 @@ export default {
 
 			model.off("change:_volumes");
 			model.off("change:_meshes");
-			model.off("change:_opts");
+			model.off("change:opts");
 			model.off("change:height");
 			model.off("msg:custom");
 

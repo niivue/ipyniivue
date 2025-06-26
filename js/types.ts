@@ -82,7 +82,7 @@ export type Model = AnyModel<{
 	height: number;
 	_volumes: Array<string>;
 	_meshes: Array<string>;
-	_opts: Partial<Record<keyof NVConfigOptions, unknown>>;
+	opts: Partial<Record<keyof NVConfigOptions, unknown>>;
 
 	background_masks_overlays: number;
 	clip_plane_depth_azi_elev: [
