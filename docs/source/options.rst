@@ -1,7 +1,7 @@
 Options
 =======
 
-.. autoclass:: ipyniivue.options_mixin.OptionsMixin
+.. autoclass:: ipyniivue.config_options.ConfigOptions
    :members:
    :undoc-members:
    :show-inheritance:

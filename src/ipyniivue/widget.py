@@ -367,7 +367,7 @@ class NiiVue(anywidget.AnyWidget):
             The height of the widget in pixels (default: 300).
         \*\*options : dict, optional
             Additional keyword arguments to configure the NiiVue widget.
-            See :class:`ipyniivue.options_mixin.OptionsMixin` for all options.
+            See :class:`ipyniivue.config_options.ConfigOptions` for all options.
         """
         # convert to JS camelCase options
         opts = ConfigOptions(parent=self, **options)
@@ -1348,6 +1348,7 @@ class NiiVue(anywidget.AnyWidget):
         Examples
         --------
         ::
+
             cmap = {
                 'R': [0, 255, 0],
                 'G': [0, 20, 0],
