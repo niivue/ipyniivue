@@ -57,17 +57,26 @@ def download_dataset(api_url=None, dest_folder=None, force_download=False, files
                 print(f"{file_path} already exists.")
                 continue
 
-            file_api_url = f"{BASE_API_URL}/{file_path}"
+            file_api_url = f"{api_url}/{file_path}"
             response = requests.get(file_api_url)
             if response.status_code != 200:
                 raise FileNotFoundError(
                     f"File {file_path} not found (HTTP {response.status_code})."
                 )
 
-            file_info = response.json()
-            download_url = file_info.get("download_url")
-            if not download_url:
-                raise Exception(f"No download URL for {file_path}.")
+            content_type = response.headers.get("Content-Type")
+
+            if (
+                content_type
+                and "application/json" in content_type.lower()
+                and not file_path.endswith(".json")
+            ):
+                file_info = response.json()
+                download_url = file_info.get("download_url")
+                if not download_url:
+                    raise Exception(f"No download URL for {file_path}.")
+            else:
+                download_url = file_api_url
 
             print(f"Downloading {file_path}...")
             file_response = requests.get(download_url)

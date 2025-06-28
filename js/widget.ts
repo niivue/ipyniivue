@@ -11,7 +11,7 @@ import type {
 } from "./types.ts";
 import { render_volumes } from "./volume.ts";
 
-const nvMap = new Map<string, niivue.Niivue>();
+let nv: niivue.Niivue;
 
 function deserializeOptions(
 	options: Partial<Record<keyof niivue.NVConfigOptions, unknown>>,
@@ -45,20 +45,20 @@ function attachModelEventHandlers(
 	model: Model,
 	disposer: Disposer,
 ) {
-	model.on("change:_volumes", () => {
+	model.on("change:volumes", () => {
 		if (nv.canvas) {
 			render_volumes(nv, model, disposer);
 		}
 	});
-	model.on("change:_meshes", () => {
+	model.on("change:meshes", () => {
 		if (nv.canvas) {
 			render_meshes(nv, model, disposer);
 		}
 	});
 
 	// Any time we change the options, we need to update the nv gl
-	model.on("change:_opts", () => {
-		const serializedOpts = model.get("_opts");
+	model.on("change:opts", () => {
+		const serializedOpts = model.get("opts");
 		const opts = deserializeOptions(serializedOpts);
 
 		nv.document.opts = { ...nv.opts, ...opts };
@@ -211,7 +211,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 		const volumeID = volume.id;
 		const volumeModels = await gather_models<VolumeModel>(
 			model,
-			model.get("_volumes"),
+			model.get("volumes"),
 		);
 
 		const backendVolumeIds = volumeModels.map(
@@ -256,7 +256,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 		const meshID = mesh.id;
 		const meshModels = await gather_models<MeshModel>(
 			model,
-			model.get("_meshes"),
+			model.get("meshes"),
 		);
 
 		const backendMeshIds = meshModels.map((mmodel) => mmodel?.get("id") || "");
@@ -518,18 +518,13 @@ function attachCanvasEventHandlers(nv: niivue.Niivue, model: Model) {
 
 export default {
 	async initialize({ model }: { model: Model }) {
-		const id = model.get("id");
-		console.log("Initializing called on model:", id);
 		const disposer = new Disposer();
-
-		let nv = nvMap.get(model.get("id"));
 
 		if (!nv) {
 			console.log("Creating new Niivue instance");
-			const serializedOpts = model.get("_opts") ?? {};
+			const serializedOpts = model.get("opts") ?? {};
 			const opts = deserializeOptions(serializedOpts);
 			nv = new niivue.Niivue(opts);
-			nvMap.set(model.get("id"), nv);
 		}
 
 		// Attach model event handlers
@@ -542,9 +537,9 @@ export default {
 		return () => {
 			disposer.disposeAll();
 
-			model.off("change:_volumes");
-			model.off("change:_meshes");
-			model.off("change:_opts");
+			model.off("change:volumes");
+			model.off("change:meshes");
+			model.off("change:opts");
 			model.off("change:height");
 			model.off("msg:custom");
 
@@ -553,15 +548,11 @@ export default {
 			model.off("change:draw_lut");
 			model.off("change:draw_opacity");
 			model.off("change:change:draw_fill_overwrites");
-
-			// remove the nv instance
-			nvMap.delete(model.get("id"));
 		};
 	},
 	async render({ model, el }: { model: Model; el: HTMLElement }) {
-		const nv = nvMap.get(model.get("id"));
 		if (!nv) {
-			console.error("Niivue instance not found for model", model.get("id"));
+			console.error("Niivue instance not found for model", model);
 			return;
 		}
 

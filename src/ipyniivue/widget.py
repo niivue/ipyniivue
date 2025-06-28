@@ -12,7 +12,7 @@ import json
 import math
 import pathlib
 import typing
-import uuid
+import warnings
 
 import anywidget
 import ipywidgets
@@ -20,8 +20,8 @@ import requests
 import traitlets as t
 from ipywidgets import CallbackDispatcher
 
-from .constants import _SNAKE_TO_CAMEL_OVERRIDES, SliceType
-from .options_mixin import OptionsMixin
+from .config_options import ConfigOptions
+from .constants import SliceType
 from .traits import LUT, ColorMap
 from .utils import (
     deserialize_colormap_label,
@@ -31,7 +31,6 @@ from .utils import (
     make_label_lut,
     serialize_colormap_label,
     serialize_options,
-    snake_to_camel,
 )
 
 __all__ = ["NiiVue"]
@@ -321,26 +320,24 @@ class Volume(anywidget.AnyWidget):
         return proposal["value"]
 
 
-class NiiVue(OptionsMixin, anywidget.AnyWidget):
+class NiiVue(anywidget.AnyWidget):
     """
     Represents a NiiVue widget instance.
 
     This class provides a Jupyter widget for visualizing neuroimaging data using
-    NiiVue. It inherits from `OptionsMixin` for default options.
+    NiiVue.
     """
 
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
 
-    id = t.Unicode(read_only=True).tag(sync=True)
-
     height = t.Int().tag(sync=True)
-    _opts = t.Dict({}).tag(
+    opts = t.Instance(ConfigOptions).tag(
         sync=True, to_json=serialize_options, from_json=deserialize_options
     )
-    _volumes = t.List(t.Instance(Volume), default_value=[]).tag(
+    volumes = t.List(t.Instance(Volume), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
     )
-    _meshes = t.List(t.Instance(Mesh), default_value=[]).tag(
+    meshes = t.List(t.Instance(Mesh), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
     )
 
@@ -356,10 +353,6 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     )
     draw_opacity = t.Float(0.8).tag(sync=True)
     draw_fill_overwrites = t.Bool(True).tag(sync=True)
-
-    @t.default("id")
-    def _default_id(self):
-        return str(uuid.uuid4())
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
@@ -377,11 +370,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             See :class:`ipyniivue.options_mixin.OptionsMixin` for all options.
         """
         # convert to JS camelCase options
-        _opts = {
-            _SNAKE_TO_CAMEL_OVERRIDES.get(k, snake_to_camel(k)): v
-            for k, v in options.items()
-        }
-        super().__init__(height=height, _opts=_opts, _volumes=[], _meshes=[])
+        opts = ConfigOptions(parent=self, **options)
+        super().__init__(height=height, opts=opts, volumes=[], meshes=[])
 
         # handle messages coming from frontend
         self._event_handlers = {}
@@ -389,6 +379,29 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
         # colormaps
         self._cluts = self._get_initial_colormaps()
+
+    def __setattr__(self, name, value):
+        """todo: remove this starting version 2.4.1."""
+        if name in ConfigOptions.class_trait_names():
+            warnings.warn(
+                "Setting config options directly on NiiVue will not be supported "
+                f"in versions starting 2.4.1. Please use nv.opts.{name}",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            setattr(self.opts, name, value)
+        super().__setattr__(name, value)
+
+    def _notify_opts_changed(self):
+        self.notify_change(
+            {
+                "name": "opts",
+                "old": self.opts,
+                "new": self.opts,
+                "owner": self,
+                "type": "change",
+            }
+        )
 
     def _register_callback(self, event_name, callback, remove=False):
         if event_name not in self._event_handlers:
@@ -421,17 +434,17 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         elif event == "frame_change":
             idx = self.get_volume_index_by_id(data["id"])
             if idx != -1:
-                handler(self._volumes[idx], data["frame_index"])
+                handler(self.volumes[idx], data["frame_index"])
         elif event in {"image_loaded", "intensity_change"}:
             idx = self.get_volume_index_by_id(data["id"])
             if idx != -1:
-                handler(self._volumes[idx])
+                handler(self.volumes[idx])
             else:
                 handler(data)
         elif event == "mesh_loaded":
             idx = self.get_mesh_index_by_id(data["id"])
             if idx != -1:
-                handler(self._meshes[idx])
+                handler(self.meshes[idx])
             else:
                 handler(data)
         elif event == "mesh_added_from_url":
@@ -446,20 +459,20 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
     def _add_volume_from_frontend(self, volume_data):
         index = volume_data.pop("index", None)
         volume = Volume(**volume_data)
-        if index is not None and 0 <= index <= len(self._volumes):
-            self._volumes = [*self._volumes[:index], volume, *self._volumes[index:]]
+        if index is not None and 0 <= index <= len(self.volumes):
+            self.volumes = [*self.volumes[:index], volume, *self.volumes[index:]]
         else:
-            self._volumes = [*self._volumes, volume]
+            self.volumes = [*self.volumes, volume]
 
     def _add_mesh_from_frontend(self, mesh_data):
         index = mesh_data.pop("index", None)
         layers_data = mesh_data.pop("layers", [])
         mesh = Mesh(**mesh_data)
         mesh.layers = [MeshLayer(**layer_data) for layer_data in layers_data]
-        if index is not None and 0 <= index <= len(self._meshes):
-            self._meshes = [*self._meshes[:index], mesh, *self._meshes[index:]]
+        if index is not None and 0 <= index <= len(self.meshes):
+            self.meshes = [*self.meshes[:index], mesh, *self.meshes[index:]]
         else:
-            self._meshes = [*self._meshes, mesh]
+            self.meshes = [*self.meshes, mesh]
 
     def close(self):
         """
@@ -486,7 +499,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         volume_id : str
             The id of the volume.
         """
-        for idx, vol in enumerate(self._volumes):
+        for idx, vol in enumerate(self.volumes):
             if vol.id == volume_id:
                 return idx
         return -1
@@ -499,7 +512,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         mesh_id : str
             The id of the mesh.
         """
-        for idx, mesh in enumerate(self._meshes):
+        for idx, mesh in enumerate(self.meshes):
             if mesh.id == mesh_id:
                 return idx
         return -1
@@ -526,7 +539,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
         """
         volumes = [Volume(**item) for item in volumes]
-        self._volumes = volumes
+        self.volumes = volumes
 
     def add_volume(self, volume: dict):
         """
@@ -549,26 +562,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             nv.add_volume({"path": "mni152.nii.gz"})
 
         """
-        self._volumes = [*self._volumes, Volume(**volume)]
-
-    @property
-    def volumes(self):
-        """
-        Returns the list of volumes.
-
-        Returns
-        -------
-        list
-            A list of dictionairies containing the volume information.
-
-        Examples
-        --------
-        ::
-
-            print(nv.volumes)
-
-        """
-        return list(self._volumes)
+        self.volumes = [*self.volumes, Volume(**volume)]
 
     def load_meshes(self, meshes: list):
         """
@@ -592,7 +586,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
         """
         meshes = [Mesh(**item) for item in meshes]
-        self._meshes = meshes
+        self.meshes = meshes
 
     def add_mesh(self, mesh: Mesh):
         """
@@ -615,26 +609,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
             nv.add_mesh({"path": "BrainMesh_ICBM152.lh.mz3"})
 
         """
-        self._meshes = [*self._meshes, mesh]
-
-    @property
-    def meshes(self):
-        """
-        Returns the list of meshes.
-
-        Returns
-        -------
-        list
-            A list of dictionairies containing the mesh information.
-
-        Examples
-        --------
-        ::
-
-            print(nv.meshes)
-
-        """
-        return list(self._meshes)
+        self.meshes = [*self.meshes, mesh]
 
     """
     Other functions
@@ -784,7 +759,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         if idx == -1:
             raise ValueError(f"Mesh with id '{mesh_id}' not found.")
 
-        mesh = self._meshes[idx]
+        mesh = self.meshes[idx]
         setattr(mesh, attribute, value)
 
     def set_mesh_layer_property(
@@ -834,7 +809,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         if idx == -1:
             raise ValueError(f"Mesh with id '{mesh_id}' not found.")
 
-        mesh = self._meshes[idx]
+        mesh = self.meshes[idx]
         if layer_index < 0 or layer_index >= len(mesh.layers):
             raise IndexError(f"Layer index {layer_index} out of range.")
 
@@ -935,7 +910,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """
         idx = self.get_volume_index_by_id(imageID)
         if idx != -1:
-            self._volumes[idx].colormap = colormap
+            self.volumes[idx].colormap = colormap
         else:
             raise ValueError(f"Volume with ID '{imageID}' not found")
 
@@ -965,7 +940,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         if not all(isinstance(c, (int, float)) and 0 <= c <= 1 for c in color):
             raise ValueError("Each color component must be a number between 0 and 1.")
 
-        self.selection_box_color = tuple(color)
+        self.opts.selection_box_color = tuple(color)
 
     def set_crosshair_color(self, color: tuple):
         """Set the crosshair and colorbar outline color.
@@ -993,7 +968,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         if not all(isinstance(c, (int, float)) and 0 <= c <= 1 for c in color):
             raise ValueError("Each color component must be a number between 0 and 1.")
 
-        self.crosshair_color = tuple(color)
+        self.opts.crosshair_color = tuple(color)
 
     def set_crosshair_width(self, width: int):
         """Set the crosshair width.
@@ -1009,7 +984,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
             nv.set_crosshair_width(3)
         """
-        self.crosshair_width = width
+        self.opts.crosshair_width = width
 
     def set_gamma(self, gamma: float = 1.0):
         """Adjust screen gamma.
@@ -1054,10 +1029,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
             nv.set_slice_type(SliceType.AXIAL)
         """
-        if slice_type not in SliceType:
-            raise TypeError("slice_type must be a valid SliceType")
-
-        self.slice_type = slice_type
+        self.opts.slice_type = slice_type
 
     def set_clip_plane(self, depth: float, azimuth: float, elevation: float):
         """Update the clip plane orientation in 3D view mode.
@@ -1222,7 +1194,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         if not isinstance(gradient_amount, (int, float)):
             raise TypeError("gradient_amount must be a number.")
         if not math.isnan(gradient_amount):
-            self.gradient_amount = gradient_amount
+            self.opts.gradient_amount = gradient_amount
         self.send({"type": "set_volume_render_illumination", "data": [gradient_amount]})
 
     def set_high_resolution_capable(
@@ -1245,7 +1217,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
         """
         if isinstance(force_device_pixel_ratio, bool):
             force_device_pixel_ratio = 0 if force_device_pixel_ratio else -1
-        self.force_device_pixel_ratio = force_device_pixel_ratio
+        self.opts.force_device_pixel_ratio = force_device_pixel_ratio
         self.send({"type": "resize_listener", "data": []})
         self.send({"type": "draw_scene", "data": []})
 
@@ -1288,7 +1260,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
             nv.set_atlas_outline(2.0)
         """
-        self.atlas_outline = outline
+        self.opts.atlas_outline = outline
 
     def set_interpolation(self, is_nearest: bool):
         """Select between nearest neighbor and linear interpolation for images.
@@ -1305,7 +1277,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
             nv.set_interpolation(True)
         """
-        self.is_nearest_interpolation = is_nearest
+        self.opts.is_nearest_interpolation = is_nearest
         self.send({"type": "set_interpolation", "data": [is_nearest]})
 
     def set_pen_value(self, pen_value: int, is_filled_pen: bool):
@@ -1324,8 +1296,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
             nv.set_pen_value(1, True)
         """
-        self.pen_value = pen_value
-        self.is_filled_pen = is_filled_pen
+        self.opts.pen_value = pen_value
+        self.opts.is_filled_pen = is_filled_pen
 
     def set_drawing_enabled(self, drawing_enabled: bool):
         """Set/unset drawing state.
@@ -1341,8 +1313,8 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
             nv.set_drawing_enabled(True)
         """
-        if drawing_enabled != self.drawing_enabled:
-            self.drawing_enabled = drawing_enabled
+        if drawing_enabled != self.opts.drawing_enabled:
+            self.opts.drawing_enabled = drawing_enabled
             self.send({"type": "set_drawing_enabled", "data": [drawing_enabled]})
 
     def colormap_from_key(self, colormap_name: str) -> ColorMap:
@@ -1476,7 +1448,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
             nv.set_slice_mm(True)
         """
-        self.is_slice_mm = is_slice_mm
+        self.opts.is_slice_mm = is_slice_mm
 
     def draw_undo(self):
         """Restore drawing to previous state.
@@ -1515,7 +1487,7 @@ class NiiVue(OptionsMixin, anywidget.AnyWidget):
 
             nv.set_radiological_convention(True)
         """
-        self.is_radiological_convention = is_radiological_convention
+        self.opts.is_radiological_convention = is_radiological_convention
 
     """
     Custom event callbacks

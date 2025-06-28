@@ -10,25 +10,12 @@ import math
 import pathlib
 import typing
 
+from .config_options import (
+    CAMEL_TO_SNAKE,
+    SNAKE_TO_CAMEL,
+    ConfigOptions,
+)
 from .traits import LUT, ColorMap
-
-
-def snake_to_camel(snake_str: str):
-    """
-    Convert the Python typical snake case to JS typical camel case.
-
-    Parameters
-    ----------
-    snake_str : str
-        The snake case string to be converted.
-
-    Returns
-    -------
-    camel_string : str
-        The parameter string converted to camel case.
-    """
-    components = snake_str.split("_")
-    return components[0] + "".join(x.title() for x in components[1:])
 
 
 def file_serializer(instance: typing.Union[pathlib.Path, str], widget: object):
@@ -256,7 +243,12 @@ def serialize_options(instance: dict, widget: object):
         else:
             return v
 
-    return {k: serialize_value(v) for k, v in instance.items()}
+    data = {}
+    for name in instance.trait_names(sync=False):
+        value = getattr(instance, name)
+        camel_name = SNAKE_TO_CAMEL.get(name)
+        data[camel_name] = serialize_value(value)
+    return data
 
 
 def deserialize_options(serialized_options: dict, widget: object):
@@ -289,4 +281,10 @@ def deserialize_options(serialized_options: dict, widget: object):
         else:
             return v
 
-    return {k: deserialize_value(v) for k, v in serialized_options.items()}
+    opts = {}
+    for camel_name, value in serialized_options.items():
+        snake_name = CAMEL_TO_SNAKE.get(camel_name)
+        deserialized_value = deserialize_value(value)
+        opts[snake_name] = deserialized_value
+
+    return ConfigOptions(**opts)
