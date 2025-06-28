@@ -2,6 +2,7 @@
 
 [![PyPI Version](https://badge.fury.io/py/ipyniivue.svg)](https://badge.fury.io/py/ipyniivue)
 [![License](https://img.shields.io/github/license/niivue/ipyniivue)](https://opensource.org/license/bsd-2-clause)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/niivue/ipyniivue/main?urlpath=lab%2Ftree%2Fexamples)
 
 **A Jupyter Widget for [Niivue](https://github.com/niivue/niivue) based on [anywidget](https://github.com/manzt/anywidget).**
 
