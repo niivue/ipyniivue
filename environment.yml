@@ -1,0 +1,9 @@
+name: ipyniivue
+channels:
+  - conda-forge
+dependencies:
+  - ipyniivue
+  - requests
+  - anywidget
+  - nibabel
+  - ipylab
