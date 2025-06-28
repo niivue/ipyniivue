@@ -177,7 +177,7 @@ if __name__ == "__main__":
         "isForceMouseClickToVoxelCenters": False,
         "dragAndDropEnabled": True,
         "drawingEnabled": False,
-        "penValue": 1,
+        "penValue": 1.0,
         "floodFillNeighbors": 6,
         "isFilledPen": False,
         "thumbnail": "",

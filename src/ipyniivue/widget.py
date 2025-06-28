@@ -367,7 +367,7 @@ class NiiVue(anywidget.AnyWidget):
             The height of the widget in pixels (default: 300).
         \*\*options : dict, optional
             Additional keyword arguments to configure the NiiVue widget.
-            See :class:`ipyniivue.options_mixin.OptionsMixin` for all options.
+            See :class:`ipyniivue.config_options.ConfigOptions` for all options.
         """
         # convert to JS camelCase options
         opts = ConfigOptions(parent=self, **options)
@@ -1280,12 +1280,12 @@ class NiiVue(anywidget.AnyWidget):
         self.opts.is_nearest_interpolation = is_nearest
         self.send({"type": "set_interpolation", "data": [is_nearest]})
 
-    def set_pen_value(self, pen_value: int, is_filled_pen: bool):
+    def set_pen_value(self, pen_value: float, is_filled_pen: bool):
         """Determine color and style of drawing.
 
         Parameters
         ----------
-        pen_value : int
+        pen_value : float
             sets the color of the pen
         is_filled_pen : bool
             determines if dragging creates flood-filled shape
@@ -1294,7 +1294,7 @@ class NiiVue(anywidget.AnyWidget):
         --------
         ::
 
-            nv.set_pen_value(1, True)
+            nv.set_pen_value(1.0, True)
         """
         self.opts.pen_value = pen_value
         self.opts.is_filled_pen = is_filled_pen
@@ -1348,6 +1348,7 @@ class NiiVue(anywidget.AnyWidget):
         Examples
         --------
         ::
+
             cmap = {
                 'R': [0, 255, 0],
                 'G': [0, 20, 0],
