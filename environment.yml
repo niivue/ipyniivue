@@ -2,8 +2,10 @@ name: ipyniivue
 channels:
   - conda-forge
 dependencies:
-  - ipyniivue
-  - requests
-  - anywidget
-  - nibabel
-  - ipylab
+  - pip
+  - pip:
+    - ipyniivue
+    - requests
+    - anywidget
+    - nibabel
+    - ipylab
