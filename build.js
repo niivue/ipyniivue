@@ -39,6 +39,16 @@ const generateColormapsPlugin = {
 					fs.writeFileSync(filePath, jsonContent, "utf8");
 				}
 
+				// draw colormaps
+				fs.copyFileSync(
+					path.join(__dirname, "build_assets", "$itksnap.json"),
+					path.join(outputDir, "$itksnap.json"),
+				);
+				fs.copyFileSync(
+					path.join(__dirname, "build_assets", "$slicer3d.json"),
+					path.join(outputDir, "$slicer3d.json"),
+				);
+
 				console.log("Successfully generated colormaps.");
 			} else {
 				console.error("Build failed, colormaps not generated.");
