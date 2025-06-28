@@ -266,7 +266,7 @@ the NiiVue widget and free up resources.</p>
 <dt>height<span class="classifier">int, optional</span></dt><dd><p>The height of the widget in pixels (default: 300).</p>
 </dd>
 <dt>**options<span class="classifier">dict, optional</span></dt><dd><p>Additional keyword arguments to configure the NiiVue widget.
-See <code class="xref py py-class docutils literal notranslate"><span class="pre">ipyniivue.options_mixin.OptionsMixin</span></code> for all options.</p>
+See <a class="reference internal" href="options.html#ipyniivue.config_options.ConfigOptions" title="ipyniivue.config_options.ConfigOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ipyniivue.config_options.ConfigOptions</span></code></a> for all options.</p>
 </dd>
 </dl>
 </section>
@@ -1617,19 +1617,16 @@ A value of <cite>0</cite> disables the outline.</p>
 </section>
 <section id="id90">
 <h2>Examples<a class="headerlink" href="#id90" title="Link to this heading">¶</a></h2>
-<dl>
-<dt>::</dt><dd><dl class="simple">
-<dt>cmap = {</dt><dd><p>‘R’: [0, 255, 0],
-‘G’: [0, 20, 0],
-‘B’: [0, 20, 80],
-‘A’: [0, 255, 255],
-‘labels’: [‘’, ‘white-matter’, ‘delete T1’],</p>
-</dd>
-</dl>
-<p>}
-nv.set_draw_colormap(cmap)</p>
-</dd>
-</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cmap</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">80</span><span class="p">],</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">],</span>
+    <span class="s1">&#39;labels&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;white-matter&#39;</span><span class="p">,</span> <span class="s1">&#39;delete T1&#39;</span><span class="p">],</span>
+<span class="p">}</span>
+<span class="n">nv</span><span class="o">.</span><span class="n">set_draw_colormap</span><span class="p">(</span><span class="n">cmap</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </dd></dl>
 
@@ -1816,12 +1813,12 @@ If the mesh shader is not found.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ipyniivue.widget.NiiVue.set_pen_value">
-<span class="sig-name descname"><span class="pre">set_pen_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pen_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_filled_pen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_pen_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_pen_value" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_pen_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pen_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_filled_pen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_pen_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.widget.NiiVue.set_pen_value" title="Link to this definition">¶</a></dt>
 <dd><p>Determine color and style of drawing.</p>
 <section id="id109">
 <h2>Parameters<a class="headerlink" href="#id109" title="Link to this heading">¶</a></h2>
 <dl class="simple">
-<dt>pen_value<span class="classifier">int</span></dt><dd><p>sets the color of the pen</p>
+<dt>pen_value<span class="classifier">float</span></dt><dd><p>sets the color of the pen</p>
 </dd>
 <dt>is_filled_pen<span class="classifier">bool</span></dt><dd><p>determines if dragging creates flood-filled shape</p>
 </dd>
@@ -1829,7 +1826,7 @@ If the mesh shader is not found.</p>
 </section>
 <section id="id110">
 <h2>Examples<a class="headerlink" href="#id110" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_pen_value</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_pen_value</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

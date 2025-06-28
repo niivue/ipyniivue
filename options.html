@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -239,7 +239,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -247,6 +247,520 @@
         <article role="main" id="furo-main-content">
           <section id="options">
 <h1>Options<a class="headerlink" href="#options" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.config_options.</span></span><span class="sig-name descname"><span class="pre">ConfigOptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/config_options.html#ConfigOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">HasTraits</span></code></p>
+<p>Configuration options for NiiVue.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/config_options.html#ConfigOptions.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.atlas_outline">
+<span class="sig-name descname"><span class="pre">atlas_outline</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.atlas_outline" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.back_color">
+<span class="sig-name descname"><span class="pre">back_color</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.back_color" title="Link to this definition">¶</a></dt>
+<dd><p>An instance of a Python tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.center_mosaic">
+<span class="sig-name descname"><span class="pre">center_mosaic</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.center_mosaic" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.click_to_segment">
+<span class="sig-name descname"><span class="pre">click_to_segment</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.click_to_segment" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.click_to_segment_auto_intensity">
+<span class="sig-name descname"><span class="pre">click_to_segment_auto_intensity</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.click_to_segment_auto_intensity" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.click_to_segment_is_2d">
+<span class="sig-name descname"><span class="pre">click_to_segment_is_2d</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.click_to_segment_is_2d" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.clip_plane_color">
+<span class="sig-name descname"><span class="pre">clip_plane_color</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.clip_plane_color" title="Link to this definition">¶</a></dt>
+<dd><p>An instance of a Python tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.clip_plane_hot_key">
+<span class="sig-name descname"><span class="pre">clip_plane_hot_key</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.clip_plane_hot_key" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for unicode strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.colorbar_height">
+<span class="sig-name descname"><span class="pre">colorbar_height</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.colorbar_height" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.colorbar_margin">
+<span class="sig-name descname"><span class="pre">colorbar_margin</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.colorbar_margin" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.crosshair_color">
+<span class="sig-name descname"><span class="pre">crosshair_color</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.crosshair_color" title="Link to this definition">¶</a></dt>
+<dd><p>An instance of a Python tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.crosshair_gap">
+<span class="sig-name descname"><span class="pre">crosshair_gap</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.crosshair_gap" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.crosshair_width">
+<span class="sig-name descname"><span class="pre">crosshair_width</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.crosshair_width" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.double_touch_timeout">
+<span class="sig-name descname"><span class="pre">double_touch_timeout</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.double_touch_timeout" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.drag_and_drop_enabled">
+<span class="sig-name descname"><span class="pre">drag_and_drop_enabled</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.drag_and_drop_enabled" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.drag_mode">
+<span class="sig-name descname"><span class="pre">drag_mode</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.drag_mode" title="Link to this definition">¶</a></dt>
+<dd><p>Use a Enum class as model for the data type description.
+Note that if no default-value is provided, the first enum-value is used
+as default-value.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- SINCE: Python 3.4 (or install backport: pip install enum34)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">traitlets</span><span class="w"> </span><span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">UseEnum</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Color</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># -- IMPLICIT: default_value</span>
+    <span class="n">blue</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyEntity</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">UseEnum</span><span class="p">(</span><span class="n">Color</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">blue</span><span class="p">)</span>
+
+
+<span class="n">entity</span> <span class="o">=</span> <span class="n">MyEntity</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">red</span><span class="p">)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>  <span class="c1"># USE: Enum-value (preferred)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>  <span class="c1"># USE: name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;Color.green&quot;</span>  <span class="c1"># USE: scoped-name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># USE: number (as int)</span>
+<span class="k">assert</span> <span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.drawing_enabled">
+<span class="sig-name descname"><span class="pre">drawing_enabled</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.drawing_enabled" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.flood_fill_neighbors">
+<span class="sig-name descname"><span class="pre">flood_fill_neighbors</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.flood_fill_neighbors" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.font_color">
+<span class="sig-name descname"><span class="pre">font_color</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.font_color" title="Link to this definition">¶</a></dt>
+<dd><p>An instance of a Python tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.force_device_pixel_ratio">
+<span class="sig-name descname"><span class="pre">force_device_pixel_ratio</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.force_device_pixel_ratio" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.gradient_amount">
+<span class="sig-name descname"><span class="pre">gradient_amount</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.gradient_amount" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.gradient_opacity">
+<span class="sig-name descname"><span class="pre">gradient_opacity</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.gradient_opacity" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_additive_blend">
+<span class="sig-name descname"><span class="pre">is_additive_blend</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_additive_blend" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_anti_alias">
+<span class="sig-name descname"><span class="pre">is_anti_alias</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_anti_alias" title="Link to this definition">¶</a></dt>
+<dd><p>A trait which allows any value.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_atlas_outline">
+<span class="sig-name descname"><span class="pre">is_atlas_outline</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_atlas_outline" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_colorbar">
+<span class="sig-name descname"><span class="pre">is_colorbar</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_colorbar" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_corner_orientation_text">
+<span class="sig-name descname"><span class="pre">is_corner_orientation_text</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_corner_orientation_text" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_depth_pick_mesh">
+<span class="sig-name descname"><span class="pre">is_depth_pick_mesh</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_depth_pick_mesh" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_filled_pen">
+<span class="sig-name descname"><span class="pre">is_filled_pen</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_filled_pen" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_force_mouse_click_to_voxel_centers">
+<span class="sig-name descname"><span class="pre">is_force_mouse_click_to_voxel_centers</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_force_mouse_click_to_voxel_centers" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_high_resolution_capable">
+<span class="sig-name descname"><span class="pre">is_high_resolution_capable</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_high_resolution_capable" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_nearest_interpolation">
+<span class="sig-name descname"><span class="pre">is_nearest_interpolation</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_nearest_interpolation" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_orient_cube">
+<span class="sig-name descname"><span class="pre">is_orient_cube</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_orient_cube" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_radiological_convention">
+<span class="sig-name descname"><span class="pre">is_radiological_convention</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_radiological_convention" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_resize_canvas">
+<span class="sig-name descname"><span class="pre">is_resize_canvas</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_resize_canvas" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_ruler">
+<span class="sig-name descname"><span class="pre">is_ruler</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_ruler" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_slice_mm">
+<span class="sig-name descname"><span class="pre">is_slice_mm</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_slice_mm" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.is_v1_slice_shader">
+<span class="sig-name descname"><span class="pre">is_v1_slice_shader</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.is_v1_slice_shader" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.key_debounce_time">
+<span class="sig-name descname"><span class="pre">key_debounce_time</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.key_debounce_time" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.legend_background_color">
+<span class="sig-name descname"><span class="pre">legend_background_color</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.legend_background_color" title="Link to this definition">¶</a></dt>
+<dd><p>An instance of a Python tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.legend_text_color">
+<span class="sig-name descname"><span class="pre">legend_text_color</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.legend_text_color" title="Link to this definition">¶</a></dt>
+<dd><p>An instance of a Python tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.limit_frames_4d">
+<span class="sig-name descname"><span class="pre">limit_frames_4d</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.limit_frames_4d" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.loading_text">
+<span class="sig-name descname"><span class="pre">loading_text</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.loading_text" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for unicode strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.log_level">
+<span class="sig-name descname"><span class="pre">log_level</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.log_level" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for unicode strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.long_touch_timeout">
+<span class="sig-name descname"><span class="pre">long_touch_timeout</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.long_touch_timeout" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.max_draw_undo_bitmaps">
+<span class="sig-name descname"><span class="pre">max_draw_undo_bitmaps</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.max_draw_undo_bitmaps" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.mesh_thickness_on_2d">
+<span class="sig-name descname"><span class="pre">mesh_thickness_on_2d</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.mesh_thickness_on_2d" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.mesh_x_ray">
+<span class="sig-name descname"><span class="pre">mesh_x_ray</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.mesh_x_ray" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.multiplanar_force_render">
+<span class="sig-name descname"><span class="pre">multiplanar_force_render</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.multiplanar_force_render" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.multiplanar_layout">
+<span class="sig-name descname"><span class="pre">multiplanar_layout</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.multiplanar_layout" title="Link to this definition">¶</a></dt>
+<dd><p>Use a Enum class as model for the data type description.
+Note that if no default-value is provided, the first enum-value is used
+as default-value.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- SINCE: Python 3.4 (or install backport: pip install enum34)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">traitlets</span><span class="w"> </span><span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">UseEnum</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Color</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># -- IMPLICIT: default_value</span>
+    <span class="n">blue</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyEntity</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">UseEnum</span><span class="p">(</span><span class="n">Color</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">blue</span><span class="p">)</span>
+
+
+<span class="n">entity</span> <span class="o">=</span> <span class="n">MyEntity</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">red</span><span class="p">)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>  <span class="c1"># USE: Enum-value (preferred)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>  <span class="c1"># USE: name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;Color.green&quot;</span>  <span class="c1"># USE: scoped-name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># USE: number (as int)</span>
+<span class="k">assert</span> <span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.multiplanar_pad_pixels">
+<span class="sig-name descname"><span class="pre">multiplanar_pad_pixels</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.multiplanar_pad_pixels" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.multiplanar_show_render">
+<span class="sig-name descname"><span class="pre">multiplanar_show_render</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.multiplanar_show_render" title="Link to this definition">¶</a></dt>
+<dd><p>Use a Enum class as model for the data type description.
+Note that if no default-value is provided, the first enum-value is used
+as default-value.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- SINCE: Python 3.4 (or install backport: pip install enum34)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">traitlets</span><span class="w"> </span><span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">UseEnum</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Color</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># -- IMPLICIT: default_value</span>
+    <span class="n">blue</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyEntity</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">UseEnum</span><span class="p">(</span><span class="n">Color</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">blue</span><span class="p">)</span>
+
+
+<span class="n">entity</span> <span class="o">=</span> <span class="n">MyEntity</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">red</span><span class="p">)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>  <span class="c1"># USE: Enum-value (preferred)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>  <span class="c1"># USE: name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;Color.green&quot;</span>  <span class="c1"># USE: scoped-name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># USE: number (as int)</span>
+<span class="k">assert</span> <span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.pen_value">
+<span class="sig-name descname"><span class="pre">pen_value</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.pen_value" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.render_overlay_blend">
+<span class="sig-name descname"><span class="pre">render_overlay_blend</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.render_overlay_blend" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.ruler_color">
+<span class="sig-name descname"><span class="pre">ruler_color</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.ruler_color" title="Link to this definition">¶</a></dt>
+<dd><p>An instance of a Python tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.ruler_width">
+<span class="sig-name descname"><span class="pre">ruler_width</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.ruler_width" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.sagittal_nose_left">
+<span class="sig-name descname"><span class="pre">sagittal_nose_left</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.sagittal_nose_left" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.selection_box_color">
+<span class="sig-name descname"><span class="pre">selection_box_color</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.selection_box_color" title="Link to this definition">¶</a></dt>
+<dd><p>An instance of a Python tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.show_3d_crosshair">
+<span class="sig-name descname"><span class="pre">show_3d_crosshair</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.show_3d_crosshair" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.show_legend">
+<span class="sig-name descname"><span class="pre">show_legend</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.show_legend" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.slice_mosaic_string">
+<span class="sig-name descname"><span class="pre">slice_mosaic_string</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.slice_mosaic_string" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for unicode strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.slice_type">
+<span class="sig-name descname"><span class="pre">slice_type</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.slice_type" title="Link to this definition">¶</a></dt>
+<dd><p>Use a Enum class as model for the data type description.
+Note that if no default-value is provided, the first enum-value is used
+as default-value.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- SINCE: Python 3.4 (or install backport: pip install enum34)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">traitlets</span><span class="w"> </span><span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">UseEnum</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Color</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># -- IMPLICIT: default_value</span>
+    <span class="n">blue</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyEntity</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">UseEnum</span><span class="p">(</span><span class="n">Color</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">blue</span><span class="p">)</span>
+
+
+<span class="n">entity</span> <span class="o">=</span> <span class="n">MyEntity</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">red</span><span class="p">)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>  <span class="c1"># USE: Enum-value (preferred)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>  <span class="c1"># USE: name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;Color.green&quot;</span>  <span class="c1"># USE: scoped-name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># USE: number (as int)</span>
+<span class="k">assert</span> <span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.text_height">
+<span class="sig-name descname"><span class="pre">text_height</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.text_height" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.thumbnail">
+<span class="sig-name descname"><span class="pre">thumbnail</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.thumbnail" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for unicode strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.trust_cal_min_max">
+<span class="sig-name descname"><span class="pre">trust_cal_min_max</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.trust_cal_min_max" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.view_mode_hot_key">
+<span class="sig-name descname"><span class="pre">view_mode_hot_key</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.view_mode_hot_key" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for unicode strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.yoke_3d_to_2d_zoom">
+<span class="sig-name descname"><span class="pre">yoke_3d_to_2d_zoom</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.yoke_3d_to_2d_zoom" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -292,8 +806,97 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Options</a><ul>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions"><code class="docutils literal notranslate"><span class="pre">ConfigOptions</span></code></a><ul>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.__init__"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.atlas_outline"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.atlas_outline</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.back_color"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.back_color</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.center_mosaic"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.center_mosaic</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.click_to_segment"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.click_to_segment</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.click_to_segment_auto_intensity"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.click_to_segment_auto_intensity</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.click_to_segment_is_2d"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.click_to_segment_is_2d</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.clip_plane_color"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.clip_plane_color</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.clip_plane_hot_key"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.clip_plane_hot_key</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.colorbar_height"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.colorbar_height</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.colorbar_margin"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.colorbar_margin</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.crosshair_color"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.crosshair_color</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.crosshair_gap"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.crosshair_gap</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.crosshair_width"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.crosshair_width</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.double_touch_timeout"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.double_touch_timeout</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.drag_and_drop_enabled"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.drag_and_drop_enabled</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.drag_mode"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.drag_mode</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.drawing_enabled"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.drawing_enabled</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.flood_fill_neighbors"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.flood_fill_neighbors</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.font_color"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.font_color</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.force_device_pixel_ratio"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.force_device_pixel_ratio</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.gradient_amount"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.gradient_amount</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.gradient_opacity"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.gradient_opacity</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_additive_blend"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_additive_blend</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_anti_alias"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_anti_alias</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_atlas_outline"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_atlas_outline</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_colorbar"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_colorbar</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_corner_orientation_text"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_corner_orientation_text</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_depth_pick_mesh"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_depth_pick_mesh</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_filled_pen"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_filled_pen</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_force_mouse_click_to_voxel_centers"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_force_mouse_click_to_voxel_centers</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_high_resolution_capable"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_high_resolution_capable</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_nearest_interpolation"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_nearest_interpolation</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_orient_cube"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_orient_cube</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_radiological_convention"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_radiological_convention</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_resize_canvas"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_resize_canvas</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_ruler"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_ruler</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_slice_mm"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_slice_mm</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.is_v1_slice_shader"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.is_v1_slice_shader</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.key_debounce_time"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.key_debounce_time</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.legend_background_color"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.legend_background_color</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.legend_text_color"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.legend_text_color</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.limit_frames_4d"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.limit_frames_4d</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.loading_text"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.loading_text</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.log_level"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.log_level</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.long_touch_timeout"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.long_touch_timeout</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.max_draw_undo_bitmaps"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.max_draw_undo_bitmaps</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.mesh_thickness_on_2d"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.mesh_thickness_on_2d</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.mesh_x_ray"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.mesh_x_ray</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.multiplanar_force_render"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.multiplanar_force_render</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.multiplanar_layout"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.multiplanar_layout</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.multiplanar_pad_pixels"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.multiplanar_pad_pixels</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.multiplanar_show_render"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.multiplanar_show_render</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.pen_value"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.pen_value</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.render_overlay_blend"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.render_overlay_blend</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.ruler_color"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.ruler_color</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.ruler_width"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.ruler_width</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.sagittal_nose_left"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.sagittal_nose_left</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.selection_box_color"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.selection_box_color</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.show_3d_crosshair"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.show_3d_crosshair</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.show_legend"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.show_legend</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.slice_mosaic_string"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.slice_mosaic_string</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.slice_type"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.slice_type</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.text_height"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.text_height</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.thumbnail"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.thumbnail</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.trust_cal_min_max"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.trust_cal_min_max</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.view_mode_hot_key"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.view_mode_hot_key</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.yoke_3d_to_2d_zoom"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.yoke_3d_to_2d_zoom</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
