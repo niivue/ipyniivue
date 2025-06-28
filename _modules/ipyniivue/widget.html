@@ -253,7 +253,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">anywidget</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">ipywidgets</span>
@@ -261,8 +261,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">traitlets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">CallbackDispatcher</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SNAKE_TO_CAMEL_OVERRIDES</span><span class="p">,</span> <span class="n">SliceType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.options_mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptionsMixin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">SliceType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.traits</span><span class="w"> </span><span class="kn">import</span> <span class="n">LUT</span><span class="p">,</span> <span class="n">ColorMap</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">deserialize_colormap_label</span><span class="p">,</span>
@@ -272,7 +272,6 @@
     <span class="n">make_label_lut</span><span class="p">,</span>
     <span class="n">serialize_colormap_label</span><span class="p">,</span>
     <span class="n">serialize_options</span><span class="p">,</span>
-    <span class="n">snake_to_camel</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NiiVue&quot;</span><span class="p">]</span>
@@ -588,26 +587,24 @@
 
 <div class="viewcode-block" id="NiiVue">
 <a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">NiiVue</span><span class="p">(</span><span class="n">OptionsMixin</span><span class="p">,</span> <span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NiiVue</span><span class="p">(</span><span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a NiiVue widget instance.</span>
 
 <span class="sd">    This class provides a Jupyter widget for visualizing neuroimaging data using</span>
-<span class="sd">    NiiVue. It inherits from `OptionsMixin` for default options.</span>
+<span class="sd">    NiiVue.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_esm</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;static&quot;</span> <span class="o">/</span> <span class="s2">&quot;widget.js&quot;</span>
 
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
     <span class="n">height</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">()</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">_opts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Dict</span><span class="p">({})</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">ConfigOptions</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_options</span><span class="p">,</span> <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_options</span>
     <span class="p">)</span>
-    <span class="n">_volumes</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">Volume</span><span class="p">),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+    <span class="n">volumes</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">Volume</span><span class="p">),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">ipywidgets</span><span class="o">.</span><span class="n">widget_serialization</span>
     <span class="p">)</span>
-    <span class="n">_meshes</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">Mesh</span><span class="p">),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+    <span class="n">meshes</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">Mesh</span><span class="p">),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">ipywidgets</span><span class="o">.</span><span class="n">widget_serialization</span>
     <span class="p">)</span>
 
@@ -623,10 +620,6 @@
     <span class="p">)</span>
     <span class="n">draw_opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">draw_fill_overwrites</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="nd">@t</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_default_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
 
 <div class="viewcode-block" id="NiiVue.__init__">
 <a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.__init__">[docs]</a>
@@ -646,11 +639,8 @@
 <span class="sd">            See :class:`ipyniivue.options_mixin.OptionsMixin` for all options.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># convert to JS camelCase options</span>
-        <span class="n">_opts</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">_SNAKE_TO_CAMEL_OVERRIDES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">snake_to_camel</span><span class="p">(</span><span class="n">k</span><span class="p">)):</span> <span class="n">v</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="p">}</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">_opts</span><span class="o">=</span><span class="n">_opts</span><span class="p">,</span> <span class="n">_volumes</span><span class="o">=</span><span class="p">[],</span> <span class="n">_meshes</span><span class="o">=</span><span class="p">[])</span>
+        <span class="n">opts</span> <span class="o">=</span> <span class="n">ConfigOptions</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="n">opts</span><span class="p">,</span> <span class="n">volumes</span><span class="o">=</span><span class="p">[],</span> <span class="n">meshes</span><span class="o">=</span><span class="p">[])</span>
 
         <span class="c1"># handle messages coming from frontend</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span> <span class="o">=</span> <span class="p">{}</span>
@@ -659,6 +649,29 @@
         <span class="c1"># colormaps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_initial_colormaps</span><span class="p">()</span></div>
 
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;todo: remove this starting version 2.4.1.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ConfigOptions</span><span class="o">.</span><span class="n">class_trait_names</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Setting config options directly on NiiVue will not be supported &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;in versions starting 2.4.1. Please use nv.opts.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_notify_opts_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify_change</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;opts&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;old&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">,</span>
+                <span class="s2">&quot;new&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">,</span>
+                <span class="s2">&quot;owner&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_register_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">event_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">:</span>
@@ -691,17 +704,17 @@
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;frame_change&quot;</span><span class="p">:</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;frame_index&quot;</span><span class="p">])</span>
+                <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;frame_index&quot;</span><span class="p">])</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;image_loaded&quot;</span><span class="p">,</span> <span class="s2">&quot;intensity_change&quot;</span><span class="p">}:</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">handler</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;mesh_loaded&quot;</span><span class="p">:</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_index_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">handler</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;mesh_added_from_url&quot;</span><span class="p">:</span>
@@ -716,20 +729,20 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_volume_from_frontend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume_data</span><span class="p">):</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">volume_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">volume</span> <span class="o">=</span> <span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">volume_data</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[:</span><span class="n">index</span><span class="p">],</span> <span class="n">volume</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[</span><span class="n">index</span><span class="p">:]]</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[:</span><span class="n">index</span><span class="p">],</span> <span class="n">volume</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">index</span><span class="p">:]]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">,</span> <span class="n">volume</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">,</span> <span class="n">volume</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_mesh_from_frontend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_data</span><span class="p">):</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">mesh_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">layers_data</span> <span class="o">=</span> <span class="n">mesh_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;layers&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="o">**</span><span class="n">mesh_data</span><span class="p">)</span>
         <span class="n">mesh</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">MeshLayer</span><span class="p">(</span><span class="o">**</span><span class="n">layer_data</span><span class="p">)</span> <span class="k">for</span> <span class="n">layer_data</span> <span class="ow">in</span> <span class="n">layers_data</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[:</span><span class="n">index</span><span class="p">],</span> <span class="n">mesh</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[</span><span class="n">index</span><span class="p">:]]</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[:</span><span class="n">index</span><span class="p">],</span> <span class="n">mesh</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="n">index</span><span class="p">:]]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">,</span> <span class="n">mesh</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">,</span> <span class="n">mesh</span><span class="p">]</span>
 
 <div class="viewcode-block" id="NiiVue.close">
 <a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.close">[docs]</a>
@@ -761,7 +774,7 @@
 <span class="sd">        volume_id : str</span>
 <span class="sd">            The id of the volume.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">vol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">vol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">vol</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">volume_id</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">idx</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
@@ -777,7 +790,7 @@
 <span class="sd">        mesh_id : str</span>
 <span class="sd">            The id of the mesh.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mesh</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mesh</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">mesh</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">mesh_id</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">idx</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
@@ -807,7 +820,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">volumes</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span> <span class="o">=</span> <span class="n">volumes</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="o">=</span> <span class="n">volumes</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.add_volume">
@@ -833,27 +846,8 @@
 <span class="sd">            nv.add_volume({&quot;path&quot;: &quot;mni152.nii.gz&quot;})</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">,</span> <span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">volume</span><span class="p">)]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">,</span> <span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">volume</span><span class="p">)]</span></div>
 
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the list of volumes.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        list</span>
-<span class="sd">            A list of dictionairies containing the volume information.</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        ::</span>
-
-<span class="sd">            print(nv.volumes)</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">)</span>
 
 <div class="viewcode-block" id="NiiVue.load_meshes">
 <a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.load_meshes">[docs]</a>
@@ -879,7 +873,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Mesh</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">meshes</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="n">meshes</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span> <span class="o">=</span> <span class="n">meshes</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.add_mesh">
@@ -905,27 +899,8 @@
 <span class="sd">            nv.add_mesh({&quot;path&quot;: &quot;BrainMesh_ICBM152.lh.mz3&quot;})</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">,</span> <span class="n">mesh</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">,</span> <span class="n">mesh</span><span class="p">]</span></div>
 
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">meshes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the list of meshes.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        list</span>
-<span class="sd">            A list of dictionairies containing the mesh information.</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        ::</span>
-
-<span class="sd">            print(nv.meshes)</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">)</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Other functions</span>
@@ -1089,7 +1064,7 @@
         <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh with id &#39;</span><span class="si">{</span><span class="n">mesh_id</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
 
-        <span class="n">mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 
@@ -1142,7 +1117,7 @@
         <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh with id &#39;</span><span class="si">{</span><span class="n">mesh_id</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
 
-        <span class="n">mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">layer_index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">layer_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layer index </span><span class="si">{</span><span class="n">layer_index</span><span class="si">}</span><span class="s2"> out of range.&quot;</span><span class="p">)</span>
 
@@ -1252,7 +1227,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">imageID</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">colormap</span> <span class="o">=</span> <span class="n">colormap</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">colormap</span> <span class="o">=</span> <span class="n">colormap</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume with ID &#39;</span><span class="si">{</span><span class="n">imageID</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span></div>
 
@@ -1285,7 +1260,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">c</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">color</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Each color component must be a number between 0 and 1.&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">selection_box_color</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">color</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">selection_box_color</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">color</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.set_crosshair_color">
@@ -1316,7 +1291,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">c</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">color</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Each color component must be a number between 0 and 1.&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">crosshair_color</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">color</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">crosshair_color</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">color</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.set_crosshair_width">
@@ -1335,7 +1310,7 @@
 
 <span class="sd">            nv.set_crosshair_width(3)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">crosshair_width</span> <span class="o">=</span> <span class="n">width</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">crosshair_width</span> <span class="o">=</span> <span class="n">width</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.set_gamma">
@@ -1386,10 +1361,7 @@
 
 <span class="sd">            nv.set_slice_type(SliceType.AXIAL)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">slice_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SliceType</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;slice_type must be a valid SliceType&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">slice_type</span> <span class="o">=</span> <span class="n">slice_type</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">slice_type</span> <span class="o">=</span> <span class="n">slice_type</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.set_clip_plane">
@@ -1569,7 +1541,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gradient_amount</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;gradient_amount must be a number.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">gradient_amount</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gradient_amount</span> <span class="o">=</span> <span class="n">gradient_amount</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">gradient_amount</span> <span class="o">=</span> <span class="n">gradient_amount</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_volume_render_illumination&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">gradient_amount</span><span class="p">]})</span></div>
 
 
@@ -1595,7 +1567,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">force_device_pixel_ratio</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="n">force_device_pixel_ratio</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">force_device_pixel_ratio</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">force_device_pixel_ratio</span> <span class="o">=</span> <span class="n">force_device_pixel_ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">force_device_pixel_ratio</span> <span class="o">=</span> <span class="n">force_device_pixel_ratio</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resize_listener&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;draw_scene&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span></div>
 
@@ -1644,7 +1616,7 @@
 
 <span class="sd">            nv.set_atlas_outline(2.0)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">atlas_outline</span> <span class="o">=</span> <span class="n">outline</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">atlas_outline</span> <span class="o">=</span> <span class="n">outline</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.set_interpolation">
@@ -1664,7 +1636,7 @@
 
 <span class="sd">            nv.set_interpolation(True)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_nearest_interpolation</span> <span class="o">=</span> <span class="n">is_nearest</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">is_nearest_interpolation</span> <span class="o">=</span> <span class="n">is_nearest</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_interpolation&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">is_nearest</span><span class="p">]})</span></div>
 
 
@@ -1686,8 +1658,8 @@
 
 <span class="sd">            nv.set_pen_value(1, True)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pen_value</span> <span class="o">=</span> <span class="n">pen_value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_filled_pen</span> <span class="o">=</span> <span class="n">is_filled_pen</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">pen_value</span> <span class="o">=</span> <span class="n">pen_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">is_filled_pen</span> <span class="o">=</span> <span class="n">is_filled_pen</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.set_drawing_enabled">
@@ -1706,8 +1678,8 @@
 
 <span class="sd">            nv.set_drawing_enabled(True)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">drawing_enabled</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drawing_enabled</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">drawing_enabled</span> <span class="o">=</span> <span class="n">drawing_enabled</span>
+        <span class="k">if</span> <span class="n">drawing_enabled</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">drawing_enabled</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">drawing_enabled</span> <span class="o">=</span> <span class="n">drawing_enabled</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_drawing_enabled&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">drawing_enabled</span><span class="p">]})</span></div>
 
 
@@ -1862,7 +1834,7 @@
 
 <span class="sd">            nv.set_slice_mm(True)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_slice_mm</span> <span class="o">=</span> <span class="n">is_slice_mm</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">is_slice_mm</span> <span class="o">=</span> <span class="n">is_slice_mm</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.draw_undo">
@@ -1910,7 +1882,7 @@
 
 <span class="sd">            nv.set_radiological_convention(True)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_radiological_convention</span> <span class="o">=</span> <span class="n">is_radiological_convention</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">is_radiological_convention</span> <span class="o">=</span> <span class="n">is_radiological_convention</span></div>
 
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
