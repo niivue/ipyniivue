@@ -39,7 +39,7 @@ const generateColormapsPlugin = {
 					fs.writeFileSync(filePath, jsonContent, "utf8");
 				}
 
-				// draw colormaps
+				// colormaps for drawing
 				fs.copyFileSync(
 					path.join(__dirname, "build_assets", "$itksnap.json"),
 					path.join(outputDir, "$itksnap.json"),

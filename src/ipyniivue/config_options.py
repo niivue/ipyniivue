@@ -61,7 +61,7 @@ class ConfigOptions(t.HasTraits):
     is_force_mouse_click_to_voxel_centers = t.Bool(False).tag(sync=False)
     drag_and_drop_enabled = t.Bool(True).tag(sync=False)
     drawing_enabled = t.Bool(False).tag(sync=False)
-    pen_value = t.Int(1).tag(sync=False)
+    pen_value = t.Float(1.0).tag(sync=False)
     flood_fill_neighbors = t.Int(6).tag(sync=False)
     is_filled_pen = t.Bool(False).tag(sync=False)
     thumbnail = t.Unicode("").tag(sync=False)

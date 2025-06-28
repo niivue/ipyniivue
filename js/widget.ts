@@ -21,6 +21,7 @@ function deserializeOptions(
 		Infinity: Number.POSITIVE_INFINITY,
 		"-Infinity": Number.NEGATIVE_INFINITY,
 		NaN: Number.NaN,
+		"-0": -0,
 	};
 
 	for (const [key, value] of Object.entries(options) as [

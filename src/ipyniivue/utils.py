@@ -218,6 +218,23 @@ def make_draw_lut(cmap: ColorMap) -> LUT:
     return LUT(lut=lut, labels=cm.labels)
 
 
+def is_negative_zero(x):
+    """
+    Check if float is -0.0.
+
+    Parameters
+    ----------
+    x : float
+        The number to check.
+
+    Returns
+    -------
+    bool
+        The result of the check.
+    """
+    return x == 0.0 and math.copysign(1.0, x) == -1.0
+
+
 def serialize_options(instance: dict, widget: object):
     """
     Serialize the options for a NiiVue instance, handling infinities and NaN.
@@ -238,6 +255,8 @@ def serialize_options(instance: dict, widget: object):
                 return "Infinity" if v > 0 else "-Infinity"
             elif math.isnan(v):
                 return "NaN"
+            elif is_negative_zero(v):
+                return "-0"
             else:
                 return v
         else:
@@ -276,6 +295,8 @@ def deserialize_options(serialized_options: dict, widget: object):
                 return float("-inf")
             elif v == "NaN":
                 return float("nan")
+            elif v == "-0":
+                return -0.0
             else:
                 return v
         else:
