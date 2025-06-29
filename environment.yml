@@ -4,7 +4,7 @@ channels:
 dependencies:
   - pip
   - pip:
-    - ipyniivue
+    - ipyniivue==2.3.0
     - requests
     - anywidget
     - nibabel
