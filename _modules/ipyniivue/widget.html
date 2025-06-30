@@ -965,8 +965,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">save_image</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;image.nii.gz&quot;</span><span class="p">,</span>
-        <span class="n">save_drawing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">index_volume</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">is_save_drawing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">volume_by_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save the current image as a nii file.</span>
@@ -975,9 +975,9 @@
 <span class="sd">        ----------</span>
 <span class="sd">        file_name : str</span>
 <span class="sd">            The file name to save the image as.</span>
-<span class="sd">        save_drawing : bool</span>
+<span class="sd">        is_save_drawing : bool</span>
 <span class="sd">            A value representing if the drawings should be saved.</span>
-<span class="sd">        index_volume : int</span>
+<span class="sd">        volume_by_index : int</span>
 <span class="sd">            The volume layer which should be saved (0 for background)</span>
 
 <span class="sd">        Returns</span>
@@ -992,7 +992,10 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
-            <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;save_image&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">file_name</span><span class="p">,</span> <span class="n">save_drawing</span><span class="p">,</span> <span class="n">index_volume</span><span class="p">]}</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;save_image&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">file_name</span><span class="p">,</span> <span class="n">is_save_drawing</span><span class="p">,</span> <span class="n">volume_by_index</span><span class="p">],</span>
+            <span class="p">}</span>
         <span class="p">)</span></div>
 
 
@@ -1884,6 +1887,46 @@
 <span class="sd">            nv.set_radiological_convention(True)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">is_radiological_convention</span> <span class="o">=</span> <span class="n">is_radiological_convention</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.load_drawing">
+<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.load_drawing">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_drawing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_binarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load a drawing.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            The url or path of the drawing.</span>
+<span class="sd">        is_binarize : bool</span>
+<span class="sd">            If true will force drawing voxels to be either 0 or 1.</span>
+
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.load_drawing(&quot;./images/lesion.nii.gz&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot load drawing: No volumes are loaded.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot load drawing: &quot;</span>
+                <span class="s2">&quot;The primary volume has not been initialized. &quot;</span>
+                <span class="s2">&quot;Please render the NiiVue object.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">file_bytes</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;load_drawing_from_url&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;local&gt;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">is_binarize</span><span class="p">],</span>
+                <span class="p">},</span>
+                <span class="n">buffers</span><span class="o">=</span><span class="p">[</span><span class="n">file_bytes</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;load_drawing_from_url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">path</span><span class="p">,</span> <span class="n">is_binarize</span><span class="p">]})</span></div>
 
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
