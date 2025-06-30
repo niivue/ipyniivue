@@ -96,113 +96,141 @@ function attachModelEventHandlers(
 	});
 
 	// Handle any message directions from the nv object.
-	model.on("msg:custom", (payload: CustomMessagePayload) => {
-		const { type, data } = payload;
-		switch (type) {
-			case "save_document": {
-				const [fileName, compress] = data;
-				nv.saveDocument(fileName, compress);
-				break;
-			}
-			case "save_html": {
-				const [fileName, canvasId] = data;
-				// Note: currently fails as esm is inaccessible.
-				// nv.saveHTML(fileName, canvasId, esm);
-				break;
-			}
-			case "save_image": {
-				const [filename, isSaveDrawing, volumeByIndex] = data;
-				nv.saveImage({
-					filename,
-					isSaveDrawing,
-					volumeByIndex,
-				});
-				break;
-			}
-			case "save_scene": {
-				const [fileName] = data;
-				nv.saveScene(fileName);
-				break;
-			}
-			case "add_colormap": {
-				const [name, cmap] = data;
-				nv.addColormap(name, cmap);
-				break;
-			}
-			case "set_gamma": {
-				const [gamma] = data;
-				nv.setGamma(gamma);
-				break;
-			}
-			case "resize_listener": {
-				nv.resizeListener();
-				break;
-			}
-			case "draw_scene": {
-				nv.drawScene();
-				break;
-			}
-			case "set_volume_render_illumination": {
-				if (nv.gl) {
-					let [gradientAmount] = data;
-					if (gradientAmount === null) {
-						gradientAmount = Number.NaN;
-					} else {
-						gradientAmount = Number(gradientAmount);
-					}
-					nv.setVolumeRenderIllumination(gradientAmount);
+	model.on(
+		"msg:custom",
+		async (payload: CustomMessagePayload, buffers: DataView[]) => {
+			const { type, data } = payload;
+			switch (type) {
+				case "save_document": {
+					const [fileName, compress] = data;
+					nv.saveDocument(fileName, compress);
+					break;
 				}
-				break;
+				case "save_html": {
+					const [fileName, canvasId] = data;
+					// Note: currently fails as esm is inaccessible.
+					// nv.saveHTML(fileName, canvasId, esm);
+					break;
+				}
+				case "save_image": {
+					const [filename, isSaveDrawing, volumeByIndex] = data;
+					nv.saveImage({
+						filename,
+						isSaveDrawing,
+						volumeByIndex,
+					});
+					break;
+				}
+				case "save_scene": {
+					const [fileName] = data;
+					nv.saveScene(fileName);
+					break;
+				}
+				case "add_colormap": {
+					const [name, cmap] = data;
+					nv.addColormap(name, cmap);
+					break;
+				}
+				case "set_gamma": {
+					const [gamma] = data;
+					nv.setGamma(gamma);
+					break;
+				}
+				case "resize_listener": {
+					nv.resizeListener();
+					break;
+				}
+				case "draw_scene": {
+					nv.drawScene();
+					break;
+				}
+				case "set_volume_render_illumination": {
+					if (nv.gl) {
+						let [gradientAmount] = data;
+						if (gradientAmount === null) {
+							gradientAmount = Number.NaN;
+						} else {
+							gradientAmount = Number(gradientAmount);
+						}
+						nv.setVolumeRenderIllumination(gradientAmount);
+					}
+					break;
+				}
+				case "load_png_as_texture": {
+					const [pngUrl, textureNum] = data;
+					nv.loadPngAsTexture(pngUrl, textureNum);
+					break;
+				}
+				case "set_render_azimuth_elevation": {
+					const [azimuth, elevation] = data;
+					nv.setRenderAzimuthElevation(azimuth, elevation);
+					break;
+				}
+				case "set_interpolation": {
+					const [isNearest] = data;
+					nv.setInterpolation(isNearest);
+					break;
+				}
+				case "set_drawing_enabled": {
+					const [drawingEnabled] = data;
+					nv.setDrawingEnabled(drawingEnabled);
+					break;
+				}
+				case "draw_otsu": {
+					const [levels] = data;
+					nv.drawOtsu(levels);
+					break;
+				}
+				case "draw_grow_cut": {
+					nv.drawGrowCut();
+					break;
+				}
+				case "move_crosshair_in_vox": {
+					const [x, y, z] = data;
+					nv.moveCrosshairInVox(x, y, z);
+					break;
+				}
+				case "remove_haze": {
+					const [level, volIndex] = data;
+					nv.removeHaze(level, volIndex);
+					break;
+				}
+				case "draw_undo": {
+					nv.drawUndo();
+					break;
+				}
+				case "close_drawing": {
+					nv.closeDrawing();
+					break;
+				}
+				case "load_drawing_from_url": {
+					const [url, isBinarize] = data;
+					if (url.startsWith("local>") && buffers.length === 1) {
+						// see loadDrawingFromUrl for reference
+						nv.drawClearAllUndoBitmaps();
+						try {
+							const name = url.slice(6);
+							const blob = new Blob([buffers[0].buffer]);
+							const file = new File([blob], name, {
+								type: "application/octet-stream",
+							});
+							const volume = await niivue.NVImage.loadFromFile({ file, name });
+							if (isBinarize) {
+								nv.binarize(volume);
+							}
+							nv.loadDrawing(volume);
+						} catch (err) {
+							console.error(`loadDrawingFromUrl() failed to load: ${err}`);
+							nv.drawClearAllUndoBitmaps();
+						}
+					} else {
+						nv.loadDrawingFromUrl(url, isBinarize);
+					}
+					break;
+				}
 			}
-			case "load_png_as_texture": {
-				const [pngUrl, textureNum] = data;
-				nv.loadPngAsTexture(pngUrl, textureNum);
-				break;
-			}
-			case "set_render_azimuth_elevation": {
-				const [azimuth, elevation] = data;
-				nv.setRenderAzimuthElevation(azimuth, elevation);
-				break;
-			}
-			case "set_interpolation": {
-				const [isNearest] = data;
-				nv.setInterpolation(isNearest);
-				break;
-			}
-			case "set_drawing_enabled": {
-				const [drawingEnabled] = data;
-				nv.setDrawingEnabled(drawingEnabled);
-				break;
-			}
-			case "draw_otsu": {
-				const [levels] = data;
-				nv.drawOtsu(levels);
-				break;
-			}
-			case "draw_grow_cut": {
-				nv.drawGrowCut();
-				break;
-			}
-			case "move_crosshair_in_vox": {
-				const [x, y, z] = data;
-				nv.moveCrosshairInVox(x, y, z);
-				break;
-			}
-			case "remove_haze": {
-				const [level, volIndex] = data;
-				nv.removeHaze(level, volIndex);
-				break;
-			}
-			case "draw_undo": {
-				nv.drawUndo();
-				break;
-			}
-			case "close_drawing": {
-				nv.closeDrawing();
-				break;
-			}
-		}
-	});
+		},
+	);
 }
 
 // Attach Niivue event handlers

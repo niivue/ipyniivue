@@ -666,8 +666,8 @@ class NiiVue(anywidget.AnyWidget):
     def save_image(
         self,
         file_name: str = "image.nii.gz",
-        save_drawing: bool = True,
-        index_volume: int = 0,
+        is_save_drawing: bool = True,
+        volume_by_index: int = 0,
     ):
         """
         Save the current image as a nii file.
@@ -676,9 +676,9 @@ class NiiVue(anywidget.AnyWidget):
         ----------
         file_name : str
             The file name to save the image as.
-        save_drawing : bool
+        is_save_drawing : bool
             A value representing if the drawings should be saved.
-        index_volume : int
+        volume_by_index : int
             The volume layer which should be saved (0 for background)
 
         Returns
@@ -693,7 +693,10 @@ class NiiVue(anywidget.AnyWidget):
 
         """
         self.send(
-            {"type": "save_image", "data": [file_name, save_drawing, index_volume]}
+            {
+                "type": "save_image",
+                "data": [file_name, is_save_drawing, volume_by_index],
+            }
         )
 
     def save_scene(self, file_name: str = "scene.png"):
@@ -1489,6 +1492,43 @@ class NiiVue(anywidget.AnyWidget):
             nv.set_radiological_convention(True)
         """
         self.opts.is_radiological_convention = is_radiological_convention
+
+    def load_drawing(self, path: str, is_binarize: bool = False):
+        """Load a drawing.
+
+        Parameters
+        ----------
+        path : str
+            The url or path of the drawing.
+        is_binarize : bool
+            If true will force drawing voxels to be either 0 or 1.
+
+
+        Examples
+        --------
+        ::
+
+            nv.load_drawing("./images/lesion.nii.gz")
+        """
+        if not self.volumes:
+            raise ValueError("Cannot load drawing: No volumes are loaded.")
+        if not self.volumes[0].id:
+            raise ValueError(
+                "Cannot load drawing: "
+                "The primary volume has not been initialized. "
+                "Please render the NiiVue object."
+            )
+        if pathlib.Path(path).exists():
+            file_bytes = pathlib.Path(path).read_bytes()
+            self.send(
+                {
+                    "type": "load_drawing_from_url",
+                    "data": [f"local>{path}", is_binarize],
+                },
+                buffers=[file_bytes],
+            )
+        else:
+            self.send({"type": "load_drawing_from_url", "data": [path, is_binarize]})
 
     """
     Custom event callbacks
