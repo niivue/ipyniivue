@@ -103,12 +103,20 @@ async function create_volume(
 		const idx = nv.getVolumeIndexByID(vmodel.get("id"));
 		volume = nv.volumes[idx];
 	} else {
+		let pairedImgData = null;
+		const pairedImg = vmodel.get("paired_img_path").data;
+
+		if (pairedImg !== null) {
+			pairedImgData = pairedImg.buffer as ArrayBuffer;
+		}
+		console.log("pairedImgData", pairedImgData);
+
 		volume = await niivue.NVImage.new(
 			vmodel.get("path").data.buffer as ArrayBuffer, // dataBuffer
 			vmodel.get("path").name, // name
 			vmodel.get("colormap"), // colormap
 			vmodel.get("opacity"), // opacity
-			null, // pairedImgData
+			pairedImgData, // pairedImgData
 			vmodel.get("cal_min") ?? Number.NaN, // cal_min
 			vmodel.get("cal_max") ?? Number.NaN, // cal_max
 			true, // trustCalMinMax
@@ -136,6 +144,7 @@ async function create_volume(
 
 	vmodel.set("id", volume.id);
 	vmodel.set("name", volume.name);
+	vmodel.set("n_frame4D", volume.nFrame4D ?? null);
 	vmodel.save_changes();
 
 	// Handle changes to the volume properties

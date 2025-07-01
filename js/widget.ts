@@ -95,6 +95,15 @@ function attachModelEventHandlers(
 		nv.drawFillOverwrites = model.get("draw_fill_overwrites");
 	});
 
+	model.on("change:graph", () => {
+		const graphData = model.get("graph");
+		for (const [key, value] of Object.entries(graphData)) {
+			// biome-ignore lint/suspicious/noExplicitAny: Update graph vals, only clear out old vals when needed
+			(nv.graph as any)[key] = value;
+		}
+		nv.updateGLVolume();
+	});
+
 	// Handle any message directions from the nv object.
 	model.on(
 		"msg:custom",
@@ -576,7 +585,8 @@ export default {
 			model.off("change:clip_plane_depth_azi_elev");
 			model.off("change:draw_lut");
 			model.off("change:draw_opacity");
-			model.off("change:change:draw_fill_overwrites");
+			model.off("change:draw_fill_overwrites");
+			model.off("change:graph");
 		};
 	},
 	async render({ model, el }: { model: Model; el: HTMLElement }) {

@@ -15,7 +15,13 @@ from .config_options import (
     SNAKE_TO_CAMEL,
     ConfigOptions,
 )
-from .traits import LUT, ColorMap
+from .traits import (
+    CAMEL_TO_SNAKE_GRAPH,
+    LUT,
+    SNAKE_TO_CAMEL_GRAPH,
+    ColorMap,
+    Graph,
+)
 
 
 def file_serializer(instance: typing.Union[pathlib.Path, str], widget: object):
@@ -31,6 +37,8 @@ def file_serializer(instance: typing.Union[pathlib.Path, str], widget: object):
     widget : object
         The NiiVue widget the instance is a part of.
     """
+    if instance is None:
+        return {"name": None, "data": None}
     if isinstance(instance, str):
         if instance == "<fromfrontend>":
             return {"name": "<fromfrontend>", "data": b""}
@@ -235,14 +243,14 @@ def is_negative_zero(x):
     return x == 0.0 and math.copysign(1.0, x) == -1.0
 
 
-def serialize_options(instance: dict, widget: object):
+def serialize_options(instance: ConfigOptions, widget: object):
     """
     Serialize the options for a NiiVue instance, handling infinities and NaN.
 
     Parameters
     ----------
-    instance : dict
-        The list of options to be serialized.
+    instance : ConfigOptions
+        The options to be serialized.
     widget : object
         The NiiVue widget the instance is a part of.
     """
@@ -263,7 +271,7 @@ def serialize_options(instance: dict, widget: object):
             return v
 
     data = {}
-    for name in instance.trait_names(sync=False):
+    for name in instance.trait_names():
         value = getattr(instance, name)
         camel_name = SNAKE_TO_CAMEL.get(name)
         data[camel_name] = serialize_value(value)
@@ -309,3 +317,49 @@ def deserialize_options(serialized_options: dict, widget: object):
         opts[snake_name] = deserialized_value
 
     return ConfigOptions(**opts)
+
+
+def serialize_graph(instance: Graph, widget: object):
+    """
+    Serialize the Graph instance, handling conversion to camelCase as needed.
+
+    Parameters
+    ----------
+    instance : Graph
+        The Graph instance to serialize.
+    widget : object
+        The NiiVue widget the instance is a part of.
+    """
+    data = {}
+    if instance:
+        for name in instance.trait_names():
+            value = getattr(instance, name)
+            if value is not None:
+                camel_name = SNAKE_TO_CAMEL_GRAPH.get(name, name)
+                data[camel_name] = value
+    return data
+
+
+def deserialize_graph(serialized_graph: dict, widget: object):
+    """
+    Deserialize serialized graph data, converting camelCase back to snake_case.
+
+    Parameters
+    ----------
+    serialized_graph : dict
+        The serialized graph dictionary from the frontend.
+    widget : object
+        The NiiVue widget the instance is a part of.
+
+    Returns
+    -------
+    Graph
+        The deserialized Graph instance.
+    """
+    graph_args = {}
+    for camel_name, value in serialized_graph.items():
+        snake_name = CAMEL_TO_SNAKE_GRAPH.get(camel_name, camel_name)
+        if snake_name in Graph.class_traits():
+            deserialized_value = value
+            graph_args[snake_name] = deserialized_value
+    return Graph(**graph_args)
