@@ -24,9 +24,30 @@ type LUT = {
 	labels?: string[];
 };
 
+type Graph = {
+	LTWH: number[];
+	opacity: number;
+	vols: number[];
+	autoSizeMultiplanar: boolean;
+	normalizeValues: boolean;
+	isRangeCalMinMax: boolean;
+
+	plotLTWH?: number[];
+	backColor?: number[];
+	lineColor?: number[];
+	textColor?: number[];
+	lineThickness?: number;
+	gridLineThickness?: number;
+	lineAlpha?: number;
+	lines?: number[][];
+	selectedColumn?: number;
+	lineRGB?: number[][];
+};
+
 export type VolumeModel = AnyModel<{
 	path: File;
 	id: string;
+	paired_img_path: File;
 	name: string;
 	colormap: string;
 	opacity: number;
@@ -39,6 +60,7 @@ export type VolumeModel = AnyModel<{
 	colormap_label: LUT;
 
 	colormap_invert: boolean;
+	n_frame4D: number | null;
 }>;
 
 export type MeshModel = AnyModel<{
@@ -92,6 +114,7 @@ export type Model = AnyModel<{
 	draw_lut: LUT;
 	draw_opacity: number;
 	draw_fill_overwrites: boolean;
+	graph: Graph;
 }>;
 
 // Custom message datas

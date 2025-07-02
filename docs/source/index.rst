@@ -10,5 +10,6 @@ A Jupyter Widget for Niivue based on anywidget.
     install
     api
     options
+    traits
     enums
     contributing

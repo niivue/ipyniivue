@@ -22,14 +22,20 @@ from ipywidgets import CallbackDispatcher
 
 from .config_options import ConfigOptions
 from .constants import SliceType
-from .traits import LUT, ColorMap
+from .traits import (
+    LUT,
+    ColorMap,
+    Graph,
+)
 from .utils import (
     deserialize_colormap_label,
+    deserialize_graph,
     deserialize_options,
     file_serializer,
     make_draw_lut,
     make_label_lut,
     serialize_colormap_label,
+    serialize_graph,
     serialize_options,
 )
 
@@ -186,6 +192,8 @@ class Volume(anywidget.AnyWidget):
     ----------
     path : str or pathlib.Path
         Path to the volume data file; cannot be modified once set.
+    paired_img_path : str or pathlib.Path, optional
+        Path to the paired img data.
     name : str, optional
         Name of the volume.
     opacity : float, optional
@@ -206,6 +214,9 @@ class Volume(anywidget.AnyWidget):
         sync=True, to_json=file_serializer
     )
     id = t.Unicode(default_value="").tag(sync=True)
+    paired_img_path = t.Union(
+        [t.Instance(pathlib.Path), t.Unicode()], default_value=None, allow_none=True
+    ).tag(sync=True, to_json=file_serializer)
     name = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     colormap = t.Unicode("gray").tag(sync=True)
@@ -222,10 +233,12 @@ class Volume(anywidget.AnyWidget):
 
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
+    n_frame4D = t.Int(None, allow_none=True).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
             "path",
+            "paired_img_path",
             "id",
             "name",
             "opacity",
@@ -319,6 +332,16 @@ class Volume(anywidget.AnyWidget):
             raise t.TraitError("Cannot modify id once set.")
         return proposal["value"]
 
+    @t.validate("n_frame4D")
+    def _validate_nframe4d(self, proposal):
+        if (
+            "n_frame4D" in self._trait_values
+            and self.n_frame4D
+            and self.n_frame4D != proposal["value"]
+        ):
+            raise t.TraitError("Cannot modify n_frame4D once set.")
+        return proposal["value"]
+
 
 class NiiVue(anywidget.AnyWidget):
     """
@@ -353,6 +376,11 @@ class NiiVue(anywidget.AnyWidget):
     )
     draw_opacity = t.Float(0.8).tag(sync=True)
     draw_fill_overwrites = t.Bool(True).tag(sync=True)
+    graph = t.Instance(Graph, allow_none=True).tag(
+        sync=True,
+        to_json=serialize_graph,
+        from_json=deserialize_graph,
+    )
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
@@ -369,16 +397,17 @@ class NiiVue(anywidget.AnyWidget):
             Additional keyword arguments to configure the NiiVue widget.
             See :class:`ipyniivue.config_options.ConfigOptions` for all options.
         """
-        # convert to JS camelCase options
+        # Get options
         opts = ConfigOptions(parent=self, **options)
         super().__init__(height=height, opts=opts, volumes=[], meshes=[])
 
-        # handle messages coming from frontend
+        # Handle messages coming from frontend
         self._event_handlers = {}
         self.on_msg(self._handle_custom_msg)
 
-        # colormaps
+        # Initialize values
         self._cluts = self._get_initial_colormaps()
+        self.graph = Graph(parent=self)
 
     def __setattr__(self, name, value):
         """todo: remove this starting version 2.4.1."""
@@ -398,6 +427,17 @@ class NiiVue(anywidget.AnyWidget):
                 "name": "opts",
                 "old": self.opts,
                 "new": self.opts,
+                "owner": self,
+                "type": "change",
+            }
+        )
+
+    def _notify_graph_changed(self):
+        self.notify_change(
+            {
+                "name": "graph",
+                "old": self.graph,
+                "new": self.graph,
                 "owner": self,
                 "type": "change",
             }
@@ -1363,9 +1403,13 @@ class NiiVue(anywidget.AnyWidget):
         """
         if isinstance(colormap, str):
             cmap = self.colormap_from_key(colormap)
-            self.draw_lut = make_draw_lut(cmap)
+            draw_lut = make_draw_lut(cmap)
+            draw_lut._parent = self
+            self.draw_lut = draw_lut
         elif isinstance(colormap, ColorMap):
-            self.draw_lut = make_draw_lut(colormap)
+            draw_lut = make_draw_lut(colormap)
+            draw_lut._parent = self
+            self.draw_lut = draw_lut
         else:
             raise ValueError("Colormap must be string or type ColorMap.")
 
