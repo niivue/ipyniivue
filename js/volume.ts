@@ -145,6 +145,7 @@ async function create_volume(
 	vmodel.set("id", volume.id);
 	vmodel.set("name", volume.name);
 	vmodel.set("n_frame4D", volume.nFrame4D ?? null);
+	vmodel.set("colormap", volume.colormap);
 	vmodel.save_changes();
 
 	// Handle changes to the volume properties
