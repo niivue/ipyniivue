@@ -199,7 +199,7 @@ class Volume(anywidget.AnyWidget):
     opacity : float, optional
         Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.
     colormap : str, optional
-        Colormap name for rendering. Default is 'gray'.
+        Colormap name for rendering. Default is '' (usually defaults to 'gray').
     colorbar_visible : bool, optional
         Show colorbar associated with the colormap. Default is True.
     cal_min : float or None, optional
@@ -219,7 +219,7 @@ class Volume(anywidget.AnyWidget):
     ).tag(sync=True, to_json=file_serializer)
     name = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
-    colormap = t.Unicode("gray").tag(sync=True)
+    colormap = t.Unicode("").tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
@@ -893,7 +893,8 @@ class NiiVue(anywidget.AnyWidget):
 
             colormaps = nv.colormaps()
         """
-        return list(self._cluts.keys())
+        exclude = {"$itksnap", "$slicer3d"}
+        return [cmap for cmap in self._cluts.keys() if cmap not in exclude]
 
     def add_colormap(self, name: str, color_map: dict):
         """Add a colormap to the widget.
