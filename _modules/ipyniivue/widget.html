@@ -455,7 +455,7 @@
 <span class="sd">    opacity : float, optional</span>
 <span class="sd">        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.</span>
 <span class="sd">    colormap : str, optional</span>
-<span class="sd">        Colormap name for rendering. Default is &#39;gray&#39;.</span>
+<span class="sd">        Colormap name for rendering. Default is &#39;&#39; (usually defaults to &#39;gray&#39;).</span>
 <span class="sd">    colorbar_visible : bool, optional</span>
 <span class="sd">        Show colorbar associated with the colormap. Default is True.</span>
 <span class="sd">    cal_min : float or None, optional</span>
@@ -475,7 +475,7 @@
     <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span><span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">colormap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">colormap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">colorbar_visible</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">cal_min</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">cal_max</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1205,7 +1205,8 @@
 
 <span class="sd">            colormaps = nv.colormaps()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$itksnap&quot;</span><span class="p">,</span> <span class="s2">&quot;$slicer3d&quot;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">cmap</span> <span class="k">for</span> <span class="n">cmap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.add_colormap">
