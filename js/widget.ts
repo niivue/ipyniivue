@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "@lukeed/uuid";
 import * as niivue from "@niivue/niivue";
+import { esm } from "@niivue/niivue/min";
 
 import { Disposer, gather_models } from "./lib.ts";
 import { render_meshes } from "./mesh.ts";
@@ -117,8 +118,7 @@ function attachModelEventHandlers(
 				}
 				case "save_html": {
 					const [fileName, canvasId] = data;
-					// Note: currently fails as esm is inaccessible.
-					// nv.saveHTML(fileName, canvasId, esm);
+					nv.saveHTML(fileName, canvasId, decodeURIComponent(esm));
 					break;
 				}
 				case "save_image": {
