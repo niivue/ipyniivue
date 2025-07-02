@@ -1,24 +1,19 @@
-Enums
-=====
+Traits
+======
 
 .. currentmodule:: ipyniivue
 
-.. autoclass:: DragMode
+.. autoclass:: ColorMap
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: MultiplanarType
+.. autoclass:: LUT
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: SliceType
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. autoclass:: ShowRender
+.. autoclass:: Graph
    :members:
    :undoc-members:
    :show-inheritance:

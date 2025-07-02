@@ -202,6 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../options.html">Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../traits.html">Traits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../enums.html">Enums</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 </ul>
@@ -263,14 +264,20 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.config_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">SliceType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.traits</span><span class="w"> </span><span class="kn">import</span> <span class="n">LUT</span><span class="p">,</span> <span class="n">ColorMap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.traits</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LUT</span><span class="p">,</span>
+    <span class="n">ColorMap</span><span class="p">,</span>
+    <span class="n">Graph</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">deserialize_colormap_label</span><span class="p">,</span>
+    <span class="n">deserialize_graph</span><span class="p">,</span>
     <span class="n">deserialize_options</span><span class="p">,</span>
     <span class="n">file_serializer</span><span class="p">,</span>
     <span class="n">make_draw_lut</span><span class="p">,</span>
     <span class="n">make_label_lut</span><span class="p">,</span>
     <span class="n">serialize_colormap_label</span><span class="p">,</span>
+    <span class="n">serialize_graph</span><span class="p">,</span>
     <span class="n">serialize_options</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -278,7 +285,7 @@
 
 
 <div class="viewcode-block" id="MeshLayer">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.MeshLayer">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.MeshLayer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MeshLayer</span><span class="p">(</span><span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a layer within a Mesh model.</span>
@@ -322,7 +329,7 @@
     <span class="n">colorbar_visible</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MeshLayer.__init__">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.MeshLayer.__init__">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.MeshLayer.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">include_keys</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;path&quot;</span><span class="p">,</span>
@@ -358,7 +365,7 @@
 
 
 <div class="viewcode-block" id="Mesh">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Mesh">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.Mesh">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Mesh</span><span class="p">(</span><span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a Mesh model.</span>
@@ -404,7 +411,7 @@
     <span class="n">colormap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Mesh.__init__">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Mesh.__init__">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.Mesh.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">include_keys</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;rgba255&quot;</span><span class="p">,</span> <span class="s2">&quot;opacity&quot;</span><span class="p">,</span> <span class="s2">&quot;visible&quot;</span><span class="p">}</span>
         <span class="n">layers_data</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;layers&quot;</span><span class="p">,</span> <span class="p">[])</span>
@@ -432,7 +439,7 @@
 
 
 <div class="viewcode-block" id="Volume">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Volume">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.Volume">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Volume</span><span class="p">(</span><span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a Volume model.</span>
@@ -441,6 +448,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    path : str or pathlib.Path</span>
 <span class="sd">        Path to the volume data file; cannot be modified once set.</span>
+<span class="sd">    paired_img_path : str or pathlib.Path, optional</span>
+<span class="sd">        Path to the paired img data.</span>
 <span class="sd">    name : str, optional</span>
 <span class="sd">        Name of the volume.</span>
 <span class="sd">    opacity : float, optional</span>
@@ -461,6 +470,9 @@
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span>
     <span class="p">)</span>
     <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">paired_img_path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()],</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span><span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">colormap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -477,12 +489,14 @@
 
     <span class="c1"># other properties that aren&#39;t in init</span>
     <span class="n">colormap_invert</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">n_frame4D</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Volume.__init__">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Volume.__init__">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.Volume.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">include_keys</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;path&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;paired_img_path&quot;</span><span class="p">,</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
             <span class="s2">&quot;name&quot;</span><span class="p">,</span>
             <span class="s2">&quot;opacity&quot;</span><span class="p">,</span>
@@ -510,7 +524,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="Volume.set_colormap_label">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Volume.set_colormap_label">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.Volume.set_colormap_label">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_colormap_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colormap_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set colormap label for the volume.</span>
 
@@ -546,7 +560,7 @@
 
 
 <div class="viewcode-block" id="Volume.set_colormap_label_from_url">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.Volume.set_colormap_label_from_url">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.Volume.set_colormap_label_from_url">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_colormap_label_from_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set colormap label from a URL.</span>
 
@@ -581,12 +595,22 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify id once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;n_frame4D&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_nframe4d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;n_frame4D&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frame4D</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frame4D</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify n_frame4D once set.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
 
 
 
 <div class="viewcode-block" id="NiiVue">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NiiVue</span><span class="p">(</span><span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a NiiVue widget instance.</span>
@@ -620,9 +644,14 @@
     <span class="p">)</span>
     <span class="n">draw_opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">draw_fill_overwrites</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">Graph</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_graph</span><span class="p">,</span>
+        <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_graph</span><span class="p">,</span>
+    <span class="p">)</span>
 
 <div class="viewcode-block" id="NiiVue.__init__">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.__init__">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>  <span class="c1"># noqa: D417</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the NiiVue widget.</span>
@@ -638,16 +667,17 @@
 <span class="sd">            Additional keyword arguments to configure the NiiVue widget.</span>
 <span class="sd">            See :class:`ipyniivue.config_options.ConfigOptions` for all options.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># convert to JS camelCase options</span>
+        <span class="c1"># Get options</span>
         <span class="n">opts</span> <span class="o">=</span> <span class="n">ConfigOptions</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="n">opts</span><span class="p">,</span> <span class="n">volumes</span><span class="o">=</span><span class="p">[],</span> <span class="n">meshes</span><span class="o">=</span><span class="p">[])</span>
 
-        <span class="c1"># handle messages coming from frontend</span>
+        <span class="c1"># Handle messages coming from frontend</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">on_msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_custom_msg</span><span class="p">)</span>
 
-        <span class="c1"># colormaps</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_initial_colormaps</span><span class="p">()</span></div>
+        <span class="c1"># Initialize values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_initial_colormaps</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -668,6 +698,17 @@
                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;opts&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;old&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">,</span>
                 <span class="s2">&quot;new&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">,</span>
+                <span class="s2">&quot;owner&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_notify_graph_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify_change</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;graph&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;old&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
+                <span class="s2">&quot;new&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
                 <span class="s2">&quot;owner&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
             <span class="p">}</span>
@@ -745,7 +786,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">,</span> <span class="n">mesh</span><span class="p">]</span>
 
 <div class="viewcode-block" id="NiiVue.close">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.close">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the NiiVue widget and free up resources.</span>
@@ -765,7 +806,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.get_volume_index_by_id">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.get_volume_index_by_id">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.get_volume_index_by_id">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_volume_index_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the index of the volume with the given id.</span>
 
@@ -781,7 +822,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.get_mesh_index_by_id">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.get_mesh_index_by_id">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.get_mesh_index_by_id">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_mesh_index_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the index of the mesh with the given id.</span>
 
@@ -797,7 +838,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.load_volumes">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.load_volumes">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.load_volumes">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volumes</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load a list of volume objects.</span>
@@ -824,7 +865,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.add_volume">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.add_volume">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.add_volume">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a new volume to the widget.</span>
@@ -850,7 +891,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.load_meshes">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.load_meshes">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.load_meshes">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_meshes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meshes</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load a list of meshes objects.</span>
@@ -877,7 +918,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.add_mesh">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.add_mesh">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.add_mesh">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh</span><span class="p">:</span> <span class="n">Mesh</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a single mesh to the widget.</span>
@@ -907,7 +948,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="NiiVue.save_document">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.save_document">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.save_document">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">save_document</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;document.nvd&quot;</span><span class="p">,</span> <span class="n">compress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save the entire scene with settings as a document.</span>
@@ -934,7 +975,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.save_html">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.save_html">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.save_html">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">save_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;untitled.html&quot;</span><span class="p">,</span> <span class="n">canvas_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gl1&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save the current instance as an html page.</span>
@@ -961,7 +1002,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.save_image">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.save_image">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.save_image">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">save_image</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;image.nii.gz&quot;</span><span class="p">,</span>
@@ -1000,7 +1041,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.save_scene">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.save_scene">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.save_scene">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">save_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;scene.png&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save the current scene with the provided file name.</span>
@@ -1025,7 +1066,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_mesh_property">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_mesh_property">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_mesh_property">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_mesh_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a property of a mesh.</span>
 
@@ -1072,7 +1113,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_mesh_layer_property">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_mesh_layer_property">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_mesh_layer_property">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_mesh_layer_property</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">mesh_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">layer_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span>
     <span class="p">):</span>
@@ -1149,7 +1190,7 @@
         <span class="k">return</span> <span class="n">cluts</span>
 
 <div class="viewcode-block" id="NiiVue.colormaps">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.colormaps">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.colormaps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">colormaps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the list of available colormap names.</span>
 
@@ -1168,7 +1209,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.add_colormap">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.add_colormap">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.add_colormap">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_colormap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a colormap to the widget.</span>
 
@@ -1206,7 +1247,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_colormap">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_colormap">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_colormap">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_colormap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imageID</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the colormap for a volume.</span>
 
@@ -1236,7 +1277,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_selection_box_color">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_selection_box_color">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_selection_box_color">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_selection_box_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the selection box color.</span>
 
@@ -1267,7 +1308,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_crosshair_color">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_crosshair_color">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_crosshair_color">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_crosshair_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the crosshair and colorbar outline color.</span>
 
@@ -1298,7 +1339,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_crosshair_width">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_crosshair_width">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_crosshair_width">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_crosshair_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the crosshair width.</span>
 
@@ -1317,7 +1358,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_gamma">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_gamma">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_gamma">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Adjust screen gamma.</span>
 
@@ -1344,7 +1385,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_slice_type">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_slice_type">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_slice_type">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_slice_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slice_type</span><span class="p">:</span> <span class="n">SliceType</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the type of slice display.</span>
 
@@ -1368,7 +1409,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_clip_plane">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_clip_plane">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_clip_plane">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_clip_plane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">elevation</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the clip plane orientation in 3D view mode.</span>
 
@@ -1400,7 +1441,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_render_azimuth_elevation">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_render_azimuth_elevation">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_render_azimuth_elevation">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_render_azimuth_elevation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">elevation</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the rotation of the 3D render view.</span>
 
@@ -1440,7 +1481,7 @@
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 
 <div class="viewcode-block" id="NiiVue.set_mesh_shader">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_mesh_shader">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_mesh_shader">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_mesh_shader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mesh_shader</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the shader for a mesh.</span>
 
@@ -1482,7 +1523,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.mesh_shader_names">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.mesh_shader_names">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.mesh_shader_names">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">mesh_shader_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the list of available mesh shader names.</span>
 
@@ -1524,7 +1565,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_volume_render_illumination">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_volume_render_illumination">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_volume_render_illumination">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_volume_render_illumination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gradient_amount</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set proportion of volume rendering influenced by selected matcap.</span>
 
@@ -1549,7 +1590,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_high_resolution_capable">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_high_resolution_capable">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_high_resolution_capable">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_high_resolution_capable</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">force_device_pixel_ratio</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>
     <span class="p">):</span>
@@ -1579,7 +1620,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;load_png_as_texture&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">png_url</span><span class="p">,</span> <span class="n">texture_num</span><span class="p">]})</span>
 
 <div class="viewcode-block" id="NiiVue.load_mat_cap_texture">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.load_mat_cap_texture">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.load_mat_cap_texture">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_mat_cap_texture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">png_data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load matcap for illumination model.</span>
 
@@ -1603,7 +1644,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_atlas_outline">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_atlas_outline">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_atlas_outline">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_atlas_outline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outline</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the outline thickness for atlas label regions.</span>
 
@@ -1623,7 +1664,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_interpolation">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_interpolation">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_interpolation">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_interpolation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_nearest</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Select between nearest neighbor and linear interpolation for images.</span>
 
@@ -1644,7 +1685,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_pen_value">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_pen_value">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_pen_value">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_pen_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pen_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">is_filled_pen</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine color and style of drawing.</span>
 
@@ -1666,7 +1707,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_drawing_enabled">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_drawing_enabled">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_drawing_enabled">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_drawing_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drawing_enabled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set/unset drawing state.</span>
 
@@ -1687,7 +1728,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.colormap_from_key">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.colormap_from_key">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.colormap_from_key">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">colormap_from_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colormap_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColorMap</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a colormap by name (case-insensitive).</span>
 
@@ -1710,7 +1751,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_draw_colormap">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_draw_colormap">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_draw_colormap">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_draw_colormap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colormap</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ColorMap</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set colors and labels for different drawing values.</span>
 
@@ -1734,15 +1775,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">cmap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">colormap_from_key</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">draw_lut</span> <span class="o">=</span> <span class="n">make_draw_lut</span><span class="p">(</span><span class="n">cmap</span><span class="p">)</span>
+            <span class="n">draw_lut</span> <span class="o">=</span> <span class="n">make_draw_lut</span><span class="p">(</span><span class="n">cmap</span><span class="p">)</span>
+            <span class="n">draw_lut</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">draw_lut</span> <span class="o">=</span> <span class="n">draw_lut</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span> <span class="n">ColorMap</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">draw_lut</span> <span class="o">=</span> <span class="n">make_draw_lut</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span>
+            <span class="n">draw_lut</span> <span class="o">=</span> <span class="n">make_draw_lut</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span>
+            <span class="n">draw_lut</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">draw_lut</span> <span class="o">=</span> <span class="n">draw_lut</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Colormap must be string or type ColorMap.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.draw_otsu">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.draw_otsu">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.draw_otsu">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">draw_otsu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Segment brain into specified number of levels using Otsu&#39;s method.</span>
 
@@ -1764,7 +1809,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.draw_grow_cut">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.draw_grow_cut">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.draw_grow_cut">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">draw_grow_cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Dilate drawing so all voxels are colored.</span>
 
@@ -1778,7 +1823,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.move_crosshair_in_vox">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.move_crosshair_in_vox">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.move_crosshair_in_vox">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">move_crosshair_in_vox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Move crosshair by a fixed number of voxels.</span>
 
@@ -1802,7 +1847,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.remove_haze">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.remove_haze">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.remove_haze">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_haze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">vol_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove dark voxels in air.</span>
 
@@ -1823,7 +1868,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_slice_mm">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_slice_mm">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_slice_mm">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_slice_mm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_slice_mm</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Control 2D slice view mode.</span>
 
@@ -1842,7 +1887,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.draw_undo">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.draw_undo">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.draw_undo">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">draw_undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Restore drawing to previous state.</span>
 
@@ -1856,7 +1901,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.close_drawing">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.close_drawing">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.close_drawing">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close_drawing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the current drawing.</span>
 
@@ -1870,7 +1915,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.set_radiological_convention">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.set_radiological_convention">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_radiological_convention">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_radiological_convention</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_radiological_convention</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set radiological or neurological convention for 2D slices.</span>
 
@@ -1890,7 +1935,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.load_drawing">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.load_drawing">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.load_drawing">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_drawing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_binarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load a drawing.</span>
 
@@ -1934,7 +1979,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="NiiVue.on_azimuth_elevation_change">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_azimuth_elevation_change">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_azimuth_elevation_change">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_azimuth_elevation_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;azimuth_elevation_change&#39; event.</span>
@@ -1974,7 +2019,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_click_to_segment">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_click_to_segment">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_click_to_segment">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_click_to_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;click_to_segment&#39; event.</span>
@@ -2015,7 +2060,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_clip_plane_change">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_clip_plane_change">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_clip_plane_change">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_clip_plane_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;clip_plane_change&#39; event.</span>
@@ -2050,7 +2095,7 @@
 
     <span class="c1"># todo: make volumes be a list of Volumes and meshes be a list of Meshes</span>
 <div class="viewcode-block" id="NiiVue.on_document_loaded">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_document_loaded">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_document_loaded">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_document_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;document_loaded&#39; event.</span>
@@ -2094,7 +2139,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_image_loaded">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_image_loaded">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_image_loaded">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_image_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;image_loaded&#39; event.</span>
@@ -2127,7 +2172,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_drag_release">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_drag_release">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_drag_release">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_drag_release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;drag_release&#39; event.</span>
@@ -2180,7 +2225,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_frame_change">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_frame_change">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_frame_change">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_frame_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;frame_change&#39; event.</span>
@@ -2220,7 +2265,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_intensity_change">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_intensity_change">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_intensity_change">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_intensity_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;intensity_change&#39; event.</span>
@@ -2255,7 +2300,7 @@
 
     <span class="c1"># todo: maybe create NiiVueLocation and NiiVueLocationValue classes?</span>
 <div class="viewcode-block" id="NiiVue.on_location_change">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_location_change">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_location_change">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_location_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;location_change&#39; event.</span>
@@ -2301,7 +2346,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_mesh_added_from_url">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_mesh_added_from_url">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_mesh_added_from_url">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_mesh_added_from_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;mesh_added_from_url&#39; event.</span>
@@ -2352,7 +2397,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_mesh_loaded">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_mesh_loaded">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_mesh_loaded">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_mesh_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;mesh_loaded&#39; event.</span>
@@ -2385,7 +2430,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_mouse_up">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_mouse_up">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_mouse_up">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_mouse_up</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;mouse_up&#39; event.</span>
@@ -2427,7 +2472,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_volume_added_from_url">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_volume_added_from_url">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_volume_added_from_url">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_volume_added_from_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;volume_added_from_url&#39; event.</span>
@@ -2512,7 +2557,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_volume_updated">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_volume_updated">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_volume_updated">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_volume_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;volume_updated&#39; event.</span>
@@ -2547,7 +2592,7 @@
 
 
 <div class="viewcode-block" id="NiiVue.on_hover_idx_change">
-<a class="viewcode-back" href="../../api.html#ipyniivue.widget.NiiVue.on_hover_idx_change">[docs]</a>
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_hover_idx_change">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_hover_idx_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback for the &#39;hover_idx_change&#39; event.</span>
