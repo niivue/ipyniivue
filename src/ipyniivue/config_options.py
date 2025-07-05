@@ -5,7 +5,13 @@
 
 import traitlets as t
 
-from .constants import DragMode, MultiplanarType, ShowRender, SliceType
+from ipyniivue.constants import (
+    DragMode,
+    DragModePrimary,
+    MultiplanarType,
+    ShowRender,
+    SliceType,
+)
 
 __all__ = ["CAMEL_TO_SNAKE", "SNAKE_TO_CAMEL", "ConfigOptions"]
 
@@ -17,16 +23,22 @@ class ConfigOptions(t.HasTraits):
 
     text_height = t.Float(0.06).tag(sync=False)
     colorbar_height = t.Float(0.05).tag(sync=False)
-    crosshair_width = t.Int(1).tag(sync=False)
-    crosshair_gap = t.Int(0).tag(sync=False)
-    ruler_width = t.Int(4).tag(sync=False)
+    colorbar_width = t.Float(-1.0).tag(sync=False)
+    show_colorbar_border = t.Bool(True).tag(sync=False)
+    crosshair_width = t.Float(1.0).tag(sync=False)
+    crosshair_width_unit = t.Unicode("voxels").tag(sync=False)
+    crosshair_gap = t.Float(0.0).tag(sync=False)
+    ruler_width = t.Float(4.0).tag(sync=False)
     show_3d_crosshair = t.Bool(False).tag(sync=False)
-    back_color = t.Tuple((0, 0, 0, 1)).tag(sync=False)
-    crosshair_color = t.Tuple((1, 0, 0, 1)).tag(sync=False)
-    font_color = t.Tuple((0.5, 0.5, 0.5, 1)).tag(sync=False)
-    selection_box_color = t.Tuple((1, 1, 1, 0.5)).tag(sync=False)
-    clip_plane_color = t.Tuple((0.7, 0, 0.7, 0.5)).tag(sync=False)
-    ruler_color = t.Tuple((1, 0, 0, 0.8)).tag(sync=False)
+    back_color = t.Tuple((0.0, 0.0, 0.0, 1.0)).tag(sync=False)
+    crosshair_color = t.Tuple((1.0, 0.0, 0.0, 1.0)).tag(sync=False)
+    font_color = t.Tuple((0.5, 0.5, 0.5, 1.0)).tag(sync=False)
+    selection_box_color = t.Tuple((1.0, 1.0, 1.0, 0.5)).tag(sync=False)
+    clip_plane_color = t.Tuple((0.7, 0.0, 0.7, 0.5)).tag(sync=False)
+    clip_thick = t.Float(2.0).tag(sync=False)
+    clip_volume_low = t.Tuple((0.0, 0.0, 0.0)).tag(sync=False)
+    clip_volume_high = t.Tuple((1.0, 1.0, 1.0)).tag(sync=False)
+    ruler_color = t.Tuple((1.0, 0.0, 0.0, 0.8)).tag(sync=False)
     colorbar_margin = t.Float(0.05).tag(sync=False)
     trust_cal_min_max = t.Bool(True).tag(sync=False)
     clip_plane_hot_key = t.Unicode("KeyC").tag(sync=False)
@@ -36,26 +48,35 @@ class ConfigOptions(t.HasTraits):
     key_debounce_time = t.Int(50).tag(sync=False)
     is_nearest_interpolation = t.Bool(False).tag(sync=False)
     is_resize_canvas = t.Bool(True).tag(sync=False)
-    is_atlas_outline = t.Bool(False).tag(sync=False)
     atlas_outline = t.Float(0.0).tag(sync=False)
     is_ruler = t.Bool(False).tag(sync=False)
     is_colorbar = t.Bool(False).tag(sync=False)
     is_orient_cube = t.Bool(False).tag(sync=False)
+    tile_margin = t.Float(0.0).tag(sync=False)
     multiplanar_pad_pixels = t.Int(0).tag(sync=False)
     multiplanar_force_render = t.Bool(False).tag(sync=False)
+    multiplanar_equal_size = t.Bool(False).tag(sync=False)
     multiplanar_show_render = t.UseEnum(ShowRender, default_value=ShowRender.AUTO).tag(
         sync=False
     )
     is_radiological_convention = t.Bool(False).tag(sync=False)
     mesh_thickness_on_2d = t.Float(float("inf")).tag(sync=False)
     drag_mode = t.UseEnum(DragMode, default_value=DragMode.CONTRAST).tag(sync=False)
+    drag_mode_primary = t.UseEnum(
+        DragModePrimary, default_value=DragModePrimary.CROSSHAIR
+    ).tag(sync=False)
     yoke_3d_to_2d_zoom = t.Bool(False).tag(sync=False)
     is_depth_pick_mesh = t.Bool(False).tag(sync=False)
     is_corner_orientation_text = t.Bool(False).tag(sync=False)
+    is_orientation_text_visible = t.Bool(True).tag(sync=False)
+    hero_image_fraction = t.Int(0).tag(sync=False)
+    hero_slice_type = t.UseEnum(SliceType, default_value=SliceType.RENDER).tag(
+        sync=False
+    )
     sagittal_nose_left = t.Bool(False).tag(sync=False)
     is_slice_mm = t.Bool(False).tag(sync=False)
     is_v1_slice_shader = t.Bool(False).tag(sync=False)
-    is_high_resolution_capable = t.Bool(True).tag(sync=False)
+    force_device_pixel_ratio = t.Float(0.0).tag(sync=False)
     log_level = t.Unicode("info").tag(sync=False)
     loading_text = t.Unicode("loading ...").tag(sync=False)
     is_force_mouse_click_to_voxel_centers = t.Bool(False).tag(sync=False)
@@ -69,7 +90,7 @@ class ConfigOptions(t.HasTraits):
     slice_type = t.UseEnum(SliceType, default_value=SliceType.MULTIPLANAR).tag(
         sync=False
     )
-    mesh_x_ray = t.Float(0.0).tag(sync=False)
+    mesh_xray = t.Float(0.0).tag(sync=False)
     is_anti_alias = t.Any(None).tag(sync=False)
     limit_frames_4d = t.Float(float("nan")).tag(sync=False)
     is_additive_blend = t.Bool(False).tag(sync=False)
@@ -82,12 +103,32 @@ class ConfigOptions(t.HasTraits):
     render_overlay_blend = t.Float(1.0).tag(sync=False)
     slice_mosaic_string = t.Unicode("").tag(sync=False)
     center_mosaic = t.Bool(False).tag(sync=False)
-    gradient_amount = t.Float(0.0).tag(sync=False)
-    gradient_opacity = t.Float(0.0).tag(sync=False)
-    force_device_pixel_ratio = t.Int(0).tag(sync=False)
+    pen_size = t.Float(1.0).tag(sync=False)
+    interactive = t.Bool(True).tag(sync=False)
     click_to_segment = t.Bool(False).tag(sync=False)
+    click_to_segment_radius = t.Float(3.0).tag(sync=False)
+    click_to_segment_bright = t.Bool(True).tag(sync=False)
     click_to_segment_auto_intensity = t.Bool(False).tag(sync=False)
+    click_to_segment_intensity_max = t.Float(float("nan")).tag(sync=False)
+    click_to_segment_intensity_min = t.Float(float("nan")).tag(sync=False)
+    click_to_segment_percent = t.Float(0.0).tag(sync=False)
+    click_to_segment_max_distance_mm = t.Float(float("inf")).tag(sync=False)
     click_to_segment_is_2d = t.Bool(False).tag(sync=False)
+    selection_box_line_thickness = t.Float(4.0).tag(sync=False)
+    selection_box_is_outline = t.Bool(False).tag(sync=False)
+    scroll_requires_focus = t.Bool(False).tag(sync=False)
+    show_measure_units = t.Bool(True).tag(sync=False)
+    measure_text_justify = t.Unicode("center").tag(sync=False)
+    measure_text_color = t.Tuple((1.0, 0.0, 0.0, 1.0)).tag(sync=False)
+    measure_line_color = t.Tuple((1.0, 0.0, 0.0, 1.0)).tag(sync=False)
+    measure_text_height = t.Float(0.03).tag(sync=False)
+    is_alpha_clip_dark = t.Bool(False).tag(sync=False)
+    gradient_order = t.Int(1).tag(sync=False)
+    gradient_opacity = t.Float(0.0).tag(sync=False)
+    render_silhouette = t.Float(0.0).tag(sync=False)
+    gradient_amount = t.Float(0.0).tag(sync=False)
+    invert_scroll_direction = t.Bool(False).tag(sync=False)
+    is_2d_slice_shader = t.Bool(False).tag(sync=False)
 
     def __init__(self, parent=None, **kwargs):
         super().__init__(**kwargs)
@@ -96,7 +137,10 @@ class ConfigOptions(t.HasTraits):
     _OBSERVED_TRAITS = (
         "text_height",
         "colorbar_height",
+        "colorbar_width",
+        "show_colorbar_border",
         "crosshair_width",
+        "crosshair_width_unit",
         "crosshair_gap",
         "ruler_width",
         "show_3d_crosshair",
@@ -105,6 +149,9 @@ class ConfigOptions(t.HasTraits):
         "font_color",
         "selection_box_color",
         "clip_plane_color",
+        "clip_thick",
+        "clip_volume_low",
+        "clip_volume_high",
         "ruler_color",
         "colorbar_margin",
         "trust_cal_min_max",
@@ -115,24 +162,29 @@ class ConfigOptions(t.HasTraits):
         "key_debounce_time",
         "is_nearest_interpolation",
         "is_resize_canvas",
-        "is_atlas_outline",
         "atlas_outline",
         "is_ruler",
         "is_colorbar",
         "is_orient_cube",
+        "tile_margin",
         "multiplanar_pad_pixels",
         "multiplanar_force_render",
+        "multiplanar_equal_size",
         "multiplanar_show_render",
         "is_radiological_convention",
         "mesh_thickness_on_2d",
         "drag_mode",
+        "drag_mode_primary",
         "yoke_3d_to_2d_zoom",
         "is_depth_pick_mesh",
         "is_corner_orientation_text",
+        "is_orientation_text_visible",
+        "hero_image_fraction",
+        "hero_slice_type",
         "sagittal_nose_left",
         "is_slice_mm",
         "is_v1_slice_shader",
-        "is_high_resolution_capable",
+        "force_device_pixel_ratio",
         "log_level",
         "loading_text",
         "is_force_mouse_click_to_voxel_centers",
@@ -144,7 +196,7 @@ class ConfigOptions(t.HasTraits):
         "thumbnail",
         "max_draw_undo_bitmaps",
         "slice_type",
-        "mesh_x_ray",
+        "mesh_xray",
         "is_anti_alias",
         "limit_frames_4d",
         "is_additive_blend",
@@ -155,12 +207,32 @@ class ConfigOptions(t.HasTraits):
         "render_overlay_blend",
         "slice_mosaic_string",
         "center_mosaic",
-        "gradient_amount",
-        "gradient_opacity",
-        "force_device_pixel_ratio",
+        "pen_size",
+        "interactive",
         "click_to_segment",
+        "click_to_segment_radius",
+        "click_to_segment_bright",
         "click_to_segment_auto_intensity",
+        "click_to_segment_intensity_max",
+        "click_to_segment_intensity_min",
+        "click_to_segment_percent",
+        "click_to_segment_max_distance_mm",
         "click_to_segment_is_2d",
+        "selection_box_line_thickness",
+        "selection_box_is_outline",
+        "scroll_requires_focus",
+        "show_measure_units",
+        "measure_text_justify",
+        "measure_text_color",
+        "measure_line_color",
+        "measure_text_height",
+        "is_alpha_clip_dark",
+        "gradient_order",
+        "gradient_opacity",
+        "render_silhouette",
+        "gradient_amount",
+        "invert_scroll_direction",
+        "is_2d_slice_shader",
     )
 
     @t.observe(*_OBSERVED_TRAITS)
@@ -174,7 +246,10 @@ class ConfigOptions(t.HasTraits):
 CAMEL_TO_SNAKE = {
     "textHeight": "text_height",
     "colorbarHeight": "colorbar_height",
+    "colorbarWidth": "colorbar_width",
+    "showColorbarBorder": "show_colorbar_border",
     "crosshairWidth": "crosshair_width",
+    "crosshairWidthUnit": "crosshair_width_unit",
     "crosshairGap": "crosshair_gap",
     "rulerWidth": "ruler_width",
     "show3Dcrosshair": "show_3d_crosshair",
@@ -183,6 +258,9 @@ CAMEL_TO_SNAKE = {
     "fontColor": "font_color",
     "selectionBoxColor": "selection_box_color",
     "clipPlaneColor": "clip_plane_color",
+    "clipThick": "clip_thick",
+    "clipVolumeLow": "clip_volume_low",
+    "clipVolumeHigh": "clip_volume_high",
     "rulerColor": "ruler_color",
     "colorbarMargin": "colorbar_margin",
     "trustCalMinMax": "trust_cal_min_max",
@@ -193,24 +271,29 @@ CAMEL_TO_SNAKE = {
     "keyDebounceTime": "key_debounce_time",
     "isNearestInterpolation": "is_nearest_interpolation",
     "isResizeCanvas": "is_resize_canvas",
-    "isAtlasOutline": "is_atlas_outline",
     "atlasOutline": "atlas_outline",
     "isRuler": "is_ruler",
     "isColorbar": "is_colorbar",
     "isOrientCube": "is_orient_cube",
+    "tileMargin": "tile_margin",
     "multiplanarPadPixels": "multiplanar_pad_pixels",
     "multiplanarForceRender": "multiplanar_force_render",
+    "multiplanarEqualSize": "multiplanar_equal_size",
     "multiplanarShowRender": "multiplanar_show_render",
     "isRadiologicalConvention": "is_radiological_convention",
     "meshThicknessOn2D": "mesh_thickness_on_2d",
     "dragMode": "drag_mode",
+    "dragModePrimary": "drag_mode_primary",
     "yoke3Dto2DZoom": "yoke_3d_to_2d_zoom",
     "isDepthPickMesh": "is_depth_pick_mesh",
     "isCornerOrientationText": "is_corner_orientation_text",
+    "isOrientationTextVisible": "is_orientation_text_visible",
+    "heroImageFraction": "hero_image_fraction",
+    "heroSliceType": "hero_slice_type",
     "sagittalNoseLeft": "sagittal_nose_left",
     "isSliceMM": "is_slice_mm",
     "isV1SliceShader": "is_v1_slice_shader",
-    "isHighResolutionCapable": "is_high_resolution_capable",
+    "forceDevicePixelRatio": "force_device_pixel_ratio",
     "logLevel": "log_level",
     "loadingText": "loading_text",
     "isForceMouseClickToVoxelCenters": "is_force_mouse_click_to_voxel_centers",
@@ -222,7 +305,7 @@ CAMEL_TO_SNAKE = {
     "thumbnail": "thumbnail",
     "maxDrawUndoBitmaps": "max_draw_undo_bitmaps",
     "sliceType": "slice_type",
-    "meshXRay": "mesh_x_ray",
+    "meshXRay": "mesh_xray",
     "isAntiAlias": "is_anti_alias",
     "limitFrames4D": "limit_frames_4d",
     "isAdditiveBlend": "is_additive_blend",
@@ -233,12 +316,32 @@ CAMEL_TO_SNAKE = {
     "renderOverlayBlend": "render_overlay_blend",
     "sliceMosaicString": "slice_mosaic_string",
     "centerMosaic": "center_mosaic",
-    "gradientAmount": "gradient_amount",
-    "gradientOpacity": "gradient_opacity",
-    "forceDevicePixelRatio": "force_device_pixel_ratio",
+    "penSize": "pen_size",
+    "interactive": "interactive",
     "clickToSegment": "click_to_segment",
+    "clickToSegmentRadius": "click_to_segment_radius",
+    "clickToSegmentBright": "click_to_segment_bright",
     "clickToSegmentAutoIntensity": "click_to_segment_auto_intensity",
+    "clickToSegmentIntensityMax": "click_to_segment_intensity_max",
+    "clickToSegmentIntensityMin": "click_to_segment_intensity_min",
+    "clickToSegmentPercent": "click_to_segment_percent",
+    "clickToSegmentMaxDistanceMM": "click_to_segment_max_distance_mm",
     "clickToSegmentIs2D": "click_to_segment_is_2d",
+    "selectionBoxLineThickness": "selection_box_line_thickness",
+    "selectionBoxIsOutline": "selection_box_is_outline",
+    "scrollRequiresFocus": "scroll_requires_focus",
+    "showMeasureUnits": "show_measure_units",
+    "measureTextJustify": "measure_text_justify",
+    "measureTextColor": "measure_text_color",
+    "measureLineColor": "measure_line_color",
+    "measureTextHeight": "measure_text_height",
+    "isAlphaClipDark": "is_alpha_clip_dark",
+    "gradientOrder": "gradient_order",
+    "gradientOpacity": "gradient_opacity",
+    "renderSilhouette": "render_silhouette",
+    "gradientAmount": "gradient_amount",
+    "invertScrollDirection": "invert_scroll_direction",
+    "is2DSliceShader": "is_2d_slice_shader",
 }
 
 SNAKE_TO_CAMEL = {v: k for k, v in CAMEL_TO_SNAKE.items()}
