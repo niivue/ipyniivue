@@ -243,15 +243,18 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Provides classes for reusable, readable versions of important data.</span>
 
-<span class="sd">This module uses enum to enumerate important constants for slice types,</span>
-<span class="sd">drag modes, and multiplanar types in more readable formats for use in notebooks.</span>
+<span class="sd">This module uses enum to enumerate important constants.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ColormapType&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DragMode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DragModePrimary&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DragModeSecondary&quot;</span><span class="p">,</span>
     <span class="s2">&quot;MultiplanarType&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ShowRender&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SliceType&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
@@ -284,57 +287,6 @@
 
 
 
-<div class="viewcode-block" id="DragMode">
-<a class="viewcode-back" href="../../enums.html#ipyniivue.DragMode">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">DragMode</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An enumeration of drag modes for NiiVue instances.</span>
-
-<span class="sd">    Members</span>
-<span class="sd">    -------</span>
-<span class="sd">    CONTRAST : int</span>
-<span class="sd">        Contrast adjustment mode (value 1).</span>
-<span class="sd">    MEASUREMENT : int</span>
-<span class="sd">        Measurement mode for taking measurements (value 2).</span>
-<span class="sd">    PAN : int</span>
-<span class="sd">        Pan mode for moving around the image (value 3).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">NONE</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">CONTRAST</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">MEASUREMENT</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">PAN</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">SLIDER_3D</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="n">CALLBACK_ONLY</span> <span class="o">=</span> <span class="mi">5</span>
-    <span class="n">ROI_SELECTION</span> <span class="o">=</span> <span class="mi">6</span></div>
-
-
-
-<div class="viewcode-block" id="MultiplanarType">
-<a class="viewcode-back" href="../../enums.html#ipyniivue.MultiplanarType">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">MultiplanarType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An enumeration of multiplanar types for NiiVue instances.</span>
-
-<span class="sd">    Members</span>
-<span class="sd">    -------</span>
-<span class="sd">    AUTO : int</span>
-<span class="sd">        Automatic multiplanar type (value 0).</span>
-<span class="sd">    COLUMN : int</span>
-<span class="sd">        Column multiplanar type (value 1).</span>
-<span class="sd">    GRID : int</span>
-<span class="sd">        Grid multiplanar type (value 2).</span>
-<span class="sd">    ROW : int</span>
-<span class="sd">        Row multiplanar type (value 3).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">AUTO</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">COLUMN</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">GRID</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">ROW</span> <span class="o">=</span> <span class="mi">3</span></div>
-
-
-
 <div class="viewcode-block" id="ShowRender">
 <a class="viewcode-back" href="../../enums.html#ipyniivue.ShowRender">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ShowRender</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
@@ -357,6 +309,131 @@
 
 
 
+<div class="viewcode-block" id="MultiplanarType">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.MultiplanarType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MultiplanarType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of multiplanar types for NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    AUTO : int</span>
+<span class="sd">        Automatic multiplanar layout (value 0).</span>
+<span class="sd">    COLUMN : int</span>
+<span class="sd">        Vertical column multiplanar layout (value 1).</span>
+<span class="sd">    GRID : int</span>
+<span class="sd">        Grid multiplanar layout (value 2).</span>
+<span class="sd">    ROW : int</span>
+<span class="sd">        Horizontal row multiplanar layout (value 3).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">AUTO</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">COLUMN</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">GRID</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">ROW</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+
+<div class="viewcode-block" id="DragMode">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.DragMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DragMode</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of drag modes for NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    NONE : int</span>
+<span class="sd">        No drag mode active (value 0).</span>
+<span class="sd">    CONTRAST : int</span>
+<span class="sd">        Contrast adjustment mode (value 1).</span>
+<span class="sd">    MEASUREMENT : int</span>
+<span class="sd">        Measurement mode for taking measurements (value 2).</span>
+<span class="sd">    PAN : int</span>
+<span class="sd">        Pan mode for moving around the image (value 3).</span>
+<span class="sd">    SLICER_3D : int</span>
+<span class="sd">        3D slicer interaction mode (value 4).</span>
+<span class="sd">    CALLBACK_ONLY : int</span>
+<span class="sd">        Callback only mode (value 5).</span>
+<span class="sd">    ROI_SELECTION : int</span>
+<span class="sd">        ROI (Region of Interest) selection mode (value 6).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NONE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">CONTRAST</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">MEASUREMENT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">PAN</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">SLICER_3D</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">CALLBACK_ONLY</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">ROI_SELECTION</span> <span class="o">=</span> <span class="mi">6</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DragModeSecondary</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of secondary drag modes for NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    NONE : int</span>
+<span class="sd">        No secondary drag mode active (value 0).</span>
+<span class="sd">    CONTRAST : int</span>
+<span class="sd">        Contrast adjustment secondary mode (value 1).</span>
+<span class="sd">    MEASUREMENT : int</span>
+<span class="sd">        Measurement secondary mode (value 2).</span>
+<span class="sd">    PAN : int</span>
+<span class="sd">        Pan secondary mode (value 3).</span>
+<span class="sd">    SLICER_3D : int</span>
+<span class="sd">        3D slicer secondary interaction mode (value 4).</span>
+<span class="sd">    CALLBACK_ONLY : int</span>
+<span class="sd">        Callback only secondary mode (value 5).</span>
+<span class="sd">    ROI_SELECTION : int</span>
+<span class="sd">        ROI selection secondary mode (value 6).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NONE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">CONTRAST</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">MEASUREMENT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">PAN</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">SLICER_3D</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">CALLBACK_ONLY</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">ROI_SELECTION</span> <span class="o">=</span> <span class="mi">6</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DragModePrimary</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of primary drag modes for NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    CROSSHAIR : int</span>
+<span class="sd">        Crosshair mode (value 0).</span>
+<span class="sd">    WINDOWING : int</span>
+<span class="sd">        Windowing mode (value 1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">CROSSHAIR</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">WINDOWING</span> <span class="o">=</span> <span class="mi">1</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ColormapType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of colormap types.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    MIN_TO_MAX : int</span>
+<span class="sd">        Colormap spans from minimum to maximum values (value 0).</span>
+<span class="sd">    ZERO_TO_MAX_TRANSPARENT_BELOW_MIN : int</span>
+<span class="sd">        Colormap spans from zero to maximum, transparent below minimum (value 1).</span>
+<span class="sd">    ZERO_TO_MAX_TRANSLUCENT_BELOW_MIN : int</span>
+<span class="sd">        Colormap spans from zero to maximum, translucent below minimum (value 2).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">MIN_TO_MAX</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ZERO_TO_MAX_TRANSPARENT_BELOW_MIN</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ZERO_TO_MAX_TRANSLUCENT_BELOW_MIN</span> <span class="o">=</span> <span class="mi">2</span>
+
+
 <span class="n">_SNAKE_TO_CAMEL_OVERRIDES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;show_3d_crosshair&quot;</span><span class="p">:</span> <span class="s2">&quot;show3Dcrosshair&quot;</span><span class="p">,</span>
     <span class="s2">&quot;mesh_thickness_on_2d&quot;</span><span class="p">:</span> <span class="s2">&quot;meshThicknessOn2D&quot;</span><span class="p">,</span>
@@ -364,6 +441,10 @@
     <span class="s2">&quot;is_slice_mm&quot;</span><span class="p">:</span> <span class="s2">&quot;isSliceMM&quot;</span><span class="p">,</span>
     <span class="s2">&quot;limit_frames_4d&quot;</span><span class="p">:</span> <span class="s2">&quot;limitFrames4D&quot;</span><span class="p">,</span>
     <span class="s2">&quot;click_to_segment_is_2d&quot;</span><span class="p">:</span> <span class="s2">&quot;clickToSegmentIs2D&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_v1_slice_shader&quot;</span><span class="p">:</span> <span class="s2">&quot;isV1SliceShader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mesh_xray&quot;</span><span class="p">:</span> <span class="s2">&quot;meshXRay&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;click_to_segment_max_distance_mm&quot;</span><span class="p">:</span> <span class="s2">&quot;clickToSegmentMaxDistanceMM&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_2d_slice_shader&quot;</span><span class="p">:</span> <span class="s2">&quot;is2DSliceShader&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 </pre></div>
         </article>

@@ -256,11 +256,19 @@
 <section id="members">
 <h2>Members<a class="headerlink" href="#members" title="Link to this heading">¶</a></h2>
 <dl class="simple">
+<dt>NONE<span class="classifier">int</span></dt><dd><p>No drag mode active (value 0).</p>
+</dd>
 <dt>CONTRAST<span class="classifier">int</span></dt><dd><p>Contrast adjustment mode (value 1).</p>
 </dd>
 <dt>MEASUREMENT<span class="classifier">int</span></dt><dd><p>Measurement mode for taking measurements (value 2).</p>
 </dd>
 <dt>PAN<span class="classifier">int</span></dt><dd><p>Pan mode for moving around the image (value 3).</p>
+</dd>
+<dt>SLICER_3D<span class="classifier">int</span></dt><dd><p>3D slicer interaction mode (value 4).</p>
+</dd>
+<dt>CALLBACK_ONLY<span class="classifier">int</span></dt><dd><p>Callback only mode (value 5).</p>
+</dd>
+<dt>ROI_SELECTION<span class="classifier">int</span></dt><dd><p>ROI (Region of Interest) selection mode (value 6).</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -294,8 +302,8 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="ipyniivue.DragMode.SLIDER_3D">
-<span class="sig-name descname"><span class="pre">SLIDER_3D</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#ipyniivue.DragMode.SLIDER_3D" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ipyniivue.DragMode.SLICER_3D">
+<span class="sig-name descname"><span class="pre">SLICER_3D</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#ipyniivue.DragMode.SLICER_3D" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -309,13 +317,13 @@
 <section id="id1">
 <h2>Members<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <dl class="simple">
-<dt>AUTO<span class="classifier">int</span></dt><dd><p>Automatic multiplanar type (value 0).</p>
+<dt>AUTO<span class="classifier">int</span></dt><dd><p>Automatic multiplanar layout (value 0).</p>
 </dd>
-<dt>COLUMN<span class="classifier">int</span></dt><dd><p>Column multiplanar type (value 1).</p>
+<dt>COLUMN<span class="classifier">int</span></dt><dd><p>Vertical column multiplanar layout (value 1).</p>
 </dd>
-<dt>GRID<span class="classifier">int</span></dt><dd><p>Grid multiplanar type (value 2).</p>
+<dt>GRID<span class="classifier">int</span></dt><dd><p>Grid multiplanar layout (value 2).</p>
 </dd>
-<dt>ROW<span class="classifier">int</span></dt><dd><p>Row multiplanar type (value 3).</p>
+<dt>ROW<span class="classifier">int</span></dt><dd><p>Horizontal row multiplanar layout (value 3).</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -486,7 +494,7 @@
 <li><a class="reference internal" href="#ipyniivue.DragMode.NONE"><code class="docutils literal notranslate"><span class="pre">DragMode.NONE</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.DragMode.PAN"><code class="docutils literal notranslate"><span class="pre">DragMode.PAN</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.DragMode.ROI_SELECTION"><code class="docutils literal notranslate"><span class="pre">DragMode.ROI_SELECTION</span></code></a></li>
-<li><a class="reference internal" href="#ipyniivue.DragMode.SLIDER_3D"><code class="docutils literal notranslate"><span class="pre">DragMode.SLIDER_3D</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.DragMode.SLICER_3D"><code class="docutils literal notranslate"><span class="pre">DragMode.SLICER_3D</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ipyniivue.MultiplanarType"><code class="docutils literal notranslate"><span class="pre">MultiplanarType</span></code></a><ul>
