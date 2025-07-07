@@ -268,7 +268,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				colorbar_visible: volume.colorbarVisible,
 				cal_min: volume.cal_min,
 				cal_max: volume.cal_max,
-				frame4D: volume.frame4D,
+				frame_4d: volume.frame4D,
 				colormap_negative: volume.colormapNegative,
 				colormap_label: volume.colormapLabel,
 				index: nv.getVolumeIndexByID(volume.id),
@@ -487,7 +487,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				colorbar_visible: imageOptions?.colorbarVisible || true,
 				ignore_zero_voxels: imageOptions?.ignoreZeroVoxels || false,
 				image_type: imageOptions?.imageType || 0,
-				frame4D: imageOptions?.frame4D || 0,
+				frame_4d: imageOptions?.frame4D || 0,
 				colormap_label: imageOptions?.colormapLabel || null,
 				//paired_img_data: imageOptions?.pairedImgData || null, //support? or no?
 				limit_frames4D: imageOptions?.limitFrames4D || Number.NaN,

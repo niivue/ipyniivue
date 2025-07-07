@@ -64,8 +64,8 @@ function setup_layer_property_listeners(
 		nv.updateGLVolume();
 	}
 
-	function frame4D_changed() {
-		layer.frame4D = layerModel.get("frame4D");
+	function frame_4d_changed() {
+		layer.frame4D = layerModel.get("frame_4d");
 		mesh.updateMesh(nv.gl);
 		nv.updateGLVolume();
 	}
@@ -78,7 +78,7 @@ function setup_layer_property_listeners(
 
 	// set values not set by kwargs
 	colormap_invert_changed();
-	frame4D_changed();
+	frame_4d_changed();
 	colorbar_visible_changed();
 
 	// Set up the event listeners
@@ -91,7 +91,7 @@ function setup_layer_property_listeners(
 	layerModel.on("change:outline_border", outline_border_changed);
 
 	layerModel.on("change:colormap_invert", colormap_invert_changed);
-	layerModel.on("change:frame4D", frame4D_changed);
+	layerModel.on("change:frame_4d", frame_4d_changed);
 	layerModel.on("change:colorbar_visible", colorbar_visible_changed);
 
 	// Return a cleanup function
@@ -105,7 +105,7 @@ function setup_layer_property_listeners(
 		layerModel.off("change:outline_border", outline_border_changed);
 
 		layerModel.off("change:colormap_invert", colormap_invert_changed);
-		layerModel.off("change:frame4D", frame4D_changed);
+		layerModel.off("change:frame_4d", frame_4d_changed);
 		layerModel.off("change:colorbar_visible", colorbar_visible_changed);
 	};
 }

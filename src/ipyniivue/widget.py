@@ -81,7 +81,7 @@ class MeshLayer(anywidget.AnyWidget):
 
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
-    frame4D = t.Int(0).tag(sync=True)
+    frame_4d = t.Int(0).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
 
     def __init__(self, **kwargs):
@@ -206,7 +206,7 @@ class Volume(anywidget.AnyWidget):
         Minimum intensity value for brightness/contrast mapping.
     cal_max : float or None, optional
         Maximum intensity value for brightness/contrast mapping.
-    frame4D : int, optional
+    frame_4d : int, optional
         Frame index for 4D volume data. Default is 0.
     """
 
@@ -223,7 +223,7 @@ class Volume(anywidget.AnyWidget):
     colorbar_visible = t.Bool(True).tag(sync=True)
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
-    frame4D = t.Int(0).tag(sync=True)
+    frame_4d = t.Int(0).tag(sync=True)
     colormap_negative = t.Unicode("").tag(sync=True)
     colormap_label = t.Instance(LUT, allow_none=True).tag(
         sync=True,
@@ -233,7 +233,7 @@ class Volume(anywidget.AnyWidget):
 
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
-    n_frame4D = t.Int(None, allow_none=True).tag(sync=True)
+    n_frame_4d = t.Int(None, allow_none=True).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -246,7 +246,7 @@ class Volume(anywidget.AnyWidget):
             "colormap_visible",
             "cal_min",
             "cal_max",
-            "frame4D",
+            "frame_4d",
             "colormap_negative",
             "colormap_label",
         }
@@ -332,14 +332,14 @@ class Volume(anywidget.AnyWidget):
             raise t.TraitError("Cannot modify id once set.")
         return proposal["value"]
 
-    @t.validate("n_frame4D")
+    @t.validate("n_frame_4d")
     def _validate_nframe4d(self, proposal):
         if (
-            "n_frame4D" in self._trait_values
-            and self.n_frame4D
-            and self.n_frame4D != proposal["value"]
+            "n_frame_4d" in self._trait_values
+            and self.n_frame_4d
+            and self.n_frame_4d != proposal["value"]
         ):
-            raise t.TraitError("Cannot modify n_frame4D once set.")
+            raise t.TraitError("Cannot modify n_frame_4d once set.")
         return proposal["value"]
 
 
@@ -2079,7 +2079,7 @@ class NiiVue(anywidget.AnyWidget):
                 - **ignore_zero_voxels** (bool): Whether to ignore zero voxels when
                     setting the display range (default is False).
                 - **image_type** (int): The image type (default is 0).
-                - **frame4D** (int): Frame number for 4D images (default is 0).
+                - **frame_4d** (int): Frame number for 4D images (default is 0).
                 - **colormap_label** (str or None): Label for the colormap.
                 - **limit_frames4D** (int): Limit the number of frames for 4D images.
                 - **is_manifest** (bool): Whether the image is loaded from a manifest

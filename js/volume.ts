@@ -36,8 +36,8 @@ function setup_volume_property_listeners(
 		nv.updateGLVolume();
 	}
 
-	function frame4D_changed() {
-		volume.frame4D = vmodel.get("frame4D");
+	function frame_4d_changed() {
+		volume.frame4D = vmodel.get("frame_4d");
 		nv.updateGLVolume();
 	}
 
@@ -70,7 +70,7 @@ function setup_volume_property_listeners(
 	vmodel.on("change:cal_max", cal_max_changed);
 	vmodel.on("change:colormap", colormap_changed);
 	vmodel.on("change:opacity", opacity_changed);
-	vmodel.on("change:frame4D", frame4D_changed);
+	vmodel.on("change:frame_4d", frame_4d_changed);
 	vmodel.on("change:colormap_negative", colormap_negative_changed);
 	vmodel.on("change:colormap_label", colormap_label_changed);
 
@@ -82,7 +82,7 @@ function setup_volume_property_listeners(
 		vmodel.off("change:cal_max", cal_max_changed);
 		vmodel.off("change:colormap", colormap_changed);
 		vmodel.off("change:opacity", opacity_changed);
-		vmodel.off("change:frame4D", frame4D_changed);
+		vmodel.off("change:frame_4d", frame_4d_changed);
 		vmodel.off("change:colormap_negative", colormap_negative_changed);
 		vmodel.off("change:colormap_label", colormap_label_changed);
 
@@ -124,7 +124,7 @@ async function create_volume(
 			false, // ignoreZeroVoxels
 			false, // useQFormNotSForm
 			vmodel.get("colormap_negative"), // colormapNegative
-			vmodel.get("frame4D"), // frame4D
+			vmodel.get("frame_4d"), // frame4D
 			0, // imageType
 			Number.NaN, // cal_minNeg
 			Number.NaN, // cal_maxNeg
@@ -144,7 +144,7 @@ async function create_volume(
 
 	vmodel.set("id", volume.id);
 	vmodel.set("name", volume.name);
-	vmodel.set("n_frame4D", volume.nFrame4D ?? null);
+	vmodel.set("n_frame_4d", volume.nFrame4D ?? null);
 	vmodel.set("colormap", volume.colormap);
 	vmodel.save_changes();
 
