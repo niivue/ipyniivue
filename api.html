@@ -1301,7 +1301,7 @@ the volume object will <strong>not</strong> be available in the callback.</p>
 </dl>
 </li>
 <li><p><strong>image_type</strong> (int): The image type (default is 0).</p></li>
-<li><p><strong>frame4D</strong> (int): Frame number for 4D images (default is 0).</p></li>
+<li><p><strong>frame_4d</strong> (int): Frame number for 4D images (default is 0).</p></li>
 <li><p><strong>colormap_label</strong> (str or None): Label for the colormap.</p></li>
 <li><p><strong>limit_frames4D</strong> (int): Limit the number of frames for 4D images.</p></li>
 <li><dl class="simple">
@@ -2034,7 +2034,7 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd>
 <dt>cal_max<span class="classifier">float or None, optional</span></dt><dd><p>Maximum intensity value for brightness/contrast mapping.</p>
 </dd>
-<dt>frame4D<span class="classifier">int, optional</span></dt><dd><p>Frame index for 4D volume data. Default is 0.</p>
+<dt>frame_4d<span class="classifier">int, optional</span></dt><dd><p>Frame index for 4D volume data. Default is 0.</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -2088,8 +2088,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="ipyniivue.Volume.frame4D">
-<span class="sig-name descname"><span class="pre">frame4D</span></span><a class="headerlink" href="#ipyniivue.Volume.frame4D" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ipyniivue.Volume.frame_4d">
+<span class="sig-name descname"><span class="pre">frame_4d</span></span><a class="headerlink" href="#ipyniivue.Volume.frame_4d" title="Link to this definition">¶</a></dt>
 <dd><p>An int trait.</p>
 </dd></dl>
 
@@ -2100,8 +2100,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="ipyniivue.Volume.n_frame4D">
-<span class="sig-name descname"><span class="pre">n_frame4D</span></span><a class="headerlink" href="#ipyniivue.Volume.n_frame4D" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ipyniivue.Volume.n_frame_4d">
+<span class="sig-name descname"><span class="pre">n_frame_4d</span></span><a class="headerlink" href="#ipyniivue.Volume.n_frame_4d" title="Link to this definition">¶</a></dt>
 <dd><p>An int trait.</p>
 </dd></dl>
 
@@ -2377,8 +2377,8 @@ Default is ‘winter’.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="ipyniivue.MeshLayer.frame4D">
-<span class="sig-name descname"><span class="pre">frame4D</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.frame4D" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ipyniivue.MeshLayer.frame_4d">
+<span class="sig-name descname"><span class="pre">frame_4d</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.frame_4d" title="Link to this definition">¶</a></dt>
 <dd><p>An int trait.</p>
 </dd></dl>
 
@@ -2554,9 +2554,9 @@ Default is ‘winter’.</p>
 <li><a class="reference internal" href="#ipyniivue.Volume.colormap_invert"><code class="docutils literal notranslate"><span class="pre">Volume.colormap_invert</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.colormap_label"><code class="docutils literal notranslate"><span class="pre">Volume.colormap_label</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.colormap_negative"><code class="docutils literal notranslate"><span class="pre">Volume.colormap_negative</span></code></a></li>
-<li><a class="reference internal" href="#ipyniivue.Volume.frame4D"><code class="docutils literal notranslate"><span class="pre">Volume.frame4D</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.frame_4d"><code class="docutils literal notranslate"><span class="pre">Volume.frame_4d</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.id"><code class="docutils literal notranslate"><span class="pre">Volume.id</span></code></a></li>
-<li><a class="reference internal" href="#ipyniivue.Volume.n_frame4D"><code class="docutils literal notranslate"><span class="pre">Volume.n_frame4D</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.n_frame_4d"><code class="docutils literal notranslate"><span class="pre">Volume.n_frame_4d</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.name"><code class="docutils literal notranslate"><span class="pre">Volume.name</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.opacity"><code class="docutils literal notranslate"><span class="pre">Volume.opacity</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.paired_img_path"><code class="docutils literal notranslate"><span class="pre">Volume.paired_img_path</span></code></a></li>
@@ -2593,7 +2593,7 @@ Default is ‘winter’.</p>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.colormap"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.colormap_invert"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap_invert</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.colormap_negative"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap_negative</span></code></a></li>
-<li><a class="reference internal" href="#ipyniivue.MeshLayer.frame4D"><code class="docutils literal notranslate"><span class="pre">MeshLayer.frame4D</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.MeshLayer.frame_4d"><code class="docutils literal notranslate"><span class="pre">MeshLayer.frame_4d</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.id"><code class="docutils literal notranslate"><span class="pre">MeshLayer.id</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.opacity"><code class="docutils literal notranslate"><span class="pre">MeshLayer.opacity</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.outline_border"><code class="docutils literal notranslate"><span class="pre">MeshLayer.outline_border</span></code></a></li>
