@@ -55,12 +55,12 @@ export type VolumeModel = AnyModel<{
 	colorbar_visible: boolean;
 	cal_min: number;
 	cal_max: number;
-	frame4D: number;
+	frame_4d: number;
 	colormap_negative: string;
 	colormap_label: LUT;
 
 	colormap_invert: boolean;
-	n_frame4D: number | null;
+	n_frame_4d: number | null;
 }>;
 
 export type MeshModel = AnyModel<{
@@ -95,7 +95,7 @@ export type MeshLayerModel = AnyModel<{
 	outline_border: number;
 
 	colormap_invert: boolean;
-	frame4D: number;
+	frame_4d: number;
 	colorbar_visible: boolean;
 }>;
 
