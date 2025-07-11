@@ -13,6 +13,7 @@ import math
 import pathlib
 import typing
 import warnings
+from urllib.parse import urlparse
 
 import anywidget
 import ipywidgets
@@ -22,21 +23,26 @@ from ipywidgets import CallbackDispatcher
 
 from .config_options import ConfigOptions
 from .constants import SliceType
+from .serializers import (
+    deserialize_colormap_label,
+    deserialize_graph,
+    deserialize_hdr,
+    deserialize_options,
+    serialize_colormap_label,
+    serialize_file,
+    serialize_graph,
+    serialize_hdr,
+    serialize_options,
+)
 from .traits import (
     LUT,
     ColorMap,
     Graph,
+    NIFTI1Hdr,
 )
 from .utils import (
-    deserialize_colormap_label,
-    deserialize_graph,
-    deserialize_options,
-    file_serializer,
     make_draw_lut,
     make_label_lut,
-    serialize_colormap_label,
-    serialize_graph,
-    serialize_options,
 )
 
 __all__ = ["NiiVue"]
@@ -68,7 +74,7 @@ class MeshLayer(anywidget.AnyWidget):
     """
 
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
-        sync=True, to_json=file_serializer
+        sync=True, to_json=serialize_file
     )
     id = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(0.5).tag(sync=True)
@@ -138,7 +144,7 @@ class Mesh(anywidget.AnyWidget):
     """
 
     path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
-        sync=True, to_json=file_serializer
+        sync=True, to_json=serialize_file
     )
     id = t.Unicode(default_value="").tag(sync=True)
     name = t.Unicode(default_value="").tag(sync=True)
@@ -190,33 +196,52 @@ class Volume(anywidget.AnyWidget):
 
     Parameters
     ----------
-    path : str or pathlib.Path
-        Path to the volume data file; cannot be modified once set.
+    path : str or pathlib.Path, optional
+        Path to the volume data file. Cannot be modified once set.
+    url : str, optional
+        URL to the volume data.
+    data : bytes, optional
+        Bytes data of the volume.
     paired_img_path : str or pathlib.Path, optional
-        Path to the paired img data.
+        Path to the paired image data file.
+    paired_img_url : str, optional
+        URL to the paired image data.
+    paired_img_data : bytes, optional
+        Bytes data of the paired image.
     name : str, optional
-        Name of the volume.
+        Name of the volume. If not provided, it will be inferred from the source.
     opacity : float, optional
-        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.
+        Opacity between 0.0 and 1.0 (default is 1.0).
     colormap : str, optional
-        Colormap name for rendering. Default is '' (usually defaults to 'gray').
+        Colormap name (default is '').
     colorbar_visible : bool, optional
-        Show colorbar associated with the colormap. Default is True.
+        Show colorbar (default is True).
     cal_min : float or None, optional
         Minimum intensity value for brightness/contrast mapping.
     cal_max : float or None, optional
         Maximum intensity value for brightness/contrast mapping.
     frame_4d : int, optional
-        Frame index for 4D volume data. Default is 0.
+        Frame index for 4D volume data (default is 0).
+    colormap_negative : str, optional
+        Colormap for negative values (default is '').
+    colormap_label : LUT, optional
+        Colormap label data.
     """
 
-    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
-        sync=True, to_json=file_serializer
-    )
-    id = t.Unicode(default_value="").tag(sync=True)
+    # Input-only traits (not accessible after initialization)
+    path = t.Union(
+        [t.Instance(pathlib.Path), t.Unicode()], default_value=None, allow_none=True
+    ).tag(sync=True, to_json=serialize_file)
+    url = t.Unicode(default_value=None, allow_none=True).tag(sync=True)
+    data = t.Bytes(default_value=None, allow_none=True).tag(sync=True)
     paired_img_path = t.Union(
         [t.Instance(pathlib.Path), t.Unicode()], default_value=None, allow_none=True
-    ).tag(sync=True, to_json=file_serializer)
+    ).tag(sync=True, to_json=serialize_file)
+    paired_img_url = t.Unicode(default_value=None, allow_none=True).tag(sync=True)
+    paired_img_data = t.Bytes(default_value=None, allow_none=True).tag(sync=True)
+
+    # Main traits
+    id = t.Unicode(default_value="").tag(sync=True)
     name = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     colormap = t.Unicode("").tag(sync=True)
@@ -231,27 +256,97 @@ class Volume(anywidget.AnyWidget):
         from_json=deserialize_colormap_label,
     )
 
-    # other properties that aren't in init
+    # Other properties
     colormap_invert = t.Bool(False).tag(sync=True)
-    n_frame_4d = t.Int(None, allow_none=True).tag(sync=True)
+    n_frame_4d = t.Int(None, allow_none=True).tag(
+        sync=True
+    )  # Read-only after initialization
+
+    # Set after bidirectional comms with frontend
+    hdr = t.Instance(NIFTI1Hdr, allow_none=True).tag(
+        sync=True, to_json=serialize_hdr, from_json=deserialize_hdr
+    )
 
     def __init__(self, **kwargs):
         include_keys = {
             "path",
+            "url",
+            "data",
             "paired_img_path",
+            "paired_img_url",
+            "paired_img_data",
             "id",
             "name",
             "opacity",
             "colormap",
-            "colormap_visible",
+            "colorbar_visible",
             "cal_min",
             "cal_max",
             "frame_4d",
             "colormap_negative",
             "colormap_label",
+            "colormap_invert",
         }
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
+
+        # Validate that one and only one of path, url, data is provided
+        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
+        if len(provided) != 1:
+            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
+
+        # Validate paired image data
+        paired_provided = [
+            k
+            for k in ("paired_img_path", "paired_img_url", "paired_img_data")
+            if getattr(self, k) is not None
+        ]
+        if len(paired_provided) > 1:
+            raise ValueError(
+                "Up to one of 'paired_img_path', "
+                "'paired_img_url', or 'paired_img_data' can be provided."
+            )
+
+        # Set name if not provided
+        if not self.name:
+            if self.path:
+                self.name = pathlib.Path(self.path).name
+            elif self.url:
+                self.name = pathlib.Path(urlparse(self.url).path).name
+            elif self.data is not None:
+                raise ValueError("Must provide 'name' when 'data' is provided.")
+            else:
+                raise ValueError("Cannot determine the name of the volume.")
+
+    @t.validate(
+        "path",
+        "url",
+        "data",
+        "id",
+        "paired_img_path",
+        "paired_img_url",
+        "paired_img_data",
+    )
+    def _validate_no_change(self, proposal):
+        trait_name = proposal["trait"].name
+        if (
+            trait_name in self._trait_values
+            and self._trait_values[trait_name]
+            and self._trait_values[trait_name] != proposal["value"]
+        ):
+            raise t.TraitError(f"Cannot modify '{trait_name}' once set.")
+        return proposal["value"]
+
+    @t.validate("n_frame_4d")
+    def _validate_nframe4d(self, proposal):
+        # separate since n_frame_4d can be 0
+        if (
+            "n_frame_4d" in self._trait_values
+            and self.n_frame_4d is not None
+            and self.n_frame_4d != proposal["value"]
+        ):
+            raise t.TraitError("Cannot modify 'n_frame_4d' once set.")
+        return proposal["value"]
 
     def _notify_colormap_label_changed(self):
         self.notify_change(
@@ -315,32 +410,6 @@ class Volume(anywidget.AnyWidget):
         response.raise_for_status()
         cmap = response.json()
         self.set_colormap_label(cmap)
-
-    @t.validate("path")
-    def _validate_path(self, proposal):
-        if (
-            "path" in self._trait_values
-            and self.path
-            and self.path != proposal["value"]
-        ):
-            raise t.TraitError("Cannot modify path once set.")
-        return proposal["value"]
-
-    @t.validate("id")
-    def _validate_id(self, proposal):
-        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
-            raise t.TraitError("Cannot modify id once set.")
-        return proposal["value"]
-
-    @t.validate("n_frame_4d")
-    def _validate_nframe4d(self, proposal):
-        if (
-            "n_frame_4d" in self._trait_values
-            and self.n_frame_4d
-            and self.n_frame_4d != proposal["value"]
-        ):
-            raise t.TraitError("Cannot modify n_frame_4d once set.")
-        return proposal["value"]
 
 
 class NiiVue(anywidget.AnyWidget):
@@ -475,7 +544,13 @@ class NiiVue(anywidget.AnyWidget):
             idx = self.get_volume_index_by_id(data["id"])
             if idx != -1:
                 handler(self.volumes[idx], data["frame_index"])
-        elif event in {"image_loaded", "intensity_change"}:
+        elif event == "intensity_change":
+            idx = self.get_volume_index_by_id(data["id"])
+            if idx != -1:
+                handler(self.volumes[idx])
+            else:
+                handler(data)
+        elif event == "image_loaded":
             idx = self.get_volume_index_by_id(data["id"])
             if idx != -1:
                 handler(self.volumes[idx])

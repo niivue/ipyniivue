@@ -2,6 +2,50 @@ import * as niivue from "@niivue/niivue";
 import * as lib from "./lib.ts";
 import type { Model, VolumeModel } from "./types.ts";
 
+import type { NIFTI1, NIFTI2 } from "nifti-reader-js";
+
+function getNIFTIData(hdr: NIFTI1 | NIFTI2): Partial<NIFTI1> {
+	const data: Partial<NIFTI1> = {
+		littleEndian: hdr.littleEndian,
+		dim_info: hdr.dim_info,
+		dims: hdr.dims,
+		intent_p1: hdr.intent_p1,
+		intent_p2: hdr.intent_p2,
+		intent_p3: hdr.intent_p3,
+		intent_code: hdr.intent_code,
+		datatypeCode: hdr.datatypeCode,
+		numBitsPerVoxel: hdr.numBitsPerVoxel,
+		slice_start: hdr.slice_start,
+		slice_end: hdr.slice_end,
+		slice_code: hdr.slice_code,
+		pixDims: hdr.pixDims,
+		vox_offset: hdr.vox_offset,
+		scl_slope: hdr.scl_slope,
+		scl_inter: hdr.scl_inter,
+		xyzt_units: hdr.xyzt_units,
+		cal_max: hdr.cal_max,
+		cal_min: hdr.cal_min,
+		slice_duration: hdr.slice_duration,
+		toffset: hdr.toffset,
+		description: hdr.description,
+		aux_file: hdr.aux_file,
+		intent_name: hdr.intent_name,
+		qform_code: hdr.qform_code,
+		sform_code: hdr.sform_code,
+		quatern_b: hdr.quatern_b,
+		quatern_c: hdr.quatern_c,
+		quatern_d: hdr.quatern_d,
+		qoffset_x: hdr.qoffset_x,
+		qoffset_y: hdr.qoffset_y,
+		qoffset_z: hdr.qoffset_z,
+		affine: hdr.affine,
+		magic: hdr.magic,
+		extensionFlag: hdr.extensionFlag,
+	};
+
+	return data;
+}
+
 /**
  * Set up event listeners to handle changes to the volume properties.
  * Returns a function to clean up the event listeners.
@@ -99,53 +143,87 @@ async function create_volume(
 	vmodel: VolumeModel,
 ): Promise<[niivue.NVImage, () => void]> {
 	let volume: niivue.NVImage;
-	if (vmodel.get("path").name === "<fromfrontend>") {
-		const idx = nv.getVolumeIndexByID(vmodel.get("id"));
-		volume = nv.volumes[idx];
-	} else {
-		let pairedImgData = null;
-		const pairedImg = vmodel.get("paired_img_path").data;
 
-		if (pairedImg !== null) {
-			pairedImgData = pairedImg.buffer as ArrayBuffer;
-		}
-		console.log("pairedImgData", pairedImgData);
+	// Input data
+	const path = vmodel.get("path").name ? vmodel.get("path") : null;
+	const url = vmodel.get("url");
+	const data = vmodel.get("data")?.byteLength ? vmodel.get("data") : null;
+	const paired_img_path = vmodel.get("paired_img_path").name
+		? vmodel.get("paired_img_path")
+		: null;
+	const paired_img_url = vmodel.get("paired_img_url") ?? "";
+	const paired_img_data = vmodel.get("paired_img_data")?.byteLength
+		? vmodel.get("paired_img_data")
+		: null;
 
+	// Paired image data
+	let pairedImgData: ArrayBuffer | null = null;
+	if (paired_img_data) {
+		pairedImgData = paired_img_data.buffer as ArrayBuffer;
+	} else if (paired_img_path) {
+		pairedImgData = paired_img_path.data.buffer as ArrayBuffer;
+	}
+
+	if (path || data) {
+		const dataBuffer = path?.data?.buffer || data?.buffer;
+		const name = path?.name || vmodel.get("name");
 		volume = await niivue.NVImage.new(
-			vmodel.get("path").data.buffer as ArrayBuffer, // dataBuffer
-			vmodel.get("path").name, // name
-			vmodel.get("colormap"), // colormap
-			vmodel.get("opacity"), // opacity
-			pairedImgData, // pairedImgData
-			vmodel.get("cal_min") ?? Number.NaN, // cal_min
-			vmodel.get("cal_max") ?? Number.NaN, // cal_max
-			true, // trustCalMinMax
-			0.02, // percentileFrac
-			false, // ignoreZeroVoxels
-			false, // useQFormNotSForm
-			vmodel.get("colormap_negative"), // colormapNegative
-			vmodel.get("frame_4d"), // frame4D
-			0, // imageType
-			Number.NaN, // cal_minNeg
-			Number.NaN, // cal_maxNeg
-			vmodel.get("colorbar_visible"), // colorbarVisible
-			null, // colormapLabel
-			0, //colormapType
-			null, //zarrData
+			dataBuffer as ArrayBuffer,
+			name,
+			vmodel.get("colormap"),
+			vmodel.get("opacity"),
+			pairedImgData,
+			vmodel.get("cal_min") ?? Number.NaN,
+			vmodel.get("cal_max") ?? Number.NaN,
+			true,
+			0.02,
+			false,
+			false,
+			vmodel.get("colormap_negative"),
+			vmodel.get("frame_4d"),
+			0,
+			Number.NaN,
+			Number.NaN,
+			vmodel.get("colorbar_visible"),
+			null,
+			0,
+			null,
 		);
+	} else if (url) {
+		volume = await niivue.NVImage.loadFromUrl({
+			url: url,
+			name: vmodel.get("name"),
+			colormap: vmodel.get("colormap"),
+			opacity: vmodel.get("opacity"),
+			urlImgData: paired_img_url,
+			cal_min: vmodel.get("cal_min") ?? Number.NaN,
+			cal_max: vmodel.get("cal_max") ?? Number.NaN,
+			trustCalMinMax: true,
+			percentileFrac: 0.02,
+			ignoreZeroVoxels: false,
+			useQFormNotSForm: false,
+			colormapNegative: vmodel.get("colormap_negative"),
+			frame4D: vmodel.get("frame_4d"),
+			imageType: 0,
+			colorbarVisible: vmodel.get("colorbar_visible"),
+		});
+	} else {
+		throw new Error("Invalid source for volume");
+	}
 
-		// Set colormap label
-		const newColormapLabel = vmodel.get("colormap_label");
-		if (newColormapLabel && Array.isArray(newColormapLabel.lut)) {
-			newColormapLabel.lut = new Uint8ClampedArray(newColormapLabel.lut);
-			volume.colormapLabel = newColormapLabel;
-		}
+	// Set colormap label
+	const newColormapLabel = vmodel.get("colormap_label");
+	if (newColormapLabel && Array.isArray(newColormapLabel.lut)) {
+		newColormapLabel.lut = new Uint8ClampedArray(newColormapLabel.lut);
+		volume.colormapLabel = newColormapLabel;
 	}
 
 	vmodel.set("id", volume.id);
-	vmodel.set("name", volume.name);
 	vmodel.set("n_frame_4d", volume.nFrame4D ?? null);
 	vmodel.set("colormap", volume.colormap);
+	if (volume.hdr !== null) {
+		vmodel.set("hdr", getNIFTIData(volume.hdr));
+	}
 	vmodel.save_changes();
 
 	// Handle changes to the volume properties
@@ -202,7 +280,7 @@ export async function render_volumes(
 
 	// add volumes
 	for (const [id, vmodel] of backend_volume_map.entries()) {
-		const fromFrontend = vmodel.get("path").name === "<fromfrontend>";
+		const fromFrontend = vmodel.get("path")?.name === "<fromfrontend>";
 		const inFrontend = frontend_volume_map.has(id);
 		const emptyId = vmodel.get("id") === "";
 
