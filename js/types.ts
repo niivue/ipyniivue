@@ -1,7 +1,8 @@
 import type { AnyModel } from "@anywidget/types";
 import type { NVConfigOptions } from "@niivue/niivue";
+import type { NIFTI1 } from "nifti-reader-js";
 
-interface File {
+interface FileInput {
 	name: string;
 	data: DataView;
 }
@@ -45,9 +46,15 @@ type Graph = {
 };
 
 export type VolumeModel = AnyModel<{
-	path: File;
+	path: FileInput;
+	url: string;
+	data: DataView;
+
+	paired_img_path: FileInput;
+	paired_img_url: string;
+	paired_img_data: DataView;
+
 	id: string;
-	paired_img_path: File;
 	name: string;
 	colormap: string;
 	opacity: number;
@@ -61,10 +68,12 @@ export type VolumeModel = AnyModel<{
 
 	colormap_invert: boolean;
 	n_frame_4d: number | null;
+
+	hdr: Partial<NIFTI1>;
 }>;
 
 export type MeshModel = AnyModel<{
-	path: File;
+	path: FileInput;
 	id: string;
 	name: string;
 	rgba255: Array<number>;
@@ -84,7 +93,7 @@ export type MeshModel = AnyModel<{
 }>;
 
 export type MeshLayerModel = AnyModel<{
-	path: File;
+	path: FileInput;
 	id: string;
 	opacity: number;
 	colormap: string;

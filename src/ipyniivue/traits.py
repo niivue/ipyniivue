@@ -235,6 +235,121 @@ class Graph(t.HasTraits):
             self._parent._notify_graph_changed()
 
 
+class NIFTI1Hdr(t.HasTraits):
+    """
+    Represents a NIFTI1 header.
+
+    Properties
+    ----------
+    littleEndian : bool
+        True if the data is in little endian byte order.
+    dim_info : int
+        MRI slice ordering.
+    dims : list of int
+        Image dimensions.
+    intent_p1 : float
+        1st intent parameter.
+    intent_p2 : float
+        2nd intent parameter.
+    intent_p3 : float
+        3rd intent parameter.
+    intent_code : int
+        NIFTI intent code.
+    datatypeCode : int
+        NIFTI data type code.
+    numBitsPerVoxel : int
+        Number of bits per voxel.
+    slice_start : int
+        First slice index.
+    slice_end : int
+        Last slice index.
+    slice_code : int
+        Slice timing order.
+    pixDims : list of float
+        Voxel dimensions.
+    vox_offset : float
+        Image data offset in bytes.
+    scl_slope : float
+        Data scaling slope.
+    scl_inter : float
+        Data scaling intercept.
+    xyzt_units : int
+        Units of measurement.
+    cal_max : float
+        Maximum display intensity value.
+    cal_min : float
+        Minimum display intensity value.
+    slice_duration : float
+        Time between individual slices.
+    toffset : float
+        Time axis shift.
+    description : str
+        Description of the data.
+    aux_file : str
+        Auxiliary filename.
+    intent_name : str
+        Name or meaning of the data.
+    qform_code : int
+        Code specifying the use of quaternion transformation.
+    sform_code : int
+        Code specifying the use of affine transformation.
+    quatern_b : float
+        Quaternion b parameter.
+    quatern_c : float
+        Quaternion c parameter.
+    quatern_d : float
+        Quaternion d parameter.
+    qoffset_x : float
+        Quaternion x translation parameter.
+    qoffset_y : float
+        Quaternion y translation parameter.
+    qoffset_z : float
+        Quaternion z translation parameter.
+    affine : list of list of float
+        Affine transformation matrix.
+    magic : str
+        Magic code indicating file type.
+    extensionFlag : list of int
+        Extensions flag.
+    """
+
+    littleEndian = t.Bool().tag(sync=True)
+    dim_info = t.Int().tag(sync=True)
+    dims = t.List(t.Int()).tag(sync=True)  # image dimensions
+    intent_p1 = t.Float().tag(sync=True)
+    intent_p2 = t.Float().tag(sync=True)
+    intent_p3 = t.Float().tag(sync=True)
+    intent_code = t.Int().tag(sync=True)
+    datatypeCode = t.Int().tag(sync=True)
+    numBitsPerVoxel = t.Int().tag(sync=True)
+    slice_start = t.Int().tag(sync=True)
+    slice_end = t.Int().tag(sync=True)
+    slice_code = t.Int().tag(sync=True)
+    pixDims = t.List(t.Float()).tag(sync=True)  # voxel dimensions
+    vox_offset = t.Float().tag(sync=True)
+    scl_slope = t.Float().tag(sync=True)
+    scl_inter = t.Float().tag(sync=True)
+    xyzt_units = t.Int().tag(sync=True)
+    cal_max = t.Float().tag(sync=True)
+    cal_min = t.Float().tag(sync=True)
+    slice_duration = t.Float().tag(sync=True)
+    toffset = t.Float().tag(sync=True)
+    description = t.Unicode().tag(sync=True)
+    aux_file = t.Unicode().tag(sync=True)
+    intent_name = t.Unicode().tag(sync=True)
+    qform_code = t.Int().tag(sync=True)
+    sform_code = t.Int().tag(sync=True)
+    quatern_b = t.Float().tag(sync=True)
+    quatern_c = t.Float().tag(sync=True)
+    quatern_d = t.Float().tag(sync=True)
+    qoffset_x = t.Float().tag(sync=True)
+    qoffset_y = t.Float().tag(sync=True)
+    qoffset_z = t.Float().tag(sync=True)
+    affine = t.List(t.List(t.Float())).tag(sync=True)
+    magic = t.Unicode().tag(sync=True)
+    extensionFlag = t.List(t.Int()).tag(sync=True)
+
+
 CAMEL_TO_SNAKE_GRAPH = {
     "LTWH": "ltwh",
     "opacity": "opacity",
