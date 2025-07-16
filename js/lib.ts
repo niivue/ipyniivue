@@ -18,14 +18,15 @@ export async function sendChunkedData(
 	model: AnyModel,
 	dataProperty: string,
 	arrayBuffer: ArrayBuffer,
-	chunkSize = 5 * 1024 * 1024,
+	_chunkSize = 5 * 1024 * 1024,
 	wait = 0,
 ) {
 	const isMarimo = typeof model.send_sync_message === "undefined";
 
-	if (isMarimo) {
-		chunkSize = Math.min(chunkSize, 2 * 1024 * 1024); // 2 mb maximum
-	}
+	// 2 mb max for marimo
+	const chunkSize = isMarimo
+		? Math.min(_chunkSize, 2 * 1024 * 1024)
+		: _chunkSize;
 
 	const totalSize = arrayBuffer.byteLength;
 	const totalChunks = Math.ceil(totalSize / chunkSize);
