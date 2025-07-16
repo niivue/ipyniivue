@@ -162,7 +162,7 @@ def is_negative_zero(x):
 
 
 class ChunkedDataHandler:
-    """For incoming chuned data."""
+    """For incoming chunked data."""
 
     def __init__(self, total_chunks):
         self.total_chunks = total_chunks
