@@ -225,6 +225,9 @@ async function create_volume(
 		vmodel.set("hdr", getNIFTIData(volume.hdr));
 	}
 	vmodel.save_changes();
+	if (volume.img) {
+		lib.sendChunkedData(vmodel, "img", volume.img.buffer as ArrayBuffer);
+	}
 
 	// Handle changes to the volume properties
 	const cleanup_volume_listeners = setup_volume_property_listeners(

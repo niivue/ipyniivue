@@ -1,4 +1,74 @@
-import type { AnyModel } from "@anywidget/types";
+import type { AnyModel } from "./types.ts";
+
+function delay(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function dataViewToBase64(dataView: DataView) {
+	const uint8Array = new Uint8Array(dataView.buffer);
+	let binaryString = "";
+	const len = uint8Array.byteLength;
+	for (let i = 0; i < len; i++) {
+		binaryString += String.fromCharCode(uint8Array[i]);
+	}
+	return btoa(binaryString);
+}
+
+export async function sendChunkedData(
+	model: AnyModel,
+	dataProperty: string,
+	arrayBuffer: ArrayBuffer,
+	chunkSize = 5 * 1024 * 1024,
+	wait = 0,
+) {
+	const isMarimo = typeof model.send_sync_message === "undefined";
+
+	if (isMarimo) {
+		chunkSize = Math.min(chunkSize, 2 * 1024 * 1024); // 2 mb maximum
+	}
+
+	const totalSize = arrayBuffer.byteLength;
+	const totalChunks = Math.ceil(totalSize / chunkSize);
+	let offset = 0;
+	let chunkIndex = 0;
+
+	while (offset < totalSize) {
+		// if not marimo and ws closed, stop sending data
+		if (!isMarimo && !model._comm_live) {
+			break;
+		}
+
+		const chunkEnd = Math.min(offset + chunkSize, totalSize);
+		const chunk = arrayBuffer.slice(offset, chunkEnd);
+		const chunkView = new DataView(chunk);
+
+		const attributeName: string = `chunk_${dataProperty}_${chunkIndex}`;
+
+		const data = {
+			chunk_index: chunkIndex,
+			total_chunks: totalChunks,
+			chunk: isMarimo ? dataViewToBase64(chunkView) : chunkView,
+		};
+		const message: Record<string, object> = {};
+		message[attributeName] = data;
+
+		console.log("lib.sendChunkedData:", message);
+
+		if (isMarimo) {
+			model.onChange(message);
+		} else {
+			const msgId = model.send_sync_message(message);
+			model.rememberLastUpdateFor(msgId);
+		}
+
+		if (wait > 0) {
+			await delay(wait);
+		}
+
+		offset = chunkEnd;
+		chunkIndex += 1;
+	}
+}
 
 export function gather_models<T extends AnyModel>(
 	model: AnyModel,

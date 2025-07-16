@@ -41,6 +41,7 @@ from .traits import (
     NIFTI1Hdr,
 )
 from .utils import (
+    ChunkedDataHandler,
     make_draw_lut,
     make_label_lut,
 )
@@ -48,7 +49,54 @@ from .utils import (
 __all__ = ["NiiVue"]
 
 
-class MeshLayer(anywidget.AnyWidget):
+class BaseAnyWidget(anywidget.AnyWidget):
+    """Base widget class that overrides set_state to handle chunked data."""
+
+    _data_handlers: typing.ClassVar[dict] = {}
+
+    def set_state(self, state):
+        """Override set_state to accept chunked-state updates."""
+        state_copy = state.copy()
+        keys_to_remove = []
+
+        for attr_name, attr_value in state.items():
+            if attr_name.startswith("chunk_"):
+                _, data_property, chunk_index = attr_name.split("_")
+                chunk_index = int(chunk_index)
+                chunk_info = attr_value
+                chunk_index_received = chunk_info["chunk_index"]
+                total_chunks = chunk_info["total_chunks"]
+                chunk_data = chunk_info["chunk"]
+
+                if isinstance(chunk_data, memoryview):
+                    chunk_data = chunk_data.tobytes()
+                elif isinstance(chunk_data, str):
+                    chunk_data = base64.b64decode(chunk_data)
+                else:
+                    raise ValueError(f"Unsupported chunk data type: {type(chunk_data)}")
+
+                if data_property not in self._data_handlers:
+                    self._data_handlers[data_property] = ChunkedDataHandler(
+                        total_chunks
+                    )
+
+                handler = self._data_handlers[data_property]
+                handler.add_chunk(chunk_index_received, chunk_data)
+
+                if handler.is_complete():
+                    assembled_data = handler.get_data()
+                    self.set_trait(data_property, assembled_data)
+                    del self._data_handlers[data_property]
+
+                keys_to_remove.append(attr_name)
+
+        for key in keys_to_remove:
+            del state_copy[key]
+
+        super().set_state(state_copy)
+
+
+class MeshLayer(BaseAnyWidget):
     """
     Represents a layer within a Mesh model.
 
@@ -122,7 +170,7 @@ class MeshLayer(anywidget.AnyWidget):
         return proposal["value"]
 
 
-class Mesh(anywidget.AnyWidget):
+class Mesh(BaseAnyWidget):
     """
     Represents a Mesh model.
 
@@ -190,7 +238,7 @@ class Mesh(anywidget.AnyWidget):
         return proposal["value"]
 
 
-class Volume(anywidget.AnyWidget):
+class Volume(BaseAnyWidget):
     """
     Represents a Volume model.
 
@@ -266,6 +314,7 @@ class Volume(anywidget.AnyWidget):
     hdr = t.Instance(NIFTI1Hdr, allow_none=True).tag(
         sync=True, to_json=serialize_hdr, from_json=deserialize_hdr
     )
+    img = t.Bytes(b"").tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -412,7 +461,7 @@ class Volume(anywidget.AnyWidget):
         self.set_colormap_label(cmap)
 
 
-class NiiVue(anywidget.AnyWidget):
+class NiiVue(BaseAnyWidget):
     """
     Represents a NiiVue widget instance.
 
@@ -570,6 +619,18 @@ class NiiVue(anywidget.AnyWidget):
             handler(image_options, data["volume"])
         else:
             handler(data)
+
+    def _handle_image_loaded(self, volume_id):
+        handler = self._event_handlers.get("image_loaded")
+        if not handler:
+            return
+
+        # ensure that volume actually exists in parent
+        idx = self.get_volume_index_by_id(volume_id)
+        if idx != -1:
+            handler(self.volumes[idx])
+        else:
+            handler({"id": volume_id})
 
     def _add_volume_from_frontend(self, volume_data):
         index = volume_data.pop("index", None)

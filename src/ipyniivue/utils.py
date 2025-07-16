@@ -159,3 +159,24 @@ def is_negative_zero(x):
         The result of the check.
     """
     return x == 0.0 and math.copysign(1.0, x) == -1.0
+
+
+class ChunkedDataHandler:
+    """For incoming chuned data."""
+
+    def __init__(self, total_chunks):
+        self.total_chunks = total_chunks
+        self.chunks = {}
+
+    def add_chunk(self, chunk_index, chunk_data):
+        """Add chunk."""
+        self.chunks[chunk_index] = chunk_data
+
+    def is_complete(self):
+        """Boolean is complete check."""
+        return len(self.chunks) == self.total_chunks
+
+    def get_data(self):
+        """Get full data bytes."""
+        data = b"".join(self.chunks[i] for i in range(self.total_chunks))
+        return data
