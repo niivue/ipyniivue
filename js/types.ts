@@ -3,10 +3,8 @@ import type { NVConfigOptions } from "@niivue/niivue";
 import type { NIFTI1 } from "nifti-reader-js";
 
 export interface AnyModel<T extends object = object> extends BaseAnyModel<T> {
-	send_sync_message(
-		state: object,
-		callbacks?: Record<string, Function>,
-	): string;
+	// biome-ignore lint/suspicious/noExplicitAny: callbacks are Record<string, Function>
+	send_sync_message(state: object, callbacks?: any): string;
 	rememberLastUpdateFor(msgId: string): void;
 	_comm_live: boolean;
 	// marimo support, since marimo uses POST requests instead of websocket
