@@ -187,8 +187,8 @@ class Mesh(BaseAnyWidget):
         Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.
     visible : bool, optional
         Mesh visibility. Default is True.
-    layers : list of dict, optional
-        List of layer data dictionaries.
+    layers : list of dict or MeshLayer objects, optional
+        List of layer data dictionaries or MeshLayer objects.
         See :class:`MeshLayer` for attribute options.
     """
 
@@ -220,7 +220,15 @@ class Mesh(BaseAnyWidget):
         layers_data = kwargs.pop("layers", [])
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
-        self.layers = [MeshLayer(**layer_data) for layer_data in layers_data]
+
+        # accept either dicts or MeshLayer objs
+        layers_list = []
+        for layer in layers_data:
+            if isinstance(layer, MeshLayer):
+                layers_list.append(layer)
+            elif isinstance(layer, dict):
+                layers_list.append(MeshLayer(**layer))
+        self.layers = layers_list
 
     @t.validate("path")
     def _validate_path(self, proposal):
@@ -729,7 +737,7 @@ class NiiVue(BaseAnyWidget):
         Parameters
         ----------
         volumes : list
-            A list of dictionaries containing the volume information.
+            A list of dictionaries or Volume objects.
 
         Returns
         -------
@@ -743,17 +751,22 @@ class NiiVue(BaseAnyWidget):
             nv.load_volumes([{"path": "mni152.nii.gz"}])
 
         """
-        volumes = [Volume(**item) for item in volumes]
-        self.volumes = volumes
+        volume_objects = []
+        for item in volumes:
+            if isinstance(item, Volume):
+                volume_objects.append(item)
+            elif isinstance(item, dict):
+                volume_objects.append(Volume(**item))
+        self.volumes = volume_objects
 
-    def add_volume(self, volume: dict):
+    def add_volume(self, volume: typing.Union[dict, Volume]):
         """
         Add a new volume to the widget.
 
         Parameters
         ----------
-        volume : dict
-            A dictionary containing the volume information.
+        volume : dict or Volume object
+            The volume information.
 
         Returns
         -------
@@ -767,7 +780,13 @@ class NiiVue(BaseAnyWidget):
             nv.add_volume({"path": "mni152.nii.gz"})
 
         """
-        self.volumes = [*self.volumes, Volume(**volume)]
+        if isinstance(volume, Volume):
+            new_volume = volume
+        elif isinstance(volume, dict):
+            new_volume = Volume(**volume)
+        else:
+            return
+        self.volumes = [*self.volumes, new_volume]
 
     def load_meshes(self, meshes: list):
         """
@@ -790,10 +809,15 @@ class NiiVue(BaseAnyWidget):
             nv.load_meshes([{"path": "BrainMesh_ICBM152.lh.mz3"}])
 
         """
-        meshes = [Mesh(**item) for item in meshes]
-        self.meshes = meshes
+        mesh_objects = []
+        for item in meshes:
+            if isinstance(item, Mesh):
+                mesh_objects.append(item)
+            elif isinstance(item, dict):
+                mesh_objects.append(Mesh(**item))
+        self.meshes = mesh_objects
 
-    def add_mesh(self, mesh: Mesh):
+    def add_mesh(self, mesh: typing.Union[dict, Volume]):
         """
         Add a single mesh to the widget.
 
@@ -814,7 +838,13 @@ class NiiVue(BaseAnyWidget):
             nv.add_mesh({"path": "BrainMesh_ICBM152.lh.mz3"})
 
         """
-        self.meshes = [*self.meshes, mesh]
+        if isinstance(mesh, Mesh):
+            new_mesh = mesh
+        elif isinstance(mesh, dict):
+            new_mesh = Mesh(**mesh)
+        else:
+            return
+        self.meshes = [*self.meshes, new_mesh]
 
     """
     Other functions
