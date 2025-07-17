@@ -36,6 +36,7 @@ from .serializers import (
 )
 from .traits import (
     LUT,
+    Bytes,
     ColorMap,
     Graph,
     NIFTI1Hdr,
@@ -314,7 +315,7 @@ class Volume(BaseAnyWidget):
     hdr = t.Instance(NIFTI1Hdr, allow_none=True).tag(
         sync=True, to_json=serialize_hdr, from_json=deserialize_hdr
     )
-    img = t.Bytes(b"").tag(sync=True)
+    img = Bytes(b"").tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -366,6 +367,34 @@ class Volume(BaseAnyWidget):
                 raise ValueError("Must provide 'name' when 'data' is provided.")
             else:
                 raise ValueError("Cannot determine the name of the volume.")
+
+        # on-event
+        self._event_handlers = {}
+
+    @t.observe("img")
+    def _handle_img_change(self, change):
+        handler = self._event_handlers.get("img_changed")
+        if handler:
+            handler(self)
+
+    def on_img_changed(self, callback, remove=False):
+        """
+        Register or unregister a callback for the 'img_changed' event.
+
+        Parameters
+        ----------
+        callback : callable
+            The function to call when the 'img_changed' event occurs.
+            Accepts 1 argument: the volume.
+        remove : bool, optional
+            If True, unregister the callback. Defaults to False.
+        """
+        if "img_changed" not in self._event_handlers:
+            self._event_handlers["img_changed"] = CallbackDispatcher()
+        if remove:
+            self._event_handlers["img_changed"].remove(callback)
+        else:
+            self._event_handlers["img_changed"].register_callback(callback)
 
     @t.validate(
         "path",
