@@ -59,7 +59,9 @@ export async function sendChunkedData(
 			model.onChange(message);
 		} else {
 			const msgId = model.send_sync_message(message);
-			model.rememberLastUpdateFor(msgId);
+			if (typeof model.rememberLastUpdateFor !== "undefined") {
+				model.rememberLastUpdateFor(msgId);
+			}
 		}
 
 		if (wait > 0) {
