@@ -379,6 +379,14 @@ class Volume(BaseAnyWidget):
         # on-event
         self._event_handlers = {}
 
+    def get_state(self, key=None, drop_defaults=False):
+        """Exclude certain attributes from state on save."""
+        state = super().get_state(key=key, drop_defaults=drop_defaults)
+        if self.path or self.url or self.data:
+            if "img" in state:
+                del state["img"]
+        return state
+
     @t.observe("img")
     def _handle_img_change(self, change):
         handler = self._event_handlers.get("img_changed")
