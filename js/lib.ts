@@ -14,7 +14,15 @@ function dataViewToBase64(dataView: DataView) {
 	return btoa(binaryString);
 }
 
-export function getArrayType(typedArray: any): string {
+type TypedArray =
+	| Float32Array
+	| Uint32Array
+	| Uint8Array
+	| Int16Array
+	| Float64Array
+	| Uint16Array;
+
+export function getArrayType(typedArray: TypedArray): string {
 	if (typedArray instanceof Float32Array) return "float32";
 	if (typedArray instanceof Uint32Array) return "uint32";
 	if (typedArray instanceof Uint8Array) return "uint8";
