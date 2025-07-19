@@ -7,7 +7,7 @@ name = "ipyniivue"
 license = { text = "BSD-2-Clause" }
 dynamic = ["version"]
 description = "A Jupyter Widget for Niivue based on anywidget."
-dependencies = ["anywidget", "requests"]
+dependencies = ["anywidget", "requests", "numpy"]
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [

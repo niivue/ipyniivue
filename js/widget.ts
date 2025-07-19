@@ -2,15 +2,16 @@ import { v4 as uuidv4 } from "@lukeed/uuid";
 import * as niivue from "@niivue/niivue";
 import { esm } from "@niivue/niivue/min";
 
-import { Disposer, gather_models } from "./lib.ts";
+import * as lib from "./lib.ts";
 import { render_meshes } from "./mesh.ts";
+import { render_volumes } from "./volume.ts";
+
 import type {
 	CustomMessagePayload,
 	MeshModel,
 	Model,
 	VolumeModel,
 } from "./types.ts";
-import { render_volumes } from "./volume.ts";
 
 let nv: niivue.Niivue;
 
@@ -45,7 +46,7 @@ function deserializeOptions(
 function attachModelEventHandlers(
 	nv: niivue.Niivue,
 	model: Model,
-	disposer: Disposer,
+	disposer: lib.Disposer,
 ) {
 	model.on("change:volumes", () => {
 		if (nv.canvas) {
@@ -247,7 +248,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 	nv.onImageLoaded = async (volume: niivue.NVImage) => {
 		// Check if the volume is already in the backend
 		const volumeID = volume.id;
-		const volumeModels = await gather_models<VolumeModel>(
+		const volumeModels = await lib.gather_models<VolumeModel>(
 			model,
 			model.get("volumes"),
 		);
@@ -292,7 +293,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 	nv.onMeshLoaded = async (mesh: niivue.NVMesh) => {
 		// Check if the mesh is already in the backend
 		const meshID = mesh.id;
-		const meshModels = await gather_models<MeshModel>(
+		const meshModels = await lib.gather_models<MeshModel>(
 			model,
 			model.get("meshes"),
 		);
@@ -556,7 +557,7 @@ function attachCanvasEventHandlers(nv: niivue.Niivue, model: Model) {
 
 export default {
 	async initialize({ model }: { model: Model }) {
-		const disposer = new Disposer();
+		const disposer = new lib.Disposer();
 
 		if (!nv) {
 			console.log("Creating new Niivue instance");
@@ -595,7 +596,7 @@ export default {
 			return;
 		}
 
-		const disposer = new Disposer();
+		const disposer = new lib.Disposer();
 
 		if (!nv.canvas?.parentNode) {
 			console.log("drawing first render");

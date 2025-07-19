@@ -1,7 +1,17 @@
-import type { AnyModel } from "@anywidget/types";
+import type { AnyModel as BaseAnyModel } from "@anywidget/types";
 import type { NVConfigOptions } from "@niivue/niivue";
+import type { NIFTI1 } from "nifti-reader-js";
 
-interface File {
+export interface AnyModel<T extends object = object> extends BaseAnyModel<T> {
+	// biome-ignore lint/suspicious/noExplicitAny: callbacks are Record<string, Function>
+	send_sync_message(state: object, callbacks?: any): string;
+	rememberLastUpdateFor(msgId: string): void;
+	_comm_live: boolean;
+	// marimo support, since marimo uses POST requests instead of websocket
+	onChange: (value: Partial<T>) => void;
+}
+
+interface FileInput {
 	name: string;
 	data: DataView;
 }
@@ -45,9 +55,15 @@ type Graph = {
 };
 
 export type VolumeModel = AnyModel<{
-	path: File;
+	path: FileInput;
+	url: string;
+	data: DataView;
+
+	paired_img_path: FileInput;
+	paired_img_url: string;
+	paired_img_data: DataView;
+
 	id: string;
-	paired_img_path: File;
 	name: string;
 	colormap: string;
 	opacity: number;
@@ -61,10 +77,16 @@ export type VolumeModel = AnyModel<{
 
 	colormap_invert: boolean;
 	n_frame_4d: number | null;
+
+	hdr: Partial<NIFTI1>;
+	img: DataView;
 }>;
 
 export type MeshModel = AnyModel<{
-	path: File;
+	path: FileInput;
+	url: string;
+	data: DataView;
+
 	id: string;
 	name: string;
 	rgba255: Array<number>;
@@ -81,10 +103,13 @@ export type MeshModel = AnyModel<{
 	fiber_color: string;
 	fiber_decimation_stride: number;
 	colormap: string;
+
+	pts: DataView;
+	tris: DataView;
 }>;
 
 export type MeshLayerModel = AnyModel<{
-	path: File;
+	path: FileInput;
 	id: string;
 	opacity: number;
 	colormap: string;
