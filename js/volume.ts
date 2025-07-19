@@ -226,7 +226,13 @@ async function create_volume(
 	}
 	vmodel.save_changes();
 	if (volume.img) {
-		lib.sendChunkedData(vmodel, "img", volume.img.buffer as ArrayBuffer);
+		const dataType = lib.getArrayType(volume.img);
+		lib.sendChunkedData(
+			vmodel,
+			"img",
+			volume.img.buffer as ArrayBuffer,
+			dataType,
+		);
 	}
 
 	// Handle changes to the volume properties

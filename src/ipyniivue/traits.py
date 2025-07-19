@@ -370,28 +370,3 @@ CAMEL_TO_SNAKE_GRAPH = {
 }
 
 SNAKE_TO_CAMEL_GRAPH = {v: k for k, v in CAMEL_TO_SNAKE_GRAPH.items()}
-
-
-class ReprBytesValue(bytes):
-    """Custom bytes class to override repr method."""
-
-    def __repr__(self):
-        """Return a custom repr display."""
-        return f"<{len(self)} bytes>"
-
-
-class Bytes(t.Bytes):
-    """A bytes trait that only displays length when printed."""
-
-    def to_json(self, value, obj):
-        """Serialize to JSON."""
-        return {"data": value}
-
-    def validate(self, obj, value):
-        """Override validation and display."""
-        if isinstance(value, bytes):
-            return ReprBytesValue(value)
-        elif value is None and self.allow_none:
-            return None
-        else:
-            self.error(obj, value)

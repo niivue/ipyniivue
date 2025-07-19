@@ -14,16 +14,26 @@ function dataViewToBase64(dataView: DataView) {
 	return btoa(binaryString);
 }
 
+export function getArrayType(typedArray: any): string {
+	if (typedArray instanceof Float32Array) return "float32";
+	if (typedArray instanceof Uint32Array) return "uint32";
+	if (typedArray instanceof Uint8Array) return "uint8";
+	if (typedArray instanceof Int16Array) return "int16";
+	if (typedArray instanceof Float64Array) return "float64";
+	if (typedArray instanceof Uint16Array) return "uint16";
+	throw new Error("Unsupported array type");
+}
+
 export async function sendChunkedData(
 	model: AnyModel,
 	dataProperty: string,
 	arrayBuffer: ArrayBuffer,
+	dataType: string,
 	_chunkSize = 5 * 1024 * 1024,
 	wait = 0,
 ) {
 	const isMarimo = typeof model.send_sync_message === "undefined";
 
-	// 2 mb max for marimo
 	const chunkSize = isMarimo
 		? Math.min(_chunkSize, 2 * 1024 * 1024)
 		: _chunkSize;
@@ -34,7 +44,6 @@ export async function sendChunkedData(
 	let chunkIndex = 0;
 
 	while (offset < totalSize) {
-		// if not marimo and ws closed, stop sending data
 		if (!isMarimo && !model._comm_live) {
 			break;
 		}
@@ -48,6 +57,7 @@ export async function sendChunkedData(
 		const data = {
 			chunk_index: chunkIndex,
 			total_chunks: totalChunks,
+			data_type: dataType,
 			chunk: isMarimo ? dataViewToBase64(chunkView) : chunkView,
 		};
 		const message: Record<string, object> = {};

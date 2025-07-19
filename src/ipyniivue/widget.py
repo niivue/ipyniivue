@@ -17,6 +17,7 @@ from urllib.parse import urlparse
 
 import anywidget
 import ipywidgets
+import numpy as np
 import requests
 import traitlets as t
 from ipywidgets import CallbackDispatcher
@@ -36,7 +37,6 @@ from .serializers import (
 )
 from .traits import (
     LUT,
-    Bytes,
     ColorMap,
     Graph,
     NIFTI1Hdr,
@@ -56,7 +56,7 @@ class BaseAnyWidget(anywidget.AnyWidget):
     _data_handlers: typing.ClassVar[dict] = {}
 
     def set_state(self, state):
-        """Override set_state to accept chunked-state updates."""
+        """Override set_state to accept chunked-state attributes."""
         state_copy = state.copy()
         keys_to_remove = []
 
@@ -67,6 +67,7 @@ class BaseAnyWidget(anywidget.AnyWidget):
                 chunk_info = attr_value
                 chunk_index_received = chunk_info["chunk_index"]
                 total_chunks = chunk_info["total_chunks"]
+                data_type = chunk_info["data_type"]
                 chunk_data = chunk_info["chunk"]
 
                 if isinstance(chunk_data, memoryview):
@@ -78,15 +79,15 @@ class BaseAnyWidget(anywidget.AnyWidget):
 
                 if data_property not in self._data_handlers:
                     self._data_handlers[data_property] = ChunkedDataHandler(
-                        total_chunks
+                        total_chunks, data_type
                     )
 
                 handler = self._data_handlers[data_property]
                 handler.add_chunk(chunk_index_received, chunk_data)
 
                 if handler.is_complete():
-                    assembled_data = handler.get_data()
-                    self.set_trait(data_property, assembled_data)
+                    numpy_array = handler.get_numpy_array()
+                    self.set_trait(data_property, numpy_array)
                     del self._data_handlers[data_property]
 
                 keys_to_remove.append(attr_name)
@@ -177,8 +178,12 @@ class Mesh(BaseAnyWidget):
 
     Parameters
     ----------
-    path : str or pathlib.Path
-        Path to the mesh file. Cannot be modified once set.
+    path : str or pathlib.Path, optional
+        Path to the volume data file. Cannot be modified once set.
+    url : str, optional
+        URL to the volume data.
+    data : bytes, optional
+        Bytes data of the volume.
     name : str, optional
         Name of the mesh.
     rgba255 : list of int, optional
@@ -192,9 +197,12 @@ class Mesh(BaseAnyWidget):
         See :class:`MeshLayer` for attribute options.
     """
 
-    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
-        sync=True, to_json=serialize_file
-    )
+    path = t.Union(
+        [t.Instance(pathlib.Path), t.Unicode()], default_value=None, allow_none=True
+    ).tag(sync=True, to_json=serialize_file)
+    url = t.Unicode(default_value=None, allow_none=True).tag(sync=True)
+    data = t.Bytes(default_value=None, allow_none=True).tag(sync=True)
+
     id = t.Unicode(default_value="").tag(sync=True)
     name = t.Unicode(default_value="").tag(sync=True)
     rgba255 = t.List([255, 255, 255, 255]).tag(sync=True)
@@ -215,11 +223,31 @@ class Mesh(BaseAnyWidget):
     fiber_decimation_stride = t.Int(1).tag(sync=True)
     colormap = t.Unicode(None, allow_none=True).tag(sync=True)
 
+    # Set after bidirectional comms with frontend
+    pts = t.Instance(np.ndarray, allow_none=True).tag(sync=True)
+    tris = t.Instance(np.ndarray, allow_none=True).tag(sync=True)
+
     def __init__(self, **kwargs):
         include_keys = {"path", "id", "name", "rgba255", "opacity", "visible"}
         layers_data = kwargs.pop("layers", [])
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
+
+        # Validate that one and only one of path, url, data is provided
+        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
+        if len(provided) != 1:
+            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
+
+        # Set name if not provided
+        if not self.name:
+            if self.path:
+                self.name = pathlib.Path(self.path).name
+            elif self.url:
+                self.name = pathlib.Path(urlparse(self.url).path).name
+            elif self.data is not None:
+                raise ValueError("Must provide 'name' when 'data' is provided.")
+            else:
+                raise ValueError("Cannot determine the name of the volume.")
 
         # accept either dicts or MeshLayer objs
         layers_list = []
@@ -229,6 +257,16 @@ class Mesh(BaseAnyWidget):
             elif isinstance(layer, dict):
                 layers_list.append(MeshLayer(**layer))
         self.layers = layers_list
+
+    def get_state(self, key=None, drop_defaults=False):
+        """Exclude certain attributes from state on save."""
+        state = super().get_state(key=key, drop_defaults=drop_defaults)
+        if self.path or self.url or self.data:
+            if "pts" in state:
+                del state["pts"]
+            if "tris" in state:
+                del state["tris"]
+        return state
 
     @t.validate("path")
     def _validate_path(self, proposal):
@@ -323,7 +361,7 @@ class Volume(BaseAnyWidget):
     hdr = t.Instance(NIFTI1Hdr, allow_none=True).tag(
         sync=True, to_json=serialize_hdr, from_json=deserialize_hdr
     )
-    img = Bytes(b"").tag(sync=True)
+    img = t.Instance(np.ndarray, allow_none=True).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {

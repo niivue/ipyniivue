@@ -324,6 +324,24 @@ export async function create_mesh(
 	mmodel.set("id", mesh.id);
 	mmodel.set("name", mesh.name);
 	mmodel.save_changes();
+	if (mesh.pts) {
+		const dataType = lib.getArrayType(mesh.pts);
+		lib.sendChunkedData(
+			mmodel,
+			"pts",
+			mesh.pts.buffer as ArrayBuffer,
+			dataType,
+		);
+	}
+	if (mesh.tris) {
+		const dataType = lib.getArrayType(mesh.tris);
+		lib.sendChunkedData(
+			mmodel,
+			"tris",
+			mesh.tris.buffer as ArrayBuffer,
+			dataType,
+		);
+	}
 
 	// Handle changes to the mesh properties
 	const cleanup_mesh_listeners = setup_mesh_property_listeners(

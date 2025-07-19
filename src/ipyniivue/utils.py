@@ -7,6 +7,8 @@ classes the serialize data to work with JS.
 
 import math
 
+import numpy as np
+
 from .traits import (
     LUT,
     ColorMap,
@@ -164,19 +166,42 @@ def is_negative_zero(x):
 class ChunkedDataHandler:
     """For incoming chunked data."""
 
-    def __init__(self, total_chunks):
+    def __init__(self, total_chunks, data_type):
         self.total_chunks = total_chunks
         self.chunks = {}
+        self.data_type = data_type
 
     def add_chunk(self, chunk_index, chunk_data):
         """Add chunk."""
         self.chunks[chunk_index] = chunk_data
 
     def is_complete(self):
-        """Boolean is complete check."""
+        """Is complete check."""
         return len(self.chunks) == self.total_chunks
 
     def get_data(self):
         """Get full data bytes."""
         data = b"".join(self.chunks[i] for i in range(self.total_chunks))
         return data
+
+    def get_numpy_array(self):
+        """Convert the assembled data into a NumPy array based on data type."""
+        data = self.get_data()
+
+        dtype_map = {
+            "float32": np.float32,
+            "uint32": np.uint32,
+            "uint8": np.uint8,
+            "int16": np.int16,
+            "float64": np.float64,
+            "uint16": np.uint16,
+        }
+
+        if self.data_type not in dtype_map:
+            raise ValueError(f"Unsupported data type: {self.data_type}")
+
+        np_dtype = dtype_map[self.data_type]
+
+        numpy_array = np.frombuffer(data, dtype=np_dtype)
+
+        return numpy_array

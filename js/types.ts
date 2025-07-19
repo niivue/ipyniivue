@@ -79,10 +79,14 @@ export type VolumeModel = AnyModel<{
 	n_frame_4d: number | null;
 
 	hdr: Partial<NIFTI1>;
+	img: DataView;
 }>;
 
 export type MeshModel = AnyModel<{
 	path: FileInput;
+	url: string;
+	data: DataView;
+
 	id: string;
 	name: string;
 	rgba255: Array<number>;
@@ -99,6 +103,9 @@ export type MeshModel = AnyModel<{
 	fiber_color: string;
 	fiber_decimation_stride: number;
 	colormap: string;
+
+	pts: DataView;
+	tris: DataView;
 }>;
 
 export type MeshLayerModel = AnyModel<{
