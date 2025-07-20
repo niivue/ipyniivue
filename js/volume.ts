@@ -1,6 +1,6 @@
 import * as niivue from "@niivue/niivue";
 import * as lib from "./lib.ts";
-import type { Model, VolumeModel, TypedBufferPayload } from "./types.ts";
+import type { Model, TypedBufferPayload, VolumeModel } from "./types.ts";
 
 import type { NIFTI1, NIFTI2 } from "nifti-reader-js";
 

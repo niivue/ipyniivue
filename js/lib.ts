@@ -14,8 +14,8 @@ function dataViewToBase64(dataView: DataView) {
 	return btoa(binaryString);
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: targetObject can be any
 export function handleBufferMsg(
+	// biome-ignore lint/suspicious/noExplicitAny: targetObject can be any
 	targetObject: any,
 	payload: TypedBufferPayload,
 	buffers: DataView[],
@@ -94,16 +94,13 @@ const typeMapping: { [key: string]: TypedArrayConstructor } = {
 };
 
 const reverseTypeMapping = new Map<TypedArrayConstructor, string>(
-	Object.entries(typeMapping).map(([typeStr, constructor]) => [
-		constructor,
-		typeStr,
-	]),
+	Object.entries(typeMapping).map(([typeStr, c]) => [c, typeStr]),
 );
 
 export function getArrayType(typedArray: TypedArray): string {
 	for (const typeStr in typeMapping) {
-		const constructor = typeMapping[typeStr];
-		if (typedArray instanceof constructor) {
+		const c = typeMapping[typeStr];
+		if (typedArray instanceof c) {
 			return typeStr;
 		}
 	}
@@ -113,12 +110,11 @@ export function getArrayType(typedArray: TypedArray): string {
 export function getTypedArrayConstructor(
 	typeStr: string,
 ): TypedArrayConstructor {
-	const constructor = typeMapping[typeStr];
-	if (constructor) {
-		return constructor;
-	} else {
-		throw new Error(`Unsupported data type: ${typeStr}`);
+	const c = typeMapping[typeStr];
+	if (c) {
+		return c;
 	}
+	throw new Error(`Unsupported data type: ${typeStr}`);
 }
 
 export function deserializeBufferToTypedArray(
