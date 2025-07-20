@@ -81,7 +81,7 @@ export type TypedArray =
 	| Uint16Array;
 
 type TypedArrayConstructor<T extends TypedArray = TypedArray> = new (
-	buffer: ArrayBuffer,
+	buffer: ArrayBufferLike,
 ) => T;
 
 const typeMapping: { [key: string]: TypedArrayConstructor } = {
