@@ -1,6 +1,6 @@
 import * as niivue from "@niivue/niivue";
 import * as lib from "./lib.ts";
-import type { Model, VolumeModel } from "./types.ts";
+import type { Model, VolumeModel, TypedBufferPayload } from "./types.ts";
 
 import type { NIFTI1, NIFTI2 } from "nifti-reader-js";
 
@@ -106,6 +106,19 @@ function setup_volume_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	// custom msgs
+	function customMessageHandler(
+		payload: TypedBufferPayload,
+		buffers: DataView[],
+	) {
+		const handled = lib.handleBufferMsg(volume, payload, buffers, () =>
+			nv.updateGLVolume(),
+		);
+		if (handled) {
+			return;
+		}
+	}
+
 	// set values not set by kwargs
 	colormap_invert_changed();
 
@@ -120,6 +133,8 @@ function setup_volume_property_listeners(
 
 	vmodel.on("change:colormap_invert", colormap_invert_changed);
 
+	vmodel.on("msg:custom", customMessageHandler);
+
 	return () => {
 		vmodel.off("change:colorbar_visible", colorbar_visible_changed);
 		vmodel.off("change:cal_min", cal_min_changed);
@@ -131,6 +146,8 @@ function setup_volume_property_listeners(
 		vmodel.off("change:colormap_label", colormap_label_changed);
 
 		vmodel.off("change:colormap_invert", colormap_invert_changed);
+
+		vmodel.off("msg:custom", customMessageHandler);
 	};
 }
 

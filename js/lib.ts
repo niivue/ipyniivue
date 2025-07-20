@@ -1,4 +1,4 @@
-import type { AnyModel } from "./types.ts";
+import type { AnyModel, TypedBufferPayload } from "./types.ts";
 
 function delay(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -14,7 +14,65 @@ function dataViewToBase64(dataView: DataView) {
 	return btoa(binaryString);
 }
 
-type TypedArray =
+// biome-ignore lint/suspicious/noExplicitAny: targetObject can be any
+export function handleBufferMsg(
+	targetObject: any,
+	payload: TypedBufferPayload,
+	buffers: DataView[],
+	callback: () => void,
+): boolean {
+	const { type, data } = payload;
+
+	switch (type) {
+		case "buffer_change": {
+			const attrName = data.attr;
+			const dataType = data.type;
+			const buffer = buffers[0].buffer;
+			const TypedArrayConstructor = getTypedArrayConstructor(dataType);
+			const typedArray = new TypedArrayConstructor(buffer);
+
+			targetObject[attrName] = typedArray;
+
+			callback();
+
+			return true;
+		}
+		case "buffer_update": {
+			const attrName = data.attr;
+			const dataType = data.type;
+			const indicesType = data.indices_type;
+			const [indicesBuffer, valuesBuffer] = [
+				buffers[0].buffer,
+				buffers[1].buffer,
+			];
+
+			const IndicesArrayConstructor = getTypedArrayConstructor(indicesType);
+			const ValuesArrayConstructor = getTypedArrayConstructor(dataType);
+
+			const indicesArray = new IndicesArrayConstructor(indicesBuffer);
+			const valuesArray = new ValuesArrayConstructor(valuesBuffer);
+
+			const existingArray = targetObject[attrName] as TypedArray;
+
+			if (!existingArray || existingArray.length === 0) {
+				console.error(
+					`Existing array ${attrName} is empty or not initialized.`,
+				);
+				return true;
+			}
+
+			applyDifferencesToTypedArray(existingArray, indicesArray, valuesArray);
+
+			callback();
+
+			return true;
+		}
+		default:
+			return false;
+	}
+}
+
+export type TypedArray =
 	| Float32Array
 	| Uint32Array
 	| Uint8Array
@@ -22,14 +80,64 @@ type TypedArray =
 	| Float64Array
 	| Uint16Array;
 
+type TypedArrayConstructor<T extends TypedArray = TypedArray> = new (
+	buffer: ArrayBuffer,
+) => T;
+
+const typeMapping: { [key: string]: TypedArrayConstructor } = {
+	float32: Float32Array,
+	uint32: Uint32Array,
+	uint8: Uint8Array,
+	int16: Int16Array,
+	float64: Float64Array,
+	uint16: Uint16Array,
+};
+
+const reverseTypeMapping = new Map<TypedArrayConstructor, string>(
+	Object.entries(typeMapping).map(([typeStr, constructor]) => [
+		constructor,
+		typeStr,
+	]),
+);
+
 export function getArrayType(typedArray: TypedArray): string {
-	if (typedArray instanceof Float32Array) return "float32";
-	if (typedArray instanceof Uint32Array) return "uint32";
-	if (typedArray instanceof Uint8Array) return "uint8";
-	if (typedArray instanceof Int16Array) return "int16";
-	if (typedArray instanceof Float64Array) return "float64";
-	if (typedArray instanceof Uint16Array) return "uint16";
+	for (const typeStr in typeMapping) {
+		const constructor = typeMapping[typeStr];
+		if (typedArray instanceof constructor) {
+			return typeStr;
+		}
+	}
 	throw new Error("Unsupported array type");
+}
+
+export function getTypedArrayConstructor(
+	typeStr: string,
+): TypedArrayConstructor {
+	const constructor = typeMapping[typeStr];
+	if (constructor) {
+		return constructor;
+	} else {
+		throw new Error(`Unsupported data type: ${typeStr}`);
+	}
+}
+
+export function deserializeBufferToTypedArray(
+	buffer: ArrayBuffer,
+	typeStr: string,
+): TypedArray {
+	const TypedArrayConstructor = getTypedArrayConstructor(typeStr);
+	return new TypedArrayConstructor(buffer);
+}
+
+export function applyDifferencesToTypedArray(
+	array: TypedArray,
+	indices: TypedArray,
+	values: TypedArray,
+): void {
+	for (let i = 0; i < indices.length; i++) {
+		const idx = indices[i];
+		array[idx] = values[i];
+	}
 }
 
 export async function sendChunkedData(
@@ -95,7 +203,7 @@ export function gather_models<T extends AnyModel>(
 	model: AnyModel,
 	ids: Array<string>,
 ): Promise<Array<T>> {
-	// biome-ignore lint/suspicious/noExplicitAny:  we know the type of the models
+	// biome-ignore lint/suspicious/noExplicitAny: we know the type of the models
 	const models: Array<Promise<any>> = [];
 	const widget_manager = model.widget_manager;
 	for (const id of ids) {

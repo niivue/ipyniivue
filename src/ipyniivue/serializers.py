@@ -5,6 +5,8 @@ import math
 import pathlib
 import typing
 
+import numpy as np
+
 from .config_options import (
     CAMEL_TO_SNAKE,
     SNAKE_TO_CAMEL,
@@ -260,3 +262,26 @@ def deserialize_hdr(serialized_hdr: dict, widget: object):
             deserialized_value = value
             hdr_args[name] = deserialized_value
     return NIFTI1Hdr(**hdr_args)
+
+
+def serialize_ndarray(instance: np.ndarray, widget: object):
+    """
+    Serialize an ndarray.
+
+    Parameters
+    ----------
+    instance : np.ndarray
+        The array to serialize.
+    widget : object
+        The widget the instance is a part of.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the ndarray.
+    """
+    if instance is None:
+        return None
+    data_bytes = instance.tobytes()
+    dtype_str = str(instance.dtype)
+    return {"type": dtype_str, "data": data_bytes}

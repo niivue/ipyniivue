@@ -204,3 +204,20 @@ export type CustomMessagePayload =
 	| { type: "draw_undo"; data: [] }
 	| { type: "close_drawing"; data: [] }
 	| { type: "load_drawing_from_url"; data: LoadDrawingFromUrlData };
+
+export type TypedBufferPayload =
+	| {
+			type: "buffer_change";
+			data: {
+				attr: string;
+				type: string;
+			};
+	  }
+	| {
+			type: "buffer_update";
+			data: {
+				attr: string;
+				type: string;
+				indices_type: string;
+			};
+	  };

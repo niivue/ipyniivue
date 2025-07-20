@@ -1,6 +1,11 @@
 import * as niivue from "@niivue/niivue";
 import * as lib from "./lib.ts";
-import type { MeshLayerModel, MeshModel, Model } from "./types.ts";
+import type {
+	MeshLayerModel,
+	MeshModel,
+	Model,
+	TypedBufferPayload,
+} from "./types.ts";
 
 import { v4 as uuidv4 } from "@lukeed/uuid";
 
@@ -190,6 +195,20 @@ function setup_mesh_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	// custom msgs
+	function customMessageHandler(
+		payload: TypedBufferPayload,
+		buffers: DataView[],
+	) {
+		const handled = lib.handleBufferMsg(mesh, payload, buffers, () => {
+			mesh.updateMesh(nv.gl);
+			nv.updateGLVolume();
+		});
+		if (handled) {
+			return;
+		}
+	}
+
 	// set values not set by kwargs
 	colormap_invert_changed();
 	colorbar_visible_changed();
@@ -214,6 +233,8 @@ function setup_mesh_property_listeners(
 	mmodel.on("change:fiber_decimation_stride", fiber_decimation_stride_changed);
 	mmodel.on("change:colormap", colormap_changed);
 
+	mmodel.on("msg:custom", customMessageHandler);
+
 	// Return a function to remove the event listeners
 	return () => {
 		mmodel.off("change:opacity", opacity_changed);
@@ -232,6 +253,8 @@ function setup_mesh_property_listeners(
 			fiber_decimation_stride_changed,
 		);
 		mmodel.off("change:colormap", colormap_changed);
+
+		mmodel.off("msg:custom", customMessageHandler);
 	};
 }
 

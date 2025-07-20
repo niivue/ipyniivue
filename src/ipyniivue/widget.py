@@ -33,6 +33,7 @@ from .serializers import (
     serialize_file,
     serialize_graph,
     serialize_hdr,
+    serialize_ndarray,
     serialize_options,
 )
 from .traits import (
@@ -54,6 +55,11 @@ class BaseAnyWidget(anywidget.AnyWidget):
     """Base widget class that overrides set_state to handle chunked data."""
 
     _data_handlers: typing.ClassVar[dict] = {}
+    _event_handlers: typing.ClassVar[dict] = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._setup_binary_change_handlers()
 
     def set_state(self, state):
         """Override set_state to accept chunked-state attributes."""
@@ -96,6 +102,65 @@ class BaseAnyWidget(anywidget.AnyWidget):
             del state_copy[key]
 
         super().set_state(state_copy)
+
+    def _setup_binary_change_handlers(self):
+        for trait_name in self._get_binary_traits():
+            self.observe(self._handle_binary_trait_change, names=trait_name)
+
+    def _get_binary_traits(self):
+        return []
+
+    def _handle_binary_trait_change(self, change):
+        trait_name = change["name"]
+        old_value = change["old"]
+        new_value = change["new"]
+        if old_value is not None:
+            if old_value.dtype != new_value.dtype:
+                self.send(
+                    {
+                        "type": "buffer_change",
+                        "data": {"attr": trait_name, "type": str(new_value.dtype)},
+                    },
+                    buffers=[new_value.tobytes()],
+                )
+            else:
+                old_array = old_value.ravel()
+                new_array = new_value.ravel()
+
+                diff_indices = np.flatnonzero(new_array != old_array)
+
+                if len(diff_indices) == 0:
+                    return
+
+                diff_values = new_array[diff_indices]
+
+                indices_bytes = diff_indices.astype(np.uint32).tobytes()
+                values_bytes = diff_values.tobytes()
+
+                self.send(
+                    {
+                        "type": "buffer_update",
+                        "data": {
+                            "attr": trait_name,
+                            "type": str(new_value.dtype),
+                            "indices_type": "uint32",
+                        },
+                    },
+                    buffers=[indices_bytes, values_bytes],
+                )
+
+        handler = self._event_handlers.get(f"{trait_name}_changed")
+        if handler:
+            handler(self)
+
+    def on_trait_changed(self, trait_name, callback, remove=False):
+        event_name = f"{trait_name}_changed"
+        if event_name not in self._event_handlers:
+            self._event_handlers[event_name] = CallbackDispatcher()
+        if remove:
+            self._event_handlers[event_name].remove(callback)
+        else:
+            self._event_handlers[event_name].register_callback(callback)
 
 
 class MeshLayer(BaseAnyWidget):
@@ -268,6 +333,9 @@ class Mesh(BaseAnyWidget):
                 del state["tris"]
         return state
 
+    def _get_binary_traits(self):
+        return ["pts", "tris"]
+
     @t.validate("path")
     def _validate_path(self, proposal):
         if (
@@ -361,7 +429,9 @@ class Volume(BaseAnyWidget):
     hdr = t.Instance(NIFTI1Hdr, allow_none=True).tag(
         sync=True, to_json=serialize_hdr, from_json=deserialize_hdr
     )
-    img = t.Instance(np.ndarray, allow_none=True).tag(sync=True)
+    img = t.Instance(np.ndarray, allow_none=True).tag(
+        sync=True, to_json=serialize_ndarray
+    )
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -425,11 +495,8 @@ class Volume(BaseAnyWidget):
                 del state["img"]
         return state
 
-    @t.observe("img")
-    def _handle_img_change(self, change):
-        handler = self._event_handlers.get("img_changed")
-        if handler:
-            handler(self)
+    def _get_binary_traits(self):
+        return ["img"]
 
     def on_img_changed(self, callback, remove=False):
         """
@@ -443,12 +510,7 @@ class Volume(BaseAnyWidget):
         remove : bool, optional
             If True, unregister the callback. Defaults to False.
         """
-        if "img_changed" not in self._event_handlers:
-            self._event_handlers["img_changed"] = CallbackDispatcher()
-        if remove:
-            self._event_handlers["img_changed"].remove(callback)
-        else:
-            self._event_handlers["img_changed"].register_callback(callback)
+        self.on_trait_changed("img", callback, remove=remove)
 
     @t.validate(
         "path",
