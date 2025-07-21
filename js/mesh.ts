@@ -334,6 +334,7 @@ export async function create_mesh(
 
 			if (layerFromFrontend) {
 				const layerId = layerModel.get("id");
+				// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
 				const idx = mesh.layers.findIndex((l) => (l as any).id === layerId);
 				layer = mesh.layers[idx];
 			}
