@@ -135,6 +135,8 @@ export type Model = AnyModel<{
 	meshes: Array<string>;
 	opts: Partial<Record<keyof NVConfigOptions, unknown>>;
 
+	_canvas_attached: boolean;
+
 	background_masks_overlays: number;
 	clip_plane_depth_azi_elev: [
 		depth: number,

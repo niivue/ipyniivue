@@ -651,6 +651,8 @@ class NiiVue(BaseAnyWidget):
         sync=True, **ipywidgets.widget_serialization
     )
 
+    _canvas_attached = t.Bool(False).tag(sync=True)
+
     # other props
     background_masks_overlays = t.Int(0).tag(sync=True)
     clip_plane_depth_azi_elev = t.List(
@@ -1562,6 +1564,10 @@ class NiiVue(BaseAnyWidget):
 
             nv.set_volume_render_illumination(0.6)
         """
+        if not self._canvas_attached:
+            raise RuntimeError(
+                "Canvas is not attached. Render this widget to attach to a canvas."
+            )
         if not isinstance(gradient_amount, (int, float)):
             raise TypeError("gradient_amount must be a number.")
         if not math.isnan(gradient_amount):
@@ -1888,7 +1894,7 @@ class NiiVue(BaseAnyWidget):
             raise ValueError(
                 "Cannot load drawing: "
                 "The primary volume has not been initialized. "
-                "Please render the NiiVue object."
+                "Please render this NiiVue widget."
             )
         if pathlib.Path(path).exists():
             file_bytes = pathlib.Path(path).read_bytes()

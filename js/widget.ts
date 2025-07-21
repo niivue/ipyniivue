@@ -155,7 +155,7 @@ function attachModelEventHandlers(
 					break;
 				}
 				case "set_volume_render_illumination": {
-					if (nv.gl) {
+					if (nv._gl) {
 						let [gradientAmount] = data;
 						if (gradientAmount === null) {
 							gradientAmount = Number.NaN;
@@ -619,6 +619,8 @@ export default {
 
 			// Attach nv to canvas
 			nv.attachToCanvas(canvas, nv.opts.isAntiAlias);
+			model.set("_canvas_attached", true);
+			model.save_changes();
 
 			// Load initial volumes and meshes
 			await render_volumes(nv, model, disposer);
