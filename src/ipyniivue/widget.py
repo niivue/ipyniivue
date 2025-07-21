@@ -469,7 +469,7 @@ class Volume(BaseAnyWidget):
     img = t.Instance(np.ndarray, allow_none=True).tag(
         sync=True, to_json=serialize_ndarray
     )
-    dims = t.Tuple().tag(sync=True)
+    dims = t.Tuple(allow_none=True).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -773,13 +773,33 @@ class NiiVue(BaseAnyWidget):
         elif event == "image_loaded":
             idx = self.get_volume_index_by_id(data["id"])
             if idx != -1:
-                handler(self.volumes[idx])
+                volume = self.volumes[idx]
+                if volume.img is not None and volume.hdr is not None:
+                    handler(volume)
+                else:
+
+                    def check_ready(change):
+                        if volume.img is not None and volume.hdr is not None:
+                            volume.unobserve(check_ready, names=["img", "hdr"])
+                            handler(volume)
+
+                    volume.observe(check_ready, names=["img", "hdr"])
             else:
                 handler(data)
         elif event == "mesh_loaded":
             idx = self.get_mesh_index_by_id(data["id"])
             if idx != -1:
-                handler(self.meshes[idx])
+                mesh = self.meshes[idx]
+                if mesh.pts is not None and mesh.tris is not None:
+                    handler(mesh)
+                else:
+
+                    def check_ready(change):
+                        if mesh.pts is not None and mesh.tris is not None:
+                            mesh.unobserve(check_ready, names=["pts", "tris"])
+                            handler(mesh)
+
+                    mesh.observe(check_ready, names=["pts", "tris"])
             else:
                 handler(data)
         elif event == "mesh_added_from_url":
