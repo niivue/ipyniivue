@@ -80,6 +80,7 @@ export type VolumeModel = AnyModel<{
 
 	hdr: Partial<NIFTI1>;
 	img: DataView;
+	dims: number[];
 }>;
 
 export type MeshModel = AnyModel<{
@@ -110,7 +111,11 @@ export type MeshModel = AnyModel<{
 
 export type MeshLayerModel = AnyModel<{
 	path: FileInput;
+	url: string;
+	data: DataView;
+
 	id: string;
+	name: string;
 	opacity: number;
 	colormap: string;
 	colormap_negative: string;

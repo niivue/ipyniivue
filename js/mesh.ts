@@ -269,19 +269,45 @@ export async function create_mesh(
 	let mesh: niivue.NVMesh;
 	const layerCleanupFunctions: (() => void)[] = [];
 
-	if (mmodel.get("path").name === "<fromfrontend>") {
-		const idx = nv.meshes.findIndex((m) => m.id === mmodel.get("id"));
+	// Input data
+	const fromFrontend = mmodel.get("path").name === "<fromfrontend>";
+
+	const path = mmodel.get("path")?.name ? mmodel.get("path") : null;
+	const url = mmodel.get("url");
+	const data = mmodel.get("data")?.byteLength ? mmodel.get("data") : null;
+
+	if (fromFrontend) {
+		const idx = nv.getMeshIndexByID(mmodel.get("id"));
 		mesh = nv.meshes[idx];
-	} else {
+	} else if (path || data) {
+		const dataBuffer = path?.data?.buffer || data?.buffer;
+		const name = path?.name || mmodel.get("name");
 		mesh = await niivue.NVMesh.readMesh(
-			mmodel.get("path").data.buffer as ArrayBuffer, // buffer
-			mmodel.get("path").name, // name (used to identify the mesh)
-			nv.gl, // gl
-			mmodel.get("opacity"), // opacity
-			new Uint8Array(mmodel.get("rgba255")), // rgba255
-			mmodel.get("visible"), // visible
+			dataBuffer as ArrayBuffer,
+			name,
+			nv.gl,
+			mmodel.get("opacity"),
+			new Uint8Array(mmodel.get("rgba255")),
+			mmodel.get("visible"),
 		);
+	} else if (url) {
+		mesh = await niivue.NVMesh.loadFromUrl({
+			url: url,
+			gl: nv.gl,
+			name: mmodel.get("name"),
+			opacity: mmodel.get("opacity") ?? 1.0,
+			rgba255: mmodel.get("rgba255") ?? [255, 255, 255, 255],
+			visible: mmodel.get("visible") ?? true,
+			layers: [],
+		});
+	} else {
+		throw new Error("Invalid source for mesh");
 	}
+
+	// Save the id and name back to the model
+	mmodel.set("id", mesh.id);
+	mmodel.set("name", mesh.name);
+	mmodel.save_changes();
 
 	// Gather MeshLayer models
 	const layerIDs = mmodel.get("layers");
@@ -291,18 +317,32 @@ export async function create_mesh(
 		const layerModels: MeshLayerModel[] =
 			await lib.gather_models<MeshLayerModel>(mmodel, layerIDs);
 
-		// Collect layer addition promises
-		const layerPromises = layerModels.map(async (layerModel) => {
+		// Process layers
+		for (const layerModel of layerModels) {
+			const layerPath = layerModel.get("path")?.name
+				? layerModel.get("path")
+				: null;
+			const layerUrl = layerModel.get("url");
+			const layerData = layerModel.get("data")?.byteLength
+				? layerModel.get("data")
+				: null;
+			const layerFromFrontend =
+				layerModel.get("path").name === "<fromfrontend>";
+
 			// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
 			let layer: any;
 
-			if (
-				layerModel.get("path").name !== "<fromfrontend>" &&
-				layerModel.get("id") === ""
-			) {
+			if (layerFromFrontend) {
+				const layerId = layerModel.get("id");
+				const idx = mesh.layers.findIndex((l) => (l as any).id === layerId);
+				layer = mesh.layers[idx];
+			}
+			if (layerPath || layerData) {
+				const layerDataBuffer = layerPath?.data?.buffer || layerData?.buffer;
+				const layerName = layerPath?.name || layerModel.get("name");
 				layer = await niivue.NVMeshLoaders.readLayer(
-					layerModel.get("path").name,
-					layerModel.get("path").data.buffer as ArrayBuffer,
+					layerName,
+					layerDataBuffer as ArrayBuffer,
 					mesh,
 					layerModel.get("opacity") ?? 0.5,
 					layerModel.get("colormap") ?? "warm",
@@ -312,23 +352,42 @@ export async function create_mesh(
 					layerModel.get("cal_max") ?? null,
 					layerModel.get("outline_border") ?? 0,
 				);
-
+				layer.id = uuidv4();
+				mesh.layers.push(layer);
+				layerModel.set("id", layer.id);
+				layerModel.save_changes();
+			} else if (layerUrl) {
+				const response = await fetch(layerUrl);
+				if (!response.ok) {
+					throw Error(response.statusText);
+				}
+				const layerDataBuffer = await response.arrayBuffer();
+				const layerName = layerModel.get("name");
+				layer = await niivue.NVMeshLoaders.readLayer(
+					layerName,
+					layerDataBuffer as ArrayBuffer,
+					mesh,
+					layerModel.get("opacity") ?? 0.5,
+					layerModel.get("colormap") ?? "warm",
+					layerModel.get("colormap_negative") ?? "winter",
+					layerModel.get("use_negative_cmap") ?? false,
+					layerModel.get("cal_min") ?? null,
+					layerModel.get("cal_max") ?? null,
+					layerModel.get("outline_border") ?? 0,
+				);
 				layer.id = uuidv4();
 				mesh.layers.push(layer);
 				layerModel.set("id", layer.id);
 				layerModel.save_changes();
 			} else {
-				const idx = mesh.layers.findIndex(
-					// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
-					(l: any) => l.id === layerModel.get("id"),
-				);
-				layer = mesh.layers[idx];
-			}
-			if (!layer) {
-				return;
+				throw new Error("Invalid source for mesh layer");
 			}
 
-			// Set up event listeners for the layer properties
+			if (!layer) {
+				continue;
+			}
+
+			// Set up event listeners
 			const cleanup_layer_listeners = setup_layer_property_listeners(
 				layer,
 				layerModel,
@@ -336,17 +395,12 @@ export async function create_mesh(
 				nv,
 			);
 			layerCleanupFunctions.push(cleanup_layer_listeners);
-		});
-
-		// Wait for all layers to be added concurrently
-		await Promise.all(layerPromises);
+		}
 	}
 
 	mesh.updateMesh(nv.gl);
 
-	mmodel.set("id", mesh.id);
-	mmodel.set("name", mesh.name);
-	mmodel.save_changes();
+	// Send pts and tris back to the model
 	if (mesh.pts) {
 		const dataType = lib.getArrayType(mesh.pts);
 		lib.sendChunkedData(

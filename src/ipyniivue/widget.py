@@ -169,8 +169,14 @@ class MeshLayer(BaseAnyWidget):
 
     Parameters
     ----------
-    path : str or pathlib.Path
-        Path to the layer data file. Cannot be modified once set.
+    path : str or pathlib.Path, optional
+        Path to the volume data file. Cannot be modified once set.
+    url : str, optional
+        URL to the volume data.
+    data : bytes, optional
+        Bytes data of the volume.
+    name : str, optional
+        Name of the mesh.
     opacity : float, optional
         Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 0.5.
     colormap : str, optional
@@ -188,10 +194,14 @@ class MeshLayer(BaseAnyWidget):
         Outline border thickness. Default is 0.
     """
 
-    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
-        sync=True, to_json=serialize_file
-    )
+    path = t.Union(
+        [t.Instance(pathlib.Path), t.Unicode()], default_value=None, allow_none=True
+    ).tag(sync=True, to_json=serialize_file)
+    url = t.Unicode(default_value=None, allow_none=True).tag(sync=True)
+    data = t.Bytes(default_value=None, allow_none=True).tag(sync=True)
+
     id = t.Unicode(default_value="").tag(sync=True)
+    name = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(0.5).tag(sync=True)
     colormap = t.Unicode("warm").tag(sync=True)
     colormap_negative = t.Unicode("winter").tag(sync=True)
@@ -208,6 +218,8 @@ class MeshLayer(BaseAnyWidget):
     def __init__(self, **kwargs):
         include_keys = {
             "path",
+            "url",
+            "data",
             "id",
             "opacity",
             "colormap",
@@ -220,20 +232,36 @@ class MeshLayer(BaseAnyWidget):
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
 
-    @t.validate("path")
-    def _validate_path(self, proposal):
-        if (
-            "path" in self._trait_values
-            and self.path
-            and self.path != proposal["value"]
-        ):
-            raise t.TraitError("Cannot modify path once set.")
-        return proposal["value"]
+        # Validate that one and only one of path, url, data is provided
+        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
+        if len(provided) != 1:
+            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
 
-    @t.validate("id")
-    def _validate_id(self, proposal):
-        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
-            raise t.TraitError("Cannot modify id once set.")
+        # Set name if not provided
+        if not self.name:
+            if self.path:
+                self.name = pathlib.Path(self.path).name
+            elif self.url:
+                self.name = pathlib.Path(urlparse(self.url).path).name
+            elif self.data is not None:
+                raise ValueError("Must provide 'name' when 'data' is provided.")
+            else:
+                raise ValueError("Cannot determine the name of the volume.")
+
+    @t.validate(
+        "path",
+        "url",
+        "data",
+        "id",
+    )
+    def _validate_no_change(self, proposal):
+        trait_name = proposal["trait"].name
+        if (
+            trait_name in self._trait_values
+            and self._trait_values[trait_name]
+            and self._trait_values[trait_name] != proposal["value"]
+        ):
+            raise t.TraitError(f"Cannot modify '{trait_name}' once set.")
         return proposal["value"]
 
 
@@ -293,7 +321,16 @@ class Mesh(BaseAnyWidget):
     tris = t.Instance(np.ndarray, allow_none=True).tag(sync=True)
 
     def __init__(self, **kwargs):
-        include_keys = {"path", "id", "name", "rgba255", "opacity", "visible"}
+        include_keys = {
+            "path",
+            "url",
+            "data",
+            "id",
+            "name",
+            "rgba255",
+            "opacity",
+            "visible",
+        }
         layers_data = kwargs.pop("layers", [])
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
@@ -326,7 +363,7 @@ class Mesh(BaseAnyWidget):
     def get_state(self, key=None, drop_defaults=False):
         """Exclude certain attributes from state on save."""
         state = super().get_state(key=key, drop_defaults=drop_defaults)
-        if self.path or self.url or self.data:
+        if (self.path and self.path != "<fromfrontend>") or self.url or self.data:
             if "pts" in state:
                 del state["pts"]
             if "tris" in state:
@@ -336,20 +373,20 @@ class Mesh(BaseAnyWidget):
     def _get_binary_traits(self):
         return ["pts", "tris"]
 
-    @t.validate("path")
-    def _validate_path(self, proposal):
+    @t.validate(
+        "path",
+        "url",
+        "data",
+        "id",
+    )
+    def _validate_no_change(self, proposal):
+        trait_name = proposal["trait"].name
         if (
-            "path" in self._trait_values
-            and self.path
-            and self.path != proposal["value"]
+            trait_name in self._trait_values
+            and self._trait_values[trait_name]
+            and self._trait_values[trait_name] != proposal["value"]
         ):
-            raise t.TraitError("Cannot modify path once set.")
-        return proposal["value"]
-
-    @t.validate("id")
-    def _validate_id(self, proposal):
-        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
-            raise t.TraitError("Cannot modify id once set.")
+            raise t.TraitError(f"Cannot modify '{trait_name}' once set.")
         return proposal["value"]
 
 
@@ -432,6 +469,7 @@ class Volume(BaseAnyWidget):
     img = t.Instance(np.ndarray, allow_none=True).tag(
         sync=True, to_json=serialize_ndarray
     )
+    dims = t.Tuple().tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -490,27 +528,13 @@ class Volume(BaseAnyWidget):
     def get_state(self, key=None, drop_defaults=False):
         """Exclude certain attributes from state on save."""
         state = super().get_state(key=key, drop_defaults=drop_defaults)
-        if self.path or self.url or self.data:
+        if (self.path and self.path != "<fromfrontend>") or self.url or self.data:
             if "img" in state:
                 del state["img"]
         return state
 
     def _get_binary_traits(self):
         return ["img"]
-
-    def on_img_changed(self, callback, remove=False):
-        """
-        Register or unregister a callback for the 'img_changed' event.
-
-        Parameters
-        ----------
-        callback : callable
-            The function to call when the 'img_changed' event occurs.
-            Accepts 1 argument: the volume.
-        remove : bool, optional
-            If True, unregister the callback. Defaults to False.
-        """
-        self.on_trait_changed("img", callback, remove=remove)
 
     @t.validate(
         "path",

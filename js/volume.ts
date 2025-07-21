@@ -162,9 +162,12 @@ async function create_volume(
 	let volume: niivue.NVImage;
 
 	// Input data
+	const fromFrontend = vmodel.get("path").name === "<fromfrontend>";
+
 	const path = vmodel.get("path").name ? vmodel.get("path") : null;
 	const url = vmodel.get("url");
 	const data = vmodel.get("data")?.byteLength ? vmodel.get("data") : null;
+
 	const paired_img_path = vmodel.get("paired_img_path").name
 		? vmodel.get("paired_img_path")
 		: null;
@@ -181,7 +184,10 @@ async function create_volume(
 		pairedImgData = paired_img_path.data.buffer as ArrayBuffer;
 	}
 
-	if (path || data) {
+	if (fromFrontend) {
+		const idx = nv.getVolumeIndexByID(vmodel.get("id"));
+		volume = nv.volumes[idx];
+	} else if (path || data) {
 		const dataBuffer = path?.data?.buffer || data?.buffer;
 		const name = path?.name || vmodel.get("name");
 		volume = await niivue.NVImage.new(
@@ -240,6 +246,9 @@ async function create_volume(
 	vmodel.set("colormap", volume.colormap);
 	if (volume.hdr !== null) {
 		vmodel.set("hdr", getNIFTIData(volume.hdr));
+	}
+	if (volume.dims) {
+		vmodel.set("dims", volume.dims);
 	}
 	vmodel.save_changes();
 	if (volume.img) {
@@ -306,7 +315,7 @@ export async function render_volumes(
 
 	// add volumes
 	for (const [id, vmodel] of backend_volume_map.entries()) {
-		const fromFrontend = vmodel.get("path")?.name === "<fromfrontend>";
+		const fromFrontend = vmodel.get("path").name === "<fromfrontend>";
 		const inFrontend = frontend_volume_map.has(id);
 		const emptyId = vmodel.get("id") === "";
 
