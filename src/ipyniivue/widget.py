@@ -238,7 +238,7 @@ class MeshLayer(BaseAnyWidget):
             raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
 
         # Set name if not provided
-        if not self.name:
+        if not self.name and self.path != "<fromfrontend>":
             if self.path:
                 self.name = pathlib.Path(self.path).name
             elif self.url:

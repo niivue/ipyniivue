@@ -326,6 +326,7 @@ export async function create_mesh(
 			const layerData = layerModel.get("data")?.byteLength
 				? layerModel.get("data")
 				: null;
+
 			const layerFromFrontend =
 				layerModel.get("path").name === "<fromfrontend>";
 
@@ -337,12 +338,11 @@ export async function create_mesh(
 				// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
 				const idx = mesh.layers.findIndex((l) => (l as any).id === layerId);
 				layer = mesh.layers[idx];
-			}
-			if (layerPath || layerData) {
+			} else if (layerPath || layerData) {
 				const layerDataBuffer = layerPath?.data?.buffer || layerData?.buffer;
 				const layerName = layerPath?.name || layerModel.get("name");
 				layer = await niivue.NVMeshLoaders.readLayer(
-					layerName,
+					layerName || "",
 					layerDataBuffer as ArrayBuffer,
 					mesh,
 					layerModel.get("opacity") ?? 0.5,

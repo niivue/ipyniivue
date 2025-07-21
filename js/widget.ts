@@ -311,6 +311,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				}
 				return {
 					path: "<fromfrontend>",
+					name: layer.name,
 					opacity: layer.opacity,
 					colormap: layer.colormap,
 					colormap_negative: layer.colormapNegative,
