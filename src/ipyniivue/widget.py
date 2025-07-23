@@ -13,43 +13,170 @@ import math
 import pathlib
 import typing
 import warnings
+from urllib.parse import urlparse
 
 import anywidget
 import ipywidgets
+import numpy as np
 import requests
 import traitlets as t
 from ipywidgets import CallbackDispatcher
 
 from .config_options import ConfigOptions
 from .constants import SliceType
+from .serializers import (
+    deserialize_colormap_label,
+    deserialize_graph,
+    deserialize_hdr,
+    deserialize_options,
+    serialize_colormap_label,
+    serialize_file,
+    serialize_graph,
+    serialize_hdr,
+    serialize_ndarray,
+    serialize_options,
+)
 from .traits import (
     LUT,
     ColorMap,
     Graph,
+    NIFTI1Hdr,
 )
 from .utils import (
-    deserialize_colormap_label,
-    deserialize_graph,
-    deserialize_options,
-    file_serializer,
+    ChunkedDataHandler,
     make_draw_lut,
     make_label_lut,
-    serialize_colormap_label,
-    serialize_graph,
-    serialize_options,
 )
 
 __all__ = ["NiiVue"]
 
 
-class MeshLayer(anywidget.AnyWidget):
+class BaseAnyWidget(anywidget.AnyWidget):
+    """Base widget class that overrides set_state to handle chunked data."""
+
+    _data_handlers: typing.ClassVar[dict] = {}
+    _event_handlers: typing.ClassVar[dict] = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._setup_binary_change_handlers()
+
+    def set_state(self, state):
+        """Override set_state to accept chunked-state attributes."""
+        state_copy = state.copy()
+        keys_to_remove = []
+
+        for attr_name, attr_value in state.items():
+            if attr_name.startswith("chunk_"):
+                _, data_property, chunk_index = attr_name.split("_")
+                chunk_index = int(chunk_index)
+                chunk_info = attr_value
+                chunk_index_received = chunk_info["chunk_index"]
+                total_chunks = chunk_info["total_chunks"]
+                data_type = chunk_info["data_type"]
+                chunk_data = chunk_info["chunk"]
+
+                if isinstance(chunk_data, memoryview):
+                    chunk_data = chunk_data.tobytes()
+                elif isinstance(chunk_data, str):
+                    chunk_data = base64.b64decode(chunk_data)
+                else:
+                    raise ValueError(f"Unsupported chunk data type: {type(chunk_data)}")
+
+                if data_property not in self._data_handlers:
+                    self._data_handlers[data_property] = ChunkedDataHandler(
+                        total_chunks, data_type
+                    )
+
+                handler = self._data_handlers[data_property]
+                handler.add_chunk(chunk_index_received, chunk_data)
+
+                if handler.is_complete():
+                    numpy_array = handler.get_numpy_array()
+                    self.set_trait(data_property, numpy_array)
+                    del self._data_handlers[data_property]
+
+                keys_to_remove.append(attr_name)
+
+        for key in keys_to_remove:
+            del state_copy[key]
+
+        super().set_state(state_copy)
+
+    def _setup_binary_change_handlers(self):
+        for trait_name in self._get_binary_traits():
+            self.observe(self._handle_binary_trait_change, names=trait_name)
+
+    def _get_binary_traits(self):
+        return []
+
+    def _handle_binary_trait_change(self, change):
+        trait_name = change["name"]
+        old_value = change["old"]
+        new_value = change["new"]
+        if old_value is not None:
+            if old_value.dtype != new_value.dtype:
+                self.send(
+                    {
+                        "type": "buffer_change",
+                        "data": {"attr": trait_name, "type": str(new_value.dtype)},
+                    },
+                    buffers=[new_value.tobytes()],
+                )
+            else:
+                old_array = old_value.ravel()
+                new_array = new_value.ravel()
+
+                diff_indices = np.flatnonzero(new_array != old_array)
+
+                if len(diff_indices) == 0:
+                    return
+
+                diff_values = new_array[diff_indices]
+
+                indices_bytes = diff_indices.astype(np.uint32).tobytes()
+                values_bytes = diff_values.tobytes()
+
+                self.send(
+                    {
+                        "type": "buffer_update",
+                        "data": {
+                            "attr": trait_name,
+                            "type": str(new_value.dtype),
+                            "indices_type": "uint32",
+                        },
+                    },
+                    buffers=[indices_bytes, values_bytes],
+                )
+
+        handler = self._event_handlers.get(f"{trait_name}_changed")
+        if handler:
+            handler(self)
+
+    def on_trait_changed(self, trait_name, callback, remove=False):
+        event_name = f"{trait_name}_changed"
+        if event_name not in self._event_handlers:
+            self._event_handlers[event_name] = CallbackDispatcher()
+        if remove:
+            self._event_handlers[event_name].remove(callback)
+        else:
+            self._event_handlers[event_name].register_callback(callback)
+
+
+class MeshLayer(BaseAnyWidget):
     """
     Represents a layer within a Mesh model.
 
     Parameters
     ----------
-    path : str or pathlib.Path
-        Path to the layer data file. Cannot be modified once set.
+    path : str or pathlib.Path, optional
+        Path to the volume data file. Cannot be modified once set.
+    url : str, optional
+        URL to the volume data.
+    data : bytes, optional
+        Bytes data of the volume.
+    name : str, optional
+        Name of the mesh.
     opacity : float, optional
         Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 0.5.
     colormap : str, optional
@@ -67,10 +194,14 @@ class MeshLayer(anywidget.AnyWidget):
         Outline border thickness. Default is 0.
     """
 
-    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
-        sync=True, to_json=file_serializer
-    )
+    path = t.Union(
+        [t.Instance(pathlib.Path), t.Unicode()], default_value=None, allow_none=True
+    ).tag(sync=True, to_json=serialize_file)
+    url = t.Unicode(default_value=None, allow_none=True).tag(sync=True)
+    data = t.Bytes(default_value=None, allow_none=True).tag(sync=True)
+
     id = t.Unicode(default_value="").tag(sync=True)
+    name = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(0.5).tag(sync=True)
     colormap = t.Unicode("warm").tag(sync=True)
     colormap_negative = t.Unicode("winter").tag(sync=True)
@@ -87,6 +218,8 @@ class MeshLayer(anywidget.AnyWidget):
     def __init__(self, **kwargs):
         include_keys = {
             "path",
+            "url",
+            "data",
             "id",
             "opacity",
             "colormap",
@@ -99,31 +232,51 @@ class MeshLayer(anywidget.AnyWidget):
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
 
-    @t.validate("path")
-    def _validate_path(self, proposal):
+        # Validate that one and only one of path, url, data is provided
+        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
+        if len(provided) != 1:
+            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
+
+        # Set name if not provided
+        if not self.name and self.path != "<fromfrontend>":
+            if self.path:
+                self.name = pathlib.Path(self.path).name
+            elif self.url:
+                self.name = pathlib.Path(urlparse(self.url).path).name
+            elif self.data is not None:
+                raise ValueError("Must provide 'name' when 'data' is provided.")
+            else:
+                raise ValueError("Cannot determine the name of the volume.")
+
+    @t.validate(
+        "path",
+        "url",
+        "data",
+        "id",
+    )
+    def _validate_no_change(self, proposal):
+        trait_name = proposal["trait"].name
         if (
-            "path" in self._trait_values
-            and self.path
-            and self.path != proposal["value"]
+            trait_name in self._trait_values
+            and self._trait_values[trait_name]
+            and self._trait_values[trait_name] != proposal["value"]
         ):
-            raise t.TraitError("Cannot modify path once set.")
-        return proposal["value"]
-
-    @t.validate("id")
-    def _validate_id(self, proposal):
-        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
-            raise t.TraitError("Cannot modify id once set.")
+            raise t.TraitError(f"Cannot modify '{trait_name}' once set.")
         return proposal["value"]
 
 
-class Mesh(anywidget.AnyWidget):
+class Mesh(BaseAnyWidget):
     """
     Represents a Mesh model.
 
     Parameters
     ----------
-    path : str or pathlib.Path
-        Path to the mesh file. Cannot be modified once set.
+    path : str or pathlib.Path, optional
+        Path to the volume data file. Cannot be modified once set.
+    url : str, optional
+        URL to the volume data.
+    data : bytes, optional
+        Bytes data of the volume.
     name : str, optional
         Name of the mesh.
     rgba255 : list of int, optional
@@ -132,14 +285,17 @@ class Mesh(anywidget.AnyWidget):
         Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.
     visible : bool, optional
         Mesh visibility. Default is True.
-    layers : list of dict, optional
-        List of layer data dictionaries.
+    layers : list of dict or MeshLayer objects, optional
+        List of layer data dictionaries or MeshLayer objects.
         See :class:`MeshLayer` for attribute options.
     """
 
-    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
-        sync=True, to_json=file_serializer
-    )
+    path = t.Union(
+        [t.Instance(pathlib.Path), t.Unicode()], default_value=None, allow_none=True
+    ).tag(sync=True, to_json=serialize_file)
+    url = t.Unicode(default_value=None, allow_none=True).tag(sync=True)
+    data = t.Bytes(default_value=None, allow_none=True).tag(sync=True)
+
     id = t.Unicode(default_value="").tag(sync=True)
     name = t.Unicode(default_value="").tag(sync=True)
     rgba255 = t.List([255, 255, 255, 255]).tag(sync=True)
@@ -160,63 +316,132 @@ class Mesh(anywidget.AnyWidget):
     fiber_decimation_stride = t.Int(1).tag(sync=True)
     colormap = t.Unicode(None, allow_none=True).tag(sync=True)
 
+    # Set after bidirectional comms with frontend
+    pts = t.Instance(np.ndarray, allow_none=True).tag(sync=True)
+    tris = t.Instance(np.ndarray, allow_none=True).tag(sync=True)
+
     def __init__(self, **kwargs):
-        include_keys = {"path", "id", "name", "rgba255", "opacity", "visible"}
+        include_keys = {
+            "path",
+            "url",
+            "data",
+            "id",
+            "name",
+            "rgba255",
+            "opacity",
+            "visible",
+        }
         layers_data = kwargs.pop("layers", [])
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
-        self.layers = [MeshLayer(**layer_data) for layer_data in layers_data]
 
-    @t.validate("path")
-    def _validate_path(self, proposal):
+        # Validate that one and only one of path, url, data is provided
+        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
+        if len(provided) != 1:
+            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
+
+        # Set name if not provided
+        if not self.name:
+            if self.path:
+                self.name = pathlib.Path(self.path).name
+            elif self.url:
+                self.name = pathlib.Path(urlparse(self.url).path).name
+            elif self.data is not None:
+                raise ValueError("Must provide 'name' when 'data' is provided.")
+            else:
+                raise ValueError("Cannot determine the name of the volume.")
+
+        # accept either dicts or MeshLayer objs
+        layers_list = []
+        for layer in layers_data:
+            if isinstance(layer, MeshLayer):
+                layers_list.append(layer)
+            elif isinstance(layer, dict):
+                layers_list.append(MeshLayer(**layer))
+        self.layers = layers_list
+
+    def get_state(self, key=None, drop_defaults=False):
+        """Exclude certain attributes from state on save."""
+        state = super().get_state(key=key, drop_defaults=drop_defaults)
+        if (self.path and self.path != "<fromfrontend>") or self.url or self.data:
+            if "pts" in state:
+                del state["pts"]
+            if "tris" in state:
+                del state["tris"]
+        return state
+
+    def _get_binary_traits(self):
+        return ["pts", "tris"]
+
+    @t.validate(
+        "path",
+        "url",
+        "data",
+        "id",
+    )
+    def _validate_no_change(self, proposal):
+        trait_name = proposal["trait"].name
         if (
-            "path" in self._trait_values
-            and self.path
-            and self.path != proposal["value"]
+            trait_name in self._trait_values
+            and self._trait_values[trait_name]
+            and self._trait_values[trait_name] != proposal["value"]
         ):
-            raise t.TraitError("Cannot modify path once set.")
-        return proposal["value"]
-
-    @t.validate("id")
-    def _validate_id(self, proposal):
-        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
-            raise t.TraitError("Cannot modify id once set.")
+            raise t.TraitError(f"Cannot modify '{trait_name}' once set.")
         return proposal["value"]
 
 
-class Volume(anywidget.AnyWidget):
+class Volume(BaseAnyWidget):
     """
     Represents a Volume model.
 
     Parameters
     ----------
-    path : str or pathlib.Path
-        Path to the volume data file; cannot be modified once set.
+    path : str or pathlib.Path, optional
+        Path to the volume data file. Cannot be modified once set.
+    url : str, optional
+        URL to the volume data.
+    data : bytes, optional
+        Bytes data of the volume.
     paired_img_path : str or pathlib.Path, optional
-        Path to the paired img data.
+        Path to the paired image data file.
+    paired_img_url : str, optional
+        URL to the paired image data.
+    paired_img_data : bytes, optional
+        Bytes data of the paired image.
     name : str, optional
-        Name of the volume.
+        Name of the volume. If not provided, it will be inferred from the source.
     opacity : float, optional
-        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.
+        Opacity between 0.0 and 1.0 (default is 1.0).
     colormap : str, optional
-        Colormap name for rendering. Default is '' (usually defaults to 'gray').
+        Colormap name (default is '').
     colorbar_visible : bool, optional
-        Show colorbar associated with the colormap. Default is True.
+        Show colorbar (default is True).
     cal_min : float or None, optional
         Minimum intensity value for brightness/contrast mapping.
     cal_max : float or None, optional
         Maximum intensity value for brightness/contrast mapping.
     frame_4d : int, optional
-        Frame index for 4D volume data. Default is 0.
+        Frame index for 4D volume data (default is 0).
+    colormap_negative : str, optional
+        Colormap for negative values (default is '').
+    colormap_label : LUT, optional
+        Colormap label data.
     """
 
-    path = t.Union([t.Instance(pathlib.Path), t.Unicode()]).tag(
-        sync=True, to_json=file_serializer
-    )
-    id = t.Unicode(default_value="").tag(sync=True)
+    # Input-only traits (not accessible after initialization)
+    path = t.Union(
+        [t.Instance(pathlib.Path), t.Unicode()], default_value=None, allow_none=True
+    ).tag(sync=True, to_json=serialize_file)
+    url = t.Unicode(default_value=None, allow_none=True).tag(sync=True)
+    data = t.Bytes(default_value=None, allow_none=True).tag(sync=True)
     paired_img_path = t.Union(
         [t.Instance(pathlib.Path), t.Unicode()], default_value=None, allow_none=True
-    ).tag(sync=True, to_json=file_serializer)
+    ).tag(sync=True, to_json=serialize_file)
+    paired_img_url = t.Unicode(default_value=None, allow_none=True).tag(sync=True)
+    paired_img_data = t.Bytes(default_value=None, allow_none=True).tag(sync=True)
+
+    # Main traits
+    id = t.Unicode(default_value="").tag(sync=True)
     name = t.Unicode(default_value="").tag(sync=True)
     opacity = t.Float(1.0).tag(sync=True)
     colormap = t.Unicode("").tag(sync=True)
@@ -231,27 +456,115 @@ class Volume(anywidget.AnyWidget):
         from_json=deserialize_colormap_label,
     )
 
-    # other properties that aren't in init
+    # Other properties
     colormap_invert = t.Bool(False).tag(sync=True)
-    n_frame_4d = t.Int(None, allow_none=True).tag(sync=True)
+    n_frame_4d = t.Int(None, allow_none=True).tag(
+        sync=True
+    )  # Read-only after initialization
+
+    # Set after bidirectional comms with frontend
+    hdr = t.Instance(NIFTI1Hdr, allow_none=True).tag(
+        sync=True, to_json=serialize_hdr, from_json=deserialize_hdr
+    )
+    img = t.Instance(np.ndarray, allow_none=True).tag(
+        sync=True, to_json=serialize_ndarray
+    )
+    dims = t.Tuple(allow_none=True).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
             "path",
+            "url",
+            "data",
             "paired_img_path",
+            "paired_img_url",
+            "paired_img_data",
             "id",
             "name",
             "opacity",
             "colormap",
-            "colormap_visible",
+            "colorbar_visible",
             "cal_min",
             "cal_max",
             "frame_4d",
             "colormap_negative",
             "colormap_label",
+            "colormap_invert",
         }
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
+
+        # Validate that one and only one of path, url, data is provided
+        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
+        if len(provided) != 1:
+            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
+
+        # Validate paired image data
+        paired_provided = [
+            k
+            for k in ("paired_img_path", "paired_img_url", "paired_img_data")
+            if getattr(self, k) is not None
+        ]
+        if len(paired_provided) > 1:
+            raise ValueError(
+                "Up to one of 'paired_img_path', "
+                "'paired_img_url', or 'paired_img_data' can be provided."
+            )
+
+        # Set name if not provided
+        if not self.name:
+            if self.path:
+                self.name = pathlib.Path(self.path).name
+            elif self.url:
+                self.name = pathlib.Path(urlparse(self.url).path).name
+            elif self.data is not None:
+                raise ValueError("Must provide 'name' when 'data' is provided.")
+            else:
+                raise ValueError("Cannot determine the name of the volume.")
+
+        # on-event
+        self._event_handlers = {}
+
+    def get_state(self, key=None, drop_defaults=False):
+        """Exclude certain attributes from state on save."""
+        state = super().get_state(key=key, drop_defaults=drop_defaults)
+        if (self.path and self.path != "<fromfrontend>") or self.url or self.data:
+            if "img" in state:
+                del state["img"]
+        return state
+
+    def _get_binary_traits(self):
+        return ["img"]
+
+    @t.validate(
+        "path",
+        "url",
+        "data",
+        "id",
+        "paired_img_path",
+        "paired_img_url",
+        "paired_img_data",
+    )
+    def _validate_no_change(self, proposal):
+        trait_name = proposal["trait"].name
+        if (
+            trait_name in self._trait_values
+            and self._trait_values[trait_name]
+            and self._trait_values[trait_name] != proposal["value"]
+        ):
+            raise t.TraitError(f"Cannot modify '{trait_name}' once set.")
+        return proposal["value"]
+
+    @t.validate("n_frame_4d")
+    def _validate_nframe4d(self, proposal):
+        # separate since n_frame_4d can be 0
+        if (
+            "n_frame_4d" in self._trait_values
+            and self.n_frame_4d is not None
+            and self.n_frame_4d != proposal["value"]
+        ):
+            raise t.TraitError("Cannot modify 'n_frame_4d' once set.")
+        return proposal["value"]
 
     def _notify_colormap_label_changed(self):
         self.notify_change(
@@ -316,34 +629,8 @@ class Volume(anywidget.AnyWidget):
         cmap = response.json()
         self.set_colormap_label(cmap)
 
-    @t.validate("path")
-    def _validate_path(self, proposal):
-        if (
-            "path" in self._trait_values
-            and self.path
-            and self.path != proposal["value"]
-        ):
-            raise t.TraitError("Cannot modify path once set.")
-        return proposal["value"]
 
-    @t.validate("id")
-    def _validate_id(self, proposal):
-        if "id" in self._trait_values and self.id and self.id != proposal["value"]:
-            raise t.TraitError("Cannot modify id once set.")
-        return proposal["value"]
-
-    @t.validate("n_frame_4d")
-    def _validate_nframe4d(self, proposal):
-        if (
-            "n_frame_4d" in self._trait_values
-            and self.n_frame_4d
-            and self.n_frame_4d != proposal["value"]
-        ):
-            raise t.TraitError("Cannot modify n_frame_4d once set.")
-        return proposal["value"]
-
-
-class NiiVue(anywidget.AnyWidget):
+class NiiVue(BaseAnyWidget):
     """
     Represents a NiiVue widget instance.
 
@@ -363,6 +650,8 @@ class NiiVue(anywidget.AnyWidget):
     meshes = t.List(t.Instance(Mesh), default_value=[]).tag(
         sync=True, **ipywidgets.widget_serialization
     )
+
+    _canvas_attached = t.Bool(False).tag(sync=True)
 
     # other props
     background_masks_overlays = t.Int(0).tag(sync=True)
@@ -475,16 +764,42 @@ class NiiVue(anywidget.AnyWidget):
             idx = self.get_volume_index_by_id(data["id"])
             if idx != -1:
                 handler(self.volumes[idx], data["frame_index"])
-        elif event in {"image_loaded", "intensity_change"}:
+        elif event == "intensity_change":
             idx = self.get_volume_index_by_id(data["id"])
             if idx != -1:
                 handler(self.volumes[idx])
             else:
                 handler(data)
+        elif event == "image_loaded":
+            idx = self.get_volume_index_by_id(data["id"])
+            if idx != -1:
+                volume = self.volumes[idx]
+                if volume.img is not None and volume.hdr is not None:
+                    handler(volume)
+                else:
+
+                    def check_ready(change):
+                        if volume.img is not None and volume.hdr is not None:
+                            volume.unobserve(check_ready, names=["img", "hdr"])
+                            handler(volume)
+
+                    volume.observe(check_ready, names=["img", "hdr"])
+            else:
+                handler(data)
         elif event == "mesh_loaded":
             idx = self.get_mesh_index_by_id(data["id"])
             if idx != -1:
-                handler(self.meshes[idx])
+                mesh = self.meshes[idx]
+                if mesh.pts is not None and mesh.tris is not None:
+                    handler(mesh)
+                else:
+
+                    def check_ready(change):
+                        if mesh.pts is not None and mesh.tris is not None:
+                            mesh.unobserve(check_ready, names=["pts", "tris"])
+                            handler(mesh)
+
+                    mesh.observe(check_ready, names=["pts", "tris"])
             else:
                 handler(data)
         elif event == "mesh_added_from_url":
@@ -495,6 +810,18 @@ class NiiVue(anywidget.AnyWidget):
             handler(image_options, data["volume"])
         else:
             handler(data)
+
+    def _handle_image_loaded(self, volume_id):
+        handler = self._event_handlers.get("image_loaded")
+        if not handler:
+            return
+
+        # ensure that volume actually exists in parent
+        idx = self.get_volume_index_by_id(volume_id)
+        if idx != -1:
+            handler(self.volumes[idx])
+        else:
+            handler({"id": volume_id})
 
     def _add_volume_from_frontend(self, volume_data):
         index = volume_data.pop("index", None)
@@ -564,7 +891,7 @@ class NiiVue(anywidget.AnyWidget):
         Parameters
         ----------
         volumes : list
-            A list of dictionaries containing the volume information.
+            A list of dictionaries or Volume objects.
 
         Returns
         -------
@@ -578,17 +905,22 @@ class NiiVue(anywidget.AnyWidget):
             nv.load_volumes([{"path": "mni152.nii.gz"}])
 
         """
-        volumes = [Volume(**item) for item in volumes]
-        self.volumes = volumes
+        volume_objects = []
+        for item in volumes:
+            if isinstance(item, Volume):
+                volume_objects.append(item)
+            elif isinstance(item, dict):
+                volume_objects.append(Volume(**item))
+        self.volumes = volume_objects
 
-    def add_volume(self, volume: dict):
+    def add_volume(self, volume: typing.Union[dict, Volume]):
         """
         Add a new volume to the widget.
 
         Parameters
         ----------
-        volume : dict
-            A dictionary containing the volume information.
+        volume : dict or Volume object
+            The volume information.
 
         Returns
         -------
@@ -602,7 +934,13 @@ class NiiVue(anywidget.AnyWidget):
             nv.add_volume({"path": "mni152.nii.gz"})
 
         """
-        self.volumes = [*self.volumes, Volume(**volume)]
+        if isinstance(volume, Volume):
+            new_volume = volume
+        elif isinstance(volume, dict):
+            new_volume = Volume(**volume)
+        else:
+            return
+        self.volumes = [*self.volumes, new_volume]
 
     def load_meshes(self, meshes: list):
         """
@@ -625,10 +963,15 @@ class NiiVue(anywidget.AnyWidget):
             nv.load_meshes([{"path": "BrainMesh_ICBM152.lh.mz3"}])
 
         """
-        meshes = [Mesh(**item) for item in meshes]
-        self.meshes = meshes
+        mesh_objects = []
+        for item in meshes:
+            if isinstance(item, Mesh):
+                mesh_objects.append(item)
+            elif isinstance(item, dict):
+                mesh_objects.append(Mesh(**item))
+        self.meshes = mesh_objects
 
-    def add_mesh(self, mesh: Mesh):
+    def add_mesh(self, mesh: typing.Union[dict, Volume]):
         """
         Add a single mesh to the widget.
 
@@ -649,7 +992,13 @@ class NiiVue(anywidget.AnyWidget):
             nv.add_mesh({"path": "BrainMesh_ICBM152.lh.mz3"})
 
         """
-        self.meshes = [*self.meshes, mesh]
+        if isinstance(mesh, Mesh):
+            new_mesh = mesh
+        elif isinstance(mesh, dict):
+            new_mesh = Mesh(**mesh)
+        else:
+            return
+        self.meshes = [*self.meshes, new_mesh]
 
     """
     Other functions
@@ -1235,6 +1584,10 @@ class NiiVue(anywidget.AnyWidget):
 
             nv.set_volume_render_illumination(0.6)
         """
+        if not self._canvas_attached:
+            raise RuntimeError(
+                "Canvas is not attached. Render this widget to attach to a canvas."
+            )
         if not isinstance(gradient_amount, (int, float)):
             raise TypeError("gradient_amount must be a number.")
         if not math.isnan(gradient_amount):
@@ -1561,7 +1914,7 @@ class NiiVue(anywidget.AnyWidget):
             raise ValueError(
                 "Cannot load drawing: "
                 "The primary volume has not been initialized. "
-                "Please render the NiiVue object."
+                "Please render this NiiVue widget."
             )
         if pathlib.Path(path).exists():
             file_bytes = pathlib.Path(path).read_bytes()

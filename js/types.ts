@@ -1,7 +1,17 @@
-import type { AnyModel } from "@anywidget/types";
+import type { AnyModel as BaseAnyModel } from "@anywidget/types";
 import type { NVConfigOptions } from "@niivue/niivue";
+import type { NIFTI1 } from "nifti-reader-js";
 
-interface File {
+export interface AnyModel<T extends object = object> extends BaseAnyModel<T> {
+	// biome-ignore lint/suspicious/noExplicitAny: callbacks are Record<string, Function>
+	send_sync_message(state: object, callbacks?: any): string;
+	rememberLastUpdateFor(msgId: string): void;
+	_comm_live: boolean;
+	// marimo support, since marimo uses POST requests instead of websocket
+	onChange: (value: Partial<T>) => void;
+}
+
+interface FileInput {
 	name: string;
 	data: DataView;
 }
@@ -45,9 +55,15 @@ type Graph = {
 };
 
 export type VolumeModel = AnyModel<{
-	path: File;
+	path: FileInput;
+	url: string;
+	data: DataView;
+
+	paired_img_path: FileInput;
+	paired_img_url: string;
+	paired_img_data: DataView;
+
 	id: string;
-	paired_img_path: File;
 	name: string;
 	colormap: string;
 	opacity: number;
@@ -61,10 +77,17 @@ export type VolumeModel = AnyModel<{
 
 	colormap_invert: boolean;
 	n_frame_4d: number | null;
+
+	hdr: Partial<NIFTI1>;
+	img: DataView;
+	dims: number[];
 }>;
 
 export type MeshModel = AnyModel<{
-	path: File;
+	path: FileInput;
+	url: string;
+	data: DataView;
+
 	id: string;
 	name: string;
 	rgba255: Array<number>;
@@ -81,11 +104,18 @@ export type MeshModel = AnyModel<{
 	fiber_color: string;
 	fiber_decimation_stride: number;
 	colormap: string;
+
+	pts: DataView;
+	tris: DataView;
 }>;
 
 export type MeshLayerModel = AnyModel<{
-	path: File;
+	path: FileInput;
+	url: string;
+	data: DataView;
+
 	id: string;
+	name: string;
 	opacity: number;
 	colormap: string;
 	colormap_negative: string;
@@ -104,6 +134,8 @@ export type Model = AnyModel<{
 	volumes: Array<string>;
 	meshes: Array<string>;
 	opts: Partial<Record<keyof NVConfigOptions, unknown>>;
+
+	_canvas_attached: boolean;
 
 	background_masks_overlays: number;
 	clip_plane_depth_azi_elev: [
@@ -179,3 +211,20 @@ export type CustomMessagePayload =
 	| { type: "draw_undo"; data: [] }
 	| { type: "close_drawing"; data: [] }
 	| { type: "load_drawing_from_url"; data: LoadDrawingFromUrlData };
+
+export type TypedBufferPayload =
+	| {
+			type: "buffer_change";
+			data: {
+				attr: string;
+				type: string;
+			};
+	  }
+	| {
+			type: "buffer_update";
+			data: {
+				attr: string;
+				type: string;
+				indices_type: string;
+			};
+	  };
