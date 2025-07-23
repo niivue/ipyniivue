@@ -5,31 +5,31 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Options" href="options.html" /><link rel="prev" title="Installation" href="install.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
         <title>API Documentation - IPyNiiVue 2.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
 
 
 <style>
   body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
   
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
   
       }
     }
@@ -189,7 +189,6 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
-  
   <span class="sidebar-brand-text">IPyNiiVue 2.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
@@ -251,7 +250,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="ipyniivue.NiiVue">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">NiiVue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AnyWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAnyWidget</span></code></p>
 <p>Represents a NiiVue widget instance.</p>
 <p>This class provides a Jupyter widget for visualizing neuroimaging data using
 NiiVue.</p>
@@ -312,7 +311,7 @@ See <a class="reference internal" href="options.html#ipyniivue.config_options.Co
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ipyniivue.NiiVue.add_mesh">
-<span class="sig-name descname"><span class="pre">add_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ipyniivue.Mesh" title="ipyniivue.widget.Mesh"><span class="pre">Mesh</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.add_mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.add_mesh" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#ipyniivue.Volume" title="ipyniivue.widget.Volume"><span class="pre">Volume</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.add_mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.add_mesh" title="Link to this definition">¶</a></dt>
 <dd><p>Add a single mesh to the widget.</p>
 <section id="id2">
 <h2>Parameters<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
@@ -336,12 +335,12 @@ See <a class="reference internal" href="options.html#ipyniivue.config_options.Co
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ipyniivue.NiiVue.add_volume">
-<span class="sig-name descname"><span class="pre">add_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.add_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.add_volume" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#ipyniivue.Volume" title="ipyniivue.widget.Volume"><span class="pre">Volume</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.add_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.add_volume" title="Link to this definition">¶</a></dt>
 <dd><p>Add a new volume to the widget.</p>
 <section id="id4">
 <h2>Parameters<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
 <dl class="simple">
-<dt>volume<span class="classifier">dict</span></dt><dd><p>A dictionary containing the volume information.</p>
+<dt>volume<span class="classifier">dict or Volume object</span></dt><dd><p>The volume information.</p>
 </dd>
 </dl>
 </section>
@@ -623,7 +622,7 @@ the image into the specified number of levels.</p>
 <section id="id27">
 <h2>Parameters<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h2>
 <dl class="simple">
-<dt>volumes<span class="classifier">list</span></dt><dd><p>A list of dictionaries containing the volume information.</p>
+<dt>volumes<span class="classifier">list</span></dt><dd><p>A list of dictionaries or Volume objects.</p>
 </dd>
 </dl>
 </section>
@@ -2013,28 +2012,40 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <dl class="py class">
 <dt class="sig sig-object py" id="ipyniivue.Volume">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">Volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Volume" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AnyWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAnyWidget</span></code></p>
 <p>Represents a Volume model.</p>
 <section id="id128">
 <h2>Parameters<a class="headerlink" href="#id128" title="Link to this heading">¶</a></h2>
 <dl class="simple">
-<dt>path<span class="classifier">str or pathlib.Path</span></dt><dd><p>Path to the volume data file; cannot be modified once set.</p>
+<dt>path<span class="classifier">str or pathlib.Path, optional</span></dt><dd><p>Path to the volume data file. Cannot be modified once set.</p>
 </dd>
-<dt>paired_img_path<span class="classifier">str or pathlib.Path, optional</span></dt><dd><p>Path to the paired img data.</p>
+<dt>url<span class="classifier">str, optional</span></dt><dd><p>URL to the volume data.</p>
 </dd>
-<dt>name<span class="classifier">str, optional</span></dt><dd><p>Name of the volume.</p>
+<dt>data<span class="classifier">bytes, optional</span></dt><dd><p>Bytes data of the volume.</p>
 </dd>
-<dt>opacity<span class="classifier">float, optional</span></dt><dd><p>Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.</p>
+<dt>paired_img_path<span class="classifier">str or pathlib.Path, optional</span></dt><dd><p>Path to the paired image data file.</p>
 </dd>
-<dt>colormap<span class="classifier">str, optional</span></dt><dd><p>Colormap name for rendering. Default is ‘’ (usually defaults to ‘gray’).</p>
+<dt>paired_img_url<span class="classifier">str, optional</span></dt><dd><p>URL to the paired image data.</p>
 </dd>
-<dt>colorbar_visible<span class="classifier">bool, optional</span></dt><dd><p>Show colorbar associated with the colormap. Default is True.</p>
+<dt>paired_img_data<span class="classifier">bytes, optional</span></dt><dd><p>Bytes data of the paired image.</p>
+</dd>
+<dt>name<span class="classifier">str, optional</span></dt><dd><p>Name of the volume. If not provided, it will be inferred from the source.</p>
+</dd>
+<dt>opacity<span class="classifier">float, optional</span></dt><dd><p>Opacity between 0.0 and 1.0 (default is 1.0).</p>
+</dd>
+<dt>colormap<span class="classifier">str, optional</span></dt><dd><p>Colormap name (default is ‘’).</p>
+</dd>
+<dt>colorbar_visible<span class="classifier">bool, optional</span></dt><dd><p>Show colorbar (default is True).</p>
 </dd>
 <dt>cal_min<span class="classifier">float or None, optional</span></dt><dd><p>Minimum intensity value for brightness/contrast mapping.</p>
 </dd>
 <dt>cal_max<span class="classifier">float or None, optional</span></dt><dd><p>Maximum intensity value for brightness/contrast mapping.</p>
 </dd>
-<dt>frame_4d<span class="classifier">int, optional</span></dt><dd><p>Frame index for 4D volume data. Default is 0.</p>
+<dt>frame_4d<span class="classifier">int, optional</span></dt><dd><p>Frame index for 4D volume data (default is 0).</p>
+</dd>
+<dt>colormap_negative<span class="classifier">str, optional</span></dt><dd><p>Colormap for negative values (default is ‘’).</p>
+</dd>
+<dt>colormap_label<span class="classifier">LUT, optional</span></dt><dd><p>Colormap label data.</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -2088,15 +2099,49 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Volume.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#ipyniivue.Volume.data" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for byte strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Volume.dims">
+<span class="sig-name descname"><span class="pre">dims</span></span><a class="headerlink" href="#ipyniivue.Volume.dims" title="Link to this definition">¶</a></dt>
+<dd><p>An instance of a Python tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.Volume.frame_4d">
 <span class="sig-name descname"><span class="pre">frame_4d</span></span><a class="headerlink" href="#ipyniivue.Volume.frame_4d" title="Link to this definition">¶</a></dt>
 <dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.Volume.get_state">
+<span class="sig-name descname"><span class="pre">get_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume.get_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Volume.get_state" title="Link to this definition">¶</a></dt>
+<dd><p>Exclude certain attributes from state on save.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Volume.hdr">
+<span class="sig-name descname"><span class="pre">hdr</span></span><a class="headerlink" href="#ipyniivue.Volume.hdr" title="Link to this definition">¶</a></dt>
+<dd><p>A trait whose value must be an instance of a specified class.</p>
+<p>The value can also be an instance of a subclass of the specified class.</p>
+<p>Subclasses can declare default classes by overriding the klass attribute</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.Volume.id">
 <span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#ipyniivue.Volume.id" title="Link to this definition">¶</a></dt>
 <dd><p>A trait for unicode strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Volume.img">
+<span class="sig-name descname"><span class="pre">img</span></span><a class="headerlink" href="#ipyniivue.Volume.img" title="Link to this definition">¶</a></dt>
+<dd><p>A trait whose value must be an instance of a specified class.</p>
+<p>The value can also be an instance of a subclass of the specified class.</p>
+<p>Subclasses can declare default classes by overriding the klass attribute</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2118,9 +2163,21 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Volume.paired_img_data">
+<span class="sig-name descname"><span class="pre">paired_img_data</span></span><a class="headerlink" href="#ipyniivue.Volume.paired_img_data" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for byte strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.Volume.paired_img_path">
 <span class="sig-name descname"><span class="pre">paired_img_path</span></span><a class="headerlink" href="#ipyniivue.Volume.paired_img_path" title="Link to this definition">¶</a></dt>
 <dd><p>A trait type representing a Union type.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Volume.paired_img_url">
+<span class="sig-name descname"><span class="pre">paired_img_url</span></span><a class="headerlink" href="#ipyniivue.Volume.paired_img_url" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for unicode strings.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2178,18 +2235,28 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </section>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Volume.url">
+<span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#ipyniivue.Volume.url" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for unicode strings.</p>
+</dd></dl>
+
 </section>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ipyniivue.Mesh">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">Mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Mesh" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AnyWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAnyWidget</span></code></p>
 <p>Represents a Mesh model.</p>
 <section id="id133">
 <h2>Parameters<a class="headerlink" href="#id133" title="Link to this heading">¶</a></h2>
 <dl class="simple">
-<dt>path<span class="classifier">str or pathlib.Path</span></dt><dd><p>Path to the mesh file. Cannot be modified once set.</p>
+<dt>path<span class="classifier">str or pathlib.Path, optional</span></dt><dd><p>Path to the volume data file. Cannot be modified once set.</p>
+</dd>
+<dt>url<span class="classifier">str, optional</span></dt><dd><p>URL to the volume data.</p>
+</dd>
+<dt>data<span class="classifier">bytes, optional</span></dt><dd><p>Bytes data of the volume.</p>
 </dd>
 <dt>name<span class="classifier">str, optional</span></dt><dd><p>Name of the mesh.</p>
 </dd>
@@ -2199,7 +2266,7 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd>
 <dt>visible<span class="classifier">bool, optional</span></dt><dd><p>Mesh visibility. Default is True.</p>
 </dd>
-<dt>layers<span class="classifier">list of dict, optional</span></dt><dd><p>List of layer data dictionaries.
+<dt>layers<span class="classifier">list of dict or MeshLayer objects, optional</span></dt><dd><p>List of layer data dictionaries or MeshLayer objects.
 See <a class="reference internal" href="#ipyniivue.MeshLayer" title="ipyniivue.MeshLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeshLayer</span></code></a> for attribute options.</p>
 </dd>
 </dl>
@@ -2225,6 +2292,12 @@ See <a class="reference internal" href="#ipyniivue.MeshLayer" title="ipyniivue.M
 <dt class="sig sig-object py" id="ipyniivue.Mesh.colormap_invert">
 <span class="sig-name descname"><span class="pre">colormap_invert</span></span><a class="headerlink" href="#ipyniivue.Mesh.colormap_invert" title="Link to this definition">¶</a></dt>
 <dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Mesh.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#ipyniivue.Mesh.data" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for byte strings.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2255,6 +2328,12 @@ See <a class="reference internal" href="#ipyniivue.MeshLayer" title="ipyniivue.M
 <dt class="sig sig-object py" id="ipyniivue.Mesh.fiber_radius">
 <span class="sig-name descname"><span class="pre">fiber_radius</span></span><a class="headerlink" href="#ipyniivue.Mesh.fiber_radius" title="Link to this definition">¶</a></dt>
 <dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.Mesh.get_state">
+<span class="sig-name descname"><span class="pre">get_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Mesh.get_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Mesh.get_state" title="Link to this definition">¶</a></dt>
+<dd><p>Exclude certain attributes from state on save.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2294,9 +2373,31 @@ See <a class="reference internal" href="#ipyniivue.MeshLayer" title="ipyniivue.M
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Mesh.pts">
+<span class="sig-name descname"><span class="pre">pts</span></span><a class="headerlink" href="#ipyniivue.Mesh.pts" title="Link to this definition">¶</a></dt>
+<dd><p>A trait whose value must be an instance of a specified class.</p>
+<p>The value can also be an instance of a subclass of the specified class.</p>
+<p>Subclasses can declare default classes by overriding the klass attribute</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.Mesh.rgba255">
 <span class="sig-name descname"><span class="pre">rgba255</span></span><a class="headerlink" href="#ipyniivue.Mesh.rgba255" title="Link to this definition">¶</a></dt>
 <dd><p>An instance of a Python list.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Mesh.tris">
+<span class="sig-name descname"><span class="pre">tris</span></span><a class="headerlink" href="#ipyniivue.Mesh.tris" title="Link to this definition">¶</a></dt>
+<dd><p>A trait whose value must be an instance of a specified class.</p>
+<p>The value can also be an instance of a subclass of the specified class.</p>
+<p>Subclasses can declare default classes by overriding the klass attribute</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Mesh.url">
+<span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#ipyniivue.Mesh.url" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for unicode strings.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2311,12 +2412,18 @@ See <a class="reference internal" href="#ipyniivue.MeshLayer" title="ipyniivue.M
 <dl class="py class">
 <dt class="sig sig-object py" id="ipyniivue.MeshLayer">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">MeshLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#MeshLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.MeshLayer" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AnyWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAnyWidget</span></code></p>
 <p>Represents a layer within a Mesh model.</p>
 <section id="id134">
 <h2>Parameters<a class="headerlink" href="#id134" title="Link to this heading">¶</a></h2>
 <dl class="simple">
-<dt>path<span class="classifier">str or pathlib.Path</span></dt><dd><p>Path to the layer data file. Cannot be modified once set.</p>
+<dt>path<span class="classifier">str or pathlib.Path, optional</span></dt><dd><p>Path to the volume data file. Cannot be modified once set.</p>
+</dd>
+<dt>url<span class="classifier">str, optional</span></dt><dd><p>URL to the volume data.</p>
+</dd>
+<dt>data<span class="classifier">bytes, optional</span></dt><dd><p>Bytes data of the volume.</p>
+</dd>
+<dt>name<span class="classifier">str, optional</span></dt><dd><p>Name of the mesh.</p>
 </dd>
 <dt>opacity<span class="classifier">float, optional</span></dt><dd><p>Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 0.5.</p>
 </dd>
@@ -2377,6 +2484,12 @@ Default is ‘winter’.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.MeshLayer.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.data" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for byte strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.MeshLayer.frame_4d">
 <span class="sig-name descname"><span class="pre">frame_4d</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.frame_4d" title="Link to this definition">¶</a></dt>
 <dd><p>An int trait.</p>
@@ -2385,6 +2498,12 @@ Default is ‘winter’.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.MeshLayer.id">
 <span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.id" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for unicode strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.MeshLayer.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.name" title="Link to this definition">¶</a></dt>
 <dd><p>A trait for unicode strings.</p>
 </dd></dl>
 
@@ -2404,6 +2523,12 @@ Default is ‘winter’.</p>
 <dt class="sig sig-object py" id="ipyniivue.MeshLayer.path">
 <span class="sig-name descname"><span class="pre">path</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.path" title="Link to this definition">¶</a></dt>
 <dd><p>A trait type representing a Union type.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.MeshLayer.url">
+<span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.url" title="Link to this definition">¶</a></dt>
+<dd><p>A trait for unicode strings.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2554,15 +2679,23 @@ Default is ‘winter’.</p>
 <li><a class="reference internal" href="#ipyniivue.Volume.colormap_invert"><code class="docutils literal notranslate"><span class="pre">Volume.colormap_invert</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.colormap_label"><code class="docutils literal notranslate"><span class="pre">Volume.colormap_label</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.colormap_negative"><code class="docutils literal notranslate"><span class="pre">Volume.colormap_negative</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.data"><code class="docutils literal notranslate"><span class="pre">Volume.data</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.dims"><code class="docutils literal notranslate"><span class="pre">Volume.dims</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.frame_4d"><code class="docutils literal notranslate"><span class="pre">Volume.frame_4d</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.get_state"><code class="docutils literal notranslate"><span class="pre">Volume.get_state()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.hdr"><code class="docutils literal notranslate"><span class="pre">Volume.hdr</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.id"><code class="docutils literal notranslate"><span class="pre">Volume.id</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.img"><code class="docutils literal notranslate"><span class="pre">Volume.img</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.n_frame_4d"><code class="docutils literal notranslate"><span class="pre">Volume.n_frame_4d</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.name"><code class="docutils literal notranslate"><span class="pre">Volume.name</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.opacity"><code class="docutils literal notranslate"><span class="pre">Volume.opacity</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.paired_img_data"><code class="docutils literal notranslate"><span class="pre">Volume.paired_img_data</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.paired_img_path"><code class="docutils literal notranslate"><span class="pre">Volume.paired_img_path</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.paired_img_url"><code class="docutils literal notranslate"><span class="pre">Volume.paired_img_url</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.path"><code class="docutils literal notranslate"><span class="pre">Volume.path</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.set_colormap_label"><code class="docutils literal notranslate"><span class="pre">Volume.set_colormap_label()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.set_colormap_label_from_url"><code class="docutils literal notranslate"><span class="pre">Volume.set_colormap_label_from_url()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.url"><code class="docutils literal notranslate"><span class="pre">Volume.url</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ipyniivue.Mesh"><code class="docutils literal notranslate"><span class="pre">Mesh</span></code></a><ul>
@@ -2570,18 +2703,23 @@ Default is ‘winter’.</p>
 <li><a class="reference internal" href="#ipyniivue.Mesh.colorbar_visible"><code class="docutils literal notranslate"><span class="pre">Mesh.colorbar_visible</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.colormap"><code class="docutils literal notranslate"><span class="pre">Mesh.colormap</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.colormap_invert"><code class="docutils literal notranslate"><span class="pre">Mesh.colormap_invert</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Mesh.data"><code class="docutils literal notranslate"><span class="pre">Mesh.data</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.fiber_color"><code class="docutils literal notranslate"><span class="pre">Mesh.fiber_color</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.fiber_decimation_stride"><code class="docutils literal notranslate"><span class="pre">Mesh.fiber_decimation_stride</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.fiber_dither"><code class="docutils literal notranslate"><span class="pre">Mesh.fiber_dither</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.fiber_length"><code class="docutils literal notranslate"><span class="pre">Mesh.fiber_length</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.fiber_radius"><code class="docutils literal notranslate"><span class="pre">Mesh.fiber_radius</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Mesh.get_state"><code class="docutils literal notranslate"><span class="pre">Mesh.get_state()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.id"><code class="docutils literal notranslate"><span class="pre">Mesh.id</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.layers"><code class="docutils literal notranslate"><span class="pre">Mesh.layers</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.mesh_shader_index"><code class="docutils literal notranslate"><span class="pre">Mesh.mesh_shader_index</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.name"><code class="docutils literal notranslate"><span class="pre">Mesh.name</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.opacity"><code class="docutils literal notranslate"><span class="pre">Mesh.opacity</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.path"><code class="docutils literal notranslate"><span class="pre">Mesh.path</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Mesh.pts"><code class="docutils literal notranslate"><span class="pre">Mesh.pts</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.rgba255"><code class="docutils literal notranslate"><span class="pre">Mesh.rgba255</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Mesh.tris"><code class="docutils literal notranslate"><span class="pre">Mesh.tris</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Mesh.url"><code class="docutils literal notranslate"><span class="pre">Mesh.url</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Mesh.visible"><code class="docutils literal notranslate"><span class="pre">Mesh.visible</span></code></a></li>
 </ul>
 </li>
@@ -2593,11 +2731,14 @@ Default is ‘winter’.</p>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.colormap"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.colormap_invert"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap_invert</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.colormap_negative"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap_negative</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.MeshLayer.data"><code class="docutils literal notranslate"><span class="pre">MeshLayer.data</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.frame_4d"><code class="docutils literal notranslate"><span class="pre">MeshLayer.frame_4d</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.id"><code class="docutils literal notranslate"><span class="pre">MeshLayer.id</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.MeshLayer.name"><code class="docutils literal notranslate"><span class="pre">MeshLayer.name</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.opacity"><code class="docutils literal notranslate"><span class="pre">MeshLayer.opacity</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.outline_border"><code class="docutils literal notranslate"><span class="pre">MeshLayer.outline_border</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.path"><code class="docutils literal notranslate"><span class="pre">MeshLayer.path</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.MeshLayer.url"><code class="docutils literal notranslate"><span class="pre">MeshLayer.url</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.use_negative_cmap"><code class="docutils literal notranslate"><span class="pre">MeshLayer.use_negative_cmap</span></code></a></li>
 </ul>
 </li>
@@ -2615,6 +2756,6 @@ Default is ‘winter’.</p>
 </div><script src="_static/documentation_options.js?v=20623aea"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
     </body>
 </html>

@@ -4,31 +4,31 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
         <title>ipyniivue.widget - IPyNiiVue 2.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
 
 
 <style>
   body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
   
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
   
       }
     }
@@ -188,7 +188,6 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  
   <span class="sidebar-brand-text">IPyNiiVue 2.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
@@ -255,45 +254,172 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlparse</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">anywidget</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">ipywidgets</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">traitlets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">CallbackDispatcher</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.config_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">SliceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.serializers</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">deserialize_colormap_label</span><span class="p">,</span>
+    <span class="n">deserialize_graph</span><span class="p">,</span>
+    <span class="n">deserialize_hdr</span><span class="p">,</span>
+    <span class="n">deserialize_options</span><span class="p">,</span>
+    <span class="n">serialize_colormap_label</span><span class="p">,</span>
+    <span class="n">serialize_file</span><span class="p">,</span>
+    <span class="n">serialize_graph</span><span class="p">,</span>
+    <span class="n">serialize_hdr</span><span class="p">,</span>
+    <span class="n">serialize_ndarray</span><span class="p">,</span>
+    <span class="n">serialize_options</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.traits</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">LUT</span><span class="p">,</span>
     <span class="n">ColorMap</span><span class="p">,</span>
     <span class="n">Graph</span><span class="p">,</span>
+    <span class="n">NIFTI1Hdr</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">deserialize_colormap_label</span><span class="p">,</span>
-    <span class="n">deserialize_graph</span><span class="p">,</span>
-    <span class="n">deserialize_options</span><span class="p">,</span>
-    <span class="n">file_serializer</span><span class="p">,</span>
+    <span class="n">ChunkedDataHandler</span><span class="p">,</span>
     <span class="n">make_draw_lut</span><span class="p">,</span>
     <span class="n">make_label_lut</span><span class="p">,</span>
-    <span class="n">serialize_colormap_label</span><span class="p">,</span>
-    <span class="n">serialize_graph</span><span class="p">,</span>
-    <span class="n">serialize_options</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NiiVue&quot;</span><span class="p">]</span>
 
 
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseAnyWidget</span><span class="p">(</span><span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base widget class that overrides set_state to handle chunked data.&quot;&quot;&quot;</span>
+
+    <span class="n">_data_handlers</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_event_handlers</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_binary_change_handlers</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Override set_state to accept chunked-state attributes.&quot;&quot;&quot;</span>
+        <span class="n">state_copy</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">keys_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_value</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">attr_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;chunk_&quot;</span><span class="p">):</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">data_property</span><span class="p">,</span> <span class="n">chunk_index</span> <span class="o">=</span> <span class="n">attr_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+                <span class="n">chunk_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">chunk_index</span><span class="p">)</span>
+                <span class="n">chunk_info</span> <span class="o">=</span> <span class="n">attr_value</span>
+                <span class="n">chunk_index_received</span> <span class="o">=</span> <span class="n">chunk_info</span><span class="p">[</span><span class="s2">&quot;chunk_index&quot;</span><span class="p">]</span>
+                <span class="n">total_chunks</span> <span class="o">=</span> <span class="n">chunk_info</span><span class="p">[</span><span class="s2">&quot;total_chunks&quot;</span><span class="p">]</span>
+                <span class="n">data_type</span> <span class="o">=</span> <span class="n">chunk_info</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span>
+                <span class="n">chunk_data</span> <span class="o">=</span> <span class="n">chunk_info</span><span class="p">[</span><span class="s2">&quot;chunk&quot;</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chunk_data</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">):</span>
+                    <span class="n">chunk_data</span> <span class="o">=</span> <span class="n">chunk_data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chunk_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">chunk_data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">chunk_data</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported chunk data type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">chunk_data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">data_property</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_handlers</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_data_handlers</span><span class="p">[</span><span class="n">data_property</span><span class="p">]</span> <span class="o">=</span> <span class="n">ChunkedDataHandler</span><span class="p">(</span>
+                        <span class="n">total_chunks</span><span class="p">,</span> <span class="n">data_type</span>
+                    <span class="p">)</span>
+
+                <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_handlers</span><span class="p">[</span><span class="n">data_property</span><span class="p">]</span>
+                <span class="n">handler</span><span class="o">.</span><span class="n">add_chunk</span><span class="p">(</span><span class="n">chunk_index_received</span><span class="p">,</span> <span class="n">chunk_data</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">handler</span><span class="o">.</span><span class="n">is_complete</span><span class="p">():</span>
+                    <span class="n">numpy_array</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">get_numpy_array</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set_trait</span><span class="p">(</span><span class="n">data_property</span><span class="p">,</span> <span class="n">numpy_array</span><span class="p">)</span>
+                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_handlers</span><span class="p">[</span><span class="n">data_property</span><span class="p">]</span>
+
+                <span class="n">keys_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr_name</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys_to_remove</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">state_copy</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">state_copy</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_binary_change_handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">trait_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_binary_traits</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_binary_trait_change</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">trait_name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_binary_traits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handle_binary_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change</span><span class="p">):</span>
+        <span class="n">trait_name</span> <span class="o">=</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">old_value</span> <span class="o">=</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;old&quot;</span><span class="p">]</span>
+        <span class="n">new_value</span> <span class="o">=</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;new&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">old_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">old_value</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">new_value</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;buffer_change&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;attr&quot;</span><span class="p">:</span> <span class="n">trait_name</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_value</span><span class="o">.</span><span class="n">dtype</span><span class="p">)},</span>
+                    <span class="p">},</span>
+                    <span class="n">buffers</span><span class="o">=</span><span class="p">[</span><span class="n">new_value</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()],</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">old_array</span> <span class="o">=</span> <span class="n">old_value</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+                <span class="n">new_array</span> <span class="o">=</span> <span class="n">new_value</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+                <span class="n">diff_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">new_array</span> <span class="o">!=</span> <span class="n">old_array</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span>
+
+                <span class="n">diff_values</span> <span class="o">=</span> <span class="n">new_array</span><span class="p">[</span><span class="n">diff_indices</span><span class="p">]</span>
+
+                <span class="n">indices_bytes</span> <span class="o">=</span> <span class="n">diff_indices</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+                <span class="n">values_bytes</span> <span class="o">=</span> <span class="n">diff_values</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;buffer_update&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;attr&quot;</span><span class="p">:</span> <span class="n">trait_name</span><span class="p">,</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_value</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
+                            <span class="s2">&quot;indices_type&quot;</span><span class="p">:</span> <span class="s2">&quot;uint32&quot;</span><span class="p">,</span>
+                        <span class="p">},</span>
+                    <span class="p">},</span>
+                    <span class="n">buffers</span><span class="o">=</span><span class="p">[</span><span class="n">indices_bytes</span><span class="p">,</span> <span class="n">values_bytes</span><span class="p">],</span>
+                <span class="p">)</span>
+
+        <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">trait_name</span><span class="si">}</span><span class="s2">_changed&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">handler</span><span class="p">:</span>
+            <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_trait_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">event_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">trait_name</span><span class="si">}</span><span class="s2">_changed&quot;</span>
+        <span class="k">if</span> <span class="n">event_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">CallbackDispatcher</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span><span class="o">.</span><span class="n">register_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="MeshLayer">
 <a class="viewcode-back" href="../../api.html#ipyniivue.MeshLayer">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">MeshLayer</span><span class="p">(</span><span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeshLayer</span><span class="p">(</span><span class="n">BaseAnyWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a layer within a Mesh model.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    path : str or pathlib.Path</span>
-<span class="sd">        Path to the layer data file. Cannot be modified once set.</span>
+<span class="sd">    path : str or pathlib.Path, optional</span>
+<span class="sd">        Path to the volume data file. Cannot be modified once set.</span>
+<span class="sd">    url : str, optional</span>
+<span class="sd">        URL to the volume data.</span>
+<span class="sd">    data : bytes, optional</span>
+<span class="sd">        Bytes data of the volume.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name of the mesh.</span>
 <span class="sd">    opacity : float, optional</span>
 <span class="sd">        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 0.5.</span>
 <span class="sd">    colormap : str, optional</span>
@@ -311,10 +437,14 @@
 <span class="sd">        Outline border thickness. Default is 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
-        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span>
-    <span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()],</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_file</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bytes</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
     <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">colormap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;warm&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">colormap_negative</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;winter&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -333,6 +463,8 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">include_keys</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;path&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">,</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
             <span class="s2">&quot;opacity&quot;</span><span class="p">,</span>
             <span class="s2">&quot;colormap&quot;</span><span class="p">,</span>
@@ -343,37 +475,57 @@
             <span class="s2">&quot;outline_border&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">filtered_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">include_keys</span><span class="p">}</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">filtered_kwargs</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">filtered_kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Validate that one and only one of path, url, data is provided</span>
+        <span class="n">provided</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide only one of &#39;path&#39;, &#39;url&#39;, or &#39;data&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Set name if not provided</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="s2">&quot;&lt;fromfrontend&gt;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide &#39;name&#39; when &#39;data&#39; is provided.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot determine the name of the volume.&quot;</span><span class="p">)</span></div>
 
 
-    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_no_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="n">trait_name</span> <span class="o">=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;trait&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
         <span class="k">if</span> <span class="p">(</span>
-            <span class="s2">&quot;path&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+            <span class="n">trait_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="n">trait_name</span><span class="p">]</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="n">trait_name</span><span class="p">]</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
         <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify path once set.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
-
-    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify id once set.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot modify &#39;</span><span class="si">{</span><span class="n">trait_name</span><span class="si">}</span><span class="s2">&#39; once set.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
 
 
 
 <div class="viewcode-block" id="Mesh">
 <a class="viewcode-back" href="../../api.html#ipyniivue.Mesh">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Mesh</span><span class="p">(</span><span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mesh</span><span class="p">(</span><span class="n">BaseAnyWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a Mesh model.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    path : str or pathlib.Path</span>
-<span class="sd">        Path to the mesh file. Cannot be modified once set.</span>
+<span class="sd">    path : str or pathlib.Path, optional</span>
+<span class="sd">        Path to the volume data file. Cannot be modified once set.</span>
+<span class="sd">    url : str, optional</span>
+<span class="sd">        URL to the volume data.</span>
+<span class="sd">    data : bytes, optional</span>
+<span class="sd">        Bytes data of the volume.</span>
 <span class="sd">    name : str, optional</span>
 <span class="sd">        Name of the mesh.</span>
 <span class="sd">    rgba255 : list of int, optional</span>
@@ -382,14 +534,17 @@
 <span class="sd">        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.</span>
 <span class="sd">    visible : bool, optional</span>
 <span class="sd">        Mesh visibility. Default is True.</span>
-<span class="sd">    layers : list of dict, optional</span>
-<span class="sd">        List of layer data dictionaries.</span>
+<span class="sd">    layers : list of dict or MeshLayer objects, optional</span>
+<span class="sd">        List of layer data dictionaries or MeshLayer objects.</span>
 <span class="sd">        See :class:`MeshLayer` for attribute options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
-        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span>
-    <span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()],</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_file</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bytes</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
     <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">rgba255</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">([</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -410,69 +565,141 @@
     <span class="n">fiber_decimation_stride</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">colormap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
+    <span class="c1"># Set after bidirectional comms with frontend</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">tris</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Mesh.__init__">
 <a class="viewcode-back" href="../../api.html#ipyniivue.Mesh.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">include_keys</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;rgba255&quot;</span><span class="p">,</span> <span class="s2">&quot;opacity&quot;</span><span class="p">,</span> <span class="s2">&quot;visible&quot;</span><span class="p">}</span>
+        <span class="n">include_keys</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;path&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rgba255&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;opacity&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;visible&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="n">layers_data</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;layers&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="n">filtered_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">include_keys</span><span class="p">}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">filtered_kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">MeshLayer</span><span class="p">(</span><span class="o">**</span><span class="n">layer_data</span><span class="p">)</span> <span class="k">for</span> <span class="n">layer_data</span> <span class="ow">in</span> <span class="n">layers_data</span><span class="p">]</span></div>
+
+        <span class="c1"># Validate that one and only one of path, url, data is provided</span>
+        <span class="n">provided</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide only one of &#39;path&#39;, &#39;url&#39;, or &#39;data&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Set name if not provided</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide &#39;name&#39; when &#39;data&#39; is provided.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot determine the name of the volume.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># accept either dicts or MeshLayer objs</span>
+        <span class="n">layers_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">MeshLayer</span><span class="p">):</span>
+                <span class="n">layers_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">layers_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MeshLayer</span><span class="p">(</span><span class="o">**</span><span class="n">layer</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">layers_list</span></div>
 
 
-    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+<div class="viewcode-block" id="Mesh.get_state">
+<a class="viewcode-back" href="../../api.html#ipyniivue.Mesh.get_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Exclude certain attributes from state on save.&quot;&quot;&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">drop_defaults</span><span class="o">=</span><span class="n">drop_defaults</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="s2">&quot;&lt;fromfrontend&gt;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;pts&quot;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;pts&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;tris&quot;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;tris&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">state</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_binary_traits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;pts&quot;</span><span class="p">,</span> <span class="s2">&quot;tris&quot;</span><span class="p">]</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_no_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="n">trait_name</span> <span class="o">=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;trait&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
         <span class="k">if</span> <span class="p">(</span>
-            <span class="s2">&quot;path&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+            <span class="n">trait_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="n">trait_name</span><span class="p">]</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="n">trait_name</span><span class="p">]</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
         <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify path once set.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
-
-    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify id once set.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot modify &#39;</span><span class="si">{</span><span class="n">trait_name</span><span class="si">}</span><span class="s2">&#39; once set.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
 
 
 
 <div class="viewcode-block" id="Volume">
 <a class="viewcode-back" href="../../api.html#ipyniivue.Volume">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Volume</span><span class="p">(</span><span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Volume</span><span class="p">(</span><span class="n">BaseAnyWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a Volume model.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    path : str or pathlib.Path</span>
-<span class="sd">        Path to the volume data file; cannot be modified once set.</span>
+<span class="sd">    path : str or pathlib.Path, optional</span>
+<span class="sd">        Path to the volume data file. Cannot be modified once set.</span>
+<span class="sd">    url : str, optional</span>
+<span class="sd">        URL to the volume data.</span>
+<span class="sd">    data : bytes, optional</span>
+<span class="sd">        Bytes data of the volume.</span>
 <span class="sd">    paired_img_path : str or pathlib.Path, optional</span>
-<span class="sd">        Path to the paired img data.</span>
+<span class="sd">        Path to the paired image data file.</span>
+<span class="sd">    paired_img_url : str, optional</span>
+<span class="sd">        URL to the paired image data.</span>
+<span class="sd">    paired_img_data : bytes, optional</span>
+<span class="sd">        Bytes data of the paired image.</span>
 <span class="sd">    name : str, optional</span>
-<span class="sd">        Name of the volume.</span>
+<span class="sd">        Name of the volume. If not provided, it will be inferred from the source.</span>
 <span class="sd">    opacity : float, optional</span>
-<span class="sd">        Opacity between 0.0 (transparent) and 1.0 (opaque). Default is 1.0.</span>
+<span class="sd">        Opacity between 0.0 and 1.0 (default is 1.0).</span>
 <span class="sd">    colormap : str, optional</span>
-<span class="sd">        Colormap name for rendering. Default is &#39;&#39; (usually defaults to &#39;gray&#39;).</span>
+<span class="sd">        Colormap name (default is &#39;&#39;).</span>
 <span class="sd">    colorbar_visible : bool, optional</span>
-<span class="sd">        Show colorbar associated with the colormap. Default is True.</span>
+<span class="sd">        Show colorbar (default is True).</span>
 <span class="sd">    cal_min : float or None, optional</span>
 <span class="sd">        Minimum intensity value for brightness/contrast mapping.</span>
 <span class="sd">    cal_max : float or None, optional</span>
 <span class="sd">        Maximum intensity value for brightness/contrast mapping.</span>
 <span class="sd">    frame_4d : int, optional</span>
-<span class="sd">        Frame index for 4D volume data. Default is 0.</span>
+<span class="sd">        Frame index for 4D volume data (default is 0).</span>
+<span class="sd">    colormap_negative : str, optional</span>
+<span class="sd">        Colormap for negative values (default is &#39;&#39;).</span>
+<span class="sd">    colormap_label : LUT, optional</span>
+<span class="sd">        Colormap label data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
-        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span>
-    <span class="p">)</span>
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Input-only traits (not accessible after initialization)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()],</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_file</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bytes</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">paired_img_path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">(</span>
         <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()],</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">file_serializer</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_file</span><span class="p">)</span>
+    <span class="n">paired_img_url</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">paired_img_data</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bytes</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Main traits</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">opacity</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">colormap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -487,30 +714,121 @@
         <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_colormap_label</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="c1"># other properties that aren&#39;t in init</span>
+    <span class="c1"># Other properties</span>
     <span class="n">colormap_invert</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">n_frame_4d</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">n_frame_4d</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>  <span class="c1"># Read-only after initialization</span>
+
+    <span class="c1"># Set after bidirectional comms with frontend</span>
+    <span class="n">hdr</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">NIFTI1Hdr</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_hdr</span><span class="p">,</span> <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_hdr</span>
+    <span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_ndarray</span>
+    <span class="p">)</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Volume.__init__">
 <a class="viewcode-back" href="../../api.html#ipyniivue.Volume.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">include_keys</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;path&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">,</span>
             <span class="s2">&quot;paired_img_path&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;paired_img_url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;paired_img_data&quot;</span><span class="p">,</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
             <span class="s2">&quot;name&quot;</span><span class="p">,</span>
             <span class="s2">&quot;opacity&quot;</span><span class="p">,</span>
             <span class="s2">&quot;colormap&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;colormap_visible&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;colorbar_visible&quot;</span><span class="p">,</span>
             <span class="s2">&quot;cal_min&quot;</span><span class="p">,</span>
             <span class="s2">&quot;cal_max&quot;</span><span class="p">,</span>
             <span class="s2">&quot;frame_4d&quot;</span><span class="p">,</span>
             <span class="s2">&quot;colormap_negative&quot;</span><span class="p">,</span>
             <span class="s2">&quot;colormap_label&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;colormap_invert&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">filtered_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">include_keys</span><span class="p">}</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">filtered_kwargs</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">filtered_kwargs</span><span class="p">)</span>
 
+        <span class="c1"># Validate that one and only one of path, url, data is provided</span>
+        <span class="n">provided</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide only one of &#39;path&#39;, &#39;url&#39;, or &#39;data&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Validate paired image data</span>
+        <span class="n">paired_provided</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">k</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;paired_img_path&quot;</span><span class="p">,</span> <span class="s2">&quot;paired_img_url&quot;</span><span class="p">,</span> <span class="s2">&quot;paired_img_data&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paired_provided</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Up to one of &#39;paired_img_path&#39;, &quot;</span>
+                <span class="s2">&quot;&#39;paired_img_url&#39;, or &#39;paired_img_data&#39; can be provided.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Set name if not provided</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide &#39;name&#39; when &#39;data&#39; is provided.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot determine the name of the volume.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># on-event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="Volume.get_state">
+<a class="viewcode-back" href="../../api.html#ipyniivue.Volume.get_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Exclude certain attributes from state on save.&quot;&quot;&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">drop_defaults</span><span class="o">=</span><span class="n">drop_defaults</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="s2">&quot;&lt;fromfrontend&gt;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;img&quot;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">state</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_binary_traits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">]</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;paired_img_path&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;paired_img_url&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;paired_img_data&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_no_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="n">trait_name</span> <span class="o">=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;trait&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">trait_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="n">trait_name</span><span class="p">]</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="n">trait_name</span><span class="p">]</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot modify &#39;</span><span class="si">{</span><span class="n">trait_name</span><span class="si">}</span><span class="s2">&#39; once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;n_frame_4d&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_nframe4d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="c1"># separate since n_frame_4d can be 0</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;n_frame_4d&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frame_4d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frame_4d</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify &#39;n_frame_4d&#39; once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_notify_colormap_label_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">notify_change</span><span class="p">(</span>
@@ -579,39 +897,13 @@
         <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="n">cmap</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_colormap_label</span><span class="p">(</span><span class="n">cmap</span><span class="p">)</span></div>
-
-
-    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="s2">&quot;path&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify path once set.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
-
-    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify id once set.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
-
-    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;n_frame_4d&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_nframe4d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="s2">&quot;n_frame_4d&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frame_4d</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frame_4d</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot modify n_frame_4d once set.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
+</div>
 
 
 
 <div class="viewcode-block" id="NiiVue">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">NiiVue</span><span class="p">(</span><span class="n">anywidget</span><span class="o">.</span><span class="n">AnyWidget</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NiiVue</span><span class="p">(</span><span class="n">BaseAnyWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a NiiVue widget instance.</span>
 
@@ -631,6 +923,8 @@
     <span class="n">meshes</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">Mesh</span><span class="p">),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">ipywidgets</span><span class="o">.</span><span class="n">widget_serialization</span>
     <span class="p">)</span>
+
+    <span class="n">_canvas_attached</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># other props</span>
     <span class="n">background_masks_overlays</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -746,16 +1040,42 @@
             <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;frame_index&quot;</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="n">event</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;image_loaded&quot;</span><span class="p">,</span> <span class="s2">&quot;intensity_change&quot;</span><span class="p">}:</span>
+        <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;intensity_change&quot;</span><span class="p">:</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">handler</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;image_loaded&quot;</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">volume</span><span class="o">.</span><span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">volume</span><span class="o">.</span><span class="n">hdr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">handler</span><span class="p">(</span><span class="n">volume</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="k">def</span><span class="w"> </span><span class="nf">check_ready</span><span class="p">(</span><span class="n">change</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">volume</span><span class="o">.</span><span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">volume</span><span class="o">.</span><span class="n">hdr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">volume</span><span class="o">.</span><span class="n">unobserve</span><span class="p">(</span><span class="n">check_ready</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">,</span> <span class="s2">&quot;hdr&quot;</span><span class="p">])</span>
+                            <span class="n">handler</span><span class="p">(</span><span class="n">volume</span><span class="p">)</span>
+
+                    <span class="n">volume</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">check_ready</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">,</span> <span class="s2">&quot;hdr&quot;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">handler</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;mesh_loaded&quot;</span><span class="p">:</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_index_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="n">mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">mesh</span><span class="o">.</span><span class="n">pts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tris</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">handler</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="k">def</span><span class="w"> </span><span class="nf">check_ready</span><span class="p">(</span><span class="n">change</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">mesh</span><span class="o">.</span><span class="n">pts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tris</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">mesh</span><span class="o">.</span><span class="n">unobserve</span><span class="p">(</span><span class="n">check_ready</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pts&quot;</span><span class="p">,</span> <span class="s2">&quot;tris&quot;</span><span class="p">])</span>
+                            <span class="n">handler</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+
+                    <span class="n">mesh</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">check_ready</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pts&quot;</span><span class="p">,</span> <span class="s2">&quot;tris&quot;</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">handler</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;mesh_added_from_url&quot;</span><span class="p">:</span>
@@ -766,6 +1086,18 @@
             <span class="n">handler</span><span class="p">(</span><span class="n">image_options</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;volume&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">handler</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handle_image_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume_id</span><span class="p">):</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image_loaded&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">handler</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># ensure that volume actually exists in parent</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">volume_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">handler</span><span class="p">({</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">volume_id</span><span class="p">})</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_volume_from_frontend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume_data</span><span class="p">):</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">volume_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -846,7 +1178,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        volumes : list</span>
-<span class="sd">            A list of dictionaries containing the volume information.</span>
+<span class="sd">            A list of dictionaries or Volume objects.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -860,20 +1192,25 @@
 <span class="sd">            nv.load_volumes([{&quot;path&quot;: &quot;mni152.nii.gz&quot;}])</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">volumes</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="o">=</span> <span class="n">volumes</span></div>
+        <span class="n">volume_objects</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">volumes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>
+                <span class="n">volume_objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">volume_objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="o">=</span> <span class="n">volume_objects</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.add_volume">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.add_volume">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">add_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Volume</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a new volume to the widget.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        volume : dict</span>
-<span class="sd">            A dictionary containing the volume information.</span>
+<span class="sd">        volume : dict or Volume object</span>
+<span class="sd">            The volume information.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -887,7 +1224,13 @@
 <span class="sd">            nv.add_volume({&quot;path&quot;: &quot;mni152.nii.gz&quot;})</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">,</span> <span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">volume</span><span class="p">)]</span></div>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>
+            <span class="n">new_volume</span> <span class="o">=</span> <span class="n">volume</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">new_volume</span> <span class="o">=</span> <span class="n">Volume</span><span class="p">(</span><span class="o">**</span><span class="n">volume</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">,</span> <span class="n">new_volume</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.load_meshes">
@@ -913,13 +1256,18 @@
 <span class="sd">            nv.load_meshes([{&quot;path&quot;: &quot;BrainMesh_ICBM152.lh.mz3&quot;}])</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Mesh</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">meshes</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span> <span class="o">=</span> <span class="n">meshes</span></div>
+        <span class="n">mesh_objects</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">meshes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Mesh</span><span class="p">):</span>
+                <span class="n">mesh_objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">mesh_objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Mesh</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span> <span class="o">=</span> <span class="n">mesh_objects</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.add_mesh">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.add_mesh">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">add_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh</span><span class="p">:</span> <span class="n">Mesh</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Volume</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a single mesh to the widget.</span>
 
@@ -940,7 +1288,13 @@
 <span class="sd">            nv.add_mesh({&quot;path&quot;: &quot;BrainMesh_ICBM152.lh.mz3&quot;})</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">,</span> <span class="n">mesh</span><span class="p">]</span></div>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">Mesh</span><span class="p">):</span>
+            <span class="n">new_mesh</span> <span class="o">=</span> <span class="n">mesh</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">new_mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="o">**</span><span class="n">mesh</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">,</span> <span class="n">new_mesh</span><span class="p">]</span></div>
 
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1583,6 +1937,10 @@
 
 <span class="sd">            nv.set_volume_render_illumination(0.6)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canvas_attached</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Canvas is not attached. Render this widget to attach to a canvas.&quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gradient_amount</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;gradient_amount must be a number.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">gradient_amount</span><span class="p">):</span>
@@ -1960,7 +2318,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Cannot load drawing: &quot;</span>
                 <span class="s2">&quot;The primary volume has not been initialized. &quot;</span>
-                <span class="s2">&quot;Please render the NiiVue object.&quot;</span>
+                <span class="s2">&quot;Please render this NiiVue widget.&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="n">file_bytes</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">()</span>
@@ -2689,6 +3047,6 @@
 </div><script src="../../_static/documentation_options.js?v=20623aea"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     </body>
 </html>
