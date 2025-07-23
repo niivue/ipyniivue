@@ -286,6 +286,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 			event: "image_loaded",
 			data: {
 				id: volume.id,
+				dims: volume.dims || null,
 			},
 		});
 	};
