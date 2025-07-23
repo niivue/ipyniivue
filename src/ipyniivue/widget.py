@@ -774,6 +774,17 @@ class NiiVue(BaseAnyWidget):
             idx = self.get_volume_index_by_id(data["id"])
             if idx != -1:
                 volume = self.volumes[idx]
+
+                # set other traits available on-loaded
+                for key, value in data.items():
+                    if (
+                        key != "id"
+                        and not key.startswith("_")
+                        and key in volume.trait_names()
+                    ):
+                        volume.set_trait(key, value)
+
+                # only fire loaded event once certain traits are defined
                 if volume.img is not None and volume.hdr is not None:
                     handler(volume)
                 else:
@@ -790,6 +801,17 @@ class NiiVue(BaseAnyWidget):
             idx = self.get_mesh_index_by_id(data["id"])
             if idx != -1:
                 mesh = self.meshes[idx]
+
+                # set other traits available on-loaded
+                for key, value in data.items():
+                    if (
+                        key != "id"
+                        and not key.startswith("_")
+                        and key in mesh.trait_names()
+                    ):
+                        mesh.set_trait(key, value)
+
+                # only fire loaded event once certain traits are defined
                 if mesh.pts is not None and mesh.tris is not None:
                     handler(mesh)
                 else:

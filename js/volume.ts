@@ -247,9 +247,6 @@ async function create_volume(
 	if (volume.hdr !== null) {
 		vmodel.set("hdr", getNIFTIData(volume.hdr));
 	}
-	if (volume.dims) {
-		vmodel.set("dims", volume.dims);
-	}
 	vmodel.save_changes();
 	if (volume.img) {
 		const dataType = lib.getArrayType(volume.img);
