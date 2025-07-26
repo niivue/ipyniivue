@@ -1382,7 +1382,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">save_image</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;image.nii.gz&quot;</span><span class="p">,</span>
-        <span class="n">is_save_drawing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">is_save_drawing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">volume_by_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2353,6 +2353,19 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;load_drawing_from_url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">path</span><span class="p">,</span> <span class="n">is_binarize</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_multiplanar_pad_pixels">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_multiplanar_pad_pixels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_multiplanar_pad_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixels</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert a gap between slices of a mutliplanar view.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pixels : int</span>
+<span class="sd">            spacing between tiles of multiplanar view</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">multiplanar_pad_pixels</span> <span class="o">=</span> <span class="n">pixels</span></div>
 
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
