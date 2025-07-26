@@ -1077,7 +1077,7 @@ class NiiVue(BaseAnyWidget):
     def save_image(
         self,
         file_name: str = "image.nii.gz",
-        is_save_drawing: bool = True,
+        is_save_drawing: bool = False,
         volume_by_index: int = 0,
     ):
         """
@@ -1949,6 +1949,16 @@ class NiiVue(BaseAnyWidget):
             )
         else:
             self.send({"type": "load_drawing_from_url", "data": [path, is_binarize]})
+
+    def set_multiplanar_pad_pixels(self, pixels: int):
+        """Insert a gap between slices of a mutliplanar view.
+
+        Parameters
+        ----------
+        pixels : int
+            spacing between tiles of multiplanar view
+        """
+        self.opts.multiplanar_pad_pixels = pixels
 
     """
     Custom event callbacks
