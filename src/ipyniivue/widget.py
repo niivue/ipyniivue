@@ -629,6 +629,16 @@ class Volume(BaseAnyWidget):
         cmap = response.json()
         self.set_colormap_label(cmap)
 
+    def save_to_disk(self, filename="image.nii"):
+        """Generate the NIfTI file data and triggers a browser download.
+
+        Parameters
+        ----------
+        filename : str, optional
+            The filename (default: "image.nii").
+        """
+        self.send({"type": "save_to_disk", "data": [filename]})
+
 
 class NiiVue(BaseAnyWidget):
     """

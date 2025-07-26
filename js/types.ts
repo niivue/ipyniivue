@@ -184,6 +184,8 @@ type RemoveHazeData = [level: number, volIndex: number];
 
 type LoadDrawingFromUrlData = [url: string, isBinarize: boolean];
 
+type SaveToDiskData = [fileName: string];
+
 export type CustomMessagePayload =
 	| { type: "save_document"; data: SaveDocumentData }
 	| { type: "save_html"; data: SaveHTMLData }
@@ -211,6 +213,11 @@ export type CustomMessagePayload =
 	| { type: "draw_undo"; data: [] }
 	| { type: "close_drawing"; data: [] }
 	| { type: "load_drawing_from_url"; data: LoadDrawingFromUrlData };
+
+export type VolumeCustomMessage = {
+	type: "save_to_disk";
+	data: SaveToDiskData;
+};
 
 export type TypedBufferPayload =
 	| {

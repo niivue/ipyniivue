@@ -1,6 +1,11 @@
 import * as niivue from "@niivue/niivue";
 import * as lib from "./lib.ts";
-import type { Model, TypedBufferPayload, VolumeModel } from "./types.ts";
+import type {
+	Model,
+	TypedBufferPayload,
+	VolumeModel,
+	VolumeCustomMessage,
+} from "./types.ts";
 
 import type { NIFTI1, NIFTI2 } from "nifti-reader-js";
 
@@ -108,14 +113,26 @@ function setup_volume_property_listeners(
 
 	// custom msgs
 	function customMessageHandler(
-		payload: TypedBufferPayload,
+		payload: TypedBufferPayload | VolumeCustomMessage,
 		buffers: DataView[],
 	) {
-		const handled = lib.handleBufferMsg(volume, payload, buffers, () =>
-			nv.updateGLVolume(),
+		const handled = lib.handleBufferMsg(
+			volume,
+			payload as TypedBufferPayload,
+			buffers,
+			() => nv.updateGLVolume(),
 		);
 		if (handled) {
 			return;
+		}
+
+		const { type, data } = payload;
+		switch (type) {
+			case "save_to_disk": {
+				const [fileName] = data;
+				volume.saveToDisk(fileName);
+				break;
+			}
 		}
 	}
 
@@ -244,6 +261,12 @@ async function create_volume(
 	vmodel.set("id", volume.id);
 	vmodel.set("n_frame_4d", volume.nFrame4D ?? null);
 	vmodel.set("colormap", volume.colormap);
+	if (typeof volume.cal_min !== "undefined") {
+		vmodel.set("cal_min", volume.cal_min);
+	}
+	if (typeof volume.cal_max !== "undefined") {
+		vmodel.set("cal_max", volume.cal_max);
+	}
 	if (volume.hdr !== null) {
 		vmodel.set("hdr", getNIFTIData(volume.hdr));
 	}

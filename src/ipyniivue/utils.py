@@ -205,3 +205,119 @@ class ChunkedDataHandler:
         numpy_array = np.frombuffer(data, dtype=np_dtype)
 
         return numpy_array
+
+
+def find_otsu(volume, mlevel=2):
+    """
+    Find Otsu thresholds for the given volume.
+
+    Parameters
+    ----------
+    volume : Volume
+        The volume object containing image data and calibration parameters.
+    mlevel : int, optional
+        The number of levels for multi-level Otsu thresholding (default is 2).
+
+    Returns
+    -------
+    list of float
+        The computed threshold values.
+    """
+    if mlevel < 2:
+        raise ValueError("mlevel must be at least 2 for thresholding.")
+    elif mlevel > 4:
+        raise NotImplementedError("mlevel greater than 4 is not supported.")
+
+    if volume is None:
+        return []
+
+    img = volume.img
+    nvox = img.size
+    if nvox < 1:
+        return []
+    nBin = 256
+    maxBin = nBin - 1  # bins from 0 to 255
+    h = np.zeros(nBin, dtype=int)  # histogram
+
+    # Build 1D histogram
+    mn = volume.cal_min
+    mx = volume.cal_max
+    if mx <= mn:
+        return []
+
+    scale2raw = (mx - mn) / nBin
+
+    def bin2raw(bin):
+        return bin * scale2raw + mn
+
+    scale2bin = (nBin - 1) / abs(mx - mn)
+    inter = volume.hdr.scl_inter
+    slope = volume.hdr.scl_slope
+
+    img_scaled = img * slope + inter
+    img_clipped = np.clip(img_scaled, mn, mx)
+    img_bins = np.round((img_clipped - mn) * scale2bin).astype(int)
+    for val in img_bins.flat:
+        h[val] += 1
+
+    P = np.zeros((nBin, nBin), dtype=float)
+    S = np.zeros((nBin, nBin), dtype=float)
+
+    # diagonal
+    for i in range(1, nBin):
+        P[i, i] = h[i]
+        S[i, i] = i * h[i]
+
+    # calculate first row (row 1)
+    for i in range(1, nBin - 1):
+        P[1, i + 1] = P[1, i] + h[i + 1]
+        S[1, i + 1] = S[1, i] + (i + 1) * h[i + 1]
+
+    # use row 1 to calculate others
+    for i in range(2, nBin):
+        for j in range(i + 1, nBin):
+            P[i, j] = P[1, j] - P[1, i - 1]
+            S[i, j] = S[1, j] - S[1, i - 1]
+
+    # calculate H[i][j]
+    for i in range(1, nBin):
+        for j in range(i + 1, nBin):
+            if P[i, j] != 0:
+                P[i, j] = (S[i, j] * S[i, j]) / P[i, j]
+
+    num_thresh = mlevel - 1
+    t = [0] * num_thresh
+    max_val = 0
+
+    if num_thresh == 1:
+        for i in range(0, nBin - 1):
+            v = P[0, i] + P[i + 1, maxBin]
+            if v > max_val:
+                t[0] = i
+                max_val = v
+    elif num_thresh == 2:
+        for i in range(0, nBin - 2):
+            for h_idx in range(i + 1, nBin - 1):
+                v = P[0, i] + P[i + 1, h_idx] + P[h_idx + 1, maxBin]
+                if v > max_val:
+                    t[0] = i
+                    t[1] = h_idx
+                    max_val = v
+    elif num_thresh == 3:
+        for i in range(0, nBin - 3):
+            for m in range(i + 1, nBin - 2):
+                for h_idx in range(m + 1, nBin - 1):
+                    v = P[0, i] + P[i + 1, m] + P[m + 1, h_idx] + P[h_idx + 1, maxBin]
+                    if v > max_val:
+                        t[0] = i
+                        t[1] = m
+                        t[2] = h_idx
+                        max_val = v
+
+    thresholds = [bin2raw(ti) for ti in t]
+
+    missing = 3 - len(thresholds)
+    if missing > 0:
+        thresholds.extend([float("inf")] * missing)
+
+    return thresholds
