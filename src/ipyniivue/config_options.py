@@ -21,7 +21,9 @@ class ConfigOptions(t.HasTraits):
 
     _parent = None
 
-    text_height = t.Float(0.06).tag(sync=False)
+    text_height = t.Float(-1.0).tag(sync=False)
+    font_size_scaling = t.Float(0.4).tag(sync=False)
+    font_min_px = t.Int(13).tag(sync=False)
     colorbar_height = t.Float(0.05).tag(sync=False)
     colorbar_width = t.Float(-1.0).tag(sync=False)
     show_colorbar_border = t.Bool(True).tag(sync=False)
@@ -49,6 +51,7 @@ class ConfigOptions(t.HasTraits):
     is_nearest_interpolation = t.Bool(False).tag(sync=False)
     is_resize_canvas = t.Bool(True).tag(sync=False)
     atlas_outline = t.Float(0.0).tag(sync=False)
+    atlas_active_index = t.Int(0).tag(sync=False)
     is_ruler = t.Bool(False).tag(sync=False)
     is_colorbar = t.Bool(False).tag(sync=False)
     is_orient_cube = t.Bool(False).tag(sync=False)
@@ -121,7 +124,7 @@ class ConfigOptions(t.HasTraits):
     measure_text_justify = t.Unicode("center").tag(sync=False)
     measure_text_color = t.Tuple((1.0, 0.0, 0.0, 1.0)).tag(sync=False)
     measure_line_color = t.Tuple((1.0, 0.0, 0.0, 1.0)).tag(sync=False)
-    measure_text_height = t.Float(0.03).tag(sync=False)
+    measure_text_height = t.Float(0.06).tag(sync=False)
     is_alpha_clip_dark = t.Bool(False).tag(sync=False)
     gradient_order = t.Int(1).tag(sync=False)
     gradient_opacity = t.Float(0.0).tag(sync=False)
@@ -136,6 +139,8 @@ class ConfigOptions(t.HasTraits):
 
     _OBSERVED_TRAITS = (
         "text_height",
+        "font_size_scaling",
+        "font_min_px",
         "colorbar_height",
         "colorbar_width",
         "show_colorbar_border",
@@ -163,6 +168,7 @@ class ConfigOptions(t.HasTraits):
         "is_nearest_interpolation",
         "is_resize_canvas",
         "atlas_outline",
+        "atlas_active_index",
         "is_ruler",
         "is_colorbar",
         "is_orient_cube",
@@ -245,6 +251,8 @@ class ConfigOptions(t.HasTraits):
 
 CAMEL_TO_SNAKE = {
     "textHeight": "text_height",
+    "fontSizeScaling": "font_size_scaling",
+    "fontMinPx": "font_min_px",
     "colorbarHeight": "colorbar_height",
     "colorbarWidth": "colorbar_width",
     "showColorbarBorder": "show_colorbar_border",
@@ -272,6 +280,7 @@ CAMEL_TO_SNAKE = {
     "isNearestInterpolation": "is_nearest_interpolation",
     "isResizeCanvas": "is_resize_canvas",
     "atlasOutline": "atlas_outline",
+    "atlasActiveIndex": "atlas_active_index",
     "isRuler": "is_ruler",
     "isColorbar": "is_colorbar",
     "isOrientCube": "is_orient_cube",
