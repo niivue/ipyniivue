@@ -2,7 +2,14 @@
 
 import importlib.metadata
 
-from .constants import DragMode, MultiplanarType, ShowRender, SliceType  # noqa: F401
+from .constants import (  # noqa: F401
+    ColormapType,
+    DragMode,
+    DragModePrimary,
+    MultiplanarType,
+    ShowRender,
+    SliceType,
+)
 from .download_dataset import download_dataset  # noqa: F401
 from .traits import (  # noqa: F401
     LUT,

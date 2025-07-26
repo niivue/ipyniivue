@@ -10,7 +10,6 @@ __all__ = [
     "ColormapType",
     "DragMode",
     "DragModePrimary",
-    "DragModeSecondary",
     "MultiplanarType",
     "ShowRender",
     "SliceType",
@@ -103,37 +102,6 @@ class DragMode(enum.Enum):
         Callback only mode (value 5).
     ROI_SELECTION : int
         ROI (Region of Interest) selection mode (value 6).
-    """
-
-    NONE = 0
-    CONTRAST = 1
-    MEASUREMENT = 2
-    PAN = 3
-    SLICER_3D = 4
-    CALLBACK_ONLY = 5
-    ROI_SELECTION = 6
-
-
-class DragModeSecondary(enum.Enum):
-    """
-    An enumeration of secondary drag modes for NiiVue instances.
-
-    Members
-    -------
-    NONE : int
-        No secondary drag mode active (value 0).
-    CONTRAST : int
-        Contrast adjustment secondary mode (value 1).
-    MEASUREMENT : int
-        Measurement secondary mode (value 2).
-    PAN : int
-        Pan secondary mode (value 3).
-    SLICER_3D : int
-        3D slicer secondary interaction mode (value 4).
-    CALLBACK_ONLY : int
-        Callback only secondary mode (value 5).
-    ROI_SELECTION : int
-        ROI selection secondary mode (value 6).
     """
 
     NONE = 0
