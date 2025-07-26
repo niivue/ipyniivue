@@ -3,8 +3,8 @@ import * as lib from "./lib.ts";
 import type {
 	Model,
 	TypedBufferPayload,
-	VolumeModel,
 	VolumeCustomMessage,
+	VolumeModel,
 } from "./types.ts";
 
 import type { NIFTI1, NIFTI2 } from "nifti-reader-js";
