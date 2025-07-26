@@ -3,7 +3,17 @@ Enums
 
 .. currentmodule:: ipyniivue
 
+.. autoclass:: ColormapType
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 .. autoclass:: DragMode
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: DragModePrimary
    :members:
    :undoc-members:
    :show-inheritance:
@@ -13,12 +23,12 @@ Enums
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: SliceType
+.. autoclass:: ShowRender
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: ShowRender
+.. autoclass:: SliceType
    :members:
    :undoc-members:
    :show-inheritance:
