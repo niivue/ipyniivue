@@ -2200,11 +2200,24 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.Volume.save_to_disk">
+<span class="sig-name descname"><span class="pre">save_to_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'image.nii'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume.save_to_disk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Volume.save_to_disk" title="Link to this definition">¶</a></dt>
+<dd><p>Generate the NIfTI file data and triggers a browser download.</p>
+<section id="id130">
+<h3>Parameters<a class="headerlink" href="#id130" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>filename<span class="classifier">str, optional</span></dt><dd><p>The filename (default: “image.nii”).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ipyniivue.Volume.set_colormap_label">
 <span class="sig-name descname"><span class="pre">set_colormap_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colormap_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume.set_colormap_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Volume.set_colormap_label" title="Link to this definition">¶</a></dt>
 <dd><p>Set colormap label for the volume.</p>
-<section id="id130">
-<h3>Parameters<a class="headerlink" href="#id130" title="Link to this heading">¶</a></h3>
+<section id="id131">
+<h3>Parameters<a class="headerlink" href="#id131" title="Link to this heading">¶</a></h3>
 <dl>
 <dt>colormap_data<span class="classifier">dict</span></dt><dd><p>The colormap dict data.</p>
 <p>Colormaps contain the following keys (‘R’, ‘G’, ‘B’ are required):</p>
@@ -2221,8 +2234,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd>
 </dl>
 </section>
-<section id="id131">
-<h3>Examples<a class="headerlink" href="#id131" title="Link to this heading">¶</a></h3>
+<section id="id132">
+<h3>Examples<a class="headerlink" href="#id132" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_colormap_label</span><span class="p">(</span><span class="n">colormap_data</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -2233,15 +2246,15 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <dt class="sig sig-object py" id="ipyniivue.Volume.set_colormap_label_from_url">
 <span class="sig-name descname"><span class="pre">set_colormap_label_from_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume.set_colormap_label_from_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Volume.set_colormap_label_from_url" title="Link to this definition">¶</a></dt>
 <dd><p>Set colormap label from a URL.</p>
-<section id="id132">
-<h3>Parameters<a class="headerlink" href="#id132" title="Link to this heading">¶</a></h3>
+<section id="id133">
+<h3>Parameters<a class="headerlink" href="#id133" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>url<span class="classifier">str</span></dt><dd><p>The colormap json url.</p>
 </dd>
 </dl>
 </section>
-<section id="id133">
-<h3>Examples<a class="headerlink" href="#id133" title="Link to this heading">¶</a></h3>
+<section id="id134">
+<h3>Examples<a class="headerlink" href="#id134" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_colormap_label_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -2262,8 +2275,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">Mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Mesh" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAnyWidget</span></code></p>
 <p>Represents a Mesh model.</p>
-<section id="id134">
-<h2>Parameters<a class="headerlink" href="#id134" title="Link to this heading">¶</a></h2>
+<section id="id135">
+<h2>Parameters<a class="headerlink" href="#id135" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>path<span class="classifier">str or pathlib.Path, optional</span></dt><dd><p>Path to the volume data file. Cannot be modified once set.</p>
 </dd>
@@ -2427,8 +2440,8 @@ See <a class="reference internal" href="#ipyniivue.MeshLayer" title="ipyniivue.M
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">MeshLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#MeshLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.MeshLayer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAnyWidget</span></code></p>
 <p>Represents a layer within a Mesh model.</p>
-<section id="id135">
-<h2>Parameters<a class="headerlink" href="#id135" title="Link to this heading">¶</a></h2>
+<section id="id136">
+<h2>Parameters<a class="headerlink" href="#id136" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>path<span class="classifier">str or pathlib.Path, optional</span></dt><dd><p>Path to the volume data file. Cannot be modified once set.</p>
 </dd>
@@ -2707,6 +2720,7 @@ Default is ‘winter’.</p>
 <li><a class="reference internal" href="#ipyniivue.Volume.paired_img_path"><code class="docutils literal notranslate"><span class="pre">Volume.paired_img_path</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.paired_img_url"><code class="docutils literal notranslate"><span class="pre">Volume.paired_img_url</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.path"><code class="docutils literal notranslate"><span class="pre">Volume.path</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.save_to_disk"><code class="docutils literal notranslate"><span class="pre">Volume.save_to_disk()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.set_colormap_label"><code class="docutils literal notranslate"><span class="pre">Volume.set_colormap_label()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.set_colormap_label_from_url"><code class="docutils literal notranslate"><span class="pre">Volume.set_colormap_label_from_url()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.url"><code class="docutils literal notranslate"><span class="pre">Volume.url</span></code></a></li>

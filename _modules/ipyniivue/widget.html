@@ -897,6 +897,19 @@
         <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="n">cmap</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_colormap_label</span><span class="p">(</span><span class="n">cmap</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Volume.save_to_disk">
+<a class="viewcode-back" href="../../api.html#ipyniivue.Volume.save_to_disk">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_to_disk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;image.nii&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the NIfTI file data and triggers a browser download.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str, optional</span>
+<span class="sd">            The filename (default: &quot;image.nii&quot;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;save_to_disk&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">filename</span><span class="p">]})</span></div>
 </div>
 
 

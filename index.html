@@ -352,6 +352,7 @@
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.Volume.paired_img_path"><code class="docutils literal notranslate"><span class="pre">Volume.paired_img_path</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.Volume.paired_img_url"><code class="docutils literal notranslate"><span class="pre">Volume.paired_img_url</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.Volume.path"><code class="docutils literal notranslate"><span class="pre">Volume.path</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.Volume.save_to_disk"><code class="docutils literal notranslate"><span class="pre">Volume.save_to_disk()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.Volume.set_colormap_label"><code class="docutils literal notranslate"><span class="pre">Volume.set_colormap_label()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.Volume.set_colormap_label_from_url"><code class="docutils literal notranslate"><span class="pre">Volume.set_colormap_label_from_url()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#ipyniivue.Volume.url"><code class="docutils literal notranslate"><span class="pre">Volume.url</span></code></a></li>
@@ -555,6 +556,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="enums.html">Enums</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="enums.html#ipyniivue.ColormapType"><code class="docutils literal notranslate"><span class="pre">ColormapType</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.ColormapType.MIN_TO_MAX"><code class="docutils literal notranslate"><span class="pre">ColormapType.MIN_TO_MAX</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.ColormapType.ZERO_TO_MAX_TRANSLUCENT_BELOW_MIN"><code class="docutils literal notranslate"><span class="pre">ColormapType.ZERO_TO_MAX_TRANSLUCENT_BELOW_MIN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.ColormapType.ZERO_TO_MAX_TRANSPARENT_BELOW_MIN"><code class="docutils literal notranslate"><span class="pre">ColormapType.ZERO_TO_MAX_TRANSPARENT_BELOW_MIN</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="enums.html#ipyniivue.DragMode"><code class="docutils literal notranslate"><span class="pre">DragMode</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.DragMode.CALLBACK_ONLY"><code class="docutils literal notranslate"><span class="pre">DragMode.CALLBACK_ONLY</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.DragMode.CONTRAST"><code class="docutils literal notranslate"><span class="pre">DragMode.CONTRAST</span></code></a></li>
@@ -565,11 +572,22 @@
 <li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.DragMode.SLICER_3D"><code class="docutils literal notranslate"><span class="pre">DragMode.SLICER_3D</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="enums.html#ipyniivue.DragModePrimary"><code class="docutils literal notranslate"><span class="pre">DragModePrimary</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.DragModePrimary.CROSSHAIR"><code class="docutils literal notranslate"><span class="pre">DragModePrimary.CROSSHAIR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.DragModePrimary.WINDOWING"><code class="docutils literal notranslate"><span class="pre">DragModePrimary.WINDOWING</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="enums.html#ipyniivue.MultiplanarType"><code class="docutils literal notranslate"><span class="pre">MultiplanarType</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.MultiplanarType.AUTO"><code class="docutils literal notranslate"><span class="pre">MultiplanarType.AUTO</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.MultiplanarType.COLUMN"><code class="docutils literal notranslate"><span class="pre">MultiplanarType.COLUMN</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.MultiplanarType.GRID"><code class="docutils literal notranslate"><span class="pre">MultiplanarType.GRID</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.MultiplanarType.ROW"><code class="docutils literal notranslate"><span class="pre">MultiplanarType.ROW</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="enums.html#ipyniivue.ShowRender"><code class="docutils literal notranslate"><span class="pre">ShowRender</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.ShowRender.ALWAYS"><code class="docutils literal notranslate"><span class="pre">ShowRender.ALWAYS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.ShowRender.AUTO"><code class="docutils literal notranslate"><span class="pre">ShowRender.AUTO</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.ShowRender.NEVER"><code class="docutils literal notranslate"><span class="pre">ShowRender.NEVER</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="enums.html#ipyniivue.SliceType"><code class="docutils literal notranslate"><span class="pre">SliceType</span></code></a><ul>
@@ -578,12 +596,6 @@
 <li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.SliceType.MULTIPLANAR"><code class="docutils literal notranslate"><span class="pre">SliceType.MULTIPLANAR</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.SliceType.RENDER"><code class="docutils literal notranslate"><span class="pre">SliceType.RENDER</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.SliceType.SAGITTAL"><code class="docutils literal notranslate"><span class="pre">SliceType.SAGITTAL</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="enums.html#ipyniivue.ShowRender"><code class="docutils literal notranslate"><span class="pre">ShowRender</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.ShowRender.ALWAYS"><code class="docutils literal notranslate"><span class="pre">ShowRender.ALWAYS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.ShowRender.AUTO"><code class="docutils literal notranslate"><span class="pre">ShowRender.AUTO</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="enums.html#ipyniivue.ShowRender.NEVER"><code class="docutils literal notranslate"><span class="pre">ShowRender.NEVER</span></code></a></li>
 </ul>
 </li>
 </ul>
