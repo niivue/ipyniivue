@@ -1389,6 +1389,18 @@ Most users will not need to use this directly.</p>
 <p>Subclasses can declare default classes by overriding the klass attribute</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.NiiVue.overlay_alpha_shader">
+<span class="sig-name descname"><span class="pre">overlay_alpha_shader</span></span><a class="headerlink" href="#ipyniivue.NiiVue.overlay_alpha_shader" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.NiiVue.overlay_outline_width">
+<span class="sig-name descname"><span class="pre">overlay_outline_width</span></span><a class="headerlink" href="#ipyniivue.NiiVue.overlay_outline_width" title="Link to this definition">¶</a></dt>
+<dd><p>A float trait.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="ipyniivue.NiiVue.remove_haze">
 <span class="sig-name descname"><span class="pre">remove_haze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vol_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.remove_haze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.remove_haze" title="Link to this definition">¶</a></dt>
@@ -1508,6 +1520,14 @@ Most users will not need to use this directly.</p>
 </pre></div>
 </div>
 </section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.NiiVue.scene">
+<span class="sig-name descname"><span class="pre">scene</span></span><a class="headerlink" href="#ipyniivue.NiiVue.scene" title="Link to this definition">¶</a></dt>
+<dd><p>A trait whose value must be an instance of a specified class.</p>
+<p>The value can also be an instance of a subclass of the specified class.</p>
+<p>Subclasses can declare default classes by overriding the klass attribute</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1841,13 +1861,72 @@ If the mesh shader is not found.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ipyniivue.NiiVue.set_multiplanar_pad_pixels">
-<span class="sig-name descname"><span class="pre">set_multiplanar_pad_pixels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_multiplanar_pad_pixels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.set_multiplanar_pad_pixels" title="Link to this definition">¶</a></dt>
-<dd><p>Insert a gap between slices of a mutliplanar view.</p>
+<dt class="sig sig-object py" id="ipyniivue.NiiVue.set_modulation_image">
+<span class="sig-name descname"><span class="pre">set_modulation_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_modulation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modulate_alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_modulation_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.set_modulation_image" title="Link to this definition">¶</a></dt>
+<dd><p>Modulate the intensity of one volume based on the intensity of another.</p>
 <section id="id111">
 <h2>Parameters<a class="headerlink" href="#id111" title="Link to this heading">¶</a></h2>
 <dl class="simple">
+<dt>id_target<span class="classifier">str</span></dt><dd><p>The ID of the volume to be modulated.</p>
+</dd>
+<dt>id_modulation<span class="classifier">str</span></dt><dd><p>The ID of the volume that controls the modulation.
+Pass an empty string (‘’) to disable modulation.</p>
+</dd>
+<dt>modulate_alpha<span class="classifier">int, optional</span></dt><dd><p>Determines if the modulation influences alpha transparency.
+Values greater than 1 will affect transparency. Default is 0.</p>
+</dd>
+</dl>
+</section>
+<section id="id112">
+<h2>Raises<a class="headerlink" href="#id112" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the target or modulation volume ID is not found.</p>
+</dd>
+<dt>RuntimeError</dt><dd><p>If the canvas has not been attached yet.
+This function requires nv._gl to be valid in the frontend.</p>
+</dd>
+</dl>
+</section>
+<section id="id113">
+<h2>Examples<a class="headerlink" href="#id113" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_modulation_image</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.NiiVue.set_multiplanar_pad_pixels">
+<span class="sig-name descname"><span class="pre">set_multiplanar_pad_pixels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_multiplanar_pad_pixels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.set_multiplanar_pad_pixels" title="Link to this definition">¶</a></dt>
+<dd><p>Insert a gap between slices of a mutliplanar view.</p>
+<section id="id114">
+<h2>Parameters<a class="headerlink" href="#id114" title="Link to this heading">¶</a></h2>
+<dl class="simple">
 <dt>pixels<span class="classifier">int</span></dt><dd><p>spacing between tiles of multiplanar view</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.NiiVue.set_opacity">
+<span class="sig-name descname"><span class="pre">set_opacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_opacity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_opacity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.set_opacity" title="Link to this definition">¶</a></dt>
+<dd><p>Set the opacity of a volume given by volume index.</p>
+<section id="id115">
+<h2>Parameters<a class="headerlink" href="#id115" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>vol_idx<span class="classifier">int</span></dt><dd><p>The volume index of the volume to change.</p>
+</dd>
+<dt>new_opacity<span class="classifier">float</span></dt><dd><p>The opacity value. Valid values range from 0 to 1.</p>
+</dd>
+</dl>
+</section>
+<section id="id116">
+<h2>Raises<a class="headerlink" href="#id116" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If <cite>new_opacity</cite> is not between 0 and 1 inclusive.</p>
+</dd>
+<dt>IndexError</dt><dd><p>If <cite>vol_idx</cite> is out of range of the <cite>self.volumes</cite> list.</p>
 </dd>
 </dl>
 </section>
@@ -1857,8 +1936,8 @@ If the mesh shader is not found.</p>
 <dt class="sig sig-object py" id="ipyniivue.NiiVue.set_pen_value">
 <span class="sig-name descname"><span class="pre">set_pen_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pen_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_filled_pen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_pen_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.set_pen_value" title="Link to this definition">¶</a></dt>
 <dd><p>Determine color and style of drawing.</p>
-<section id="id112">
-<h2>Parameters<a class="headerlink" href="#id112" title="Link to this heading">¶</a></h2>
+<section id="id117">
+<h2>Parameters<a class="headerlink" href="#id117" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>pen_value<span class="classifier">float</span></dt><dd><p>sets the color of the pen</p>
 </dd>
@@ -1866,8 +1945,8 @@ If the mesh shader is not found.</p>
 </dd>
 </dl>
 </section>
-<section id="id113">
-<h2>Examples<a class="headerlink" href="#id113" title="Link to this heading">¶</a></h2>
+<section id="id118">
+<h2>Examples<a class="headerlink" href="#id118" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_pen_value</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1878,16 +1957,16 @@ If the mesh shader is not found.</p>
 <dt class="sig sig-object py" id="ipyniivue.NiiVue.set_radiological_convention">
 <span class="sig-name descname"><span class="pre">set_radiological_convention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_radiological_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_radiological_convention"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.set_radiological_convention" title="Link to this definition">¶</a></dt>
 <dd><p>Set radiological or neurological convention for 2D slices.</p>
-<section id="id114">
-<h2>Parameters<a class="headerlink" href="#id114" title="Link to this heading">¶</a></h2>
+<section id="id119">
+<h2>Parameters<a class="headerlink" href="#id119" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>is_radiological_convention<span class="classifier">bool</span></dt><dd><p>If True, use radiological convention.
 If False, use neurological convention.</p>
 </dd>
 </dl>
 </section>
-<section id="id115">
-<h2>Examples<a class="headerlink" href="#id115" title="Link to this heading">¶</a></h2>
+<section id="id120">
+<h2>Examples<a class="headerlink" href="#id120" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_radiological_convention</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1898,8 +1977,8 @@ If False, use neurological convention.</p>
 <dt class="sig sig-object py" id="ipyniivue.NiiVue.set_render_azimuth_elevation">
 <span class="sig-name descname"><span class="pre">set_render_azimuth_elevation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">azimuth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elevation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_render_azimuth_elevation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.set_render_azimuth_elevation" title="Link to this definition">¶</a></dt>
 <dd><p>Set the rotation of the 3D render view.</p>
-<section id="id116">
-<h2>Parameters<a class="headerlink" href="#id116" title="Link to this heading">¶</a></h2>
+<section id="id121">
+<h2>Parameters<a class="headerlink" href="#id121" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>azimuth<span class="classifier">float</span></dt><dd><p>The azimuth angle in degrees around the object.</p>
 </dd>
@@ -1907,15 +1986,15 @@ If False, use neurological convention.</p>
 </dd>
 </dl>
 </section>
-<section id="id117">
-<h2>Raises<a class="headerlink" href="#id117" title="Link to this heading">¶</a></h2>
+<section id="id122">
+<h2>Raises<a class="headerlink" href="#id122" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>TypeError</dt><dd><p>If azimuth or elevation is not a number.</p>
 </dd>
 </dl>
 </section>
-<section id="id118">
-<h2>Examples<a class="headerlink" href="#id118" title="Link to this heading">¶</a></h2>
+<section id="id123">
+<h2>Examples<a class="headerlink" href="#id123" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_render_azimuth_elevation</span><span class="p">(</span><span class="mi">45</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1926,22 +2005,22 @@ If False, use neurological convention.</p>
 <dt class="sig sig-object py" id="ipyniivue.NiiVue.set_selection_box_color">
 <span class="sig-name descname"><span class="pre">set_selection_box_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_selection_box_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.set_selection_box_color" title="Link to this definition">¶</a></dt>
 <dd><p>Set the selection box color.</p>
-<section id="id119">
-<h2>Parameters<a class="headerlink" href="#id119" title="Link to this heading">¶</a></h2>
+<section id="id124">
+<h2>Parameters<a class="headerlink" href="#id124" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>color<span class="classifier">tuple of floats</span></dt><dd><p>An RGBA array with values ranging from 0 to 1.</p>
 </dd>
 </dl>
 </section>
-<section id="id120">
-<h2>Raises<a class="headerlink" href="#id120" title="Link to this heading">¶</a></h2>
+<section id="id125">
+<h2>Raises<a class="headerlink" href="#id125" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>ValueError</dt><dd><p>If the color is not a list of four numeric values.</p>
 </dd>
 </dl>
 </section>
-<section id="id121">
-<h2>Examples<a class="headerlink" href="#id121" title="Link to this heading">¶</a></h2>
+<section id="id126">
+<h2>Examples<a class="headerlink" href="#id126" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_selection_box_color</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -1952,15 +2031,15 @@ If False, use neurological convention.</p>
 <dt class="sig sig-object py" id="ipyniivue.NiiVue.set_slice_mm">
 <span class="sig-name descname"><span class="pre">set_slice_mm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_slice_mm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_slice_mm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.set_slice_mm" title="Link to this definition">¶</a></dt>
 <dd><p>Control 2D slice view mode.</p>
-<section id="id122">
-<h2>Parameters<a class="headerlink" href="#id122" title="Link to this heading">¶</a></h2>
+<section id="id127">
+<h2>Parameters<a class="headerlink" href="#id127" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>is_slice_mm<span class="classifier">bool</span></dt><dd><p>Control whether 2D slices use world space (True) or voxel space (False).</p>
 </dd>
 </dl>
 </section>
-<section id="id123">
-<h2>Examples<a class="headerlink" href="#id123" title="Link to this heading">¶</a></h2>
+<section id="id128">
+<h2>Examples<a class="headerlink" href="#id128" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_slice_mm</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1971,22 +2050,22 @@ If False, use neurological convention.</p>
 <dt class="sig sig-object py" id="ipyniivue.NiiVue.set_slice_type">
 <span class="sig-name descname"><span class="pre">set_slice_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="enums.html#ipyniivue.SliceType" title="ipyniivue.constants.SliceType"><span class="pre">SliceType</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_slice_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.set_slice_type" title="Link to this definition">¶</a></dt>
 <dd><p>Set the type of slice display.</p>
-<section id="id124">
-<h2>Parameters<a class="headerlink" href="#id124" title="Link to this heading">¶</a></h2>
+<section id="id129">
+<h2>Parameters<a class="headerlink" href="#id129" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>slice_type<span class="classifier">SliceType</span></dt><dd><p>The type of slice display.</p>
 </dd>
 </dl>
 </section>
-<section id="id125">
-<h2>Raises<a class="headerlink" href="#id125" title="Link to this heading">¶</a></h2>
+<section id="id130">
+<h2>Raises<a class="headerlink" href="#id130" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>TypeError</dt><dd><p>If slice_type is not a valid SliceType.</p>
 </dd>
 </dl>
 </section>
-<section id="id126">
-<h2>Examples<a class="headerlink" href="#id126" title="Link to this heading">¶</a></h2>
+<section id="id131">
+<h2>Examples<a class="headerlink" href="#id131" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_slice_type</span><span class="p">(</span><span class="n">SliceType</span><span class="o">.</span><span class="n">AXIAL</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1997,8 +2076,8 @@ If False, use neurological convention.</p>
 <dt class="sig sig-object py" id="ipyniivue.NiiVue.set_volume_render_illumination">
 <span class="sig-name descname"><span class="pre">set_volume_render_illumination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gradient_amount</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.set_volume_render_illumination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.set_volume_render_illumination" title="Link to this definition">¶</a></dt>
 <dd><p>Set proportion of volume rendering influenced by selected matcap.</p>
-<section id="id127">
-<h2>Parameters<a class="headerlink" href="#id127" title="Link to this heading">¶</a></h2>
+<section id="id132">
+<h2>Parameters<a class="headerlink" href="#id132" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>gradient_amount<span class="classifier">float</span></dt><dd><p>Amount of matcap (<code class="docutils literal notranslate"><span class="pre">NaN</span></code> or <code class="docutils literal notranslate"><span class="pre">0..1</span></code>).
 Default is <code class="docutils literal notranslate"><span class="pre">0.0</span></code> (matte, surface normal does not influence color).
@@ -2006,8 +2085,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd>
 </dl>
 </section>
-<section id="id128">
-<h2>Examples<a class="headerlink" href="#id128" title="Link to this heading">¶</a></h2>
+<section id="id133">
+<h2>Examples<a class="headerlink" href="#id133" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">set_volume_render_illumination</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -2027,8 +2106,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">Volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Volume" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAnyWidget</span></code></p>
 <p>Represents a Volume model.</p>
-<section id="id129">
-<h2>Parameters<a class="headerlink" href="#id129" title="Link to this heading">¶</a></h2>
+<section id="id134">
+<h2>Parameters<a class="headerlink" href="#id134" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>path<span class="classifier">str or pathlib.Path, optional</span></dt><dd><p>Path to the volume data file. Cannot be modified once set.</p>
 </dd>
@@ -2158,6 +2237,18 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Volume.modulate_alpha">
+<span class="sig-name descname"><span class="pre">modulate_alpha</span></span><a class="headerlink" href="#ipyniivue.Volume.modulate_alpha" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.Volume.modulation_image">
+<span class="sig-name descname"><span class="pre">modulation_image</span></span><a class="headerlink" href="#ipyniivue.Volume.modulation_image" title="Link to this definition">¶</a></dt>
+<dd><p>An int trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.Volume.n_frame_4d">
 <span class="sig-name descname"><span class="pre">n_frame_4d</span></span><a class="headerlink" href="#ipyniivue.Volume.n_frame_4d" title="Link to this definition">¶</a></dt>
 <dd><p>An int trait.</p>
@@ -2203,8 +2294,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <dt class="sig sig-object py" id="ipyniivue.Volume.save_to_disk">
 <span class="sig-name descname"><span class="pre">save_to_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'image.nii'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume.save_to_disk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Volume.save_to_disk" title="Link to this definition">¶</a></dt>
 <dd><p>Generate the NIfTI file data and triggers a browser download.</p>
-<section id="id130">
-<h3>Parameters<a class="headerlink" href="#id130" title="Link to this heading">¶</a></h3>
+<section id="id135">
+<h3>Parameters<a class="headerlink" href="#id135" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>filename<span class="classifier">str, optional</span></dt><dd><p>The filename (default: “image.nii”).</p>
 </dd>
@@ -2216,8 +2307,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <dt class="sig sig-object py" id="ipyniivue.Volume.set_colormap_label">
 <span class="sig-name descname"><span class="pre">set_colormap_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colormap_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume.set_colormap_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Volume.set_colormap_label" title="Link to this definition">¶</a></dt>
 <dd><p>Set colormap label for the volume.</p>
-<section id="id131">
-<h3>Parameters<a class="headerlink" href="#id131" title="Link to this heading">¶</a></h3>
+<section id="id136">
+<h3>Parameters<a class="headerlink" href="#id136" title="Link to this heading">¶</a></h3>
 <dl>
 <dt>colormap_data<span class="classifier">dict</span></dt><dd><p>The colormap dict data.</p>
 <p>Colormaps contain the following keys (‘R’, ‘G’, ‘B’ are required):</p>
@@ -2234,8 +2325,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 </dd>
 </dl>
 </section>
-<section id="id132">
-<h3>Examples<a class="headerlink" href="#id132" title="Link to this heading">¶</a></h3>
+<section id="id137">
+<h3>Examples<a class="headerlink" href="#id137" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_colormap_label</span><span class="p">(</span><span class="n">colormap_data</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -2246,15 +2337,15 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <dt class="sig sig-object py" id="ipyniivue.Volume.set_colormap_label_from_url">
 <span class="sig-name descname"><span class="pre">set_colormap_label_from_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Volume.set_colormap_label_from_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Volume.set_colormap_label_from_url" title="Link to this definition">¶</a></dt>
 <dd><p>Set colormap label from a URL.</p>
-<section id="id133">
-<h3>Parameters<a class="headerlink" href="#id133" title="Link to this heading">¶</a></h3>
+<section id="id138">
+<h3>Parameters<a class="headerlink" href="#id138" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>url<span class="classifier">str</span></dt><dd><p>The colormap json url.</p>
 </dd>
 </dl>
 </section>
-<section id="id134">
-<h3>Examples<a class="headerlink" href="#id134" title="Link to this heading">¶</a></h3>
+<section id="id139">
+<h3>Examples<a class="headerlink" href="#id139" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_colormap_label_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -2275,8 +2366,8 @@ Default is <code class="docutils literal notranslate"><span class="pre">0.0</spa
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">Mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#Mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.Mesh" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAnyWidget</span></code></p>
 <p>Represents a Mesh model.</p>
-<section id="id135">
-<h2>Parameters<a class="headerlink" href="#id135" title="Link to this heading">¶</a></h2>
+<section id="id140">
+<h2>Parameters<a class="headerlink" href="#id140" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>path<span class="classifier">str or pathlib.Path, optional</span></dt><dd><p>Path to the volume data file. Cannot be modified once set.</p>
 </dd>
@@ -2440,8 +2531,8 @@ See <a class="reference internal" href="#ipyniivue.MeshLayer" title="ipyniivue.M
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">MeshLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#MeshLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.MeshLayer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAnyWidget</span></code></p>
 <p>Represents a layer within a Mesh model.</p>
-<section id="id136">
-<h2>Parameters<a class="headerlink" href="#id136" title="Link to this heading">¶</a></h2>
+<section id="id141">
+<h2>Parameters<a class="headerlink" href="#id141" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>path<span class="classifier">str or pathlib.Path, optional</span></dt><dd><p>Path to the volume data file. Cannot be modified once set.</p>
 </dd>
@@ -2668,11 +2759,14 @@ Default is ‘winter’.</p>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.on_volume_added_from_url"><code class="docutils literal notranslate"><span class="pre">NiiVue.on_volume_added_from_url()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.on_volume_updated"><code class="docutils literal notranslate"><span class="pre">NiiVue.on_volume_updated()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.opts"><code class="docutils literal notranslate"><span class="pre">NiiVue.opts</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.NiiVue.overlay_alpha_shader"><code class="docutils literal notranslate"><span class="pre">NiiVue.overlay_alpha_shader</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.NiiVue.overlay_outline_width"><code class="docutils literal notranslate"><span class="pre">NiiVue.overlay_outline_width</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.remove_haze"><code class="docutils literal notranslate"><span class="pre">NiiVue.remove_haze()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.save_document"><code class="docutils literal notranslate"><span class="pre">NiiVue.save_document()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.save_html"><code class="docutils literal notranslate"><span class="pre">NiiVue.save_html()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.save_image"><code class="docutils literal notranslate"><span class="pre">NiiVue.save_image()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.save_scene"><code class="docutils literal notranslate"><span class="pre">NiiVue.save_scene()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.NiiVue.scene"><code class="docutils literal notranslate"><span class="pre">NiiVue.scene</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.set_atlas_outline"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_atlas_outline()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.set_clip_plane"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_clip_plane()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.set_colormap"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_colormap()</span></code></a></li>
@@ -2686,7 +2780,9 @@ Default is ‘winter’.</p>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.set_mesh_layer_property"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_mesh_layer_property()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.set_mesh_property"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_mesh_property()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.set_mesh_shader"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_mesh_shader()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.NiiVue.set_modulation_image"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_modulation_image()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.set_multiplanar_pad_pixels"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_multiplanar_pad_pixels()</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.NiiVue.set_opacity"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_opacity()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.set_pen_value"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_pen_value()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.set_radiological_convention"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_radiological_convention()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.set_render_azimuth_elevation"><code class="docutils literal notranslate"><span class="pre">NiiVue.set_render_azimuth_elevation()</span></code></a></li>
@@ -2713,6 +2809,8 @@ Default is ‘winter’.</p>
 <li><a class="reference internal" href="#ipyniivue.Volume.hdr"><code class="docutils literal notranslate"><span class="pre">Volume.hdr</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.id"><code class="docutils literal notranslate"><span class="pre">Volume.id</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.img"><code class="docutils literal notranslate"><span class="pre">Volume.img</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.modulate_alpha"><code class="docutils literal notranslate"><span class="pre">Volume.modulate_alpha</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.Volume.modulation_image"><code class="docutils literal notranslate"><span class="pre">Volume.modulation_image</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.n_frame_4d"><code class="docutils literal notranslate"><span class="pre">Volume.n_frame_4d</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.name"><code class="docutils literal notranslate"><span class="pre">Volume.name</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.Volume.opacity"><code class="docutils literal notranslate"><span class="pre">Volume.opacity</span></code></a></li>

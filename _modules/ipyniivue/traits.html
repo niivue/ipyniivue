@@ -609,6 +609,122 @@
     <span class="n">extensionFlag</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 
+<span class="k">class</span><span class="w"> </span><span class="nc">Scene</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents the scene configuration for NiiVue.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    render_azimuth : float</span>
+<span class="sd">        The azimuth angle in degrees around the object.</span>
+<span class="sd">    render_elevation : float</span>
+<span class="sd">        The elevation angle in degrees.</span>
+<span class="sd">    vol_scale_multiplier : float</span>
+<span class="sd">        Scale multiplier for volume rendering.</span>
+<span class="sd">    crosshair_pos : list of float</span>
+<span class="sd">        The crosshair position as a list of 3 floats.</span>
+<span class="sd">    clip_plane : list of float</span>
+<span class="sd">        The clip plane parameters.</span>
+<span class="sd">    clip_plane_depth_azi_elev : list of float</span>
+<span class="sd">        The depth, azimuth, and elevation for the clip plane.</span>
+<span class="sd">    pan2d_xyzmm : list of float</span>
+<span class="sd">        The 2D pan in 3D mm as a list of 4 floats.</span>
+<span class="sd">    gamma : float</span>
+<span class="sd">        The gamma value for rendering.</span>
+<span class="sd">    clip_thick : float</span>
+<span class="sd">        The clip plane thickness.</span>
+<span class="sd">    clip_volume_low : list of float</span>
+<span class="sd">        The lower bounds of the clipping volume.</span>
+<span class="sd">    clip_volume_high : list of float</span>
+<span class="sd">        The upper bounds of the clipping volume.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Traits</span>
+    <span class="n">render_azimuth</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">110.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">render_elevation</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">vol_scale_multiplier</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">crosshair_pos</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">minlen</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">3</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">clip_plane</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">clip_plane_depth_azi_elev</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">minlen</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">3</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pan2d_xyzmm</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">minlen</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">4</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">clip_thick</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">clip_volume_low</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">minlen</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">3</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">clip_volume_high</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">minlen</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">3</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># parent</span>
+    <span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">scene_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the scene data as a dict with properties in snake_case.&quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span>
+            <span class="s2">&quot;azimuth&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_azimuth</span><span class="p">,</span>
+            <span class="s2">&quot;elevation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_elevation</span><span class="p">,</span>
+            <span class="s2">&quot;crosshair_pos&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">crosshair_pos</span><span class="p">,</span>
+            <span class="s2">&quot;clip_plane&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_plane</span><span class="p">,</span>
+            <span class="s2">&quot;clip_plane_depth_azi_elev&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elev</span><span class="p">,</span>
+            <span class="s2">&quot;vol_scale_multiplier&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vol_scale_multiplier</span><span class="p">,</span>
+            <span class="s2">&quot;pan2d_xyzmm&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pan2d_xyzmm</span><span class="p">,</span>
+            <span class="s2">&quot;clip_thick&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_thick</span><span class="p">,</span>
+            <span class="s2">&quot;clip_volume_low&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_volume_low</span><span class="p">,</span>
+            <span class="s2">&quot;clip_volume_high&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_volume_high</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="n">_OBSERVED_TRAITS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;render_azimuth&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;render_elevation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;vol_scale_multiplier&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;crosshair_pos&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;clip_plane&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;clip_plane_depth_azi_elev&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pan2d_xyzmm&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gamma&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;clip_thick&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;clip_volume_low&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;clip_volume_high&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="o">*</span><span class="n">_OBSERVED_TRAITS</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_propagate_parent_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">,</span> <span class="s2">&quot;_notify_scene_changed&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">_notify_scene_changed</span><span class="p">()</span>
+
+
+<span class="n">CAMEL_TO_SNAKE_SCENE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;renderAzimuth&quot;</span><span class="p">:</span> <span class="s2">&quot;render_azimuth&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;renderElevation&quot;</span><span class="p">:</span> <span class="s2">&quot;render_elevation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;volScaleMultiplier&quot;</span><span class="p">:</span> <span class="s2">&quot;vol_scale_multiplier&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;crosshairPos&quot;</span><span class="p">:</span> <span class="s2">&quot;crosshair_pos&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;clipPlane&quot;</span><span class="p">:</span> <span class="s2">&quot;clip_plane&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;clipPlaneDepthAziElev&quot;</span><span class="p">:</span> <span class="s2">&quot;clip_plane_depth_azi_elev&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pan2Dxyzmm&quot;</span><span class="p">:</span> <span class="s2">&quot;pan2d_xyzmm&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="s2">&quot;gamma&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;clipThick&quot;</span><span class="p">:</span> <span class="s2">&quot;clip_thick&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;clipVolumeLow&quot;</span><span class="p">:</span> <span class="s2">&quot;clip_volume_low&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;clipVolumeHigh&quot;</span><span class="p">:</span> <span class="s2">&quot;clip_volume_high&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">SNAKE_TO_CAMEL_SCENE</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">CAMEL_TO_SNAKE_SCENE</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
 <span class="n">CAMEL_TO_SNAKE_GRAPH</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;LTWH&quot;</span><span class="p">:</span> <span class="s2">&quot;ltwh&quot;</span><span class="p">,</span>
     <span class="s2">&quot;opacity&quot;</span><span class="p">:</span> <span class="s2">&quot;opacity&quot;</span><span class="p">,</span>

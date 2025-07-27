@@ -270,18 +270,21 @@
     <span class="n">deserialize_graph</span><span class="p">,</span>
     <span class="n">deserialize_hdr</span><span class="p">,</span>
     <span class="n">deserialize_options</span><span class="p">,</span>
+    <span class="n">deserialize_scene</span><span class="p">,</span>
     <span class="n">serialize_colormap_label</span><span class="p">,</span>
     <span class="n">serialize_file</span><span class="p">,</span>
     <span class="n">serialize_graph</span><span class="p">,</span>
     <span class="n">serialize_hdr</span><span class="p">,</span>
     <span class="n">serialize_ndarray</span><span class="p">,</span>
     <span class="n">serialize_options</span><span class="p">,</span>
+    <span class="n">serialize_scene</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.traits</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">LUT</span><span class="p">,</span>
     <span class="n">ColorMap</span><span class="p">,</span>
     <span class="n">Graph</span><span class="p">,</span>
     <span class="n">NIFTI1Hdr</span><span class="p">,</span>
+    <span class="n">Scene</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ChunkedDataHandler</span><span class="p">,</span>
@@ -716,14 +719,14 @@
 
     <span class="c1"># Other properties</span>
     <span class="n">colormap_invert</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">n_frame_4d</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
-        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>  <span class="c1"># Read-only after initialization</span>
+    <span class="n">n_frame_4d</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># readonly after set</span>
+    <span class="n">modulation_image</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">modulate_alpha</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Set after bidirectional comms with frontend</span>
     <span class="n">hdr</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">NIFTI1Hdr</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_hdr</span><span class="p">,</span> <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_hdr</span>
-    <span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># currently only supports frontend-&gt;backend communication</span>
     <span class="n">img</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_ndarray</span>
     <span class="p">)</span>
@@ -956,6 +959,13 @@
         <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_graph</span><span class="p">,</span>
         <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_graph</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">Scene</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_scene</span><span class="p">,</span>
+        <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_scene</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">overlay_outline_width</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 0 for none</span>
+    <span class="n">overlay_alpha_shader</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 1 for opaque</span>
 
 <div class="viewcode-block" id="NiiVue.__init__">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.__init__">[docs]</a>
@@ -984,7 +994,8 @@
 
         <span class="c1"># Initialize values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_initial_colormaps</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span> <span class="o">=</span> <span class="n">Scene</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -1016,6 +1027,17 @@
                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;graph&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;old&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
                 <span class="s2">&quot;new&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
+                <span class="s2">&quot;owner&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_notify_scene_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify_change</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;scene&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;old&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="p">,</span>
+                <span class="s2">&quot;new&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="p">,</span>
                 <span class="s2">&quot;owner&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
             <span class="p">}</span>
@@ -1974,7 +1996,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canvas_attached</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;Canvas is not attached. Render this widget to attach to a canvas.&quot;</span>
+                <span class="s2">&quot;Canvas is not attached. Render this widget to attach it to a canvas.&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gradient_amount</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;gradient_amount must be a number.&quot;</span><span class="p">)</span>
@@ -2498,6 +2520,90 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;clip_plane_change&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_opacity">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_opacity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_opacity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vol_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">new_opacity</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the opacity of a volume given by volume index.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        vol_idx : int</span>
+<span class="sd">            The volume index of the volume to change.</span>
+<span class="sd">        new_opacity : float</span>
+<span class="sd">            The opacity value. Valid values range from 0 to 1.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If `new_opacity` is not between 0 and 1 inclusive.</span>
+<span class="sd">        IndexError</span>
+<span class="sd">            If `vol_idx` is out of range of the `self.volumes` list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">new_opacity</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;new_opacity must be between 0 and 1 inclusive.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">vol_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;vol_idx is out of range.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">vol_idx</span><span class="p">]</span><span class="o">.</span><span class="n">opacity</span> <span class="o">=</span> <span class="n">new_opacity</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_modulation_image">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_modulation_image">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_modulation_image</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">id_target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">id_modulation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">modulate_alpha</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Modulate the intensity of one volume based on the intensity of another.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        id_target : str</span>
+<span class="sd">            The ID of the volume to be modulated.</span>
+<span class="sd">        id_modulation : str</span>
+<span class="sd">            The ID of the volume that controls the modulation.</span>
+<span class="sd">            Pass an empty string (&#39;&#39;) to disable modulation.</span>
+<span class="sd">        modulate_alpha : int, optional</span>
+<span class="sd">            Determines if the modulation influences alpha transparency.</span>
+<span class="sd">            Values greater than 1 will affect transparency. Default is 0.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the target or modulation volume ID is not found.</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If the canvas has not been attached yet.</span>
+<span class="sd">            This function requires nv._gl to be valid in the frontend.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_modulation_image(nv.volumes[0].id, nv.volumes[1].id)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canvas_attached</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Canvas is not attached. Render this widget to attach it to a canvas.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">idx_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">id_target</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx_target</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume with ID &#39;</span><span class="si">{</span><span class="n">id_target</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+
+        <span class="n">volume_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx_target</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">id_modulation</span><span class="p">:</span>
+            <span class="n">idx_modulation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">id_modulation</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">idx_modulation</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Modulation volume with ID &#39;</span><span class="si">{</span><span class="n">id_modulation</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">volume_target</span><span class="o">.</span><span class="n">modulation_image</span> <span class="o">=</span> <span class="n">idx_modulation</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">volume_target</span><span class="o">.</span><span class="n">modulation_image</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">volume_target</span><span class="o">.</span><span class="n">modulate_alpha</span> <span class="o">=</span> <span class="n">modulate_alpha</span></div>
 
 
     <span class="c1"># todo: make volumes be a list of Volumes and meshes be a list of Meshes</span>
