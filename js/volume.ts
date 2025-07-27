@@ -111,6 +111,16 @@ function setup_volume_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	function modulation_image_changed() {
+		volume.modulationImage = vmodel.get("modulation_image");
+		nv.updateGLVolume();
+	}
+
+	function modulate_alpha_changed() {
+		volume.modulateAlpha = vmodel.get("modulate_alpha");
+		nv.updateGLVolume();
+	}
+
 	// custom msgs
 	function customMessageHandler(
 		payload: TypedBufferPayload | VolumeCustomMessage,
@@ -138,6 +148,8 @@ function setup_volume_property_listeners(
 
 	// set values not set by kwargs
 	colormap_invert_changed();
+	modulation_image_changed();
+	modulate_alpha_changed();
 
 	vmodel.on("change:colorbar_visible", colorbar_visible_changed);
 	vmodel.on("change:cal_min", cal_min_changed);
@@ -149,6 +161,8 @@ function setup_volume_property_listeners(
 	vmodel.on("change:colormap_label", colormap_label_changed);
 
 	vmodel.on("change:colormap_invert", colormap_invert_changed);
+	vmodel.on("change:modulation_image", modulation_image_changed);
+	vmodel.on("change:modulate_alpha", modulate_alpha_changed);
 
 	vmodel.on("msg:custom", customMessageHandler);
 
@@ -163,6 +177,8 @@ function setup_volume_property_listeners(
 		vmodel.off("change:colormap_label", colormap_label_changed);
 
 		vmodel.off("change:colormap_invert", colormap_invert_changed);
+		vmodel.off("change:modulation_image", modulation_image_changed);
+		vmodel.off("change:modulate_alpha", modulate_alpha_changed);
 
 		vmodel.off("msg:custom", customMessageHandler);
 	};

@@ -54,6 +54,17 @@ type Graph = {
 	lineRGB?: number[][];
 };
 
+export type Scene = {
+	renderAzimuth: number;
+	renderElevation: number;
+	volScaleMultiplier: number;
+	crosshairPos: number[];
+	clipPlane: number[];
+	clipPlaneDepthAziElev: number[];
+	pan2Dxyzmm: number[];
+	gamma: number;
+};
+
 export type VolumeModel = AnyModel<{
 	path: FileInput;
 	url: string;
@@ -77,6 +88,8 @@ export type VolumeModel = AnyModel<{
 
 	colormap_invert: boolean;
 	n_frame_4d: number | null;
+	modulation_image: number | null;
+	modulate_alpha: number;
 
 	hdr: Partial<NIFTI1>;
 	img: DataView;
@@ -147,6 +160,8 @@ export type Model = AnyModel<{
 	draw_opacity: number;
 	draw_fill_overwrites: boolean;
 	graph: Graph;
+	scene: Scene;
+	overlay_alpha_shader: number;
 }>;
 
 // Custom message datas
