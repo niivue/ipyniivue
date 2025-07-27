@@ -10,8 +10,8 @@ import type {
 	CustomMessagePayload,
 	MeshModel,
 	Model,
-	VolumeModel,
 	Scene,
+	VolumeModel,
 } from "./types.ts";
 
 let nv: niivue.Niivue;
