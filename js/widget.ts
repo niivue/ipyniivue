@@ -126,6 +126,13 @@ function attachModelEventHandlers(
 		}
 	}
 
+	function overlay_outline_width_changed() {
+		nv.overlayOutlineWidth = model.get("overlay_outline_width");
+		if (nv._gl) {
+			nv.updateGLVolume();
+		}
+	}
+
 	function overlay_alpha_shader_changed() {
 		nv.overlayAlphaShader = model.get("overlay_alpha_shader");
 		if (nv._gl) {
@@ -146,6 +153,7 @@ function attachModelEventHandlers(
 	model.on("change:draw_fill_overwrites", draw_fill_overwrites_changed);
 	model.on("change:graph", graph_changed);
 	model.on("change:scene", scene_changed);
+	model.on("change:overlay_outline_width", overlay_outline_width_changed);
 	model.on("change:overlay_alpha_shader", overlay_alpha_shader_changed);
 
 	// Set attributes not set on init
@@ -156,6 +164,7 @@ function attachModelEventHandlers(
 	draw_fill_overwrites_changed();
 	graph_changed();
 	scene_changed();
+	overlay_outline_width_changed();
 	overlay_alpha_shader_changed();
 
 	// Handle any message directions from the nv object.
@@ -671,6 +680,7 @@ export default {
 			model.off("change:draw_fill_overwrites");
 			model.off("change:graph");
 			model.off("change:scene");
+			model.off("change:overlay_outline_width");
 			model.off("change:overlay_alpha_shader");
 		};
 	},

@@ -161,6 +161,7 @@ export type Model = AnyModel<{
 	draw_fill_overwrites: boolean;
 	graph: Graph;
 	scene: Scene;
+	overlay_outline_width: number;
 	overlay_alpha_shader: number;
 }>;
 

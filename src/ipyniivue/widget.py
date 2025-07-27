@@ -688,6 +688,7 @@ class NiiVue(BaseAnyWidget):
         to_json=serialize_scene,
         from_json=deserialize_scene,
     )
+    overlay_outline_width = t.Float(0).tag(sync=True)  # 0 for none
     overlay_alpha_shader = t.Float(1).tag(sync=True)  # 1 for opaque
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
