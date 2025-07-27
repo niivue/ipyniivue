@@ -10,6 +10,7 @@ import type {
 	CustomMessagePayload,
 	MeshModel,
 	Model,
+	Scene,
 	VolumeModel,
 } from "./types.ts";
 
@@ -69,42 +70,102 @@ function attachModelEventHandlers(
 	});
 
 	// Other nv prop changes
-	model.on("change:background_masks_overlays", () => {
+	function background_masks_overlays_changed() {
 		nv.backgroundMasksOverlays = model.get("background_masks_overlays");
-		nv.updateGLVolume();
-	});
+		if (nv._gl) {
+			nv.updateGLVolume();
+		}
+	}
 
-	model.on("change:clip_plane_depth_azi_elev", () => {
+	function clip_plane_depth_azi_elev_changed() {
 		const [depth, azimuth, elevation] = model.get("clip_plane_depth_azi_elev");
 		nv.setClipPlane([depth, azimuth, elevation]);
-	});
+	}
 
-	model.on("change:draw_lut", () => {
+	function draw_lut_changed() {
 		const drawLut = model.get("draw_lut");
 		if (drawLut && Array.isArray(drawLut.lut)) {
 			drawLut.lut = new Uint8ClampedArray(drawLut.lut);
 			nv.drawLut = drawLut;
 		}
-		nv.updateGLVolume();
-	});
+		if (nv._gl) {
+			nv.updateGLVolume();
+		}
+	}
 
-	model.on("change:draw_opacity", () => {
+	function draw_opacity_changed() {
 		nv.drawOpacity = model.get("draw_opacity");
-		nv.drawScene();
-	});
+		if (nv._gl) {
+			nv.drawScene();
+		}
+	}
 
-	model.on("change:draw_fill_overwrites", () => {
+	function draw_fill_overwrites_changed() {
 		nv.drawFillOverwrites = model.get("draw_fill_overwrites");
-	});
+	}
 
-	model.on("change:graph", () => {
+	function graph_changed() {
 		const graphData = model.get("graph");
 		for (const [key, value] of Object.entries(graphData)) {
 			// biome-ignore lint/suspicious/noExplicitAny: Update graph vals, only clear out old vals when needed
 			(nv.graph as any)[key] = value;
 		}
-		nv.updateGLVolume();
-	});
+		if (nv._gl) {
+			nv.updateGLVolume();
+		}
+	}
+
+	function scene_changed() {
+		const sceneData = model.get("scene");
+		for (const [key, value] of Object.entries(sceneData)) {
+			// biome-ignore lint/suspicious/noExplicitAny: Update scene vals, only clear out old vals when needed
+			(nv.scene as any)[key] = value;
+		}
+		if (nv._gl) {
+			nv.drawScene();
+		}
+	}
+
+	function overlay_outline_width_changed() {
+		nv.overlayOutlineWidth = model.get("overlay_outline_width");
+		if (nv._gl) {
+			nv.updateGLVolume();
+		}
+	}
+
+	function overlay_alpha_shader_changed() {
+		nv.overlayAlphaShader = model.get("overlay_alpha_shader");
+		if (nv._gl) {
+			nv.updateGLVolume();
+		}
+	}
+
+	model.on(
+		"change:background_masks_overlays",
+		background_masks_overlays_changed,
+	);
+	model.on(
+		"change:clip_plane_depth_azi_elev",
+		clip_plane_depth_azi_elev_changed,
+	);
+	model.on("change:draw_lut", draw_lut_changed);
+	model.on("change:draw_opacity", draw_opacity_changed);
+	model.on("change:draw_fill_overwrites", draw_fill_overwrites_changed);
+	model.on("change:graph", graph_changed);
+	model.on("change:scene", scene_changed);
+	model.on("change:overlay_outline_width", overlay_outline_width_changed);
+	model.on("change:overlay_alpha_shader", overlay_alpha_shader_changed);
+
+	// Set attributes not set on init
+	background_masks_overlays_changed();
+	clip_plane_depth_azi_elev_changed();
+	draw_lut_changed();
+	draw_opacity_changed();
+	draw_fill_overwrites_changed();
+	graph_changed();
+	scene_changed();
+	overlay_outline_width_changed();
+	overlay_alpha_shader_changed();
 
 	// Handle any message directions from the nv object.
 	model.on(
@@ -245,6 +306,34 @@ function attachModelEventHandlers(
 
 // Attach Niivue event handlers
 function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
+	let isThrottling = false;
+	const originalSyncMethod = nv.sync;
+	nv.sync = new Proxy(originalSyncMethod, {
+		apply: (target, thisArg, argumentsList) => {
+			Reflect.apply(target, thisArg, argumentsList);
+
+			// throttle sending back to backend
+			if (isThrottling) return;
+			isThrottling = true;
+			setTimeout(() => {
+				isThrottling = false;
+			}, 50);
+
+			const currentScene: Scene = {
+				renderAzimuth: nv.scene.renderAzimuth,
+				renderElevation: nv.scene.renderElevation,
+				volScaleMultiplier: nv.scene.volScaleMultiplier,
+				crosshairPos: [...nv.scene.crosshairPos],
+				clipPlane: nv.scene.clipPlane,
+				clipPlaneDepthAziElev: nv.scene.clipPlaneDepthAziElev,
+				pan2Dxyzmm: [...nv.scene.pan2Dxyzmm],
+				gamma: nv.scene.gamma || 1.0,
+			};
+			model.set("scene", currentScene);
+			model.save_changes();
+		},
+	});
+
 	nv.onImageLoaded = async (volume: niivue.NVImage) => {
 		// Check if the volume is already in the backend
 		const volumeID = volume.id;
@@ -590,6 +679,9 @@ export default {
 			model.off("change:draw_opacity");
 			model.off("change:draw_fill_overwrites");
 			model.off("change:graph");
+			model.off("change:scene");
+			model.off("change:overlay_outline_width");
+			model.off("change:overlay_alpha_shader");
 		};
 	},
 	async render({ model, el }: { model: Model; el: HTMLElement }) {

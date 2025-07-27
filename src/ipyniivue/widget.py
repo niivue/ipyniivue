@@ -29,18 +29,21 @@ from .serializers import (
     deserialize_graph,
     deserialize_hdr,
     deserialize_options,
+    deserialize_scene,
     serialize_colormap_label,
     serialize_file,
     serialize_graph,
     serialize_hdr,
     serialize_ndarray,
     serialize_options,
+    serialize_scene,
 )
 from .traits import (
     LUT,
     ColorMap,
     Graph,
     NIFTI1Hdr,
+    Scene,
 )
 from .utils import (
     ChunkedDataHandler,
@@ -458,14 +461,14 @@ class Volume(BaseAnyWidget):
 
     # Other properties
     colormap_invert = t.Bool(False).tag(sync=True)
-    n_frame_4d = t.Int(None, allow_none=True).tag(
-        sync=True
-    )  # Read-only after initialization
+    n_frame_4d = t.Int(None, allow_none=True).tag(sync=True)  # readonly after set
+    modulation_image = t.Int(None, allow_none=True).tag(sync=True)
+    modulate_alpha = t.Int(0).tag(sync=True)
 
     # Set after bidirectional comms with frontend
     hdr = t.Instance(NIFTI1Hdr, allow_none=True).tag(
         sync=True, to_json=serialize_hdr, from_json=deserialize_hdr
-    )
+    )  # currently only supports frontend->backend communication
     img = t.Instance(np.ndarray, allow_none=True).tag(
         sync=True, to_json=serialize_ndarray
     )
@@ -680,6 +683,13 @@ class NiiVue(BaseAnyWidget):
         to_json=serialize_graph,
         from_json=deserialize_graph,
     )
+    scene = t.Instance(Scene, allow_none=True).tag(
+        sync=True,
+        to_json=serialize_scene,
+        from_json=deserialize_scene,
+    )
+    overlay_outline_width = t.Float(0).tag(sync=True)  # 0 for none
+    overlay_alpha_shader = t.Float(1).tag(sync=True)  # 1 for opaque
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
@@ -707,6 +717,7 @@ class NiiVue(BaseAnyWidget):
         # Initialize values
         self._cluts = self._get_initial_colormaps()
         self.graph = Graph(parent=self)
+        self.scene = Scene(parent=self)
 
     def __setattr__(self, name, value):
         """todo: remove this starting version 2.4.1."""
@@ -737,6 +748,17 @@ class NiiVue(BaseAnyWidget):
                 "name": "graph",
                 "old": self.graph,
                 "new": self.graph,
+                "owner": self,
+                "type": "change",
+            }
+        )
+
+    def _notify_scene_changed(self):
+        self.notify_change(
+            {
+                "name": "scene",
+                "old": self.scene,
+                "new": self.scene,
                 "owner": self,
                 "type": "change",
             }
@@ -1618,7 +1640,7 @@ class NiiVue(BaseAnyWidget):
         """
         if not self._canvas_attached:
             raise RuntimeError(
-                "Canvas is not attached. Render this widget to attach to a canvas."
+                "Canvas is not attached. Render this widget to attach it to a canvas."
             )
         if not isinstance(gradient_amount, (int, float)):
             raise TypeError("gradient_amount must be a number.")
@@ -2079,6 +2101,84 @@ class NiiVue(BaseAnyWidget):
 
         """
         self._register_callback("clip_plane_change", callback, remove=remove)
+
+    def set_opacity(self, vol_idx: int, new_opacity: float):
+        """Set the opacity of a volume given by volume index.
+
+        Parameters
+        ----------
+        vol_idx : int
+            The volume index of the volume to change.
+        new_opacity : float
+            The opacity value. Valid values range from 0 to 1.
+
+        Raises
+        ------
+        ValueError
+            If `new_opacity` is not between 0 and 1 inclusive.
+        IndexError
+            If `vol_idx` is out of range of the `self.volumes` list.
+        """
+        if not (0 <= new_opacity <= 1):
+            raise ValueError("new_opacity must be between 0 and 1 inclusive.")
+        if not 0 <= vol_idx < len(self.volumes):
+            raise IndexError("vol_idx is out of range.")
+
+        self.volumes[vol_idx].opacity = new_opacity
+
+    def set_modulation_image(
+        self, id_target: str, id_modulation: str, modulate_alpha: int = 0
+    ):
+        """
+        Modulate the intensity of one volume based on the intensity of another.
+
+        Parameters
+        ----------
+        id_target : str
+            The ID of the volume to be modulated.
+        id_modulation : str
+            The ID of the volume that controls the modulation.
+            Pass an empty string ('') to disable modulation.
+        modulate_alpha : int, optional
+            Determines if the modulation influences alpha transparency.
+            Values greater than 1 will affect transparency. Default is 0.
+
+        Raises
+        ------
+        ValueError
+            If the target or modulation volume ID is not found.
+        RuntimeError
+            If the canvas has not been attached yet.
+            This function requires nv._gl to be valid in the frontend.
+
+        Examples
+        --------
+        ::
+
+            nv.set_modulation_image(nv.volumes[0].id, nv.volumes[1].id)
+        """
+        if not self._canvas_attached:
+            raise RuntimeError(
+                "Canvas is not attached. Render this widget to attach it to a canvas."
+            )
+
+        idx_target = self.get_volume_index_by_id(id_target)
+        if idx_target == -1:
+            raise ValueError(f"Volume with ID '{id_target}' not found.")
+
+        volume_target = self.volumes[idx_target]
+
+        if id_modulation:
+            idx_modulation = self.get_volume_index_by_id(id_modulation)
+            if idx_modulation == -1:
+                raise ValueError(
+                    f"Modulation volume with ID '{id_modulation}' not found."
+                )
+            volume_target.modulation_image = idx_modulation
+        else:
+            volume_target.modulation_image = None
+
+        volume_target.modulate_alpha = modulate_alpha
 
     # todo: make volumes be a list of Volumes and meshes be a list of Meshes
     def on_document_loaded(self, callback, remove=False):

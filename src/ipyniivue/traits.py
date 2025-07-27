@@ -350,6 +350,122 @@ class NIFTI1Hdr(t.HasTraits):
     extensionFlag = t.List(t.Int()).tag(sync=False)
 
 
+class Scene(t.HasTraits):
+    """
+    Represents the scene configuration for NiiVue.
+
+    Parameters
+    ----------
+    render_azimuth : float
+        The azimuth angle in degrees around the object.
+    render_elevation : float
+        The elevation angle in degrees.
+    vol_scale_multiplier : float
+        Scale multiplier for volume rendering.
+    crosshair_pos : list of float
+        The crosshair position as a list of 3 floats.
+    clip_plane : list of float
+        The clip plane parameters.
+    clip_plane_depth_azi_elev : list of float
+        The depth, azimuth, and elevation for the clip plane.
+    pan2d_xyzmm : list of float
+        The 2D pan in 3D mm as a list of 4 floats.
+    gamma : float
+        The gamma value for rendering.
+    clip_thick : float
+        The clip plane thickness.
+    clip_volume_low : list of float
+        The lower bounds of the clipping volume.
+    clip_volume_high : list of float
+        The upper bounds of the clipping volume.
+    """
+
+    # Traits
+    render_azimuth = t.Float(110.0).tag(sync=True)
+    render_elevation = t.Float(10.0).tag(sync=True)
+    vol_scale_multiplier = t.Float(1.0).tag(sync=True)
+    crosshair_pos = t.List(
+        t.Float(), default_value=[0.5, 0.5, 0.5], minlen=3, maxlen=3
+    ).tag(sync=True)
+    clip_plane = t.List(t.Float(), default_value=[0.0, 0.0, 0.0, 0.0]).tag(sync=True)
+    clip_plane_depth_azi_elev = t.List(
+        t.Float(), default_value=[2.0, 0.0, 0.0], minlen=3, maxlen=3
+    ).tag(sync=True)
+    pan2d_xyzmm = t.List(
+        t.Float(), default_value=[0.0, 0.0, 0.0, 1.0], minlen=4, maxlen=4
+    ).tag(sync=True)
+    gamma = t.Float(1.0).tag(sync=True)
+    clip_thick = t.Float(2.0).tag(sync=True)
+    clip_volume_low = t.List(
+        t.Float(), default_value=[0.0, 0.0, 0.0], minlen=3, maxlen=3
+    ).tag(sync=True)
+    clip_volume_high = t.List(
+        t.Float(), default_value=[1.0, 1.0, 1.0], minlen=3, maxlen=3
+    ).tag(sync=True)
+
+    # parent
+    _parent = None
+
+    def __init__(self, *args, parent=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._parent = parent
+
+    @property
+    def scene_data(self):
+        """Return the scene data as a dict with properties in snake_case."""
+        data = {
+            "gamma": self.gamma,
+            "azimuth": self.render_azimuth,
+            "elevation": self.render_elevation,
+            "crosshair_pos": self.crosshair_pos,
+            "clip_plane": self.clip_plane,
+            "clip_plane_depth_azi_elev": self.clip_plane_depth_azi_elev,
+            "vol_scale_multiplier": self.vol_scale_multiplier,
+            "pan2d_xyzmm": self.pan2d_xyzmm,
+            "clip_thick": self.clip_thick,
+            "clip_volume_low": self.clip_volume_low,
+            "clip_volume_high": self.clip_volume_high,
+        }
+        return data
+
+    _OBSERVED_TRAITS = (
+        "render_azimuth",
+        "render_elevation",
+        "vol_scale_multiplier",
+        "crosshair_pos",
+        "clip_plane",
+        "clip_plane_depth_azi_elev",
+        "pan2d_xyzmm",
+        "gamma",
+        "clip_thick",
+        "clip_volume_low",
+        "clip_volume_high",
+    )
+
+    @t.observe(*_OBSERVED_TRAITS)
+    def _propagate_parent_change(self, change):
+        if self._parent and callable(
+            getattr(self._parent, "_notify_scene_changed", None)
+        ):
+            self._parent._notify_scene_changed()
+
+
+CAMEL_TO_SNAKE_SCENE = {
+    "renderAzimuth": "render_azimuth",
+    "renderElevation": "render_elevation",
+    "volScaleMultiplier": "vol_scale_multiplier",
+    "crosshairPos": "crosshair_pos",
+    "clipPlane": "clip_plane",
+    "clipPlaneDepthAziElev": "clip_plane_depth_azi_elev",
+    "pan2Dxyzmm": "pan2d_xyzmm",
+    "gamma": "gamma",
+    "clipThick": "clip_thick",
+    "clipVolumeLow": "clip_volume_low",
+    "clipVolumeHigh": "clip_volume_high",
+}
+
+SNAKE_TO_CAMEL_SCENE = {v: k for k, v in CAMEL_TO_SNAKE_SCENE.items()}
+
 CAMEL_TO_SNAKE_GRAPH = {
     "LTWH": "ltwh",
     "opacity": "opacity",
