@@ -186,9 +186,8 @@ if __name__ == "__main__":
         "meshThicknessOn2D": float("inf"),
         "dragMode": DragMode.CONTRAST,
         "dragModePrimary": DragMode.CROSSHAIR,
-        # "mouseEventConfig": undefined, # not supported for
-        # now because right click on jupyter notebook is buggy
-        # "touchEventConfig": undefined,
+        "mouseEventConfig": None,
+        "touchEventConfig": None,
         "yoke3Dto2DZoom": False,
         "isDepthPickMesh": False,
         "isCornerOrientationText": False,

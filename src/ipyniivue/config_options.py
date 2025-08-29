@@ -69,6 +69,8 @@ class ConfigOptions(t.HasTraits):
     drag_mode_primary = t.UseEnum(DragMode, default_value=DragMode.CROSSHAIR).tag(
         sync=False
     )
+    mouse_event_config = t.Any(None).tag(sync=False)
+    touch_event_config = t.Any(None).tag(sync=False)
     yoke_3d_to_2d_zoom = t.Bool(False).tag(sync=False)
     is_depth_pick_mesh = t.Bool(False).tag(sync=False)
     is_corner_orientation_text = t.Bool(False).tag(sync=False)
@@ -185,6 +187,8 @@ class ConfigOptions(t.HasTraits):
         "mesh_thickness_on_2d",
         "drag_mode",
         "drag_mode_primary",
+        "mouse_event_config",
+        "touch_event_config",
         "yoke_3d_to_2d_zoom",
         "is_depth_pick_mesh",
         "is_corner_orientation_text",
@@ -300,6 +304,8 @@ CAMEL_TO_SNAKE = {
     "meshThicknessOn2D": "mesh_thickness_on_2d",
     "dragMode": "drag_mode",
     "dragModePrimary": "drag_mode_primary",
+    "mouseEventConfig": "mouse_event_config",
+    "touchEventConfig": "touch_event_config",
     "yoke3Dto2DZoom": "yoke_3d_to_2d_zoom",
     "isDepthPickMesh": "is_depth_pick_mesh",
     "isCornerOrientationText": "is_corner_orientation_text",
