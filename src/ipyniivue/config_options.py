@@ -7,7 +7,6 @@ import traitlets as t
 
 from ipyniivue.constants import (
     DragMode,
-    DragModePrimary,
     MultiplanarType,
     ShowRender,
     SliceType,
@@ -65,9 +64,9 @@ class ConfigOptions(t.HasTraits):
     is_radiological_convention = t.Bool(False).tag(sync=False)
     mesh_thickness_on_2d = t.Float(float("inf")).tag(sync=False)
     drag_mode = t.UseEnum(DragMode, default_value=DragMode.CONTRAST).tag(sync=False)
-    drag_mode_primary = t.UseEnum(
-        DragModePrimary, default_value=DragModePrimary.CROSSHAIR
-    ).tag(sync=False)
+    drag_mode_primary = t.UseEnum(DragMode, default_value=DragMode.CROSSHAIR).tag(
+        sync=False
+    )
     yoke_3d_to_2d_zoom = t.Bool(False).tag(sync=False)
     is_depth_pick_mesh = t.Bool(False).tag(sync=False)
     is_corner_orientation_text = t.Bool(False).tag(sync=False)

@@ -9,7 +9,6 @@ import enum
 __all__ = [
     "ColormapType",
     "DragMode",
-    "DragModePrimary",
     "MultiplanarType",
     "ShowRender",
     "SliceType",
@@ -102,6 +101,12 @@ class DragMode(enum.Enum):
         Callback only mode (value 5).
     ROI_SELECTION : int
         ROI (Region of Interest) selection mode (value 6).
+    ANGLE : int
+        Angle measurement mode (value 7).
+    CROSSHAIR : int
+        Crosshair interaction mode (value 8).
+    WINDOWING : int
+        Windowing adjustment mode (value 9).
     """
 
     NONE = 0
@@ -111,22 +116,9 @@ class DragMode(enum.Enum):
     SLICER_3D = 4
     CALLBACK_ONLY = 5
     ROI_SELECTION = 6
-
-
-class DragModePrimary(enum.Enum):
-    """
-    An enumeration of primary drag modes for NiiVue instances.
-
-    Members
-    -------
-    CROSSHAIR : int
-        Crosshair mode (value 0).
-    WINDOWING : int
-        Windowing mode (value 1).
-    """
-
-    CROSSHAIR = 0
-    WINDOWING = 1
+    ANGLE = 7
+    CROSSHAIR = 8
+    WINDOWING = 9
 
 
 class ColormapType(enum.Enum):
