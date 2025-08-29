@@ -250,8 +250,8 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;ColormapType&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DragMode&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;DragModePrimary&quot;</span><span class="p">,</span>
     <span class="s2">&quot;MultiplanarType&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PenType&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ShowRender&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SliceType&quot;</span><span class="p">,</span>
 <span class="p">]</span>
@@ -282,6 +282,28 @@
     <span class="n">SAGITTAL</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">MULTIPLANAR</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">RENDER</span> <span class="o">=</span> <span class="mi">4</span></div>
+
+
+
+<div class="viewcode-block" id="PenType">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.PenType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PenType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of pen types for drawing tools.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    PEN : int</span>
+<span class="sd">        Standard pen (freehand drawing) (value 0).</span>
+<span class="sd">    RECTANGLE : int</span>
+<span class="sd">        Rectangle drawing mode (value 1).</span>
+<span class="sd">    ELLIPSE : int</span>
+<span class="sd">        Ellipse drawing mode (value 2).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">PEN</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">RECTANGLE</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ELLIPSE</span> <span class="o">=</span> <span class="mi">2</span></div>
 
 
 
@@ -354,6 +376,12 @@
 <span class="sd">        Callback only mode (value 5).</span>
 <span class="sd">    ROI_SELECTION : int</span>
 <span class="sd">        ROI (Region of Interest) selection mode (value 6).</span>
+<span class="sd">    ANGLE : int</span>
+<span class="sd">        Angle measurement mode (value 7).</span>
+<span class="sd">    CROSSHAIR : int</span>
+<span class="sd">        Crosshair interaction mode (value 8).</span>
+<span class="sd">    WINDOWING : int</span>
+<span class="sd">        Windowing adjustment mode (value 9).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">NONE</span> <span class="o">=</span> <span class="mi">0</span>
@@ -362,26 +390,10 @@
     <span class="n">PAN</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">SLICER_3D</span> <span class="o">=</span> <span class="mi">4</span>
     <span class="n">CALLBACK_ONLY</span> <span class="o">=</span> <span class="mi">5</span>
-    <span class="n">ROI_SELECTION</span> <span class="o">=</span> <span class="mi">6</span></div>
-
-
-
-<div class="viewcode-block" id="DragModePrimary">
-<a class="viewcode-back" href="../../enums.html#ipyniivue.DragModePrimary">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">DragModePrimary</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An enumeration of primary drag modes for NiiVue instances.</span>
-
-<span class="sd">    Members</span>
-<span class="sd">    -------</span>
-<span class="sd">    CROSSHAIR : int</span>
-<span class="sd">        Crosshair mode (value 0).</span>
-<span class="sd">    WINDOWING : int</span>
-<span class="sd">        Windowing mode (value 1).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">CROSSHAIR</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">WINDOWING</span> <span class="o">=</span> <span class="mi">1</span></div>
+    <span class="n">ROI_SELECTION</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">ANGLE</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">CROSSHAIR</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">WINDOWING</span> <span class="o">=</span> <span class="mi">9</span></div>
 
 
 

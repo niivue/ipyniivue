@@ -302,7 +302,18 @@
 </dd>
 <dt>ROI_SELECTION<span class="classifier">int</span></dt><dd><p>ROI (Region of Interest) selection mode (value 6).</p>
 </dd>
+<dt>ANGLE<span class="classifier">int</span></dt><dd><p>Angle measurement mode (value 7).</p>
+</dd>
+<dt>CROSSHAIR<span class="classifier">int</span></dt><dd><p>Crosshair interaction mode (value 8).</p>
+</dd>
+<dt>WINDOWING<span class="classifier">int</span></dt><dd><p>Windowing adjustment mode (value 9).</p>
+</dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.DragMode.ANGLE">
+<span class="sig-name descname"><span class="pre">ANGLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#ipyniivue.DragMode.ANGLE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.DragMode.CALLBACK_ONLY">
 <span class="sig-name descname"><span class="pre">CALLBACK_ONLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#ipyniivue.DragMode.CALLBACK_ONLY" title="Link to this definition">¶</a></dt>
@@ -311,6 +322,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.DragMode.CONTRAST">
 <span class="sig-name descname"><span class="pre">CONTRAST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ipyniivue.DragMode.CONTRAST" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.DragMode.CROSSHAIR">
+<span class="sig-name descname"><span class="pre">CROSSHAIR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#ipyniivue.DragMode.CROSSHAIR" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -338,30 +354,9 @@
 <span class="sig-name descname"><span class="pre">SLICER_3D</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#ipyniivue.DragMode.SLICER_3D" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</section>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ipyniivue.DragModePrimary">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">DragModePrimary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/constants.html#DragModePrimary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.DragModePrimary" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>An enumeration of primary drag modes for NiiVue instances.</p>
-<section id="id2">
-<h2>Members<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<dl class="simple">
-<dt>CROSSHAIR<span class="classifier">int</span></dt><dd><p>Crosshair mode (value 0).</p>
-</dd>
-<dt>WINDOWING<span class="classifier">int</span></dt><dd><p>Windowing mode (value 1).</p>
-</dd>
-</dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="ipyniivue.DragModePrimary.CROSSHAIR">
-<span class="sig-name descname"><span class="pre">CROSSHAIR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#ipyniivue.DragModePrimary.CROSSHAIR" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ipyniivue.DragModePrimary.WINDOWING">
-<span class="sig-name descname"><span class="pre">WINDOWING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ipyniivue.DragModePrimary.WINDOWING" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ipyniivue.DragMode.WINDOWING">
+<span class="sig-name descname"><span class="pre">WINDOWING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#ipyniivue.DragMode.WINDOWING" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -372,8 +367,8 @@
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">MultiplanarType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/constants.html#MultiplanarType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.MultiplanarType" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
 <p>An enumeration of multiplanar types for NiiVue instances.</p>
-<section id="id3">
-<h2>Members<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<section id="id2">
+<h2>Members<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>AUTO<span class="classifier">int</span></dt><dd><p>Automatic multiplanar layout (value 0).</p>
 </dd>
@@ -402,6 +397,39 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.MultiplanarType.ROW">
 <span class="sig-name descname"><span class="pre">ROW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#ipyniivue.MultiplanarType.ROW" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ipyniivue.PenType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ipyniivue.</span></span><span class="sig-name descname"><span class="pre">PenType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/constants.html#PenType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.PenType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>An enumeration of pen types for drawing tools.</p>
+<section id="id3">
+<h2>Members<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>PEN<span class="classifier">int</span></dt><dd><p>Standard pen (freehand drawing) (value 0).</p>
+</dd>
+<dt>RECTANGLE<span class="classifier">int</span></dt><dd><p>Rectangle drawing mode (value 1).</p>
+</dd>
+<dt>ELLIPSE<span class="classifier">int</span></dt><dd><p>Ellipse drawing mode (value 2).</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.PenType.ELLIPSE">
+<span class="sig-name descname"><span class="pre">ELLIPSE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#ipyniivue.PenType.ELLIPSE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.PenType.PEN">
+<span class="sig-name descname"><span class="pre">PEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#ipyniivue.PenType.PEN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.PenType.RECTANGLE">
+<span class="sig-name descname"><span class="pre">RECTANGLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ipyniivue.PenType.RECTANGLE" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -552,18 +580,16 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#ipyniivue.DragMode"><code class="docutils literal notranslate"><span class="pre">DragMode</span></code></a><ul>
+<li><a class="reference internal" href="#ipyniivue.DragMode.ANGLE"><code class="docutils literal notranslate"><span class="pre">DragMode.ANGLE</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.DragMode.CALLBACK_ONLY"><code class="docutils literal notranslate"><span class="pre">DragMode.CALLBACK_ONLY</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.DragMode.CONTRAST"><code class="docutils literal notranslate"><span class="pre">DragMode.CONTRAST</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.DragMode.CROSSHAIR"><code class="docutils literal notranslate"><span class="pre">DragMode.CROSSHAIR</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.DragMode.MEASUREMENT"><code class="docutils literal notranslate"><span class="pre">DragMode.MEASUREMENT</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.DragMode.NONE"><code class="docutils literal notranslate"><span class="pre">DragMode.NONE</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.DragMode.PAN"><code class="docutils literal notranslate"><span class="pre">DragMode.PAN</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.DragMode.ROI_SELECTION"><code class="docutils literal notranslate"><span class="pre">DragMode.ROI_SELECTION</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.DragMode.SLICER_3D"><code class="docutils literal notranslate"><span class="pre">DragMode.SLICER_3D</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#ipyniivue.DragModePrimary"><code class="docutils literal notranslate"><span class="pre">DragModePrimary</span></code></a><ul>
-<li><a class="reference internal" href="#ipyniivue.DragModePrimary.CROSSHAIR"><code class="docutils literal notranslate"><span class="pre">DragModePrimary.CROSSHAIR</span></code></a></li>
-<li><a class="reference internal" href="#ipyniivue.DragModePrimary.WINDOWING"><code class="docutils literal notranslate"><span class="pre">DragModePrimary.WINDOWING</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.DragMode.WINDOWING"><code class="docutils literal notranslate"><span class="pre">DragMode.WINDOWING</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ipyniivue.MultiplanarType"><code class="docutils literal notranslate"><span class="pre">MultiplanarType</span></code></a><ul>
@@ -571,6 +597,12 @@
 <li><a class="reference internal" href="#ipyniivue.MultiplanarType.COLUMN"><code class="docutils literal notranslate"><span class="pre">MultiplanarType.COLUMN</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MultiplanarType.GRID"><code class="docutils literal notranslate"><span class="pre">MultiplanarType.GRID</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MultiplanarType.ROW"><code class="docutils literal notranslate"><span class="pre">MultiplanarType.ROW</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ipyniivue.PenType"><code class="docutils literal notranslate"><span class="pre">PenType</span></code></a><ul>
+<li><a class="reference internal" href="#ipyniivue.PenType.ELLIPSE"><code class="docutils literal notranslate"><span class="pre">PenType.ELLIPSE</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.PenType.PEN"><code class="docutils literal notranslate"><span class="pre">PenType.PEN</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.PenType.RECTANGLE"><code class="docutils literal notranslate"><span class="pre">PenType.RECTANGLE</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ipyniivue.ShowRender"><code class="docutils literal notranslate"><span class="pre">ShowRender</span></code></a><ul>

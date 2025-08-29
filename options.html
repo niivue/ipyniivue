@@ -538,7 +538,7 @@ as default-value.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.hero_image_fraction">
 <span class="sig-name descname"><span class="pre">hero_image_fraction</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.hero_image_fraction" title="Link to this definition">¶</a></dt>
-<dd><p>An int trait.</p>
+<dd><p>A float trait.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -771,6 +771,12 @@ as default-value.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.mouse_event_config">
+<span class="sig-name descname"><span class="pre">mouse_event_config</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.mouse_event_config" title="Link to this definition">¶</a></dt>
+<dd><p>A trait which allows any value.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.multiplanar_equal_size">
 <span class="sig-name descname"><span class="pre">multiplanar_equal_size</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.multiplanar_equal_size" title="Link to this definition">¶</a></dt>
 <dd><p>A boolean (True, False) trait.</p>
@@ -851,9 +857,46 @@ as default-value.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.paqd_uniforms">
+<span class="sig-name descname"><span class="pre">paqd_uniforms</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.paqd_uniforms" title="Link to this definition">¶</a></dt>
+<dd><p>An instance of a Python tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.pen_size">
 <span class="sig-name descname"><span class="pre">pen_size</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.pen_size" title="Link to this definition">¶</a></dt>
 <dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.pen_type">
+<span class="sig-name descname"><span class="pre">pen_type</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.pen_type" title="Link to this definition">¶</a></dt>
+<dd><p>Use a Enum class as model for the data type description.
+Note that if no default-value is provided, the first enum-value is used
+as default-value.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- SINCE: Python 3.4 (or install backport: pip install enum34)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">traitlets</span><span class="w"> </span><span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">UseEnum</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Color</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># -- IMPLICIT: default_value</span>
+    <span class="n">blue</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyEntity</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">UseEnum</span><span class="p">(</span><span class="n">Color</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">blue</span><span class="p">)</span>
+
+
+<span class="n">entity</span> <span class="o">=</span> <span class="n">MyEntity</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">red</span><span class="p">)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>  <span class="c1"># USE: Enum-value (preferred)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>  <span class="c1"># USE: name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;Color.green&quot;</span>  <span class="c1"># USE: scoped-name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># USE: number (as int)</span>
+<span class="k">assert</span> <span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py attribute">
@@ -919,6 +962,12 @@ as default-value.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.show_3d_crosshair">
 <span class="sig-name descname"><span class="pre">show_3d_crosshair</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.show_3d_crosshair" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.show_all_orientation_markers">
+<span class="sig-name descname"><span class="pre">show_all_orientation_markers</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.show_all_orientation_markers" title="Link to this definition">¶</a></dt>
 <dd><p>A boolean (True, False) trait.</p>
 </dd></dl>
 
@@ -993,6 +1042,12 @@ as default-value.</p>
 <dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.tile_margin">
 <span class="sig-name descname"><span class="pre">tile_margin</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.tile_margin" title="Link to this definition">¶</a></dt>
 <dd><p>A float trait.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.config_options.ConfigOptions.touch_event_config">
+<span class="sig-name descname"><span class="pre">touch_event_config</span></span><a class="headerlink" href="#ipyniivue.config_options.ConfigOptions.touch_event_config" title="Link to this definition">¶</a></dt>
+<dd><p>A trait which allows any value.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1148,12 +1203,15 @@ as default-value.</p>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.measure_text_justify"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.measure_text_justify</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.mesh_thickness_on_2d"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.mesh_thickness_on_2d</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.mesh_xray"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.mesh_xray</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.mouse_event_config"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.mouse_event_config</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.multiplanar_equal_size"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.multiplanar_equal_size</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.multiplanar_force_render"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.multiplanar_force_render</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.multiplanar_layout"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.multiplanar_layout</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.multiplanar_pad_pixels"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.multiplanar_pad_pixels</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.multiplanar_show_render"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.multiplanar_show_render</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.paqd_uniforms"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.paqd_uniforms</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.pen_size"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.pen_size</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.pen_type"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.pen_type</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.pen_value"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.pen_value</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.render_overlay_blend"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.render_overlay_blend</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.render_silhouette"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.render_silhouette</span></code></a></li>
@@ -1165,6 +1223,7 @@ as default-value.</p>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.selection_box_is_outline"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.selection_box_is_outline</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.selection_box_line_thickness"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.selection_box_line_thickness</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.show_3d_crosshair"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.show_3d_crosshair</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.show_all_orientation_markers"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.show_all_orientation_markers</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.show_colorbar_border"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.show_colorbar_border</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.show_legend"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.show_legend</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.show_measure_units"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.show_measure_units</span></code></a></li>
@@ -1173,6 +1232,7 @@ as default-value.</p>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.text_height"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.text_height</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.thumbnail"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.thumbnail</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.tile_margin"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.tile_margin</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.touch_event_config"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.touch_event_config</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.trust_cal_min_max"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.trust_cal_min_max</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.view_mode_hot_key"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.view_mode_hot_key</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.config_options.ConfigOptions.yoke_3d_to_2d_zoom"><code class="docutils literal notranslate"><span class="pre">ConfigOptions.yoke_3d_to_2d_zoom</span></code></a></li>

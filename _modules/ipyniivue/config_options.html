@@ -248,8 +248,8 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">ipyniivue.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DragMode</span><span class="p">,</span>
-    <span class="n">DragModePrimary</span><span class="p">,</span>
     <span class="n">MultiplanarType</span><span class="p">,</span>
+    <span class="n">PenType</span><span class="p">,</span>
     <span class="n">ShowRender</span><span class="p">,</span>
     <span class="n">SliceType</span><span class="p">,</span>
 <span class="p">)</span>
@@ -280,6 +280,7 @@
     <span class="n">font_color</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Tuple</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">selection_box_color</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Tuple</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">clip_plane_color</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Tuple</span><span class="p">((</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">paqd_uniforms</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Tuple</span><span class="p">((</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">clip_thick</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">clip_volume_low</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Tuple</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">clip_volume_high</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Tuple</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -308,14 +309,17 @@
     <span class="n">is_radiological_convention</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">mesh_thickness_on_2d</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">drag_mode</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">UseEnum</span><span class="p">(</span><span class="n">DragMode</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">DragMode</span><span class="o">.</span><span class="n">CONTRAST</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">drag_mode_primary</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">UseEnum</span><span class="p">(</span>
-        <span class="n">DragModePrimary</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">DragModePrimary</span><span class="o">.</span><span class="n">CROSSHAIR</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">drag_mode_primary</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">UseEnum</span><span class="p">(</span><span class="n">DragMode</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">DragMode</span><span class="o">.</span><span class="n">CROSSHAIR</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">mouse_event_config</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">touch_event_config</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">yoke_3d_to_2d_zoom</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">is_depth_pick_mesh</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">is_corner_orientation_text</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">is_orientation_text_visible</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">hero_image_fraction</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">show_all_orientation_markers</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">hero_image_fraction</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">hero_slice_type</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">UseEnum</span><span class="p">(</span><span class="n">SliceType</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">SliceType</span><span class="o">.</span><span class="n">RENDER</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span>
@@ -329,6 +333,7 @@
     <span class="n">drag_and_drop_enabled</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">drawing_enabled</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">pen_value</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">pen_type</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">UseEnum</span><span class="p">(</span><span class="n">PenType</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">PenType</span><span class="o">.</span><span class="n">PEN</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">flood_fill_neighbors</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">is_filled_pen</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -400,6 +405,7 @@
         <span class="s2">&quot;font_color&quot;</span><span class="p">,</span>
         <span class="s2">&quot;selection_box_color&quot;</span><span class="p">,</span>
         <span class="s2">&quot;clip_plane_color&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;paqd_uniforms&quot;</span><span class="p">,</span>
         <span class="s2">&quot;clip_thick&quot;</span><span class="p">,</span>
         <span class="s2">&quot;clip_volume_low&quot;</span><span class="p">,</span>
         <span class="s2">&quot;clip_volume_high&quot;</span><span class="p">,</span>
@@ -427,10 +433,13 @@
         <span class="s2">&quot;mesh_thickness_on_2d&quot;</span><span class="p">,</span>
         <span class="s2">&quot;drag_mode&quot;</span><span class="p">,</span>
         <span class="s2">&quot;drag_mode_primary&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mouse_event_config&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;touch_event_config&quot;</span><span class="p">,</span>
         <span class="s2">&quot;yoke_3d_to_2d_zoom&quot;</span><span class="p">,</span>
         <span class="s2">&quot;is_depth_pick_mesh&quot;</span><span class="p">,</span>
         <span class="s2">&quot;is_corner_orientation_text&quot;</span><span class="p">,</span>
         <span class="s2">&quot;is_orientation_text_visible&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;show_all_orientation_markers&quot;</span><span class="p">,</span>
         <span class="s2">&quot;hero_image_fraction&quot;</span><span class="p">,</span>
         <span class="s2">&quot;hero_slice_type&quot;</span><span class="p">,</span>
         <span class="s2">&quot;sagittal_nose_left&quot;</span><span class="p">,</span>
@@ -443,6 +452,7 @@
         <span class="s2">&quot;drag_and_drop_enabled&quot;</span><span class="p">,</span>
         <span class="s2">&quot;drawing_enabled&quot;</span><span class="p">,</span>
         <span class="s2">&quot;pen_value&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pen_type&quot;</span><span class="p">,</span>
         <span class="s2">&quot;flood_fill_neighbors&quot;</span><span class="p">,</span>
         <span class="s2">&quot;is_filled_pen&quot;</span><span class="p">,</span>
         <span class="s2">&quot;thumbnail&quot;</span><span class="p">,</span>
@@ -513,6 +523,7 @@
     <span class="s2">&quot;fontColor&quot;</span><span class="p">:</span> <span class="s2">&quot;font_color&quot;</span><span class="p">,</span>
     <span class="s2">&quot;selectionBoxColor&quot;</span><span class="p">:</span> <span class="s2">&quot;selection_box_color&quot;</span><span class="p">,</span>
     <span class="s2">&quot;clipPlaneColor&quot;</span><span class="p">:</span> <span class="s2">&quot;clip_plane_color&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;paqdUniforms&quot;</span><span class="p">:</span> <span class="s2">&quot;paqd_uniforms&quot;</span><span class="p">,</span>
     <span class="s2">&quot;clipThick&quot;</span><span class="p">:</span> <span class="s2">&quot;clip_thick&quot;</span><span class="p">,</span>
     <span class="s2">&quot;clipVolumeLow&quot;</span><span class="p">:</span> <span class="s2">&quot;clip_volume_low&quot;</span><span class="p">,</span>
     <span class="s2">&quot;clipVolumeHigh&quot;</span><span class="p">:</span> <span class="s2">&quot;clip_volume_high&quot;</span><span class="p">,</span>
@@ -540,10 +551,13 @@
     <span class="s2">&quot;meshThicknessOn2D&quot;</span><span class="p">:</span> <span class="s2">&quot;mesh_thickness_on_2d&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dragMode&quot;</span><span class="p">:</span> <span class="s2">&quot;drag_mode&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dragModePrimary&quot;</span><span class="p">:</span> <span class="s2">&quot;drag_mode_primary&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mouseEventConfig&quot;</span><span class="p">:</span> <span class="s2">&quot;mouse_event_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;touchEventConfig&quot;</span><span class="p">:</span> <span class="s2">&quot;touch_event_config&quot;</span><span class="p">,</span>
     <span class="s2">&quot;yoke3Dto2DZoom&quot;</span><span class="p">:</span> <span class="s2">&quot;yoke_3d_to_2d_zoom&quot;</span><span class="p">,</span>
     <span class="s2">&quot;isDepthPickMesh&quot;</span><span class="p">:</span> <span class="s2">&quot;is_depth_pick_mesh&quot;</span><span class="p">,</span>
     <span class="s2">&quot;isCornerOrientationText&quot;</span><span class="p">:</span> <span class="s2">&quot;is_corner_orientation_text&quot;</span><span class="p">,</span>
     <span class="s2">&quot;isOrientationTextVisible&quot;</span><span class="p">:</span> <span class="s2">&quot;is_orientation_text_visible&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;showAllOrientationMarkers&quot;</span><span class="p">:</span> <span class="s2">&quot;show_all_orientation_markers&quot;</span><span class="p">,</span>
     <span class="s2">&quot;heroImageFraction&quot;</span><span class="p">:</span> <span class="s2">&quot;hero_image_fraction&quot;</span><span class="p">,</span>
     <span class="s2">&quot;heroSliceType&quot;</span><span class="p">:</span> <span class="s2">&quot;hero_slice_type&quot;</span><span class="p">,</span>
     <span class="s2">&quot;sagittalNoseLeft&quot;</span><span class="p">:</span> <span class="s2">&quot;sagittal_nose_left&quot;</span><span class="p">,</span>
@@ -556,6 +570,7 @@
     <span class="s2">&quot;dragAndDropEnabled&quot;</span><span class="p">:</span> <span class="s2">&quot;drag_and_drop_enabled&quot;</span><span class="p">,</span>
     <span class="s2">&quot;drawingEnabled&quot;</span><span class="p">:</span> <span class="s2">&quot;drawing_enabled&quot;</span><span class="p">,</span>
     <span class="s2">&quot;penValue&quot;</span><span class="p">:</span> <span class="s2">&quot;pen_value&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;penType&quot;</span><span class="p">:</span> <span class="s2">&quot;pen_type&quot;</span><span class="p">,</span>
     <span class="s2">&quot;floodFillNeighbors&quot;</span><span class="p">:</span> <span class="s2">&quot;flood_fill_neighbors&quot;</span><span class="p">,</span>
     <span class="s2">&quot;isFilledPen&quot;</span><span class="p">:</span> <span class="s2">&quot;is_filled_pen&quot;</span><span class="p">,</span>
     <span class="s2">&quot;thumbnail&quot;</span><span class="p">:</span> <span class="s2">&quot;thumbnail&quot;</span><span class="p">,</span>
