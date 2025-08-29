@@ -13,12 +13,12 @@ Enums
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: DragModePrimary
+.. autoclass:: MultiplanarType
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: MultiplanarType
+.. autoclass:: PenType
    :members:
    :undoc-members:
    :show-inheritance:

@@ -5,8 +5,8 @@ import importlib.metadata
 from .constants import (  # noqa: F401
     ColormapType,
     DragMode,
-    DragModePrimary,
     MultiplanarType,
+    PenType,
     ShowRender,
     SliceType,
 )
