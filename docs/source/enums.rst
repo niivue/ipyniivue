@@ -13,11 +13,6 @@ Enums
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: DragModePrimary
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 .. autoclass:: MultiplanarType
    :members:
    :undoc-members:
