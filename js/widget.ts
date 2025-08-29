@@ -281,7 +281,13 @@ function attachModelEventHandlers(
 						nv.drawClearAllUndoBitmaps();
 						try {
 							const name = url.slice(6);
-							const blob = new Blob([buffers[0]]);
+							const blob = new Blob([
+								new Uint8Array(
+									buffers[0].buffer,
+									buffers[0].byteOffset,
+									buffers[0].byteLength,
+								),
+							]);
 							const file = new File([blob], name, {
 								type: "application/octet-stream",
 							});
