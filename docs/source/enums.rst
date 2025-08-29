@@ -18,6 +18,11 @@ Enums
    :undoc-members:
    :show-inheritance:
 
+.. autoclass:: PenType
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 .. autoclass:: ShowRender
    :members:
    :undoc-members:

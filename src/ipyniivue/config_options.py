@@ -8,6 +8,7 @@ import traitlets as t
 from ipyniivue.constants import (
     DragMode,
     MultiplanarType,
+    PenType,
     ShowRender,
     SliceType,
 )
@@ -36,6 +37,7 @@ class ConfigOptions(t.HasTraits):
     font_color = t.Tuple((0.5, 0.5, 0.5, 1.0)).tag(sync=False)
     selection_box_color = t.Tuple((1.0, 1.0, 1.0, 0.5)).tag(sync=False)
     clip_plane_color = t.Tuple((0.7, 0.0, 0.7, 0.5)).tag(sync=False)
+    paqd_uniforms = t.Tuple((0.3, 0.5, 0.5, 1.0)).tag(sync=False)
     clip_thick = t.Float(2.0).tag(sync=False)
     clip_volume_low = t.Tuple((0.0, 0.0, 0.0)).tag(sync=False)
     clip_volume_high = t.Tuple((1.0, 1.0, 1.0)).tag(sync=False)
@@ -71,7 +73,8 @@ class ConfigOptions(t.HasTraits):
     is_depth_pick_mesh = t.Bool(False).tag(sync=False)
     is_corner_orientation_text = t.Bool(False).tag(sync=False)
     is_orientation_text_visible = t.Bool(True).tag(sync=False)
-    hero_image_fraction = t.Int(0).tag(sync=False)
+    show_all_orientation_markers = t.Bool(False).tag(sync=False)
+    hero_image_fraction = t.Float(0.0).tag(sync=False)
     hero_slice_type = t.UseEnum(SliceType, default_value=SliceType.RENDER).tag(
         sync=False
     )
@@ -85,6 +88,7 @@ class ConfigOptions(t.HasTraits):
     drag_and_drop_enabled = t.Bool(True).tag(sync=False)
     drawing_enabled = t.Bool(False).tag(sync=False)
     pen_value = t.Float(1.0).tag(sync=False)
+    pen_type = t.UseEnum(PenType, default_value=PenType.PEN).tag(sync=False)
     flood_fill_neighbors = t.Int(6).tag(sync=False)
     is_filled_pen = t.Bool(False).tag(sync=False)
     thumbnail = t.Unicode("").tag(sync=False)
@@ -153,6 +157,7 @@ class ConfigOptions(t.HasTraits):
         "font_color",
         "selection_box_color",
         "clip_plane_color",
+        "paqd_uniforms",
         "clip_thick",
         "clip_volume_low",
         "clip_volume_high",
@@ -184,6 +189,7 @@ class ConfigOptions(t.HasTraits):
         "is_depth_pick_mesh",
         "is_corner_orientation_text",
         "is_orientation_text_visible",
+        "show_all_orientation_markers",
         "hero_image_fraction",
         "hero_slice_type",
         "sagittal_nose_left",
@@ -196,6 +202,7 @@ class ConfigOptions(t.HasTraits):
         "drag_and_drop_enabled",
         "drawing_enabled",
         "pen_value",
+        "pen_type",
         "flood_fill_neighbors",
         "is_filled_pen",
         "thumbnail",
@@ -265,6 +272,7 @@ CAMEL_TO_SNAKE = {
     "fontColor": "font_color",
     "selectionBoxColor": "selection_box_color",
     "clipPlaneColor": "clip_plane_color",
+    "paqdUniforms": "paqd_uniforms",
     "clipThick": "clip_thick",
     "clipVolumeLow": "clip_volume_low",
     "clipVolumeHigh": "clip_volume_high",
@@ -296,6 +304,7 @@ CAMEL_TO_SNAKE = {
     "isDepthPickMesh": "is_depth_pick_mesh",
     "isCornerOrientationText": "is_corner_orientation_text",
     "isOrientationTextVisible": "is_orientation_text_visible",
+    "showAllOrientationMarkers": "show_all_orientation_markers",
     "heroImageFraction": "hero_image_fraction",
     "heroSliceType": "hero_slice_type",
     "sagittalNoseLeft": "sagittal_nose_left",
@@ -308,6 +317,7 @@ CAMEL_TO_SNAKE = {
     "dragAndDropEnabled": "drag_and_drop_enabled",
     "drawingEnabled": "drawing_enabled",
     "penValue": "pen_value",
+    "penType": "pen_type",
     "floodFillNeighbors": "flood_fill_neighbors",
     "isFilledPen": "is_filled_pen",
     "thumbnail": "thumbnail",

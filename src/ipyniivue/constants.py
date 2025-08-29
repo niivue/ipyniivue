@@ -10,6 +10,7 @@ __all__ = [
     "ColormapType",
     "DragMode",
     "MultiplanarType",
+    "PenType",
     "ShowRender",
     "SliceType",
 ]
@@ -38,6 +39,25 @@ class SliceType(enum.Enum):
     SAGITTAL = 2
     MULTIPLANAR = 3
     RENDER = 4
+
+
+class PenType(enum.Enum):
+    """
+    An enumeration of pen types for drawing tools.
+
+    Members
+    -------
+    PEN : int
+        Standard pen (freehand drawing) (value 0).
+    RECTANGLE : int
+        Rectangle drawing mode (value 1).
+    ELLIPSE : int
+        Ellipse drawing mode (value 2).
+    """
+
+    PEN = 0
+    RECTANGLE = 1
+    ELLIPSE = 2
 
 
 class ShowRender(enum.Enum):

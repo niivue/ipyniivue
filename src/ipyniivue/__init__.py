@@ -6,6 +6,7 @@ from .constants import (  # noqa: F401
     ColormapType,
     DragMode,
     MultiplanarType,
+    PenType,
     ShowRender,
     SliceType,
 )
