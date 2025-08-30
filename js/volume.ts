@@ -66,12 +66,22 @@ function setup_volume_property_listeners(
 	}
 
 	function cal_min_changed() {
-		volume.cal_min = vmodel.get("cal_min");
+		volume.cal_min = vmodel.get("cal_min") ?? Number.NaN;
 		nv.updateGLVolume();
 	}
 
 	function cal_max_changed() {
-		volume.cal_max = vmodel.get("cal_max");
+		volume.cal_max = vmodel.get("cal_max") ?? Number.NaN;
+		nv.updateGLVolume();
+	}
+
+	function cal_min_neg_changed() {
+		volume.cal_minNeg = vmodel.get("cal_min_neg") ?? Number.NaN;
+		nv.updateGLVolume();
+	}
+
+	function cal_max_neg_changed() {
+		volume.cal_maxNeg = vmodel.get("cal_max_neg") ?? Number.NaN;
 		nv.updateGLVolume();
 	}
 
@@ -102,6 +112,12 @@ function setup_volume_property_listeners(
 			newColormapLabel.lut = new Uint8ClampedArray(newColormapLabel.lut);
 			volume.colormapLabel = newColormapLabel;
 		}
+		nv.updateGLVolume();
+	}
+
+	function colormap_type_changed() {
+		console.log("colormap type changed", vmodel.get("colormap_type"));
+		volume.colormapType = vmodel.get("colormap_type");
 		nv.updateGLVolume();
 	}
 
@@ -154,11 +170,14 @@ function setup_volume_property_listeners(
 	vmodel.on("change:colorbar_visible", colorbar_visible_changed);
 	vmodel.on("change:cal_min", cal_min_changed);
 	vmodel.on("change:cal_max", cal_max_changed);
+	vmodel.on("change:cal_min_neg", cal_min_neg_changed);
+	vmodel.on("change:cal_max_neg", cal_max_neg_changed);
 	vmodel.on("change:colormap", colormap_changed);
 	vmodel.on("change:opacity", opacity_changed);
 	vmodel.on("change:frame_4d", frame_4d_changed);
 	vmodel.on("change:colormap_negative", colormap_negative_changed);
 	vmodel.on("change:colormap_label", colormap_label_changed);
+	vmodel.on("change:colormap_type", colormap_type_changed);
 
 	vmodel.on("change:colormap_invert", colormap_invert_changed);
 	vmodel.on("change:modulation_image", modulation_image_changed);
@@ -170,11 +189,14 @@ function setup_volume_property_listeners(
 		vmodel.off("change:colorbar_visible", colorbar_visible_changed);
 		vmodel.off("change:cal_min", cal_min_changed);
 		vmodel.off("change:cal_max", cal_max_changed);
+		vmodel.off("change:cal_min_neg", cal_min_neg_changed);
+		vmodel.off("change:cal_max_neg", cal_max_neg_changed);
 		vmodel.off("change:colormap", colormap_changed);
 		vmodel.off("change:opacity", opacity_changed);
 		vmodel.off("change:frame_4d", frame_4d_changed);
 		vmodel.off("change:colormap_negative", colormap_negative_changed);
 		vmodel.off("change:colormap_label", colormap_label_changed);
+		vmodel.off("change:colormap_type", colormap_type_changed);
 
 		vmodel.off("change:colormap_invert", colormap_invert_changed);
 		vmodel.off("change:modulation_image", modulation_image_changed);
@@ -238,11 +260,11 @@ async function create_volume(
 			vmodel.get("colormap_negative"),
 			vmodel.get("frame_4d"),
 			0,
-			Number.NaN,
-			Number.NaN,
+			vmodel.get("cal_min_neg") ?? Number.NaN,
+			vmodel.get("cal_max_neg") ?? Number.NaN,
 			vmodel.get("colorbar_visible"),
 			null,
-			0,
+			vmodel.get("colormap_type"),
 			null,
 		);
 	} else if (url) {
@@ -263,6 +285,9 @@ async function create_volume(
 			imageType: 0,
 			colorbarVisible: vmodel.get("colorbar_visible"),
 		});
+		volume.cal_minNeg = vmodel.get("cal_min_neg") ?? Number.NaN;
+		volume.cal_maxNeg = vmodel.get("cal_max_neg") ?? Number.NaN;
+		volume.colormapType = vmodel.get("colormap_type");
 	} else {
 		throw new Error("Invalid source for volume");
 	}

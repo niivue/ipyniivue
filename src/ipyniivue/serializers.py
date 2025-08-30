@@ -334,3 +334,24 @@ def deserialize_scene(serialized_scene: dict, widget: object):
             deserialized_value = value
             scene_args[snake_name] = deserialized_value
     return Scene(**scene_args)
+
+
+def serialize_enum(instance: enum.Enum, widget: object):
+    """
+    Serialize an Enum instance by returning its value.
+
+    Parameters
+    ----------
+    instance : enum.Enum
+        The Enum instance to serialize.
+    widget : object
+        The NiiVue widget the instance is a part of.
+
+    Returns
+    -------
+    int
+        The value of the enum.
+    """
+    if isinstance(instance, enum.Enum):
+        return instance.value
+    return instance

@@ -82,9 +82,12 @@ export type VolumeModel = AnyModel<{
 	colorbar_visible: boolean;
 	cal_min: number;
 	cal_max: number;
+	cal_min_neg: number;
+	cal_max_neg: number;
 	frame_4d: number;
 	colormap_negative: string;
 	colormap_label: LUT;
+	colormap_type: number;
 
 	colormap_invert: boolean;
 	n_frame_4d: number | null;
