@@ -1473,6 +1473,7 @@ class NiiVue(BaseAnyWidget):
         if not isinstance(gamma, (int, float)):
             raise TypeError("gamma must be a number")
 
+        self.scene.gamma = gamma
         self.send({"type": "set_gamma", "data": [gamma]})
 
     def set_slice_type(self, slice_type: SliceType):
