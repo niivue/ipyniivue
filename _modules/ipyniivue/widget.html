@@ -264,7 +264,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">CallbackDispatcher</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.config_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigOptions</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">SliceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ColormapType</span><span class="p">,</span>
+    <span class="n">SliceType</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.serializers</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">deserialize_colormap_label</span><span class="p">,</span>
     <span class="n">deserialize_graph</span><span class="p">,</span>
@@ -272,6 +275,7 @@
     <span class="n">deserialize_options</span><span class="p">,</span>
     <span class="n">deserialize_scene</span><span class="p">,</span>
     <span class="n">serialize_colormap_label</span><span class="p">,</span>
+    <span class="n">serialize_enum</span><span class="p">,</span>
     <span class="n">serialize_file</span><span class="p">,</span>
     <span class="n">serialize_graph</span><span class="p">,</span>
     <span class="n">serialize_hdr</span><span class="p">,</span>
@@ -681,12 +685,18 @@
 <span class="sd">        Minimum intensity value for brightness/contrast mapping.</span>
 <span class="sd">    cal_max : float or None, optional</span>
 <span class="sd">        Maximum intensity value for brightness/contrast mapping.</span>
+<span class="sd">    cal_min_neg : float or None, optional</span>
+<span class="sd">        Minimum (most negative) intensity for negative-value colormap mapping.</span>
+<span class="sd">    cal_max_neg : float or None, optional</span>
+<span class="sd">        Maximum (least negative) intensity for negative-value colormap mapping.</span>
 <span class="sd">    frame_4d : int, optional</span>
 <span class="sd">        Frame index for 4D volume data (default is 0).</span>
 <span class="sd">    colormap_negative : str, optional</span>
 <span class="sd">        Colormap for negative values (default is &#39;&#39;).</span>
-<span class="sd">    colormap_label : LUT, optional</span>
+<span class="sd">    colormap_label : :class:`LUT`, optional</span>
 <span class="sd">        Colormap label data.</span>
+<span class="sd">    colormap_type : :class:`ColormapType`, optional</span>
+<span class="sd">        Colormap type used for the volume. Default is ``ColormapType.MIN_TO_MAX``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Input-only traits (not accessible after initialization)</span>
@@ -709,12 +719,17 @@
     <span class="n">colorbar_visible</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">cal_min</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">cal_max</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cal_min_neg</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cal_max_neg</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">frame_4d</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">colormap_negative</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">colormap_label</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">LUT</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_colormap_label</span><span class="p">,</span>
         <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_colormap_label</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">colormap_type</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">UseEnum</span><span class="p">(</span><span class="n">ColormapType</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">ColormapType</span><span class="o">.</span><span class="n">MIN_TO_MAX</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_enum</span>
     <span class="p">)</span>
 
     <span class="c1"># Other properties</span>
@@ -749,10 +764,12 @@
             <span class="s2">&quot;colorbar_visible&quot;</span><span class="p">,</span>
             <span class="s2">&quot;cal_min&quot;</span><span class="p">,</span>
             <span class="s2">&quot;cal_max&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cal_min_neg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cal_max_neg&quot;</span><span class="p">,</span>
             <span class="s2">&quot;frame_4d&quot;</span><span class="p">,</span>
             <span class="s2">&quot;colormap_negative&quot;</span><span class="p">,</span>
             <span class="s2">&quot;colormap_label&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;colormap_invert&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;colormap_type&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">filtered_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">include_keys</span><span class="p">}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">filtered_kwargs</span><span class="p">)</span>
@@ -964,8 +981,8 @@
         <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_scene</span><span class="p">,</span>
         <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_scene</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">overlay_outline_width</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 0 for none</span>
-    <span class="n">overlay_alpha_shader</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 1 for opaque</span>
+    <span class="n">overlay_outline_width</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 0 for none</span>
+    <span class="n">overlay_alpha_shader</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 1 for opaque</span>
 
 <div class="viewcode-block" id="NiiVue.__init__">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.__init__">[docs]</a>
@@ -1660,12 +1677,12 @@
 
 <div class="viewcode-block" id="NiiVue.set_colormap">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_colormap">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_colormap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imageID</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_colormap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the colormap for a volume.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        imageID : str</span>
+<span class="sd">        image_id : str</span>
 <span class="sd">            The ID of the volume.</span>
 <span class="sd">        colormap : str</span>
 <span class="sd">            The name of the colormap to set.</span>
@@ -1681,11 +1698,11 @@
 
 <span class="sd">            nv.set_colormap(nv.volumes[0].id, &quot;green2cyan&quot;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">imageID</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">colormap</span> <span class="o">=</span> <span class="n">colormap</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume with ID &#39;</span><span class="si">{</span><span class="n">imageID</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume with ID &#39;</span><span class="si">{</span><span class="n">image_id</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.set_selection_box_color">
@@ -2401,6 +2418,37 @@
 <span class="sd">            spacing between tiles of multiplanar view</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">multiplanar_pad_pixels</span> <span class="o">=</span> <span class="n">pixels</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_colormap_negative">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_colormap_negative">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_colormap_negative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">colormap_negative</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the colormap negative for a specific volume.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        image_id : str</span>
+<span class="sd">            The ID of the volume for which to set the negative colormap.</span>
+<span class="sd">        colormap_negative : str</span>
+<span class="sd">            The name of the negative colormap to use (e.g., &quot;winter&quot;).</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the volume with the given ID is not found.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_colormap_negative(nv.volumes[1].id, &quot;winter&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">colormap_negative</span> <span class="o">=</span> <span class="n">colormap_negative</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume with ID &#39;</span><span class="si">{</span><span class="n">image_id</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span></div>
 
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
