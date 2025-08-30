@@ -23,7 +23,10 @@ import traitlets as t
 from ipywidgets import CallbackDispatcher
 
 from .config_options import ConfigOptions
-from .constants import SliceType
+from .constants import (
+    ColormapType,
+    SliceType,
+)
 from .serializers import (
     deserialize_colormap_label,
     deserialize_graph,
@@ -31,6 +34,7 @@ from .serializers import (
     deserialize_options,
     deserialize_scene,
     serialize_colormap_label,
+    serialize_enum,
     serialize_file,
     serialize_graph,
     serialize_hdr,
@@ -423,12 +427,18 @@ class Volume(BaseAnyWidget):
         Minimum intensity value for brightness/contrast mapping.
     cal_max : float or None, optional
         Maximum intensity value for brightness/contrast mapping.
+    cal_min_neg : float or None, optional
+        Minimum (most negative) intensity for negative-value colormap mapping.
+    cal_max_neg : float or None, optional
+        Maximum (least negative) intensity for negative-value colormap mapping.
     frame_4d : int, optional
         Frame index for 4D volume data (default is 0).
     colormap_negative : str, optional
         Colormap for negative values (default is '').
-    colormap_label : LUT, optional
+    colormap_label : :class:`LUT`, optional
         Colormap label data.
+    colormap_type : :class:`ColormapType`, optional
+        Colormap type used for the volume. Default is ``ColormapType.MIN_TO_MAX``.
     """
 
     # Input-only traits (not accessible after initialization)
@@ -451,12 +461,17 @@ class Volume(BaseAnyWidget):
     colorbar_visible = t.Bool(True).tag(sync=True)
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
+    cal_min_neg = t.Float(None, allow_none=True).tag(sync=True)
+    cal_max_neg = t.Float(None, allow_none=True).tag(sync=True)
     frame_4d = t.Int(0).tag(sync=True)
     colormap_negative = t.Unicode("").tag(sync=True)
     colormap_label = t.Instance(LUT, allow_none=True).tag(
         sync=True,
         to_json=serialize_colormap_label,
         from_json=deserialize_colormap_label,
+    )
+    colormap_type = t.UseEnum(ColormapType, default_value=ColormapType.MIN_TO_MAX).tag(
+        sync=True, to_json=serialize_enum
     )
 
     # Other properties
@@ -489,10 +504,12 @@ class Volume(BaseAnyWidget):
             "colorbar_visible",
             "cal_min",
             "cal_max",
+            "cal_min_neg",
+            "cal_max_neg",
             "frame_4d",
             "colormap_negative",
             "colormap_label",
-            "colormap_invert",
+            "colormap_type",
         }
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
@@ -688,8 +705,8 @@ class NiiVue(BaseAnyWidget):
         to_json=serialize_scene,
         from_json=deserialize_scene,
     )
-    overlay_outline_width = t.Float(0).tag(sync=True)  # 0 for none
-    overlay_alpha_shader = t.Float(1).tag(sync=True)  # 1 for opaque
+    overlay_outline_width = t.Float(0.0).tag(sync=True)  # 0 for none
+    overlay_alpha_shader = t.Float(1.0).tag(sync=True)  # 1 for opaque
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
@@ -1334,12 +1351,12 @@ class NiiVue(BaseAnyWidget):
         # Send the colormap to the frontend
         self.send({"type": "add_colormap", "data": [name.lower(), color_map]})
 
-    def set_colormap(self, imageID: str, colormap: str):
+    def set_colormap(self, image_id: str, colormap: str):
         """Set the colormap for a volume.
 
         Parameters
         ----------
-        imageID : str
+        image_id : str
             The ID of the volume.
         colormap : str
             The name of the colormap to set.
@@ -1355,11 +1372,11 @@ class NiiVue(BaseAnyWidget):
 
             nv.set_colormap(nv.volumes[0].id, "green2cyan")
         """
-        idx = self.get_volume_index_by_id(imageID)
+        idx = self.get_volume_index_by_id(image_id)
         if idx != -1:
             self.volumes[idx].colormap = colormap
         else:
-            raise ValueError(f"Volume with ID '{imageID}' not found")
+            raise ValueError(f"Volume with ID '{image_id}' not found")
 
     def set_selection_box_color(self, color: tuple):
         """Set the selection box color.
@@ -1991,6 +2008,34 @@ class NiiVue(BaseAnyWidget):
             spacing between tiles of multiplanar view
         """
         self.opts.multiplanar_pad_pixels = pixels
+
+    def set_colormap_negative(self, image_id: str, colormap_negative: str):
+        """
+        Set the colormap negative for a specific volume.
+
+        Parameters
+        ----------
+        image_id : str
+            The ID of the volume for which to set the negative colormap.
+        colormap_negative : str
+            The name of the negative colormap to use (e.g., "winter").
+
+        Raises
+        ------
+        ValueError
+            If the volume with the given ID is not found.
+
+        Examples
+        --------
+        ::
+
+            nv.set_colormap_negative(nv.volumes[1].id, "winter")
+        """
+        idx = self.get_volume_index_by_id(image_id)
+        if idx != -1:
+            self.volumes[idx].colormap_negative = colormap_negative
+        else:
+            raise ValueError(f"Volume with ID '{image_id}' not found")
 
     """
     Custom event callbacks
