@@ -169,7 +169,7 @@ def deserialize_options(serialized_options: dict, widget: object):
         deserialized_value = deserialize_value(value)
         opts[snake_name] = deserialized_value
 
-    return ConfigOptions(**opts)
+    return ConfigOptions(**opts, parent=widget)
 
 
 def serialize_graph(instance: Graph, widget: object):
@@ -215,7 +215,7 @@ def deserialize_graph(serialized_graph: dict, widget: object):
         if snake_name in Graph.class_traits():
             deserialized_value = value
             graph_args[snake_name] = deserialized_value
-    return Graph(**graph_args)
+    return Graph(**graph_args, parent=widget)
 
 
 def serialize_hdr(instance: NIFTI1Hdr, widget: object):
@@ -333,7 +333,7 @@ def deserialize_scene(serialized_scene: dict, widget: object):
         if snake_name in Scene.class_traits():
             deserialized_value = value
             scene_args[snake_name] = deserialized_value
-    return Scene(**scene_args)
+    return Scene(**scene_args, parent=widget)
 
 
 def serialize_enum(instance: enum.Enum, widget: object):
