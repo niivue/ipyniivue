@@ -2466,6 +2466,33 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">slice_mosaic_string</span> <span class="o">=</span> <span class="n">mosaic_string</span></div>
 
 
+<div class="viewcode-block" id="NiiVue.set_corner_orientation_text">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_corner_orientation_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_corner_orientation_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_corner_orientation_text</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine if text appears at corner (true) or sides of 2D slice.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        is_corner_orientation_text : str</span>
+<span class="sd">            controls position of text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">is_corner_orientation_text</span> <span class="o">=</span> <span class="n">is_corner_orientation_text</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_mesh_thickness_on_2d">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_mesh_thickness_on_2d">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_mesh_thickness_on_2d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_thickness_on_2d</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Limit visibility of mesh in front of a 2D image. Requires world-space mode.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mesh_thickness_on_2d : str</span>
+<span class="sd">            distance from voxels for clipping mesh. Use float(&quot;inf&quot;)</span>
+<span class="sd">            to show entire mesh or 0.0 to hide mesh.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">mesh_thickness_on_2d</span> <span class="o">=</span> <span class="n">mesh_thickness_on_2d</span></div>
+
+
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom event callbacks</span>
 <span class="sd">    &quot;&quot;&quot;</span>
