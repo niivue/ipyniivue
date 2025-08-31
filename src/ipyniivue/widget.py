@@ -2049,6 +2049,27 @@ class NiiVue(BaseAnyWidget):
         """
         self.opts.slice_mosaic_string = mosaic_string
 
+    def set_corner_orientation_text(self, is_corner_orientation_text: bool):
+        """Determine if text appears at corner (true) or sides of 2D slice.
+
+        Parameters
+        ----------
+        is_corner_orientation_text : str
+            controls position of text
+        """
+        self.opts.is_corner_orientation_text = is_corner_orientation_text
+
+    def set_mesh_thickness_on_2d(self, mesh_thickness_on_2d: float):
+        """Limit visibility of mesh in front of a 2D image. Requires world-space mode.
+
+        Parameters
+        ----------
+        mesh_thickness_on_2d : str
+            distance from voxels for clipping mesh. Use float("inf")
+            to show entire mesh or 0.0 to hide mesh.
+        """
+        self.opts.mesh_thickness_on_2d = mesh_thickness_on_2d
+
     """
     Custom event callbacks
     """
