@@ -106,6 +106,7 @@ function attachModelEventHandlers(
 
 	function graph_changed() {
 		const graphData = model.get("graph");
+		if (!graphData) return;
 		for (const [key, value] of Object.entries(graphData)) {
 			// biome-ignore lint/suspicious/noExplicitAny: Update graph vals, only clear out old vals when needed
 			(nv.graph as any)[key] = value;
@@ -117,12 +118,10 @@ function attachModelEventHandlers(
 
 	function scene_changed() {
 		const sceneData = model.get("scene");
+		if (!sceneData) return;
 		for (const [key, value] of Object.entries(sceneData)) {
 			// biome-ignore lint/suspicious/noExplicitAny: Update scene vals, only clear out old vals when needed
 			(nv.scene as any)[key] = value;
-		}
-		if (nv._gl) {
-			nv.drawScene();
 		}
 	}
 

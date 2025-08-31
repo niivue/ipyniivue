@@ -780,6 +780,7 @@ class NiiVue(BaseAnyWidget):
                 "type": "change",
             }
         )
+        self.send({"type": "draw_scene", "data": []})
 
     def _register_callback(self, event_name, callback, remove=False):
         if event_name not in self._event_handlers:
@@ -1472,6 +1473,7 @@ class NiiVue(BaseAnyWidget):
         if not isinstance(gamma, (int, float)):
             raise TypeError("gamma must be a number")
 
+        self.scene.gamma = gamma
         self.send({"type": "set_gamma", "data": [gamma]})
 
     def set_slice_type(self, slice_type: SliceType):
@@ -2037,9 +2039,47 @@ class NiiVue(BaseAnyWidget):
         else:
             raise ValueError(f"Volume with ID '{image_id}' not found")
 
+    def set_slice_mosaic_string(self, mosaic_string: str):
+        """Create a custom multi-slice mosaic view.
+
+        Parameters
+        ----------
+        mosaic_string : str
+            description of mosaic
+        """
+        self.opts.slice_mosaic_string = mosaic_string
+
     """
     Custom event callbacks
     """
+
+    def on_canvas_attached(self, callback, remove=False):
+        """
+        Register a callback for when the canvas becomes attached.
+
+        If canvas is already attached the callback just gets called.
+
+        Parameters
+        ----------
+        callback : callable
+            Called when the canvas becomes attached.
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+        """
+        self._register_callback("canvas_attached", callback, remove=remove)
+
+        if not remove:
+            dispatcher = self._event_handlers["canvas_attached"]
+            if len(dispatcher.callbacks) == 1:
+
+                def _canvas_attached_observer(change):
+                    if change["new"] and not change["old"]:
+                        dispatcher()
+
+                self.observe(_canvas_attached_observer, names="_canvas_attached")
+
+            if self._canvas_attached:
+                callback()
 
     def on_azimuth_elevation_change(self, callback, remove=False):
         """
