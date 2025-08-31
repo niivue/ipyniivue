@@ -1059,6 +1059,7 @@
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;draw_scene&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_register_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">event_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">:</span>
@@ -1810,6 +1811,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;gamma must be a number&quot;</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_gamma&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">gamma</span><span class="p">]})</span></div>
 
 
@@ -2451,9 +2453,53 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume with ID &#39;</span><span class="si">{</span><span class="n">image_id</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="NiiVue.set_slice_mosaic_string">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_slice_mosaic_string">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_slice_mosaic_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mosaic_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a custom multi-slice mosaic view.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mosaic_string : str</span>
+<span class="sd">            description of mosaic</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">slice_mosaic_string</span> <span class="o">=</span> <span class="n">mosaic_string</span></div>
+
+
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom event callbacks</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NiiVue.on_canvas_attached">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_canvas_attached">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_canvas_attached</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for when the canvas becomes attached.</span>
+
+<span class="sd">        If canvas is already attached the callback just gets called.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            Called when the canvas becomes attached.</span>
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;canvas_attached&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">remove</span><span class="p">:</span>
+            <span class="n">dispatcher</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="s2">&quot;canvas_attached&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dispatcher</span><span class="o">.</span><span class="n">callbacks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+                <span class="k">def</span><span class="w"> </span><span class="nf">_canvas_attached_observer</span><span class="p">(</span><span class="n">change</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;new&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;old&quot;</span><span class="p">]:</span>
+                        <span class="n">dispatcher</span><span class="p">()</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">_canvas_attached_observer</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="s2">&quot;_canvas_attached&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canvas_attached</span><span class="p">:</span>
+                <span class="n">callback</span><span class="p">()</span></div>
+
 
 <div class="viewcode-block" id="NiiVue.on_azimuth_elevation_change">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_azimuth_elevation_change">[docs]</a>
