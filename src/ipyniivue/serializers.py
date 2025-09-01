@@ -21,6 +21,7 @@ from .traits import (
     Graph,
     NIFTI1Hdr,
     Scene,
+    VolumeObject3DData,
 )
 from .utils import is_negative_zero
 
@@ -355,3 +356,40 @@ def serialize_enum(instance: enum.Enum, widget: object):
     if isinstance(instance, enum.Enum):
         return instance.value
     return instance
+
+
+def serialize_to_none(instance: object, widget: object):
+    """
+    Serialize to None.
+
+    Parameters
+    ----------
+    instance : object
+        The object to serialize.
+    widget : object
+        The NiiVue widget the instance is a part of.
+
+    Returns
+    -------
+    None
+    """
+    return None
+
+
+def deserialize_volume_object_3d_data(instance: dict, widget: object):
+    """
+    Deserialize serialized VolumeObject3DData.
+
+    Parameters
+    ----------
+    instance : dict
+        The dictionary from the frontend.
+    widget : object
+        The NiiVue widget the instance is a part of.
+
+    Returns
+    -------
+    VolumeObject3DData
+        The deserialized VolumeObject3DData instance.
+    """
+    return VolumeObject3DData(**instance)

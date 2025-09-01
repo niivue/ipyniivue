@@ -1,4 +1,5 @@
 import type { AnyModel, TypedBufferPayload } from "./types.ts";
+import type { NVConfigOptions } from "@niivue/niivue";
 
 function delay(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -12,6 +13,33 @@ function dataViewToBase64(dataView: DataView) {
 		binaryString += String.fromCharCode(uint8Array[i]);
 	}
 	return btoa(binaryString);
+}
+
+export function deserializeOptions(
+	options: Partial<Record<keyof NVConfigOptions, unknown>>,
+): NVConfigOptions {
+	const result: Partial<NVConfigOptions> = {};
+	const specialValues: Record<string, number> = {
+		Infinity: Number.POSITIVE_INFINITY,
+		"-Infinity": Number.NEGATIVE_INFINITY,
+		NaN: Number.NaN,
+		"-0": -0,
+	};
+
+	for (const [key, value] of Object.entries(options) as [
+		keyof NVConfigOptions,
+		unknown,
+	][]) {
+		if (typeof value === "string" && value in specialValues) {
+			// biome-ignore lint/suspicious/noExplicitAny: NVConfigOptions
+			(result as any)[key] = specialValues[value];
+		} else {
+			// biome-ignore lint/suspicious/noExplicitAny: NVConfigOptions
+			(result as any)[key] = value;
+		}
+	}
+
+	return result as NVConfigOptions;
 }
 
 export function handleBufferMsg(

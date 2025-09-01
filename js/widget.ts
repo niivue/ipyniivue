@@ -10,38 +10,12 @@ import type {
 	CustomMessagePayload,
 	MeshModel,
 	Model,
+	NiivueObject3D,
 	Scene,
 	VolumeModel,
 } from "./types.ts";
 
 let nv: niivue.Niivue;
-
-function deserializeOptions(
-	options: Partial<Record<keyof niivue.NVConfigOptions, unknown>>,
-): niivue.NVConfigOptions {
-	const result: Partial<niivue.NVConfigOptions> = {};
-	const specialValues: Record<string, number> = {
-		Infinity: Number.POSITIVE_INFINITY,
-		"-Infinity": Number.NEGATIVE_INFINITY,
-		NaN: Number.NaN,
-		"-0": -0,
-	};
-
-	for (const [key, value] of Object.entries(options) as [
-		keyof niivue.NVConfigOptions,
-		unknown,
-	][]) {
-		if (typeof value === "string" && value in specialValues) {
-			// biome-ignore lint/suspicious/noExplicitAny: NVConfigOptions
-			(result as any)[key] = specialValues[value];
-		} else {
-			// biome-ignore lint/suspicious/noExplicitAny: NVConfigOptions
-			(result as any)[key] = value;
-		}
-	}
-
-	return result as niivue.NVConfigOptions;
-}
 
 // Attach model event handlers
 function attachModelEventHandlers(
@@ -60,13 +34,13 @@ function attachModelEventHandlers(
 		}
 	});
 
-	// Any time we change the options, we need to update the nv gl
+	// Any time the backend changes the options, we need to update the nv gl
+	// but...need to filter out changes that are *actually* from the frontend
+	// so, we don't call updateGLVolume here (instead, it's explicitly called from the backend)
 	model.on("change:opts", () => {
 		const serializedOpts = model.get("opts");
-		const opts = deserializeOptions(serializedOpts);
-
+		const opts = lib.deserializeOptions(serializedOpts);
 		nv.document.opts = { ...nv.opts, ...opts };
-		nv.updateGLVolume();
 	});
 
 	// Other nv prop changes
@@ -110,9 +84,6 @@ function attachModelEventHandlers(
 		for (const [key, value] of Object.entries(graphData)) {
 			// biome-ignore lint/suspicious/noExplicitAny: Update graph vals, only clear out old vals when needed
 			(nv.graph as any)[key] = value;
-		}
-		if (nv._gl) {
-			nv.updateGLVolume();
 		}
 	}
 
@@ -212,6 +183,10 @@ function attachModelEventHandlers(
 				}
 				case "draw_scene": {
 					nv.drawScene();
+					break;
+				}
+				case "update_gl_volume": {
+					nv.updateGLVolume();
 					break;
 				}
 				case "set_volume_render_illumination": {
@@ -330,6 +305,29 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 			};
 			model.set("scene", currentScene);
 			model.save_changes();
+		},
+	});
+
+	const originalRefreshLayersMethod = nv.refreshLayers;
+	nv.refreshLayers = new Proxy(originalRefreshLayersMethod, {
+		apply: (target, thisArg, argumentsList) => {
+			Reflect.apply(target, thisArg, argumentsList);
+
+			if (nv.volumeObject3D) {
+				const currentVolumeObject3D: NiivueObject3D = {
+					id: nv.volumeObject3D.id,
+					extents_min: nv.volumeObject3D.extentsMin,
+					extents_max: nv.volumeObject3D.extentsMax,
+					scale: nv.volumeObject3D.scale,
+					furthest_vertex_from_origin:
+						nv.volumeObject3D.furthestVertexFromOrigin,
+					field_of_view_de_oblique_mm: nv.volumeObject3D
+						.fieldOfViewDeObliqueMM as number[],
+				};
+				model.set("_volume_object_3d_data", currentVolumeObject3D);
+				model.save_changes();
+				console.log("_volume_object_3d_data set");
+			}
 		},
 	});
 
@@ -652,7 +650,7 @@ export default {
 		if (!nv) {
 			console.log("Creating new Niivue instance");
 			const serializedOpts = model.get("opts") ?? {};
-			const opts = deserializeOptions(serializedOpts);
+			const opts = lib.deserializeOptions(serializedOpts);
 			nv = new niivue.Niivue(opts);
 		}
 

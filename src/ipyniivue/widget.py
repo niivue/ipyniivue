@@ -33,6 +33,7 @@ from .serializers import (
     deserialize_hdr,
     deserialize_options,
     deserialize_scene,
+    deserialize_volume_object_3d_data,
     serialize_colormap_label,
     serialize_enum,
     serialize_file,
@@ -41,6 +42,7 @@ from .serializers import (
     serialize_ndarray,
     serialize_options,
     serialize_scene,
+    serialize_to_none,
 )
 from .traits import (
     LUT,
@@ -48,6 +50,7 @@ from .traits import (
     Graph,
     NIFTI1Hdr,
     Scene,
+    VolumeObject3DData,
 )
 from .utils import (
     ChunkedDataHandler,
@@ -682,6 +685,11 @@ class NiiVue(BaseAnyWidget):
     )
 
     _canvas_attached = t.Bool(False).tag(sync=True)
+    _volume_object_3d_data = t.Instance(VolumeObject3DData, allow_none=True).tag(
+        sync=True,
+        to_json=serialize_to_none,
+        from_json=deserialize_volume_object_3d_data,
+    )
 
     # other props
     background_masks_overlays = t.Int(0).tag(sync=True)
@@ -758,6 +766,7 @@ class NiiVue(BaseAnyWidget):
                 "type": "change",
             }
         )
+        self.send({"type": "update_gl_volume", "data": []})
 
     def _notify_graph_changed(self):
         self.notify_change(
@@ -769,6 +778,7 @@ class NiiVue(BaseAnyWidget):
                 "type": "change",
             }
         )
+        self.send({"type": "update_gl_volume", "data": []})
 
     def _notify_scene_changed(self):
         self.notify_change(

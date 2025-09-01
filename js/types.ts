@@ -11,6 +11,16 @@ export interface AnyModel<T extends object = object> extends BaseAnyModel<T> {
 	onChange: (value: Partial<T>) => void;
 }
 
+// just part of the NiivueObject3D in niivue
+export type NiivueObject3D = {
+	id: number;
+	extents_min: number[];
+	extents_max: number[];
+	scale: number[];
+	furthest_vertex_from_origin?: number;
+	field_of_view_de_oblique_mm?: number[];
+};
+
 interface FileInput {
 	name: string;
 	data: DataView;
@@ -94,7 +104,7 @@ export type VolumeModel = AnyModel<{
 	modulation_image: number | null;
 	modulate_alpha: number;
 
-	hdr: Partial<NIFTI1>;
+	hdr: Partial<NIFTI1>; // only updated via frontend...but this might change in the future..
 	img: DataView;
 	dims: number[];
 }>;
@@ -166,6 +176,8 @@ export type Model = AnyModel<{
 	scene: Scene;
 	overlay_outline_width: number;
 	overlay_alpha_shader: number;
+
+	_volume_object_3d_data: NiivueObject3D; // only updated via frontend (1-way comm)
 }>;
 
 // Custom message datas
@@ -214,6 +226,7 @@ export type CustomMessagePayload =
 	| { type: "set_gamma"; data: SetGammaData }
 	| { type: "resize_listener"; data: [] }
 	| { type: "draw_scene"; data: [] }
+	| { type: "update_gl_volume"; data: [] }
 	| {
 			type: "set_volume_render_illumination";
 			data: SetVolumeRenderIlluminationData;
