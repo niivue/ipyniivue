@@ -329,6 +329,8 @@ class Mesh(BaseAnyWidget):
     # Set after bidirectional comms with frontend
     pts = t.Instance(np.ndarray, allow_none=True).tag(sync=True)
     tris = t.Instance(np.ndarray, allow_none=True).tag(sync=True)
+    extents_min = t.List(t.Float()).tag(sync=True)
+    extents_max = t.List(t.Float()).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -491,6 +493,8 @@ class Volume(BaseAnyWidget):
         sync=True, to_json=serialize_ndarray
     )
     dims = t.Tuple(allow_none=True).tag(sync=True)
+    extents_min_ortho = t.List(t.Float()).tag(sync=True)
+    extents_max_ortho = t.List(t.Float()).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {

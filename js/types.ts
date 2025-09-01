@@ -107,6 +107,8 @@ export type VolumeModel = AnyModel<{
 	hdr: Partial<NIFTI1>; // only updated via frontend...but this might change in the future..
 	img: DataView;
 	dims: number[];
+	extents_min_ortho: number[];
+	extents_max_ortho: number[];
 }>;
 
 export type MeshModel = AnyModel<{
@@ -133,6 +135,8 @@ export type MeshModel = AnyModel<{
 
 	pts: DataView;
 	tris: DataView;
+	extents_min: number[];
+	extents_max: number[];
 }>;
 
 export type MeshLayerModel = AnyModel<{

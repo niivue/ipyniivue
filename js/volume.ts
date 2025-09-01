@@ -311,6 +311,12 @@ async function create_volume(
 	if (volume.hdr !== null) {
 		vmodel.set("hdr", getNIFTIData(volume.hdr));
 	}
+	if (volume.extentsMinOrtho) {
+		vmodel.set("extents_min_ortho", volume.extentsMinOrtho);
+	}
+	if (volume.extentsMaxOrtho) {
+		vmodel.set("extents_max_ortho", volume.extentsMaxOrtho);
+	}
 	vmodel.save_changes();
 	if (volume.img) {
 		const dataType = lib.getArrayType(volume.img);
