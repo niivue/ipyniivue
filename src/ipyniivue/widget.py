@@ -31,6 +31,7 @@ from .serializers import (
     deserialize_colormap_label,
     deserialize_graph,
     deserialize_hdr,
+    deserialize_mat4,
     deserialize_options,
     deserialize_scene,
     deserialize_volume_object_3d_data,
@@ -496,10 +497,16 @@ class Volume(BaseAnyWidget):
     dims = t.Tuple(allow_none=True).tag(sync=True)
     extents_min_ortho = t.List(t.Float()).tag(sync=True)
     extents_max_ortho = t.List(t.Float()).tag(sync=True)
-    frac2mm = t.List(t.Float()).tag(sync=True)
-    frac2mm_ortho = t.List(t.Float()).tag(sync=True)
+    frac2mm = t.Instance(np.ndarray, allow_none=True).tag(
+        sync=True, to_json=serialize_to_none, from_json=deserialize_mat4
+    )
+    frac2mm_ortho = t.Instance(np.ndarray, allow_none=True).tag(
+        sync=True, to_json=serialize_to_none, from_json=deserialize_mat4
+    )
     dims_ras = t.List(t.Float()).tag(sync=True)
-    mat_ras = t.List(t.Float()).tag(sync=True)
+    mat_ras = t.Instance(np.ndarray, allow_none=True).tag(
+        sync=True, to_json=serialize_to_none, from_json=deserialize_mat4
+    )
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -699,7 +706,7 @@ class Volume(BaseAnyWidget):
 
             mm_pos = volume.convert_frac2mm([0.5, 0.5, 0.5])
         """
-        if not self.frac2mm or not self.frac2mm_ortho:
+        if self.frac2mm is None or self.frac2mm_ortho is None:
             raise RuntimeError(
                 "Volume coordinate transformation matrices are not available. "
                 "Ensure canvas is attached."
@@ -708,9 +715,9 @@ class Volume(BaseAnyWidget):
         pos = [frac[0], frac[1], frac[2], 1.0]
 
         if is_force_slice_mm:
-            matrix = np.array(self.frac2mm).reshape(4, 4).T
+            matrix = self.frac2mm.T
         else:
-            matrix = np.array(self.frac2mm_ortho).reshape(4, 4).T
+            matrix = self.frac2mm_ortho.T
 
         result = np.dot(matrix, pos)
         return result.tolist()
@@ -752,18 +759,18 @@ class Volume(BaseAnyWidget):
 
         if not is_force_slice_mm:
             # Use orthogonal space
-            if not self.frac2mm_ortho:
+            if self.frac2mm_ortho is None:
                 raise RuntimeError(
                     "Volume orthogonal transformation matrix is not available. "
                     "Ensure canvas is attached."
                 )
-            matrix = np.array(self.frac2mm_ortho).reshape(4, 4).T
+            matrix = self.frac2mm_ortho.T
             inv_matrix = np.linalg.inv(matrix)
             result = np.dot(inv_matrix, mm4)
             frac = result[:3].tolist()
         else:
             # Use world space with RAS coordinates
-            if not self.dims_ras or not self.mat_ras:
+            if self.dims_ras is None or self.mat_ras is None:
                 raise RuntimeError(
                     "Volume RAS dimensions or matrix not available. "
                     "Ensure the volume is fully loaded."
@@ -773,7 +780,7 @@ class Volume(BaseAnyWidget):
             if d[1] < 1 or d[2] < 1 or d[3] < 1:
                 return frac
 
-            sform = np.array(self.mat_ras).reshape(4, 4).T
+            sform = self.mat_ras.T
             sform = np.linalg.inv(sform)
             sform = sform.T
 

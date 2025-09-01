@@ -393,3 +393,31 @@ def deserialize_volume_object_3d_data(instance: dict, widget: object):
         The deserialized VolumeObject3DData instance.
     """
     return VolumeObject3DData(**instance)
+
+
+def deserialize_mat4(instance: list, widget: object):
+    """
+    Deserialize a list into a 4x4 numpy array.
+
+    Parameters
+    ----------
+    instance : list
+        The flattened list representation of a 4x4 matrix.
+    widget : object
+        The NiiVue widget the instance is a part of.
+
+    Returns
+    -------
+    np.ndarray
+        The deserialized 4x4 numpy matrix.
+
+    Raises
+    ------
+    ValueError
+        If instance is not a list of length 16.
+    """
+    if not isinstance(instance, list):
+        raise ValueError(f"Input must be a list, got {type(instance)}.")
+    if len(instance) != 16:
+        raise ValueError(f"Input list must have length 16, got length {len(instance)}.")
+    return np.array(instance).reshape(4, 4)
