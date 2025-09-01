@@ -326,7 +326,6 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				};
 				model.set("_volume_object_3d_data", currentVolumeObject3D);
 				model.save_changes();
-				console.log("_volume_object_3d_data set");
 			}
 		},
 	});

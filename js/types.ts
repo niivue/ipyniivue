@@ -109,6 +109,10 @@ export type VolumeModel = AnyModel<{
 	dims: number[];
 	extents_min_ortho: number[];
 	extents_max_ortho: number[];
+	frac2mm: number[];
+	frac2mm_ortho: number[];
+	dims_ras: number[];
+	mat_ras: number[];
 }>;
 
 export type MeshModel = AnyModel<{

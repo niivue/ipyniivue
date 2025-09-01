@@ -54,6 +54,7 @@ from .traits import (
 )
 from .utils import (
     ChunkedDataHandler,
+    lerp,
     make_draw_lut,
     make_label_lut,
 )
@@ -495,6 +496,10 @@ class Volume(BaseAnyWidget):
     dims = t.Tuple(allow_none=True).tag(sync=True)
     extents_min_ortho = t.List(t.Float()).tag(sync=True)
     extents_max_ortho = t.List(t.Float()).tag(sync=True)
+    frac2mm = t.List(t.Float()).tag(sync=True)
+    frac2mm_ortho = t.List(t.Float()).tag(sync=True)
+    dims_ras = t.List(t.Float()).tag(sync=True)
+    mat_ras = t.List(t.Float()).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -665,6 +670,119 @@ class Volume(BaseAnyWidget):
             The filename (default: "image.nii").
         """
         self.send({"type": "save_to_disk", "data": [filename]})
+
+    def convert_frac2mm(self, frac: list, is_force_slice_mm: bool = False) -> list:
+        """
+        Convert fractional volume coordinates to millimeter space.
+
+        Parameters
+        ----------
+        frac : list of float
+            Fractional coordinates [X, Y, Z] in the range [0, 1].
+        is_force_slice_mm : bool, optional
+            If True, use world space coordinates. If False, use orthogonal space.
+            Default is False.
+
+        Returns
+        -------
+        list of float
+            Position in millimeters [X, Y, Z, W] where W is always 1.
+
+        Raises
+        ------
+        RuntimeError
+            If the volume data is not fully loaded.
+
+        Examples
+        --------
+        ::
+
+            mm_pos = volume.convert_frac2mm([0.5, 0.5, 0.5])
+        """
+        if not self.frac2mm or not self.frac2mm_ortho:
+            raise RuntimeError(
+                "Volume coordinate transformation matrices are not available. "
+                "Ensure canvas is attached."
+            )
+
+        pos = [frac[0], frac[1], frac[2], 1.0]
+
+        if is_force_slice_mm:
+            matrix = np.array(self.frac2mm).reshape(4, 4).T
+        else:
+            matrix = np.array(self.frac2mm_ortho).reshape(4, 4).T
+
+        result = np.dot(matrix, pos)
+        return result.tolist()
+
+    def convert_mm2frac(self, mm: list, is_force_slice_mm: bool = False) -> list:
+        """
+        Convert millimeter coordinates to fractional volume coordinates.
+
+        Parameters
+        ----------
+        mm : list of float
+            Position in millimeters [X, Y, Z] or [X, Y, Z, W].
+        is_force_slice_mm : bool, optional
+            If True, use world space coordinates. If False, use orthogonal space.
+            Default is False.
+
+        Returns
+        -------
+        list of float
+            Fractional coordinates [X, Y, Z] in the range [0, 1].
+
+        Raises
+        ------
+        RuntimeError
+            If the volume data is not fully loaded.
+
+        Examples
+        --------
+        ::
+
+            frac_pos = volume.convert_mm2frac([10.0, 20.0, 30.0])
+        """
+        if len(mm) == 3:
+            mm4 = [mm[0], mm[1], mm[2], 1.0]
+        else:
+            mm4 = list(mm[:4])
+
+        frac = [0.0, 0.0, 0.0]
+
+        if not is_force_slice_mm:
+            # Use orthogonal space
+            if not self.frac2mm_ortho:
+                raise RuntimeError(
+                    "Volume orthogonal transformation matrix is not available. "
+                    "Ensure canvas is attached."
+                )
+            matrix = np.array(self.frac2mm_ortho).reshape(4, 4).T
+            inv_matrix = np.linalg.inv(matrix)
+            result = np.dot(inv_matrix, mm4)
+            frac = result[:3].tolist()
+        else:
+            # Use world space with RAS coordinates
+            if not self.dims_ras or not self.mat_ras:
+                raise RuntimeError(
+                    "Volume RAS dimensions or matrix not available. "
+                    "Ensure the volume is fully loaded."
+                )
+
+            d = self.dims_ras
+            if d[1] < 1 or d[2] < 1 or d[3] < 1:
+                return frac
+
+            sform = np.array(self.mat_ras).reshape(4, 4).T
+            sform = np.linalg.inv(sform)
+            sform = sform.T
+
+            result = np.dot(sform, mm4)
+            frac[0] = (result[0] + 0.5) / d[1]
+            frac[1] = (result[1] + 0.5) / d[2]
+            frac[2] = (result[2] + 0.5) / d[3]
+
+        return frac
 
 
 class NiiVue(BaseAnyWidget):
@@ -2880,6 +2998,106 @@ class NiiVue(BaseAnyWidget):
         range_extents = mx - mn
 
         return (mn.tolist(), mx.tolist(), range_extents.tolist())
+
+    def mm2frac(
+        self, mm: list, vol_idx: int = 0, is_force_slice_mm: bool = False
+    ) -> list:
+        """
+        Convert mm coords to frac volume coords for a volume.
+
+        Parameters
+        ----------
+        mm : list of float
+            Position in millimeters [X, Y, Z] or [X, Y, Z, W].
+        vol_idx : int, optional
+            Index of the volume to use for conversion. Default is 0.
+        is_force_slice_mm : bool, optional
+            If True, use world space coordinates. If False, use orthogonal space
+            unless `opts.is_slice_mm` is True. Default is False.
+
+        Returns
+        -------
+        list of float
+            Fractional coordinates [X, Y, Z] in the range [0, 1].
+
+        Examples
+        --------
+        ::
+
+            frac_pos = nv.mm2frac([10.0, 20.0, 30.0])
+        """
+        if len(self.volumes) < 1:
+            frac = [0.1, 0.5, 0.5]
+            mn, _, range_ext = self.scene_extents_min_max()
+
+            if len(mm) >= 3:
+                frac[0] = (mm[0] - mn[0]) / range_ext[0] if range_ext[0] != 0 else 0.5
+                frac[1] = (mm[1] - mn[1]) / range_ext[1] if range_ext[1] != 0 else 0.5
+                frac[2] = (mm[2] - mn[2]) / range_ext[2] if range_ext[2] != 0 else 0.5
+
+            for i in range(3):
+                if not math.isfinite(frac[i]):
+                    frac[i] = 0.5
+
+            if len(self.meshes) < 1 and not all(math.isfinite(f) for f in frac):
+                print("mm2frac() not finite: objects not yet loaded.")
+
+            return frac
+
+        if vol_idx < 0 or vol_idx >= len(self.volumes):
+            raise IndexError(f"Volume index {vol_idx} out of range.")
+
+        return self.volumes[vol_idx].convert_mm2frac(
+            mm, is_force_slice_mm or self.opts.is_slice_mm
+        )
+
+    def frac2mm(
+        self,
+        frac: list,
+        vol_idx: int = 0,
+        is_force_slice_mm: bool = False,
+    ) -> list:
+        """
+        Convert frac volume coords to mm space for a volume.
+
+        Parameters
+        ----------
+        frac : list of float
+            Fractional coordinates [X, Y, Z] in the range [0, 1].
+        vol_idx : int, optional
+            Index of the volume to use for conversion. Default is 0.
+        is_force_slice_mm : bool, optional
+            If True, use world space coordinates. If False, use orthogonal space
+            unless `opts.is_slice_mm` is True. Default is False.
+
+        Returns
+        -------
+        list of float
+            Position in millimeters [X, Y, Z, W] where W is always 1.
+
+        Examples
+        --------
+        ::
+
+            mm_pos = nv.frac2mm([0.5, 0.5, 0.5])
+        """
+        pos = [frac[0], frac[1], frac[2], 1.0]
+
+        if len(self.volumes) > 0:
+            if vol_idx < 0 or vol_idx >= len(self.volumes):
+                raise IndexError(f"Volume index {vol_idx} out of range.")
+
+            return self.volumes[vol_idx].convert_frac2mm(
+                frac, is_force_slice_mm or self.opts.is_slice_mm
+            )
+        else:
+            mn, mx, _ = self.scene_extents_min_max()
+
+            pos[0] = lerp(mn[0], mx[0], frac[0])
+            pos[1] = lerp(mn[1], mx[1], frac[1])
+            pos[2] = lerp(mn[2], mx[2], frac[2])
+
+        return pos
 
 
 class WidgetObserver:
