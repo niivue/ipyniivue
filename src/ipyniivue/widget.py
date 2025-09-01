@@ -2808,6 +2808,79 @@ class NiiVue(BaseAnyWidget):
         """
         self._register_callback("hover_idx_change", callback, remove=remove)
 
+    """
+    Custom utils
+    """
+
+    def scene_extents_min_max(self, is_slice_mm: bool = True) -> tuple:
+        """
+        Return the scene's min, max, and range extents in mm or voxel space.
+
+        Includes both volume and mesh geometry.
+
+        Parameters
+        ----------
+        is_slice_mm : bool, optional
+            If True, returns extents in mm space.
+            If False, returns extents in voxel space. Default is True.
+
+        Returns
+        -------
+        tuple
+            A tuple containing three lists:
+            - min_extents: [x, y, z] minimum coordinates
+            - max_extents: [x, y, z] maximum coordinates
+            - range: [x, y, z] range (max - min) for each dimension
+
+        Raises
+        ------
+        RuntimeError
+            If volumes exist but volume_object_3d_data is not defined.
+
+        Examples
+        --------
+        ::
+
+            min_ext, max_ext, range_ext = nv.scene_extents_min_max()
+            print(f"Min: {min_ext}, Max: {max_ext}, Range: {range_ext}")
+        """
+        mn = np.array([0.0, 0.0, 0.0])
+        mx = np.array([0.0, 0.0, 0.0])
+
+        if len(self.volumes) > 0:
+            if not self._volume_object_3d_data:
+                raise RuntimeError(
+                    "_volume_object_3d_data not defined. Canvas needs to be attached."
+                )
+
+            if is_slice_mm:
+                mn = np.array(self._volume_object_3d_data.extents_min)
+                mx = np.array(self._volume_object_3d_data.extents_max)
+            else:
+                if (
+                    self.volumes[0].extents_min_ortho
+                    and self.volumes[0].extents_max_ortho
+                ):
+                    mn = np.array(self.volumes[0].extents_min_ortho)
+                    mx = np.array(self.volumes[0].extents_max_ortho)
+
+        if len(self.meshes) > 0:
+            if len(self.volumes) < 1:
+                if self.meshes[0].extents_min and self.meshes[0].extents_max:
+                    mn = np.array(self.meshes[0].extents_min)
+                    mx = np.array(self.meshes[0].extents_max)
+
+            for mesh in self.meshes:
+                if mesh.extents_min and mesh.extents_max:
+                    mesh_min = np.array(mesh.extents_min)
+                    mesh_max = np.array(mesh.extents_max)
+                    mn = np.minimum(mn, mesh_min)
+                    mx = np.maximum(mx, mesh_max)
+
+        range_extents = mx - mn
+
+        return (mn.tolist(), mx.tolist(), range_extents.tolist())
+
 
 class WidgetObserver:
     """Creates an observer on the `attribute` of `object` for a `widget`."""
