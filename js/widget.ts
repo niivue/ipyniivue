@@ -11,7 +11,7 @@ import type {
 	MeshModel,
 	Model,
 	NiivueObject3D,
-	Scene,
+	PyScene,
 	VolumeModel,
 } from "./types.ts";
 
@@ -34,9 +34,6 @@ function attachModelEventHandlers(
 		}
 	});
 
-	// Any time the backend changes the options, we need to update the nv gl
-	// but...need to filter out changes that are *actually* from the frontend
-	// so, we don't call updateGLVolume here (instead, it's explicitly called from the backend)
 	model.on("change:opts", () => {
 		const serializedOpts = model.get("opts");
 		const opts = lib.deserializeOptions(serializedOpts);
@@ -291,20 +288,26 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 			isThrottling = true;
 			setTimeout(() => {
 				isThrottling = false;
-			}, 50);
+			}, 40);
 
-			const currentScene: Scene = {
-				renderAzimuth: nv.scene.renderAzimuth,
-				renderElevation: nv.scene.renderElevation,
-				volScaleMultiplier: nv.scene.volScaleMultiplier,
-				crosshairPos: [...nv.scene.crosshairPos],
-				clipPlane: nv.scene.clipPlane,
-				clipPlaneDepthAziElev: nv.scene.clipPlaneDepthAziElev,
-				pan2Dxyzmm: [...nv.scene.pan2Dxyzmm],
+			const currentScene: PyScene = {
+				render_azimuth: nv.scene.renderAzimuth,
+				render_elevation: nv.scene.renderElevation,
+				vol_scale_multiplier: nv.scene.volScaleMultiplier,
+				crosshair_pos: [...nv.scene.crosshairPos],
+				clip_plane: nv.scene.clipPlane,
+				clip_plane_depth_azi_elev: nv.scene.clipPlaneDepthAziElev,
+				pan2d_xyzmm: [...nv.scene.pan2Dxyzmm],
 				gamma: nv.scene.gamma || 1.0,
 			};
+
 			model.set("scene", currentScene);
 			model.save_changes();
+
+			model.send({
+				event: "sync",
+				data: {}
+			});
 		},
 	});
 

@@ -1,5 +1,5 @@
-import type { NVConfigOptions } from "@niivue/niivue";
-import type { AnyModel, TypedBufferPayload } from "./types.ts";
+import type { NVConfigOptions, Niivue } from "@niivue/niivue";
+import type { AnyModel, TypedBufferPayload, PyScene, Model } from "./types.ts";
 
 function delay(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));

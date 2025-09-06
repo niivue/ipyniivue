@@ -64,14 +64,14 @@ type Graph = {
 	lineRGB?: number[][];
 };
 
-export type Scene = {
-	renderAzimuth: number;
-	renderElevation: number;
-	volScaleMultiplier: number;
-	crosshairPos: number[];
-	clipPlane: number[];
-	clipPlaneDepthAziElev: number[];
-	pan2Dxyzmm: number[];
+export type PyScene = {
+	render_azimuth: number;
+	render_elevation: number;
+	vol_scale_multiplier: number;
+	crosshair_pos: number[];
+	clip_plane: number[];
+	clip_plane_depth_azi_elev: number[];
+	pan2d_xyzmm: number[];
 	gamma: number;
 };
 

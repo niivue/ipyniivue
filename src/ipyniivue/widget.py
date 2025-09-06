@@ -33,7 +33,6 @@ from .serializers import (
     deserialize_hdr,
     deserialize_mat4,
     deserialize_options,
-    deserialize_scene,
     deserialize_volume_object_3d_data,
     serialize_colormap_label,
     serialize_enum,
@@ -840,10 +839,42 @@ class NiiVue(BaseAnyWidget):
     scene = t.Instance(Scene, allow_none=True).tag(
         sync=True,
         to_json=serialize_scene,
-        from_json=deserialize_scene,
     )
     overlay_outline_width = t.Float(0.0).tag(sync=True)  # 0 for none
     overlay_alpha_shader = t.Float(1.0).tag(sync=True)  # 1 for opaque
+
+    other_nv = t.List(t.Instance(object, allow_none=False), default_value=[]).tag(
+        sync=False
+    )
+    sync_opts = t.Dict(
+        default_value={
+            "3d": False,
+            "2d": False,
+            "zoom_pan": False,
+            "cal_min": False,
+            "cal_max": False,
+            "clip_plane": False,
+            "gamma": False,
+            "slice_type": False,
+            "crosshair": False,
+        }
+    ).tag(sync=False)
+
+    @t.validate("other_nv")
+    def _validate_other_nv(self, proposal):
+        value = proposal["value"]
+        for nv_inst in value:
+            if nv_inst is self:
+                raise t.TraitError("Cannot sync to self.")
+            if (
+                f"{type(nv_inst).__module__}.{type(nv_inst).__qualname__}"
+                != "ipyniivue.widget.NiiVue"
+            ):
+                raise t.TraitError(
+                    "All items in `other_nv` must be NiiVue instances."
+                    + str(type(self))
+                )
+        return value
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
@@ -864,14 +895,15 @@ class NiiVue(BaseAnyWidget):
         opts = ConfigOptions(parent=self, **options)
         super().__init__(height=height, opts=opts, volumes=[], meshes=[])
 
-        # Handle messages coming from frontend
-        self._event_handlers = {}
-        self.on_msg(self._handle_custom_msg)
-
         # Initialize values
         self._cluts = self._get_initial_colormaps()
         self.graph = Graph(parent=self)
         self.scene = Scene(parent=self)
+        self.other_nv = []
+
+        # Handle messages coming from frontend
+        self._event_handlers = {}
+        self.on_msg(self._handle_custom_msg)
 
     def __setattr__(self, name, value):
         """todo: remove this starting version 2.4.1."""
@@ -884,6 +916,13 @@ class NiiVue(BaseAnyWidget):
             )
             setattr(self.opts, name, value)
         super().__setattr__(name, value)
+
+    def set_state(self, state):
+        """Override set_state to silence notifications for certain updates."""
+        if "scene" in state:
+            self.scene._trait_values.update(state["scene"])
+            return
+        return super().set_state(state)
 
     def _notify_opts_changed(self):
         self.notify_change(
@@ -939,6 +978,11 @@ class NiiVue(BaseAnyWidget):
             return
         elif event == "add_mesh":
             self._add_mesh_from_frontend(data)
+            return
+
+        # sync
+        elif event == "sync":
+            self.sync()
             return
 
         # check if the event has a registered handler
@@ -2932,6 +2976,142 @@ class NiiVue(BaseAnyWidget):
 
         """
         self._register_callback("hover_idx_change", callback, remove=remove)
+
+    """
+    Sync
+    """
+
+    def broadcast_to(self, other_nv, sync_opts=None):
+        """
+        Sync the scene controls from one NiiVue instance to others.
+
+        Useful for using one canvas to drive another.
+
+        Parameters
+        ----------
+        other_nv : :class:`NiiVue` or list of :class:`NiiVue`
+            The other NiiVue instance(s) to broadcast state to.
+        sync_opts : dict, optional
+            Options specifying which properties to sync. E.g., {'2d': True, '3d': True}
+            Possible keys are:
+            - gamma
+            - crosshair
+            - zoom_pan
+            - slice_type
+            - cal_min
+            - cal_max
+            - clip_plane
+            - 2d
+            - 3d
+        """
+        if not isinstance(sync_opts, dict):
+            sync_opts = {"2d": True, "3d": True}
+
+        if not isinstance(other_nv, (list, tuple)):
+            other_nv = [other_nv]
+
+        self.other_nv = other_nv
+        self.sync_opts = sync_opts
+
+    def _do_sync_3d(self, other_nv):
+        """Synchronize 3D view settings with another NiiVue instance.
+
+        Do not call this by itself. This should be called by the sync method.
+        """
+        other_nv.scene._trait_values["render_azimuth"] = self.scene.render_azimuth
+        other_nv.scene._trait_values["render_elevation"] = self.scene.render_elevation
+        other_nv.scene._trait_values["vol_scale_multiplier"] = (
+            self.scene.vol_scale_multiplier
+        )
+
+    def _do_sync_2d(self, other_nv):
+        """Synchronize 2D crosshair pos + pan settings with another NiiVue instance.
+
+        Do not call this by itself. This should be called by the sync method.
+        """
+        this_mm = self.frac2mm(self.scene.crosshair_pos)
+        other_nv.scene._trait_values["crosshair_pos"] = other_nv.mm2frac(this_mm)
+        other_nv.scene._trait_values["pan2d_xyzmm"] = list(self.scene.pan2d_xyzmm)
+
+    def _do_sync_gamma(self, other_nv):
+        """Synchronize gamma correction setting with another NiiVue instance."""
+        this_gamma = self.scene.gamma
+        other_gamma = other_nv.scene.gamma
+        if this_gamma != other_gamma:
+            other_nv.set_gamma(this_gamma)
+
+    def _do_sync_zoom_pan(self, other_nv):
+        """Synchronize zoom/pan settings with another NiiVue instance.
+
+        Do not call this by itself. This should be called by the sync method.
+        """
+        other_nv.scene._trait_values["pan2d_xyzmm"] = list(self.scene.pan2d_xyzmm)
+
+    def _do_sync_crosshair(self, other_nv):
+        """Synchronize crosshair position with another NiiVue instance.
+
+        Do not call this by itself. This should be called by the sync method.
+        """
+        this_mm = self.frac2mm(self.scene.crosshair_pos)
+        other_nv.scene._trait_values["crosshair_pos"] = other_nv.mm2frac(this_mm)
+
+    def _do_sync_cal_min(self, other_nv):
+        """Synchronize cal_min with another NiiVue instance."""
+        if (
+            self.volumes
+            and other_nv.volumes
+            and self.volumes[0].cal_min != other_nv.volumes[0].cal_min
+        ):
+            other_nv.volumes[0].cal_min = self.volumes[0].cal_min
+
+    def _do_sync_cal_max(self, other_nv):
+        """Synchronize cal_max with another NiiVue instance."""
+        if (
+            self.volumes
+            and other_nv.volumes
+            and self.volumes[0].cal_max != other_nv.volumes[0].cal_max
+        ):
+            other_nv.volumes[0].cal_max = self.volumes[0].cal_max
+
+    def _do_sync_slice_type(self, other_nv):
+        """Synchronize slice view type with another NiiVue instance."""
+        other_nv.set_slice_type(self.opts.slice_type)
+
+    def _do_sync_clip_plane(self, other_nv):
+        """Synchronize clip plane settings with another NiiVue instance."""
+        other_nv.scene._trait_values["clip_plane_depth_azi_elev"] = list(
+            self.scene.clip_plane_depth_azi_elev
+        )
+
+    def sync(self):
+        """Sync the scene controls from this NiiVue instance to others."""
+        for nv_obj in self.other_nv:
+            if not nv_obj._canvas_attached:
+                # todo: add logging msg here
+                continue
+
+            if self.sync_opts.get("gamma"):
+                self._do_sync_gamma(nv_obj)
+            if self.sync_opts.get("crosshair"):
+                self._do_sync_crosshair(nv_obj)
+            if self.sync_opts.get("zoom_pan"):
+                self._do_sync_zoom_pan(nv_obj)
+            if self.sync_opts.get("slice_type"):
+                self._do_sync_slice_type(nv_obj)
+            if self.sync_opts.get("cal_min"):
+                self._do_sync_cal_min(nv_obj)
+            if self.sync_opts.get("cal_max"):
+                self._do_sync_cal_max(nv_obj)
+            if self.sync_opts.get("clip_plane"):
+                self._do_sync_clip_plane(nv_obj)
+
+            # legacy 2d and 3d opts:
+            if self.sync_opts.get("2d"):
+                self._do_sync_2d(nv_obj)
+            if self.sync_opts.get("3d"):
+                self._do_sync_3d(nv_obj)
+
+            nv_obj._notify_scene_changed()
 
     """
     Custom utils

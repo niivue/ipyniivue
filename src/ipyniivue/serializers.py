@@ -14,7 +14,6 @@ from .config_options import (
 )
 from .traits import (
     CAMEL_TO_SNAKE_GRAPH,
-    CAMEL_TO_SNAKE_SCENE,
     LUT,
     SNAKE_TO_CAMEL_GRAPH,
     SNAKE_TO_CAMEL_SCENE,
@@ -310,31 +309,6 @@ def serialize_scene(instance: Scene, widget: object):
                 camel_name = SNAKE_TO_CAMEL_SCENE.get(name, name)
                 data[camel_name] = value
     return data
-
-
-def deserialize_scene(serialized_scene: dict, widget: object):
-    """
-    Deserialize serialized scene data, converting camelCase back to snake_case.
-
-    Parameters
-    ----------
-    serialized_scene : dict
-        The serialized scene dictionary from the frontend.
-    widget : object
-        The NiiVue widget the instance is a part of.
-
-    Returns
-    -------
-    Scene
-        The deserialized Scene instance.
-    """
-    scene_args = {}
-    for camel_name, value in serialized_scene.items():
-        snake_name = CAMEL_TO_SNAKE_SCENE.get(camel_name, camel_name)
-        if snake_name in Scene.class_traits():
-            deserialized_value = value
-            scene_args[snake_name] = deserialized_value
-    return Scene(**scene_args, parent=widget)
 
 
 def serialize_enum(instance: enum.Enum, widget: object):
