@@ -181,7 +181,7 @@ export type Model = AnyModel<{
 	draw_opacity: number;
 	draw_fill_overwrites: boolean;
 	graph: Graph;
-	scene: Scene;
+	scene: PyScene;
 	overlay_outline_width: number;
 	overlay_alpha_shader: number;
 
