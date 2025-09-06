@@ -306,7 +306,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 
 			model.send({
 				event: "sync",
-				data: {}
+				data: {},
 			});
 		},
 	});
