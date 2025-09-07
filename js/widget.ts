@@ -17,7 +17,7 @@ import type {
 } from "./types.ts";
 
 let nv: niivue.Niivue;
-let syncInterval: number;
+let syncInterval: number | undefined;
 
 // Attach model event handlers
 function attachModelEventHandlers(
@@ -599,6 +599,11 @@ function attachCanvasEventHandlers(nv: niivue.Niivue, model: Model) {
 }
 
 function setupSyncInterval(nv: niivue.Niivue, model: Model) {
+	if (syncInterval !== undefined) {
+		clearInterval(syncInterval);
+		syncInterval = undefined;
+	}
+
 	let lastSentScene: Scene | null = model.get("scene");
 	let shouldSendScene = false;
 	const sendSceneUpdate = async () => {

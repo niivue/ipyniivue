@@ -846,19 +846,6 @@ class NiiVue(BaseAnyWidget):
     other_nv = t.List(t.Instance(object, allow_none=False), default_value=[]).tag(
         sync=False
     )
-    sync_opts = t.Dict(
-        default_value={
-            "3d": False,
-            "2d": False,
-            "zoom_pan": False,
-            "cal_min": False,
-            "cal_max": False,
-            "clip_plane": False,
-            "gamma": False,
-            "slice_type": False,
-            "crosshair": False,
-        }
-    ).tag(sync=False)
 
     @t.validate("other_nv")
     def _validate_other_nv(self, proposal):
@@ -874,28 +861,6 @@ class NiiVue(BaseAnyWidget):
                     "All items in `other_nv` must be NiiVue instances."
                     + str(type(self))
                 )
-        return value
-
-    @t.validate("sync_opts")
-    def _validate_sync_opts(self, proposal):
-        ALLOWED_KEYS = {
-            "3d",
-            "2d",
-            "zoom_pan",
-            "cal_min",
-            "cal_max",
-            "clip_plane",
-            "gamma",
-            "slice_type",
-            "crosshair",
-        }
-        value = proposal["value"]
-        invalid_keys = set(value.keys()) - ALLOWED_KEYS
-        if invalid_keys:
-            raise t.TraitError(
-                f"Invalid keys in sync_opts: {invalid_keys}. "
-                f"Allowed keys: {ALLOWED_KEYS}"
-            )
         return value
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
@@ -918,11 +883,22 @@ class NiiVue(BaseAnyWidget):
         super().__init__(height=height, opts=opts, volumes=[], meshes=[])
 
         # Initialize values
+        self.this_model_id = self._model_id
         self._cluts = self._get_initial_colormaps()
         self.graph = Graph(parent=self)
         self.scene = Scene(parent=self)
         self.other_nv = []
-        self.this_model_id = self._model_id
+        self.sync_opts = {
+            "3d": False,
+            "2d": False,
+            "zoom_pan": False,
+            "cal_min": False,
+            "cal_max": False,
+            "clip_plane": False,
+            "gamma": False,
+            "slice_type": False,
+            "crosshair": False,
+        }
 
         # Handle messages coming from frontend
         self._event_handlers = {}
