@@ -820,6 +820,8 @@ class NiiVue(BaseAnyWidget):
         from_json=deserialize_volume_object_3d_data,
     )
 
+    this_model_id = t.Unicode().tag(sync=True)
+
     # other props
     background_masks_overlays = t.Int(0).tag(sync=True)
     draw_lut = t.Instance(LUT, allow_none=True).tag(
@@ -858,8 +860,6 @@ class NiiVue(BaseAnyWidget):
         }
     ).tag(sync=False)
 
-    this_model_id = t.Unicode().tag(sync=True)
-
     @t.validate("other_nv")
     def _validate_other_nv(self, proposal):
         value = proposal["value"]
@@ -874,6 +874,28 @@ class NiiVue(BaseAnyWidget):
                     "All items in `other_nv` must be NiiVue instances."
                     + str(type(self))
                 )
+        return value
+
+    @t.validate("sync_opts")
+    def _validate_sync_opts(self, proposal):
+        ALLOWED_KEYS = {
+            "3d",
+            "2d",
+            "zoom_pan",
+            "cal_min",
+            "cal_max",
+            "clip_plane",
+            "gamma",
+            "slice_type",
+            "crosshair",
+        }
+        value = proposal["value"]
+        invalid_keys = set(value.keys()) - ALLOWED_KEYS
+        if invalid_keys:
+            raise t.TraitError(
+                f"Invalid keys in sync_opts: {invalid_keys}. "
+                f"Allowed keys: {ALLOWED_KEYS}"
+            )
         return value
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
