@@ -165,7 +165,7 @@ export type MeshLayerModel = AnyModel<{
 
 export type Model = AnyModel<{
 	this_model_id: string;
-	
+
 	height: number;
 	volumes: Array<string>;
 	meshes: Array<string>;

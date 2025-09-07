@@ -611,7 +611,9 @@ function setupSyncInterval(nv: niivue.Niivue, model: Model) {
 		}
 		let thisAnyModel: AnyModel;
 		try {
-			thisAnyModel = await model.widget_manager.get_model(thisModelId) as AnyModel;
+			thisAnyModel = (await model.widget_manager.get_model(
+				thisModelId,
+			)) as AnyModel;
 		} catch (err) {
 			return;
 		}
@@ -643,12 +645,12 @@ function setupSyncInterval(nv: niivue.Niivue, model: Model) {
 				shouldSendScene = false;
 				return;
 			}
-			if (!(nv.gl.canvas as HTMLCanvasElement).matches(':focus')) {
+			if (!(nv.gl.canvas as HTMLCanvasElement).matches(":focus")) {
 				shouldSendScene = false;
 				return;
 			}
 			shouldSendScene = true;
-		}
+		},
 	});
 }
 
