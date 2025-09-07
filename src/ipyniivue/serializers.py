@@ -14,6 +14,7 @@ from .config_options import (
 )
 from .traits import (
     CAMEL_TO_SNAKE_GRAPH,
+    CAMEL_TO_SNAKE_SCENE,
     LUT,
     SNAKE_TO_CAMEL_GRAPH,
     SNAKE_TO_CAMEL_SCENE,
@@ -395,3 +396,26 @@ def deserialize_mat4(instance: list, widget: object):
     if len(instance) != 16:
         raise ValueError(f"Input list must have length 16, got length {len(instance)}.")
     return np.array(instance).reshape(4, 4)
+
+
+def parse_scene(serialized_scene: dict):
+    """
+    Convert camelCase back to snake_case.
+
+    Parameters
+    ----------
+    serialized_scene : dict
+        The serialized scene dictionary from the frontend.
+
+    Returns
+    -------
+    dict
+        The parsed scene data.
+    """
+    scene_args = {}
+    for camel_name, value in serialized_scene.items():
+        snake_name = CAMEL_TO_SNAKE_SCENE.get(camel_name, camel_name)
+        if snake_name in Scene.class_traits():
+            deserialized_value = value
+            scene_args[snake_name] = deserialized_value
+    return scene_args

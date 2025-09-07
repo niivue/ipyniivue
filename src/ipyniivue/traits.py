@@ -380,7 +380,6 @@ class Scene(t.HasTraits):
         The upper bounds of the clipping volume.
     """
 
-    # Traits
     render_azimuth = t.Float(110.0).tag(sync=True)
     render_elevation = t.Float(10.0).tag(sync=True)
     vol_scale_multiplier = t.Float(1.0).tag(sync=True)

@@ -34,6 +34,7 @@ from .serializers import (
     deserialize_mat4,
     deserialize_options,
     deserialize_volume_object_3d_data,
+    parse_scene,
     serialize_colormap_label,
     serialize_enum,
     serialize_file,
@@ -821,9 +822,6 @@ class NiiVue(BaseAnyWidget):
 
     # other props
     background_masks_overlays = t.Int(0).tag(sync=True)
-    clip_plane_depth_azi_elev = t.List(
-        t.Float(), default_value=[2, 0, 0], minlen=3, maxlen=3
-    ).tag(sync=True)
     draw_lut = t.Instance(LUT, allow_none=True).tag(
         sync=True,
         to_json=serialize_colormap_label,
@@ -859,6 +857,8 @@ class NiiVue(BaseAnyWidget):
             "crosshair": False,
         }
     ).tag(sync=False)
+
+    this_model_id = t.Unicode().tag(sync=True)
 
     @t.validate("other_nv")
     def _validate_other_nv(self, proposal):
@@ -900,6 +900,7 @@ class NiiVue(BaseAnyWidget):
         self.graph = Graph(parent=self)
         self.scene = Scene(parent=self)
         self.other_nv = []
+        self.this_model_id = self._model_id
 
         # Handle messages coming from frontend
         self._event_handlers = {}
@@ -920,7 +921,9 @@ class NiiVue(BaseAnyWidget):
     def set_state(self, state):
         """Override set_state to silence notifications for certain updates."""
         if "scene" in state:
-            self.scene._trait_values.update(state["scene"])
+            parsed = parse_scene(state["scene"])
+            self.scene._trait_values.update(parsed)
+            self.sync()
             return
         return super().set_state(state)
 
@@ -981,9 +984,9 @@ class NiiVue(BaseAnyWidget):
             return
 
         # sync
-        elif event == "sync":
-            self.sync()
-            return
+        # elif event == "sync":
+        #    self.sync()
+        #    return
 
         # check if the event has a registered handler
         handler = self._event_handlers.get(event)
@@ -1707,7 +1710,7 @@ class NiiVue(BaseAnyWidget):
         if not all(isinstance(x, (int, float)) for x in [depth, azimuth, elevation]):
             raise TypeError("depth, azimuth, and elevation must all be numeric values.")
 
-        self.clip_plane_depth_azi_elev = [depth, azimuth, elevation]
+        self.scene.clip_plane_depth_azi_elev = [depth, azimuth, elevation]
 
     def set_render_azimuth_elevation(self, azimuth: float, elevation: float):
         """Set the rotation of the 3D render view.
@@ -1734,9 +1737,9 @@ class NiiVue(BaseAnyWidget):
             raise TypeError("Azimuth must be a number.")
         if not isinstance(elevation, (int, float)):
             raise TypeError("Elevation must be a number.")
-        self.send(
-            {"type": "set_render_azimuth_elevation", "data": [azimuth, elevation]}
-        )
+        self.scene._trait_values["render_azimuth"] = azimuth
+        self.scene._trait_values["render_elevation"] = elevation
+        self._notify_scene_changed()
 
     def _mesh_shader_name_to_number(self, mesh_shader_name: str) -> int:
         name = mesh_shader_name.lower()

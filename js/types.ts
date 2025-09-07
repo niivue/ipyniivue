@@ -64,15 +64,15 @@ type Graph = {
 	lineRGB?: number[][];
 };
 
-export type PyScene = {
-	render_azimuth: number;
-	render_elevation: number;
-	vol_scale_multiplier: number;
-	crosshair_pos: number[];
-	clip_plane: number[];
-	clip_plane_depth_azi_elev: number[];
-	pan2d_xyzmm: number[];
-	gamma: number;
+export type Scene = {
+	renderAzimuth?: number;
+	renderElevation?: number;
+	volScaleMultiplier?: number;
+	crosshairPos?: number[];
+	clipPlane?: number[];
+	clipPlaneDepthAziElev?: number[];
+	pan2Dxyzmm?: number[];
+	gamma?: number;
 };
 
 export type VolumeModel = AnyModel<{
@@ -164,6 +164,8 @@ export type MeshLayerModel = AnyModel<{
 }>;
 
 export type Model = AnyModel<{
+	this_model_id: string;
+	
 	height: number;
 	volumes: Array<string>;
 	meshes: Array<string>;
@@ -172,16 +174,11 @@ export type Model = AnyModel<{
 	_canvas_attached: boolean;
 
 	background_masks_overlays: number;
-	clip_plane_depth_azi_elev: [
-		depth: number,
-		azimuth: number,
-		elevation: number,
-	];
 	draw_lut: LUT;
 	draw_opacity: number;
 	draw_fill_overwrites: boolean;
 	graph: Graph;
-	scene: PyScene;
+	scene: Scene;
 	overlay_outline_width: number;
 	overlay_alpha_shader: number;
 
@@ -240,10 +237,6 @@ export type CustomMessagePayload =
 			data: SetVolumeRenderIlluminationData;
 	  }
 	| { type: "load_png_as_texture"; data: LoadPngAsTextureData }
-	| {
-			type: "set_render_azimuth_elevation";
-			data: SetRenderAzimuthElevationData;
-	  }
 	| { type: "set_interpolation"; data: SetInterpolationData }
 	| { type: "set_drawing_enabled"; data: SetDrawingEnabledData }
 	| { type: "draw_otsu"; data: DrawOtsuData }

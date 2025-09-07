@@ -1,5 +1,5 @@
 import type { NVConfigOptions } from "@niivue/niivue";
-import type { AnyModel, TypedBufferPayload } from "./types.ts";
+import type { AnyModel, TypedBufferPayload, Scene } from "./types.ts";
 
 function delay(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -121,10 +121,6 @@ const typeMapping: { [key: string]: TypedArrayConstructor } = {
 	uint16: Uint16Array,
 };
 
-const reverseTypeMapping = new Map<TypedArrayConstructor, string>(
-	Object.entries(typeMapping).map(([typeStr, c]) => [c, typeStr]),
-);
-
 export function getArrayType(typedArray: TypedArray): string {
 	for (const typeStr in typeMapping) {
 		const c = typeMapping[typeStr];
@@ -161,6 +157,19 @@ export function applyDifferencesToTypedArray(
 	for (let i = 0; i < indices.length; i++) {
 		const idx = indices[i];
 		array[idx] = values[i];
+	}
+}
+
+export async function forceSendState(model: AnyModel, state: Record<string, unknown>) {
+	const isMarimo = typeof model.send_sync_message === "undefined";
+
+	if (isMarimo) {
+		model.onChange(state);
+	} else {
+		const msgId = model.send_sync_message(state);
+		if (typeof model.rememberLastUpdateFor !== "undefined") {
+			model.rememberLastUpdateFor(msgId);
+		}
 	}
 }
 
@@ -265,4 +274,47 @@ export class Disposer {
 		}
 		this.#disposers.clear();
 	}
+}
+
+function numberArraysEqual(a: number[], b: number[]): boolean {
+    if (a.length !== b.length) return false;
+    return a.every((val, idx) => val === b[idx]);
+}
+
+export function sceneDiff(oldScene: Scene | null, newScene: Scene): Partial<Scene> {
+    if (!oldScene) return newScene;
+    
+    const diff: Partial<Scene> = {};
+    
+    if (oldScene.renderAzimuth !== newScene.renderAzimuth) {
+        diff.renderAzimuth = newScene.renderAzimuth;
+    }
+    if (oldScene.renderElevation !== newScene.renderElevation) {
+        diff.renderElevation = newScene.renderElevation;
+    }
+    if (oldScene.volScaleMultiplier !== newScene.volScaleMultiplier) {
+        diff.volScaleMultiplier = newScene.volScaleMultiplier;
+    }
+    if (oldScene.gamma !== newScene.gamma) {
+        diff.gamma = newScene.gamma;
+    }
+    
+    if (oldScene.crosshairPos && newScene.crosshairPos && 
+        !numberArraysEqual(oldScene.crosshairPos, newScene.crosshairPos)) {
+        diff.crosshairPos = newScene.crosshairPos;
+    }
+    if (oldScene.clipPlane && newScene.clipPlane && 
+        !numberArraysEqual(oldScene.clipPlane, newScene.clipPlane)) {
+        diff.clipPlane = newScene.clipPlane;
+    }
+    if (oldScene.clipPlaneDepthAziElev && newScene.clipPlaneDepthAziElev && 
+        !numberArraysEqual(oldScene.clipPlaneDepthAziElev, newScene.clipPlaneDepthAziElev)) {
+        diff.clipPlaneDepthAziElev = newScene.clipPlaneDepthAziElev;
+    }
+    if (oldScene.pan2Dxyzmm && newScene.pan2Dxyzmm && 
+        !numberArraysEqual(oldScene.pan2Dxyzmm, newScene.pan2Dxyzmm)) {
+        diff.pan2Dxyzmm = newScene.pan2Dxyzmm;
+    }
+    
+    return diff;
 }
