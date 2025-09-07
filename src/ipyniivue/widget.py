@@ -983,11 +983,6 @@ class NiiVue(BaseAnyWidget):
             self._add_mesh_from_frontend(data)
             return
 
-        # sync
-        # elif event == "sync":
-        #    self.sync()
-        #    return
-
         # check if the event has a registered handler
         handler = self._event_handlers.get(event)
         if not handler:
