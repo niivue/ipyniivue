@@ -639,7 +639,6 @@
 <span class="sd">        The upper bounds of the clipping volume.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Traits</span>
     <span class="n">render_azimuth</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">110.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">render_elevation</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">vol_scale_multiplier</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -707,6 +706,58 @@
             <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">,</span> <span class="s2">&quot;_notify_scene_changed&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">_notify_scene_changed</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">VolumeObject3DData</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents data from a 3D volume object, partial of niivue&#39;s NiivueObject3D.</span>
+
+<span class="sd">    Properties</span>
+<span class="sd">    ----------</span>
+<span class="sd">    id : int</span>
+<span class="sd">        Unique identifier for the object.</span>
+<span class="sd">    extents_min : list of float</span>
+<span class="sd">        Minimum extents of the object in each dimension.</span>
+<span class="sd">    extents_max : list of float</span>
+<span class="sd">        Maximum extents of the object in each dimension.</span>
+<span class="sd">    scale : list of float</span>
+<span class="sd">        Scale factors for each dimension.</span>
+<span class="sd">    furthest_vertex_from_origin : float or None</span>
+<span class="sd">        Distance to the furthest vertex from the origin.</span>
+<span class="sd">    field_of_view_de_oblique_mm : list of float or None</span>
+<span class="sd">        Field of view in de-oblique millimeters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">()</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">extents_min</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">extents_max</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">furthest_vertex_from_origin</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">field_of_view_de_oblique_mm</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;extents_min&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;extents_max&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;scale&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;furthest_vertex_from_origin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;field_of_view_de_oblique_mm&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_no_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="n">trait_name</span> <span class="o">=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;trait&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">trait_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span>
+            <span class="ow">and</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="n">trait_name</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="n">trait_name</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span>
+            <span class="p">)</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="n">trait_name</span><span class="p">]</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot modify &#39;</span><span class="si">{</span><span class="n">trait_name</span><span class="si">}</span><span class="s2">&#39; once set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
 
 
 <span class="n">CAMEL_TO_SNAKE_SCENE</span> <span class="o">=</span> <span class="p">{</span>

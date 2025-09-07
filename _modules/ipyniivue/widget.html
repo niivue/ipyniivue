@@ -272,8 +272,10 @@
     <span class="n">deserialize_colormap_label</span><span class="p">,</span>
     <span class="n">deserialize_graph</span><span class="p">,</span>
     <span class="n">deserialize_hdr</span><span class="p">,</span>
+    <span class="n">deserialize_mat4</span><span class="p">,</span>
     <span class="n">deserialize_options</span><span class="p">,</span>
-    <span class="n">deserialize_scene</span><span class="p">,</span>
+    <span class="n">deserialize_volume_object_3d_data</span><span class="p">,</span>
+    <span class="n">parse_scene</span><span class="p">,</span>
     <span class="n">serialize_colormap_label</span><span class="p">,</span>
     <span class="n">serialize_enum</span><span class="p">,</span>
     <span class="n">serialize_file</span><span class="p">,</span>
@@ -282,6 +284,7 @@
     <span class="n">serialize_ndarray</span><span class="p">,</span>
     <span class="n">serialize_options</span><span class="p">,</span>
     <span class="n">serialize_scene</span><span class="p">,</span>
+    <span class="n">serialize_to_none</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.traits</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">LUT</span><span class="p">,</span>
@@ -289,9 +292,11 @@
     <span class="n">Graph</span><span class="p">,</span>
     <span class="n">NIFTI1Hdr</span><span class="p">,</span>
     <span class="n">Scene</span><span class="p">,</span>
+    <span class="n">VolumeObject3DData</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ChunkedDataHandler</span><span class="p">,</span>
+    <span class="n">lerp</span><span class="p">,</span>
     <span class="n">make_draw_lut</span><span class="p">,</span>
     <span class="n">make_label_lut</span><span class="p">,</span>
 <span class="p">)</span>
@@ -575,6 +580,8 @@
     <span class="c1"># Set after bidirectional comms with frontend</span>
     <span class="n">pts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">tris</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">extents_min</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">extents_max</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Mesh.__init__">
 <a class="viewcode-back" href="../../api.html#ipyniivue.Mesh.__init__">[docs]</a>
@@ -746,6 +753,18 @@
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_ndarray</span>
     <span class="p">)</span>
     <span class="n">dims</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">extents_min_ortho</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">extents_max_ortho</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">frac2mm</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_to_none</span><span class="p">,</span> <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_mat4</span>
+    <span class="p">)</span>
+    <span class="n">frac2mm_ortho</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_to_none</span><span class="p">,</span> <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_mat4</span>
+    <span class="p">)</span>
+    <span class="n">dims_ras</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">mat_ras</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_to_none</span><span class="p">,</span> <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_mat4</span>
+    <span class="p">)</span>
 
 <div class="viewcode-block" id="Volume.__init__">
 <a class="viewcode-back" href="../../api.html#ipyniivue.Volume.__init__">[docs]</a>
@@ -930,6 +949,125 @@
 <span class="sd">            The filename (default: &quot;image.nii&quot;).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;save_to_disk&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">filename</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="Volume.convert_frac2mm">
+<a class="viewcode-back" href="../../api.html#ipyniivue.Volume.convert_frac2mm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_frac2mm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frac</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">is_force_slice_mm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert fractional volume coordinates to millimeter space.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        frac : list of float</span>
+<span class="sd">            Fractional coordinates [X, Y, Z] in the range [0, 1].</span>
+<span class="sd">        is_force_slice_mm : bool, optional</span>
+<span class="sd">            If True, use world space coordinates. If False, use orthogonal space.</span>
+<span class="sd">            Default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of float</span>
+<span class="sd">            Position in millimeters [X, Y, Z, W] where W is always 1.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If the volume data is not fully loaded.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            mm_pos = volume.convert_frac2mm([0.5, 0.5, 0.5])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac2mm</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac2mm_ortho</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Volume coordinate transformation matrices are not available. &quot;</span>
+                <span class="s2">&quot;Ensure canvas is attached.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">frac</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">frac</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">frac</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mf">1.0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">is_force_slice_mm</span><span class="p">:</span>
+            <span class="n">matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac2mm</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac2mm_ortho</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Volume.convert_mm2frac">
+<a class="viewcode-back" href="../../api.html#ipyniivue.Volume.convert_mm2frac">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_mm2frac</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mm</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">is_force_slice_mm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert millimeter coordinates to fractional volume coordinates.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mm : list of float</span>
+<span class="sd">            Position in millimeters [X, Y, Z] or [X, Y, Z, W].</span>
+<span class="sd">        is_force_slice_mm : bool, optional</span>
+<span class="sd">            If True, use world space coordinates. If False, use orthogonal space.</span>
+<span class="sd">            Default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of float</span>
+<span class="sd">            Fractional coordinates [X, Y, Z] in the range [0, 1].</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If the volume data is not fully loaded.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            frac_pos = volume.convert_mm2frac([10.0, 20.0, 30.0])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">mm4</span> <span class="o">=</span> <span class="p">[</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mf">1.0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mm4</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mm</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+
+        <span class="n">frac</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_force_slice_mm</span><span class="p">:</span>
+            <span class="c1"># Use orthogonal space</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac2mm_ortho</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Volume orthogonal transformation matrix is not available. &quot;</span>
+                    <span class="s2">&quot;Ensure canvas is attached.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac2mm_ortho</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">inv_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">inv_matrix</span><span class="p">,</span> <span class="n">mm4</span><span class="p">)</span>
+            <span class="n">frac</span> <span class="o">=</span> <span class="n">result</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use world space with RAS coordinates</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dims_ras</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_ras</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Volume RAS dimensions or matrix not available. &quot;</span>
+                    <span class="s2">&quot;Ensure the volume is fully loaded.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dims_ras</span>
+            <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">d</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">d</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">frac</span>
+
+            <span class="n">sform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_ras</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">sform</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">sform</span><span class="p">)</span>
+            <span class="n">sform</span> <span class="o">=</span> <span class="n">sform</span><span class="o">.</span><span class="n">T</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sform</span><span class="p">,</span> <span class="n">mm4</span><span class="p">)</span>
+            <span class="n">frac</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">frac</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">d</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">frac</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">d</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">frac</span></div>
 </div>
 
 
@@ -958,12 +1096,16 @@
     <span class="p">)</span>
 
     <span class="n">_canvas_attached</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_volume_object_3d_data</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">VolumeObject3DData</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_to_none</span><span class="p">,</span>
+        <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_volume_object_3d_data</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">this_model_id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># other props</span>
     <span class="n">background_masks_overlays</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">clip_plane_depth_azi_elev</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
-        <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">minlen</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">3</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">draw_lut</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">LUT</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_colormap_label</span><span class="p">,</span>
@@ -979,10 +1121,29 @@
     <span class="n">scene</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">Scene</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_scene</span><span class="p">,</span>
-        <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_scene</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">overlay_outline_width</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 0 for none</span>
     <span class="n">overlay_alpha_shader</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 1 for opaque</span>
+
+    <span class="n">other_nv</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;other_nv&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_other_nv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">nv_inst</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nv_inst</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s2">&quot;Cannot sync to self.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">nv_inst</span><span class="p">)</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">nv_inst</span><span class="p">)</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="o">!=</span> <span class="s2">&quot;ipyniivue.widget.NiiVue&quot;</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span>
+                    <span class="s2">&quot;All items in `other_nv` must be NiiVue instances.&quot;</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
 
 <div class="viewcode-block" id="NiiVue.__init__">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.__init__">[docs]</a>
@@ -1005,14 +1166,27 @@
         <span class="n">opts</span> <span class="o">=</span> <span class="n">ConfigOptions</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="n">opts</span><span class="p">,</span> <span class="n">volumes</span><span class="o">=</span><span class="p">[],</span> <span class="n">meshes</span><span class="o">=</span><span class="p">[])</span>
 
-        <span class="c1"># Handle messages coming from frontend</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">on_msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_custom_msg</span><span class="p">)</span>
-
         <span class="c1"># Initialize values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">this_model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_initial_colormaps</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span> <span class="o">=</span> <span class="n">Scene</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span> <span class="o">=</span> <span class="n">Scene</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">other_nv</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;3d&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;2d&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;zoom_pan&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;cal_min&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;cal_max&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;clip_plane&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;slice_type&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;crosshair&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Handle messages coming from frontend</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_custom_msg</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -1027,6 +1201,18 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
+<div class="viewcode-block" id="NiiVue.set_state">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Override set_state to silence notifications for certain updates.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;scene&quot;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+            <span class="n">parsed</span> <span class="o">=</span> <span class="n">parse_scene</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;scene&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sync</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
+
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_notify_opts_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">notify_change</span><span class="p">(</span>
             <span class="p">{</span>
@@ -1037,6 +1223,7 @@
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;update_gl_volume&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_notify_graph_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">notify_change</span><span class="p">(</span>
@@ -1048,6 +1235,7 @@
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;update_gl_volume&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_notify_scene_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">notify_change</span><span class="p">(</span>
@@ -1868,7 +2056,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;depth, azimuth, and elevation must all be numeric values.&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elev</span> <span class="o">=</span> <span class="p">[</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elev</span> <span class="o">=</span> <span class="p">[</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.set_render_azimuth_elevation">
@@ -1898,9 +2086,9 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Azimuth must be a number.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elevation</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Elevation must be a number.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
-            <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_render_azimuth_elevation&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">]}</span>
-        <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;render_azimuth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">azimuth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;render_elevation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elevation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notify_scene_changed</span><span class="p">()</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_mesh_shader_name_to_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_shader_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -3269,6 +3457,330 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;hover_idx_change&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sync</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NiiVue.broadcast_to">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.broadcast_to">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">broadcast_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">,</span> <span class="n">sync_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sync the scene controls from one NiiVue instance to others.</span>
+
+<span class="sd">        Useful for using one canvas to drive another.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_nv : :class:`NiiVue` or list of :class:`NiiVue`</span>
+<span class="sd">            The other NiiVue instance(s) to broadcast state to.</span>
+<span class="sd">        sync_opts : dict, optional</span>
+<span class="sd">            Options specifying which properties to sync. E.g., {&#39;2d&#39;: True, &#39;3d&#39;: True}</span>
+<span class="sd">            Possible keys are:</span>
+<span class="sd">            - gamma</span>
+<span class="sd">            - crosshair</span>
+<span class="sd">            - zoom_pan</span>
+<span class="sd">            - slice_type</span>
+<span class="sd">            - cal_min</span>
+<span class="sd">            - cal_max</span>
+<span class="sd">            - clip_plane</span>
+<span class="sd">            - 2d</span>
+<span class="sd">            - 3d</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sync_opts</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">sync_opts</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;2d&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;3d&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other_nv</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">other_nv</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_nv</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">other_nv</span> <span class="o">=</span> <span class="n">other_nv</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span> <span class="o">=</span> <span class="n">sync_opts</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_do_sync_3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize 3D view settings with another NiiVue instance.</span>
+
+<span class="sd">        Do not call this by itself. This should be called by the sync method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">other_nv</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;render_azimuth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">render_azimuth</span>
+        <span class="n">other_nv</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;render_elevation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">render_elevation</span>
+        <span class="n">other_nv</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;vol_scale_multiplier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">vol_scale_multiplier</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_do_sync_2d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize 2D crosshair pos + pan settings with another NiiVue instance.</span>
+
+<span class="sd">        Do not call this by itself. This should be called by the sync method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">this_mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac2mm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">crosshair_pos</span><span class="p">)</span>
+        <span class="n">other_nv</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;crosshair_pos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">other_nv</span><span class="o">.</span><span class="n">mm2frac</span><span class="p">(</span><span class="n">this_mm</span><span class="p">)</span>
+        <span class="n">other_nv</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;pan2d_xyzmm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">pan2d_xyzmm</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_do_sync_gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize gamma correction setting with another NiiVue instance.&quot;&quot;&quot;</span>
+        <span class="n">this_gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">gamma</span>
+        <span class="n">other_gamma</span> <span class="o">=</span> <span class="n">other_nv</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">gamma</span>
+        <span class="k">if</span> <span class="n">this_gamma</span> <span class="o">!=</span> <span class="n">other_gamma</span><span class="p">:</span>
+            <span class="n">other_nv</span><span class="o">.</span><span class="n">set_gamma</span><span class="p">(</span><span class="n">this_gamma</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_do_sync_zoom_pan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize zoom/pan settings with another NiiVue instance.</span>
+
+<span class="sd">        Do not call this by itself. This should be called by the sync method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">other_nv</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;pan2d_xyzmm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">pan2d_xyzmm</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_do_sync_crosshair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize crosshair position with another NiiVue instance.</span>
+
+<span class="sd">        Do not call this by itself. This should be called by the sync method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">this_mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac2mm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">crosshair_pos</span><span class="p">)</span>
+        <span class="n">other_nv</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;crosshair_pos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">other_nv</span><span class="o">.</span><span class="n">mm2frac</span><span class="p">(</span><span class="n">this_mm</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_do_sync_cal_min</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize cal_min with another NiiVue instance.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span>
+            <span class="ow">and</span> <span class="n">other_nv</span><span class="o">.</span><span class="n">volumes</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cal_min</span> <span class="o">!=</span> <span class="n">other_nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cal_min</span>
+        <span class="p">):</span>
+            <span class="n">other_nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cal_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cal_min</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_do_sync_cal_max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize cal_max with another NiiVue instance.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span>
+            <span class="ow">and</span> <span class="n">other_nv</span><span class="o">.</span><span class="n">volumes</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cal_max</span> <span class="o">!=</span> <span class="n">other_nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cal_max</span>
+        <span class="p">):</span>
+            <span class="n">other_nv</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cal_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cal_max</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_do_sync_slice_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize slice view type with another NiiVue instance.&quot;&quot;&quot;</span>
+        <span class="n">other_nv</span><span class="o">.</span><span class="n">set_slice_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">slice_type</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_do_sync_clip_plane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize clip plane settings with another NiiVue instance.&quot;&quot;&quot;</span>
+        <span class="n">other_nv</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;clip_plane_depth_azi_elev&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elev</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="NiiVue.sync">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.sync">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sync</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sync the scene controls from this NiiVue instance to others.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">nv_obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_nv</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">nv_obj</span><span class="o">.</span><span class="n">_canvas_attached</span><span class="p">:</span>
+                <span class="c1"># todo: add logging msg here</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_do_sync_gamma</span><span class="p">(</span><span class="n">nv_obj</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;crosshair&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_do_sync_crosshair</span><span class="p">(</span><span class="n">nv_obj</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;zoom_pan&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_do_sync_zoom_pan</span><span class="p">(</span><span class="n">nv_obj</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;slice_type&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_do_sync_slice_type</span><span class="p">(</span><span class="n">nv_obj</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cal_min&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_do_sync_cal_min</span><span class="p">(</span><span class="n">nv_obj</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cal_max&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_do_sync_cal_max</span><span class="p">(</span><span class="n">nv_obj</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;clip_plane&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_do_sync_clip_plane</span><span class="p">(</span><span class="n">nv_obj</span><span class="p">)</span>
+
+            <span class="c1"># legacy 2d and 3d opts:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;2d&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_do_sync_2d</span><span class="p">(</span><span class="n">nv_obj</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;3d&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_do_sync_3d</span><span class="p">(</span><span class="n">nv_obj</span><span class="p">)</span>
+
+            <span class="n">nv_obj</span><span class="o">.</span><span class="n">_notify_scene_changed</span><span class="p">()</span></div>
+
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom utils</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NiiVue.scene_extents_min_max">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.scene_extents_min_max">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">scene_extents_min_max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_slice_mm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the scene&#39;s min, max, and range extents in mm or voxel space.</span>
+
+<span class="sd">        Includes both volume and mesh geometry.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        is_slice_mm : bool, optional</span>
+<span class="sd">            If True, returns extents in mm space.</span>
+<span class="sd">            If False, returns extents in voxel space. Default is True.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A tuple containing three lists:</span>
+<span class="sd">            - min_extents: [x, y, z] minimum coordinates</span>
+<span class="sd">            - max_extents: [x, y, z] maximum coordinates</span>
+<span class="sd">            - range: [x, y, z] range (max - min) for each dimension</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If volumes exist but volume_object_3d_data is not defined.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            min_ext, max_ext, range_ext = nv.scene_extents_min_max()</span>
+<span class="sd">            print(f&quot;Min: {min_ext}, Max: {max_ext}, Range: {range_ext}&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volume_object_3d_data</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;_volume_object_3d_data not defined. Canvas needs to be attached.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">is_slice_mm</span><span class="p">:</span>
+                <span class="n">mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volume_object_3d_data</span><span class="o">.</span><span class="n">extents_min</span><span class="p">)</span>
+                <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volume_object_3d_data</span><span class="o">.</span><span class="n">extents_max</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">extents_min_ortho</span>
+                    <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">extents_max_ortho</span>
+                <span class="p">):</span>
+                    <span class="n">mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">extents_min_ortho</span><span class="p">)</span>
+                    <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">extents_max_ortho</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">extents_min</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">extents_max</span><span class="p">:</span>
+                    <span class="n">mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">extents_min</span><span class="p">)</span>
+                    <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">extents_max</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">mesh</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">mesh</span><span class="o">.</span><span class="n">extents_min</span> <span class="ow">and</span> <span class="n">mesh</span><span class="o">.</span><span class="n">extents_max</span><span class="p">:</span>
+                    <span class="n">mesh_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">extents_min</span><span class="p">)</span>
+                    <span class="n">mesh_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">extents_max</span><span class="p">)</span>
+                    <span class="n">mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">mn</span><span class="p">,</span> <span class="n">mesh_min</span><span class="p">)</span>
+                    <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">mesh_max</span><span class="p">)</span>
+
+        <span class="n">range_extents</span> <span class="o">=</span> <span class="n">mx</span> <span class="o">-</span> <span class="n">mn</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">mx</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">range_extents</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.mm2frac">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.mm2frac">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mm2frac</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">mm</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">vol_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">is_force_slice_mm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert mm coords to frac volume coords for a volume.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mm : list of float</span>
+<span class="sd">            Position in millimeters [X, Y, Z] or [X, Y, Z, W].</span>
+<span class="sd">        vol_idx : int, optional</span>
+<span class="sd">            Index of the volume to use for conversion. Default is 0.</span>
+<span class="sd">        is_force_slice_mm : bool, optional</span>
+<span class="sd">            If True, use world space coordinates. If False, use orthogonal space</span>
+<span class="sd">            unless `opts.is_slice_mm` is True. Default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of float</span>
+<span class="sd">            Fractional coordinates [X, Y, Z] in the range [0, 1].</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            frac_pos = nv.mm2frac([10.0, 20.0, 30.0])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">frac</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+            <span class="n">mn</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">range_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_extents_min_max</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mm</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">frac</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">mn</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">range_ext</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">range_ext</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.5</span>
+                <span class="n">frac</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">mn</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">range_ext</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">range_ext</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.5</span>
+                <span class="n">frac</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">mn</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">range_ext</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="n">range_ext</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.5</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">frac</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                    <span class="n">frac</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">frac</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mm2frac() not finite: objects not yet loaded.&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">frac</span>
+
+        <span class="k">if</span> <span class="n">vol_idx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">vol_idx</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume index </span><span class="si">{</span><span class="n">vol_idx</span><span class="si">}</span><span class="s2"> out of range.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">vol_idx</span><span class="p">]</span><span class="o">.</span><span class="n">convert_mm2frac</span><span class="p">(</span>
+            <span class="n">mm</span><span class="p">,</span> <span class="n">is_force_slice_mm</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">is_slice_mm</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.frac2mm">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.frac2mm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">frac2mm</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">frac</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">vol_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">is_force_slice_mm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert frac volume coords to mm space for a volume.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        frac : list of float</span>
+<span class="sd">            Fractional coordinates [X, Y, Z] in the range [0, 1].</span>
+<span class="sd">        vol_idx : int, optional</span>
+<span class="sd">            Index of the volume to use for conversion. Default is 0.</span>
+<span class="sd">        is_force_slice_mm : bool, optional</span>
+<span class="sd">            If True, use world space coordinates. If False, use orthogonal space</span>
+<span class="sd">            unless `opts.is_slice_mm` is True. Default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of float</span>
+<span class="sd">            Position in millimeters [X, Y, Z, W] where W is always 1.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            mm_pos = nv.frac2mm([0.5, 0.5, 0.5])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">frac</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">frac</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">frac</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mf">1.0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">vol_idx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">vol_idx</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume index </span><span class="si">{</span><span class="n">vol_idx</span><span class="si">}</span><span class="s2"> out of range.&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">vol_idx</span><span class="p">]</span><span class="o">.</span><span class="n">convert_frac2mm</span><span class="p">(</span>
+                <span class="n">frac</span><span class="p">,</span> <span class="n">is_force_slice_mm</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">is_slice_mm</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mn</span><span class="p">,</span> <span class="n">mx</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_extents_min_max</span><span class="p">()</span>
+
+            <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">lerp</span><span class="p">(</span><span class="n">mn</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">frac</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">lerp</span><span class="p">(</span><span class="n">mn</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">frac</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">lerp</span><span class="p">(</span><span class="n">mn</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">mx</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">frac</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">pos</span></div>
 </div>
 
 

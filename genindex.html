@@ -320,6 +320,8 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api.html#ipyniivue.NiiVue.background_masks_overlays">background_masks_overlays (ipyniivue.NiiVue attribute)</a>
 </li>
+        <li><a href="api.html#ipyniivue.NiiVue.broadcast_to">broadcast_to() (ipyniivue.NiiVue method)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -368,8 +370,6 @@
 </li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.clip_plane_color">clip_plane_color (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
-        <li><a href="api.html#ipyniivue.NiiVue.clip_plane_depth_azi_elev">clip_plane_depth_azi_elev (ipyniivue.NiiVue attribute)</a>
-</li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.clip_plane_hot_key">clip_plane_hot_key (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.clip_thick">clip_thick (ipyniivue.config_options.ConfigOptions attribute)</a>
@@ -386,8 +386,6 @@
 </li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.colorbar_margin">colorbar_margin (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api.html#ipyniivue.Mesh.colorbar_visible">colorbar_visible (ipyniivue.Mesh attribute)</a>
 
         <ul>
@@ -396,6 +394,8 @@
           <li><a href="api.html#ipyniivue.Volume.colorbar_visible">(ipyniivue.Volume attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.colorbar_width">colorbar_width (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
         <li><a href="traits.html#ipyniivue.ColorMap">ColorMap (class in ipyniivue)</a>
@@ -438,6 +438,10 @@
 </li>
         <li><a href="enums.html#ipyniivue.DragMode.CONTRAST">CONTRAST (ipyniivue.DragMode attribute)</a>
 </li>
+        <li><a href="api.html#ipyniivue.Volume.convert_frac2mm">convert_frac2mm() (ipyniivue.Volume method)</a>
+</li>
+        <li><a href="api.html#ipyniivue.Volume.convert_mm2frac">convert_mm2frac() (ipyniivue.Volume method)</a>
+</li>
         <li><a href="enums.html#ipyniivue.SliceType.CORONAL">CORONAL (ipyniivue.SliceType attribute)</a>
 </li>
         <li><a href="enums.html#ipyniivue.DragMode.CROSSHAIR">CROSSHAIR (ipyniivue.DragMode attribute)</a>
@@ -468,16 +472,18 @@
         </ul></li>
         <li><a href="api.html#ipyniivue.Volume.dims">dims (ipyniivue.Volume attribute)</a>
 </li>
+        <li><a href="api.html#ipyniivue.Volume.dims_ras">dims_ras (ipyniivue.Volume attribute)</a>
+</li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.double_touch_timeout">double_touch_timeout (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.drag_and_drop_enabled">drag_and_drop_enabled (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.drag_mode">drag_mode (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
-        <li><a href="options.html#ipyniivue.config_options.ConfigOptions.drag_mode_primary">drag_mode_primary (ipyniivue.config_options.ConfigOptions attribute)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="options.html#ipyniivue.config_options.ConfigOptions.drag_mode_primary">drag_mode_primary (ipyniivue.config_options.ConfigOptions attribute)</a>
+</li>
         <li><a href="enums.html#ipyniivue.DragMode">DragMode (class in ipyniivue)</a>
 </li>
         <li><a href="api.html#ipyniivue.NiiVue.draw_fill_overwrites">draw_fill_overwrites (ipyniivue.NiiVue attribute)</a>
@@ -504,6 +510,16 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="enums.html#ipyniivue.PenType.ELLIPSE">ELLIPSE (ipyniivue.PenType attribute)</a>
 </li>
+        <li><a href="api.html#ipyniivue.Mesh.extents_max">extents_max (ipyniivue.Mesh attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api.html#ipyniivue.Volume.extents_max_ortho">extents_max_ortho (ipyniivue.Volume attribute)</a>
+</li>
+        <li><a href="api.html#ipyniivue.Mesh.extents_min">extents_min (ipyniivue.Mesh attribute)</a>
+</li>
+        <li><a href="api.html#ipyniivue.Volume.extents_min_ortho">extents_min_ortho (ipyniivue.Volume attribute)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -524,15 +540,21 @@
 </li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.flood_fill_neighbors">flood_fill_neighbors (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.font_color">font_color (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.font_min_px">font_min_px (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.font_size_scaling">font_size_scaling (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.force_device_pixel_ratio">force_device_pixel_ratio (ipyniivue.config_options.ConfigOptions attribute)</a>
+</li>
+        <li><a href="api.html#ipyniivue.Volume.frac2mm">frac2mm (ipyniivue.Volume attribute)</a>
+</li>
+        <li><a href="api.html#ipyniivue.NiiVue.frac2mm">frac2mm() (ipyniivue.NiiVue method)</a>
+</li>
+        <li><a href="api.html#ipyniivue.Volume.frac2mm_ortho">frac2mm_ortho (ipyniivue.Volume attribute)</a>
 </li>
         <li><a href="api.html#ipyniivue.MeshLayer.frame_4d">frame_4d (ipyniivue.MeshLayer attribute)</a>
 
@@ -728,6 +750,8 @@
   <h2>M</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api.html#ipyniivue.Volume.mat_ras">mat_ras (ipyniivue.Volume attribute)</a>
+</li>
         <li><a href="traits.html#ipyniivue.ColorMap.max">max (ipyniivue.ColorMap attribute)</a>
 
         <ul>
@@ -769,6 +793,8 @@
 </li>
         </ul></li>
         <li><a href="enums.html#ipyniivue.ColormapType.MIN_TO_MAX">MIN_TO_MAX (ipyniivue.ColormapType attribute)</a>
+</li>
+        <li><a href="api.html#ipyniivue.NiiVue.mm2frac">mm2frac() (ipyniivue.NiiVue method)</a>
 </li>
         <li><a href="api.html#ipyniivue.Volume.modulate_alpha">modulate_alpha (ipyniivue.Volume attribute)</a>
 </li>
@@ -874,6 +900,8 @@
         </ul></li>
         <li><a href="api.html#ipyniivue.NiiVue.opts">opts (ipyniivue.NiiVue attribute)</a>
 </li>
+        <li><a href="api.html#ipyniivue.NiiVue.other_nv">other_nv (ipyniivue.NiiVue attribute)</a>
+</li>
         <li><a href="api.html#ipyniivue.MeshLayer.outline_border">outline_border (ipyniivue.MeshLayer attribute)</a>
 </li>
         <li><a href="api.html#ipyniivue.NiiVue.overlay_alpha_shader">overlay_alpha_shader (ipyniivue.NiiVue attribute)</a>
@@ -978,6 +1006,8 @@
 </li>
         <li><a href="api.html#ipyniivue.NiiVue.scene">scene (ipyniivue.NiiVue attribute)</a>
 </li>
+        <li><a href="api.html#ipyniivue.NiiVue.scene_extents_min_max">scene_extents_min_max() (ipyniivue.NiiVue method)</a>
+</li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.scroll_requires_focus">scroll_requires_focus (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
         <li><a href="traits.html#ipyniivue.Graph.selected_column">selected_column (ipyniivue.Graph attribute)</a>
@@ -1046,6 +1076,8 @@
 </li>
         <li><a href="api.html#ipyniivue.NiiVue.set_slice_type">set_slice_type() (ipyniivue.NiiVue method)</a>
 </li>
+        <li><a href="api.html#ipyniivue.NiiVue.set_state">set_state() (ipyniivue.NiiVue method)</a>
+</li>
         <li><a href="api.html#ipyniivue.NiiVue.set_volume_render_illumination">set_volume_render_illumination() (ipyniivue.NiiVue method)</a>
 </li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.show_3d_crosshair">show_3d_crosshair (ipyniivue.config_options.ConfigOptions attribute)</a>
@@ -1068,6 +1100,8 @@
 </li>
         <li><a href="enums.html#ipyniivue.SliceType">SliceType (class in ipyniivue)</a>
 </li>
+        <li><a href="api.html#ipyniivue.NiiVue.sync">sync() (ipyniivue.NiiVue method)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -1079,6 +1113,8 @@
         <li><a href="traits.html#ipyniivue.Graph.text_color">text_color (ipyniivue.Graph attribute)</a>
 </li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.text_height">text_height (ipyniivue.config_options.ConfigOptions attribute)</a>
+</li>
+        <li><a href="api.html#ipyniivue.NiiVue.this_model_id">this_model_id (ipyniivue.NiiVue attribute)</a>
 </li>
         <li><a href="options.html#ipyniivue.config_options.ConfigOptions.thumbnail">thumbnail (ipyniivue.config_options.ConfigOptions attribute)</a>
 </li>
