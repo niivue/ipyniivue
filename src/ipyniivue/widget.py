@@ -12,7 +12,6 @@ import json
 import math
 import pathlib
 import typing
-import warnings
 from urllib.parse import urlparse
 
 import anywidget
