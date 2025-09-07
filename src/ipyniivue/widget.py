@@ -904,18 +904,6 @@ class NiiVue(BaseAnyWidget):
         self._event_handlers = {}
         self.on_msg(self._handle_custom_msg)
 
-    def __setattr__(self, name, value):
-        """todo: remove this starting version 2.4.1."""
-        if name in ConfigOptions.class_trait_names():
-            warnings.warn(
-                "Setting config options directly on NiiVue will not be supported "
-                f"in versions starting 2.4.1. Please use nv.opts.{name}",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            setattr(self.opts, name, value)
-        super().__setattr__(name, value)
-
     def set_state(self, state):
         """Override set_state to silence notifications for certain updates."""
         if "scene" in state:
