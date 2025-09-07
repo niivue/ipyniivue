@@ -11,6 +11,16 @@ export interface AnyModel<T extends object = object> extends BaseAnyModel<T> {
 	onChange: (value: Partial<T>) => void;
 }
 
+// just part of the NiivueObject3D in niivue
+export type NiivueObject3D = {
+	id: number;
+	extents_min: number[];
+	extents_max: number[];
+	scale: number[];
+	furthest_vertex_from_origin?: number;
+	field_of_view_de_oblique_mm?: number[];
+};
+
 interface FileInput {
 	name: string;
 	data: DataView;
@@ -55,14 +65,14 @@ type Graph = {
 };
 
 export type Scene = {
-	renderAzimuth: number;
-	renderElevation: number;
-	volScaleMultiplier: number;
-	crosshairPos: number[];
-	clipPlane: number[];
-	clipPlaneDepthAziElev: number[];
-	pan2Dxyzmm: number[];
-	gamma: number;
+	renderAzimuth?: number;
+	renderElevation?: number;
+	volScaleMultiplier?: number;
+	crosshairPos?: number[];
+	clipPlane?: number[];
+	clipPlaneDepthAziElev?: number[];
+	pan2Dxyzmm?: number[];
+	gamma?: number;
 };
 
 export type VolumeModel = AnyModel<{
@@ -94,9 +104,15 @@ export type VolumeModel = AnyModel<{
 	modulation_image: number | null;
 	modulate_alpha: number;
 
-	hdr: Partial<NIFTI1>;
+	hdr: Partial<NIFTI1>; // only updated via frontend...but this might change in the future..
 	img: DataView;
 	dims: number[];
+	extents_min_ortho: number[];
+	extents_max_ortho: number[];
+	frac2mm: number[];
+	frac2mm_ortho: number[];
+	dims_ras: number[];
+	mat_ras: number[];
 }>;
 
 export type MeshModel = AnyModel<{
@@ -123,6 +139,8 @@ export type MeshModel = AnyModel<{
 
 	pts: DataView;
 	tris: DataView;
+	extents_min: number[];
+	extents_max: number[];
 }>;
 
 export type MeshLayerModel = AnyModel<{
@@ -146,6 +164,8 @@ export type MeshLayerModel = AnyModel<{
 }>;
 
 export type Model = AnyModel<{
+	this_model_id: string;
+
 	height: number;
 	volumes: Array<string>;
 	meshes: Array<string>;
@@ -154,11 +174,6 @@ export type Model = AnyModel<{
 	_canvas_attached: boolean;
 
 	background_masks_overlays: number;
-	clip_plane_depth_azi_elev: [
-		depth: number,
-		azimuth: number,
-		elevation: number,
-	];
 	draw_lut: LUT;
 	draw_opacity: number;
 	draw_fill_overwrites: boolean;
@@ -166,6 +181,8 @@ export type Model = AnyModel<{
 	scene: Scene;
 	overlay_outline_width: number;
 	overlay_alpha_shader: number;
+
+	_volume_object_3d_data: NiivueObject3D; // only updated via frontend (1-way comm)
 }>;
 
 // Custom message datas
@@ -214,15 +231,12 @@ export type CustomMessagePayload =
 	| { type: "set_gamma"; data: SetGammaData }
 	| { type: "resize_listener"; data: [] }
 	| { type: "draw_scene"; data: [] }
+	| { type: "update_gl_volume"; data: [] }
 	| {
 			type: "set_volume_render_illumination";
 			data: SetVolumeRenderIlluminationData;
 	  }
 	| { type: "load_png_as_texture"; data: LoadPngAsTextureData }
-	| {
-			type: "set_render_azimuth_elevation";
-			data: SetRenderAzimuthElevationData;
-	  }
 	| { type: "set_interpolation"; data: SetInterpolationData }
 	| { type: "set_drawing_enabled"; data: SetDrawingEnabledData }
 	| { type: "draw_otsu"; data: DrawOtsuData }

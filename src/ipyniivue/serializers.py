@@ -21,6 +21,7 @@ from .traits import (
     Graph,
     NIFTI1Hdr,
     Scene,
+    VolumeObject3DData,
 )
 from .utils import is_negative_zero
 
@@ -311,31 +312,6 @@ def serialize_scene(instance: Scene, widget: object):
     return data
 
 
-def deserialize_scene(serialized_scene: dict, widget: object):
-    """
-    Deserialize serialized scene data, converting camelCase back to snake_case.
-
-    Parameters
-    ----------
-    serialized_scene : dict
-        The serialized scene dictionary from the frontend.
-    widget : object
-        The NiiVue widget the instance is a part of.
-
-    Returns
-    -------
-    Scene
-        The deserialized Scene instance.
-    """
-    scene_args = {}
-    for camel_name, value in serialized_scene.items():
-        snake_name = CAMEL_TO_SNAKE_SCENE.get(camel_name, camel_name)
-        if snake_name in Scene.class_traits():
-            deserialized_value = value
-            scene_args[snake_name] = deserialized_value
-    return Scene(**scene_args, parent=widget)
-
-
 def serialize_enum(instance: enum.Enum, widget: object):
     """
     Serialize an Enum instance by returning its value.
@@ -355,3 +331,91 @@ def serialize_enum(instance: enum.Enum, widget: object):
     if isinstance(instance, enum.Enum):
         return instance.value
     return instance
+
+
+def serialize_to_none(instance: object, widget: object):
+    """
+    Serialize to None.
+
+    Parameters
+    ----------
+    instance : object
+        The object to serialize.
+    widget : object
+        The NiiVue widget the instance is a part of.
+
+    Returns
+    -------
+    None
+    """
+    return None
+
+
+def deserialize_volume_object_3d_data(instance: dict, widget: object):
+    """
+    Deserialize serialized VolumeObject3DData.
+
+    Parameters
+    ----------
+    instance : dict
+        The dictionary from the frontend.
+    widget : object
+        The NiiVue widget the instance is a part of.
+
+    Returns
+    -------
+    VolumeObject3DData
+        The deserialized VolumeObject3DData instance.
+    """
+    return VolumeObject3DData(**instance)
+
+
+def deserialize_mat4(instance: list, widget: object):
+    """
+    Deserialize a list into a 4x4 numpy array.
+
+    Parameters
+    ----------
+    instance : list
+        The flattened list representation of a 4x4 matrix.
+    widget : object
+        The NiiVue widget the instance is a part of.
+
+    Returns
+    -------
+    np.ndarray
+        The deserialized 4x4 numpy matrix.
+
+    Raises
+    ------
+    ValueError
+        If instance is not a list of length 16.
+    """
+    if not isinstance(instance, list):
+        raise ValueError(f"Input must be a list, got {type(instance)}.")
+    if len(instance) != 16:
+        raise ValueError(f"Input list must have length 16, got length {len(instance)}.")
+    return np.array(instance).reshape(4, 4)
+
+
+def parse_scene(serialized_scene: dict):
+    """
+    Convert camelCase back to snake_case.
+
+    Parameters
+    ----------
+    serialized_scene : dict
+        The serialized scene dictionary from the frontend.
+
+    Returns
+    -------
+    dict
+        The parsed scene data.
+    """
+    scene_args = {}
+    for camel_name, value in serialized_scene.items():
+        snake_name = CAMEL_TO_SNAKE_SCENE.get(camel_name, camel_name)
+        if snake_name in Scene.class_traits():
+            deserialized_value = value
+            scene_args[snake_name] = deserialized_value
+    return scene_args

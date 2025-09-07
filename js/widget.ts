@@ -7,41 +7,17 @@ import { render_meshes } from "./mesh.ts";
 import { render_volumes } from "./volume.ts";
 
 import type {
+	AnyModel,
 	CustomMessagePayload,
 	MeshModel,
 	Model,
+	NiivueObject3D,
 	Scene,
 	VolumeModel,
 } from "./types.ts";
 
 let nv: niivue.Niivue;
-
-function deserializeOptions(
-	options: Partial<Record<keyof niivue.NVConfigOptions, unknown>>,
-): niivue.NVConfigOptions {
-	const result: Partial<niivue.NVConfigOptions> = {};
-	const specialValues: Record<string, number> = {
-		Infinity: Number.POSITIVE_INFINITY,
-		"-Infinity": Number.NEGATIVE_INFINITY,
-		NaN: Number.NaN,
-		"-0": -0,
-	};
-
-	for (const [key, value] of Object.entries(options) as [
-		keyof niivue.NVConfigOptions,
-		unknown,
-	][]) {
-		if (typeof value === "string" && value in specialValues) {
-			// biome-ignore lint/suspicious/noExplicitAny: NVConfigOptions
-			(result as any)[key] = specialValues[value];
-		} else {
-			// biome-ignore lint/suspicious/noExplicitAny: NVConfigOptions
-			(result as any)[key] = value;
-		}
-	}
-
-	return result as niivue.NVConfigOptions;
-}
+let syncInterval: number | undefined;
 
 // Attach model event handlers
 function attachModelEventHandlers(
@@ -60,13 +36,10 @@ function attachModelEventHandlers(
 		}
 	});
 
-	// Any time we change the options, we need to update the nv gl
 	model.on("change:opts", () => {
 		const serializedOpts = model.get("opts");
-		const opts = deserializeOptions(serializedOpts);
-
+		const opts = lib.deserializeOptions(serializedOpts);
 		nv.document.opts = { ...nv.opts, ...opts };
-		nv.updateGLVolume();
 	});
 
 	// Other nv prop changes
@@ -75,11 +48,6 @@ function attachModelEventHandlers(
 		if (nv._gl) {
 			nv.updateGLVolume();
 		}
-	}
-
-	function clip_plane_depth_azi_elev_changed() {
-		const [depth, azimuth, elevation] = model.get("clip_plane_depth_azi_elev");
-		nv.setClipPlane([depth, azimuth, elevation]);
 	}
 
 	function draw_lut_changed() {
@@ -111,9 +79,6 @@ function attachModelEventHandlers(
 			// biome-ignore lint/suspicious/noExplicitAny: Update graph vals, only clear out old vals when needed
 			(nv.graph as any)[key] = value;
 		}
-		if (nv._gl) {
-			nv.updateGLVolume();
-		}
 	}
 
 	function scene_changed() {
@@ -143,10 +108,6 @@ function attachModelEventHandlers(
 		"change:background_masks_overlays",
 		background_masks_overlays_changed,
 	);
-	model.on(
-		"change:clip_plane_depth_azi_elev",
-		clip_plane_depth_azi_elev_changed,
-	);
 	model.on("change:draw_lut", draw_lut_changed);
 	model.on("change:draw_opacity", draw_opacity_changed);
 	model.on("change:draw_fill_overwrites", draw_fill_overwrites_changed);
@@ -157,7 +118,6 @@ function attachModelEventHandlers(
 
 	// Set attributes not set on init
 	background_masks_overlays_changed();
-	clip_plane_depth_azi_elev_changed();
 	draw_lut_changed();
 	draw_opacity_changed();
 	draw_fill_overwrites_changed();
@@ -214,6 +174,10 @@ function attachModelEventHandlers(
 					nv.drawScene();
 					break;
 				}
+				case "update_gl_volume": {
+					nv.updateGLVolume();
+					break;
+				}
 				case "set_volume_render_illumination": {
 					if (nv._gl) {
 						let [gradientAmount] = data;
@@ -229,11 +193,6 @@ function attachModelEventHandlers(
 				case "load_png_as_texture": {
 					const [pngUrl, textureNum] = data;
 					nv.loadPngAsTexture(pngUrl, textureNum);
-					break;
-				}
-				case "set_render_azimuth_elevation": {
-					const [azimuth, elevation] = data;
-					nv.setRenderAzimuthElevation(azimuth, elevation);
 					break;
 				}
 				case "set_interpolation": {
@@ -305,31 +264,25 @@ function attachModelEventHandlers(
 
 // Attach Niivue event handlers
 function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
-	let isThrottling = false;
-	const originalSyncMethod = nv.sync;
-	nv.sync = new Proxy(originalSyncMethod, {
+	const originalRefreshLayersMethod = nv.refreshLayers;
+	nv.refreshLayers = new Proxy(originalRefreshLayersMethod, {
 		apply: (target, thisArg, argumentsList) => {
 			Reflect.apply(target, thisArg, argumentsList);
 
-			// throttle sending back to backend
-			if (isThrottling) return;
-			isThrottling = true;
-			setTimeout(() => {
-				isThrottling = false;
-			}, 50);
-
-			const currentScene: Scene = {
-				renderAzimuth: nv.scene.renderAzimuth,
-				renderElevation: nv.scene.renderElevation,
-				volScaleMultiplier: nv.scene.volScaleMultiplier,
-				crosshairPos: [...nv.scene.crosshairPos],
-				clipPlane: nv.scene.clipPlane,
-				clipPlaneDepthAziElev: nv.scene.clipPlaneDepthAziElev,
-				pan2Dxyzmm: [...nv.scene.pan2Dxyzmm],
-				gamma: nv.scene.gamma || 1.0,
-			};
-			model.set("scene", currentScene);
-			model.save_changes();
+			if (nv.volumeObject3D) {
+				const currentVolumeObject3D: NiivueObject3D = {
+					id: nv.volumeObject3D.id,
+					extents_min: nv.volumeObject3D.extentsMin,
+					extents_max: nv.volumeObject3D.extentsMax,
+					scale: nv.volumeObject3D.scale,
+					furthest_vertex_from_origin:
+						nv.volumeObject3D.furthestVertexFromOrigin,
+					field_of_view_de_oblique_mm: nv.volumeObject3D
+						.fieldOfViewDeObliqueMM as number[],
+				};
+				model.set("_volume_object_3d_data", currentVolumeObject3D);
+				model.save_changes();
+			}
 		},
 	});
 
@@ -645,6 +598,67 @@ function attachCanvasEventHandlers(nv: niivue.Niivue, model: Model) {
 	}
 }
 
+function setupSyncInterval(nv: niivue.Niivue, model: Model) {
+	if (syncInterval !== undefined) {
+		clearInterval(syncInterval);
+		syncInterval = undefined;
+	}
+
+	let lastSentScene: Scene | null = model.get("scene");
+	let shouldSendScene = false;
+	const sendSceneUpdate = async () => {
+		if (!shouldSendScene) {
+			return;
+		}
+		const thisModelId = model.get("this_model_id");
+		if (!thisModelId) {
+			return;
+		}
+		let thisAnyModel: AnyModel;
+		try {
+			thisAnyModel = (await model.widget_manager.get_model(
+				thisModelId,
+			)) as AnyModel;
+		} catch (err) {
+			return;
+		}
+
+		const currentScene: Scene = {
+			renderAzimuth: nv.scene.renderAzimuth,
+			renderElevation: nv.scene.renderElevation,
+			volScaleMultiplier: nv.scene.volScaleMultiplier,
+			crosshairPos: [...nv.scene.crosshairPos],
+			clipPlane: nv.scene.clipPlane,
+			clipPlaneDepthAziElev: nv.scene.clipPlaneDepthAziElev,
+			pan2Dxyzmm: [...nv.scene.pan2Dxyzmm],
+			gamma: nv.scene.gamma || 1.0,
+		};
+		const sceneDelta = lib.sceneDiff(lastSentScene, currentScene);
+		if (Object.keys(sceneDelta).length > 0) {
+			lib.forceSendState(thisAnyModel, { scene: sceneDelta });
+			lastSentScene = currentScene;
+		}
+	};
+
+	syncInterval = setInterval(sendSceneUpdate, 30);
+
+	const originalSync = nv.sync;
+	nv.sync = new Proxy(originalSync, {
+		apply: (target, thisArg, argumentsList) => {
+			Reflect.apply(target, thisArg, argumentsList);
+			if (!nv.gl) {
+				shouldSendScene = false;
+				return;
+			}
+			if (!(nv.gl.canvas as HTMLCanvasElement).matches(":focus")) {
+				shouldSendScene = false;
+				return;
+			}
+			shouldSendScene = true;
+		},
+	});
+}
+
 export default {
 	async initialize({ model }: { model: Model }) {
 		const disposer = new lib.Disposer();
@@ -652,7 +666,7 @@ export default {
 		if (!nv) {
 			console.log("Creating new Niivue instance");
 			const serializedOpts = model.get("opts") ?? {};
-			const opts = deserializeOptions(serializedOpts);
+			const opts = lib.deserializeOptions(serializedOpts);
 			nv = new niivue.Niivue(opts);
 		}
 
@@ -673,7 +687,6 @@ export default {
 			model.off("msg:custom");
 
 			model.off("change:background_masks_overlays");
-			model.off("change:clip_plane_depth_azi_elev");
 			model.off("change:draw_lut");
 			model.off("change:draw_opacity");
 			model.off("change:draw_fill_overwrites");
@@ -681,6 +694,8 @@ export default {
 			model.off("change:scene");
 			model.off("change:overlay_outline_width");
 			model.off("change:overlay_alpha_shader");
+
+			clearInterval(syncInterval);
 		};
 	},
 	async render({ model, el }: { model: Model; el: HTMLElement }) {
@@ -719,6 +734,8 @@ export default {
 			await render_meshes(nv, model, disposer);
 
 			attachCanvasEventHandlers(nv, model);
+
+			setupSyncInterval(nv, model);
 		} else {
 			console.log("moving render around");
 

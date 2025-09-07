@@ -31,8 +31,10 @@ from .serializers import (
     deserialize_colormap_label,
     deserialize_graph,
     deserialize_hdr,
+    deserialize_mat4,
     deserialize_options,
-    deserialize_scene,
+    deserialize_volume_object_3d_data,
+    parse_scene,
     serialize_colormap_label,
     serialize_enum,
     serialize_file,
@@ -41,6 +43,7 @@ from .serializers import (
     serialize_ndarray,
     serialize_options,
     serialize_scene,
+    serialize_to_none,
 )
 from .traits import (
     LUT,
@@ -48,9 +51,11 @@ from .traits import (
     Graph,
     NIFTI1Hdr,
     Scene,
+    VolumeObject3DData,
 )
 from .utils import (
     ChunkedDataHandler,
+    lerp,
     make_draw_lut,
     make_label_lut,
 )
@@ -326,6 +331,8 @@ class Mesh(BaseAnyWidget):
     # Set after bidirectional comms with frontend
     pts = t.Instance(np.ndarray, allow_none=True).tag(sync=True)
     tris = t.Instance(np.ndarray, allow_none=True).tag(sync=True)
+    extents_min = t.List(t.Float()).tag(sync=True)
+    extents_max = t.List(t.Float()).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -488,6 +495,18 @@ class Volume(BaseAnyWidget):
         sync=True, to_json=serialize_ndarray
     )
     dims = t.Tuple(allow_none=True).tag(sync=True)
+    extents_min_ortho = t.List(t.Float()).tag(sync=True)
+    extents_max_ortho = t.List(t.Float()).tag(sync=True)
+    frac2mm = t.Instance(np.ndarray, allow_none=True).tag(
+        sync=True, to_json=serialize_to_none, from_json=deserialize_mat4
+    )
+    frac2mm_ortho = t.Instance(np.ndarray, allow_none=True).tag(
+        sync=True, to_json=serialize_to_none, from_json=deserialize_mat4
+    )
+    dims_ras = t.List(t.Float()).tag(sync=True)
+    mat_ras = t.Instance(np.ndarray, allow_none=True).tag(
+        sync=True, to_json=serialize_to_none, from_json=deserialize_mat4
+    )
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -659,6 +678,119 @@ class Volume(BaseAnyWidget):
         """
         self.send({"type": "save_to_disk", "data": [filename]})
 
+    def convert_frac2mm(self, frac: list, is_force_slice_mm: bool = False) -> list:
+        """
+        Convert fractional volume coordinates to millimeter space.
+
+        Parameters
+        ----------
+        frac : list of float
+            Fractional coordinates [X, Y, Z] in the range [0, 1].
+        is_force_slice_mm : bool, optional
+            If True, use world space coordinates. If False, use orthogonal space.
+            Default is False.
+
+        Returns
+        -------
+        list of float
+            Position in millimeters [X, Y, Z, W] where W is always 1.
+
+        Raises
+        ------
+        RuntimeError
+            If the volume data is not fully loaded.
+
+        Examples
+        --------
+        ::
+
+            mm_pos = volume.convert_frac2mm([0.5, 0.5, 0.5])
+        """
+        if self.frac2mm is None or self.frac2mm_ortho is None:
+            raise RuntimeError(
+                "Volume coordinate transformation matrices are not available. "
+                "Ensure canvas is attached."
+            )
+
+        pos = [frac[0], frac[1], frac[2], 1.0]
+
+        if is_force_slice_mm:
+            matrix = self.frac2mm.T
+        else:
+            matrix = self.frac2mm_ortho.T
+
+        result = np.dot(matrix, pos)
+        return result.tolist()
+
+    def convert_mm2frac(self, mm: list, is_force_slice_mm: bool = False) -> list:
+        """
+        Convert millimeter coordinates to fractional volume coordinates.
+
+        Parameters
+        ----------
+        mm : list of float
+            Position in millimeters [X, Y, Z] or [X, Y, Z, W].
+        is_force_slice_mm : bool, optional
+            If True, use world space coordinates. If False, use orthogonal space.
+            Default is False.
+
+        Returns
+        -------
+        list of float
+            Fractional coordinates [X, Y, Z] in the range [0, 1].
+
+        Raises
+        ------
+        RuntimeError
+            If the volume data is not fully loaded.
+
+        Examples
+        --------
+        ::
+
+            frac_pos = volume.convert_mm2frac([10.0, 20.0, 30.0])
+        """
+        if len(mm) == 3:
+            mm4 = [mm[0], mm[1], mm[2], 1.0]
+        else:
+            mm4 = list(mm[:4])
+
+        frac = [0.0, 0.0, 0.0]
+
+        if not is_force_slice_mm:
+            # Use orthogonal space
+            if self.frac2mm_ortho is None:
+                raise RuntimeError(
+                    "Volume orthogonal transformation matrix is not available. "
+                    "Ensure canvas is attached."
+                )
+            matrix = self.frac2mm_ortho.T
+            inv_matrix = np.linalg.inv(matrix)
+            result = np.dot(inv_matrix, mm4)
+            frac = result[:3].tolist()
+        else:
+            # Use world space with RAS coordinates
+            if self.dims_ras is None or self.mat_ras is None:
+                raise RuntimeError(
+                    "Volume RAS dimensions or matrix not available. "
+                    "Ensure the volume is fully loaded."
+                )
+
+            d = self.dims_ras
+            if d[1] < 1 or d[2] < 1 or d[3] < 1:
+                return frac
+
+            sform = self.mat_ras.T
+            sform = np.linalg.inv(sform)
+            sform = sform.T
+
+            result = np.dot(sform, mm4)
+            frac[0] = (result[0] + 0.5) / d[1]
+            frac[1] = (result[1] + 0.5) / d[2]
+            frac[2] = (result[2] + 0.5) / d[3]
+
+        return frac
+
 
 class NiiVue(BaseAnyWidget):
     """
@@ -682,12 +814,16 @@ class NiiVue(BaseAnyWidget):
     )
 
     _canvas_attached = t.Bool(False).tag(sync=True)
+    _volume_object_3d_data = t.Instance(VolumeObject3DData, allow_none=True).tag(
+        sync=True,
+        to_json=serialize_to_none,
+        from_json=deserialize_volume_object_3d_data,
+    )
+
+    this_model_id = t.Unicode().tag(sync=True)
 
     # other props
     background_masks_overlays = t.Int(0).tag(sync=True)
-    clip_plane_depth_azi_elev = t.List(
-        t.Float(), default_value=[2, 0, 0], minlen=3, maxlen=3
-    ).tag(sync=True)
     draw_lut = t.Instance(LUT, allow_none=True).tag(
         sync=True,
         to_json=serialize_colormap_label,
@@ -703,10 +839,29 @@ class NiiVue(BaseAnyWidget):
     scene = t.Instance(Scene, allow_none=True).tag(
         sync=True,
         to_json=serialize_scene,
-        from_json=deserialize_scene,
     )
     overlay_outline_width = t.Float(0.0).tag(sync=True)  # 0 for none
     overlay_alpha_shader = t.Float(1.0).tag(sync=True)  # 1 for opaque
+
+    other_nv = t.List(t.Instance(object, allow_none=False), default_value=[]).tag(
+        sync=False
+    )
+
+    @t.validate("other_nv")
+    def _validate_other_nv(self, proposal):
+        value = proposal["value"]
+        for nv_inst in value:
+            if nv_inst is self:
+                raise t.TraitError("Cannot sync to self.")
+            if (
+                f"{type(nv_inst).__module__}.{type(nv_inst).__qualname__}"
+                != "ipyniivue.widget.NiiVue"
+            ):
+                raise t.TraitError(
+                    "All items in `other_nv` must be NiiVue instances."
+                    + str(type(self))
+                )
+        return value
 
     def __init__(self, height: int = 300, **options):  # noqa: D417
         r"""
@@ -727,14 +882,27 @@ class NiiVue(BaseAnyWidget):
         opts = ConfigOptions(parent=self, **options)
         super().__init__(height=height, opts=opts, volumes=[], meshes=[])
 
-        # Handle messages coming from frontend
-        self._event_handlers = {}
-        self.on_msg(self._handle_custom_msg)
-
         # Initialize values
+        self.this_model_id = self._model_id
         self._cluts = self._get_initial_colormaps()
         self.graph = Graph(parent=self)
         self.scene = Scene(parent=self)
+        self.other_nv = []
+        self.sync_opts = {
+            "3d": False,
+            "2d": False,
+            "zoom_pan": False,
+            "cal_min": False,
+            "cal_max": False,
+            "clip_plane": False,
+            "gamma": False,
+            "slice_type": False,
+            "crosshair": False,
+        }
+
+        # Handle messages coming from frontend
+        self._event_handlers = {}
+        self.on_msg(self._handle_custom_msg)
 
     def __setattr__(self, name, value):
         """todo: remove this starting version 2.4.1."""
@@ -748,6 +916,15 @@ class NiiVue(BaseAnyWidget):
             setattr(self.opts, name, value)
         super().__setattr__(name, value)
 
+    def set_state(self, state):
+        """Override set_state to silence notifications for certain updates."""
+        if "scene" in state:
+            parsed = parse_scene(state["scene"])
+            self.scene._trait_values.update(parsed)
+            self.sync()
+            return
+        return super().set_state(state)
+
     def _notify_opts_changed(self):
         self.notify_change(
             {
@@ -758,6 +935,7 @@ class NiiVue(BaseAnyWidget):
                 "type": "change",
             }
         )
+        self.send({"type": "update_gl_volume", "data": []})
 
     def _notify_graph_changed(self):
         self.notify_change(
@@ -769,6 +947,7 @@ class NiiVue(BaseAnyWidget):
                 "type": "change",
             }
         )
+        self.send({"type": "update_gl_volume", "data": []})
 
     def _notify_scene_changed(self):
         self.notify_change(
@@ -1524,7 +1703,7 @@ class NiiVue(BaseAnyWidget):
         if not all(isinstance(x, (int, float)) for x in [depth, azimuth, elevation]):
             raise TypeError("depth, azimuth, and elevation must all be numeric values.")
 
-        self.clip_plane_depth_azi_elev = [depth, azimuth, elevation]
+        self.scene.clip_plane_depth_azi_elev = [depth, azimuth, elevation]
 
     def set_render_azimuth_elevation(self, azimuth: float, elevation: float):
         """Set the rotation of the 3D render view.
@@ -1551,9 +1730,9 @@ class NiiVue(BaseAnyWidget):
             raise TypeError("Azimuth must be a number.")
         if not isinstance(elevation, (int, float)):
             raise TypeError("Elevation must be a number.")
-        self.send(
-            {"type": "set_render_azimuth_elevation", "data": [azimuth, elevation]}
-        )
+        self.scene._trait_values["render_azimuth"] = azimuth
+        self.scene._trait_values["render_elevation"] = elevation
+        self._notify_scene_changed()
 
     def _mesh_shader_name_to_number(self, mesh_shader_name: str) -> int:
         name = mesh_shader_name.lower()
@@ -2793,6 +2972,315 @@ class NiiVue(BaseAnyWidget):
 
         """
         self._register_callback("hover_idx_change", callback, remove=remove)
+
+    """
+    Sync
+    """
+
+    def broadcast_to(self, other_nv, sync_opts=None):
+        """
+        Sync the scene controls from one NiiVue instance to others.
+
+        Useful for using one canvas to drive another.
+
+        Parameters
+        ----------
+        other_nv : :class:`NiiVue` or list of :class:`NiiVue`
+            The other NiiVue instance(s) to broadcast state to.
+        sync_opts : dict, optional
+            Options specifying which properties to sync. E.g., {'2d': True, '3d': True}
+            Possible keys are:
+            - gamma
+            - crosshair
+            - zoom_pan
+            - slice_type
+            - cal_min
+            - cal_max
+            - clip_plane
+            - 2d
+            - 3d
+        """
+        if not isinstance(sync_opts, dict):
+            sync_opts = {"2d": True, "3d": True}
+
+        if not isinstance(other_nv, (list, tuple)):
+            other_nv = [other_nv]
+
+        self.other_nv = other_nv
+        self.sync_opts = sync_opts
+
+    def _do_sync_3d(self, other_nv):
+        """Synchronize 3D view settings with another NiiVue instance.
+
+        Do not call this by itself. This should be called by the sync method.
+        """
+        other_nv.scene._trait_values["render_azimuth"] = self.scene.render_azimuth
+        other_nv.scene._trait_values["render_elevation"] = self.scene.render_elevation
+        other_nv.scene._trait_values["vol_scale_multiplier"] = (
+            self.scene.vol_scale_multiplier
+        )
+
+    def _do_sync_2d(self, other_nv):
+        """Synchronize 2D crosshair pos + pan settings with another NiiVue instance.
+
+        Do not call this by itself. This should be called by the sync method.
+        """
+        this_mm = self.frac2mm(self.scene.crosshair_pos)
+        other_nv.scene._trait_values["crosshair_pos"] = other_nv.mm2frac(this_mm)
+        other_nv.scene._trait_values["pan2d_xyzmm"] = list(self.scene.pan2d_xyzmm)
+
+    def _do_sync_gamma(self, other_nv):
+        """Synchronize gamma correction setting with another NiiVue instance."""
+        this_gamma = self.scene.gamma
+        other_gamma = other_nv.scene.gamma
+        if this_gamma != other_gamma:
+            other_nv.set_gamma(this_gamma)
+
+    def _do_sync_zoom_pan(self, other_nv):
+        """Synchronize zoom/pan settings with another NiiVue instance.
+
+        Do not call this by itself. This should be called by the sync method.
+        """
+        other_nv.scene._trait_values["pan2d_xyzmm"] = list(self.scene.pan2d_xyzmm)
+
+    def _do_sync_crosshair(self, other_nv):
+        """Synchronize crosshair position with another NiiVue instance.
+
+        Do not call this by itself. This should be called by the sync method.
+        """
+        this_mm = self.frac2mm(self.scene.crosshair_pos)
+        other_nv.scene._trait_values["crosshair_pos"] = other_nv.mm2frac(this_mm)
+
+    def _do_sync_cal_min(self, other_nv):
+        """Synchronize cal_min with another NiiVue instance."""
+        if (
+            self.volumes
+            and other_nv.volumes
+            and self.volumes[0].cal_min != other_nv.volumes[0].cal_min
+        ):
+            other_nv.volumes[0].cal_min = self.volumes[0].cal_min
+
+    def _do_sync_cal_max(self, other_nv):
+        """Synchronize cal_max with another NiiVue instance."""
+        if (
+            self.volumes
+            and other_nv.volumes
+            and self.volumes[0].cal_max != other_nv.volumes[0].cal_max
+        ):
+            other_nv.volumes[0].cal_max = self.volumes[0].cal_max
+
+    def _do_sync_slice_type(self, other_nv):
+        """Synchronize slice view type with another NiiVue instance."""
+        other_nv.set_slice_type(self.opts.slice_type)
+
+    def _do_sync_clip_plane(self, other_nv):
+        """Synchronize clip plane settings with another NiiVue instance."""
+        other_nv.scene._trait_values["clip_plane_depth_azi_elev"] = list(
+            self.scene.clip_plane_depth_azi_elev
+        )
+
+    def sync(self):
+        """Sync the scene controls from this NiiVue instance to others."""
+        for nv_obj in self.other_nv:
+            if not nv_obj._canvas_attached:
+                # todo: add logging msg here
+                continue
+
+            if self.sync_opts.get("gamma"):
+                self._do_sync_gamma(nv_obj)
+            if self.sync_opts.get("crosshair"):
+                self._do_sync_crosshair(nv_obj)
+            if self.sync_opts.get("zoom_pan"):
+                self._do_sync_zoom_pan(nv_obj)
+            if self.sync_opts.get("slice_type"):
+                self._do_sync_slice_type(nv_obj)
+            if self.sync_opts.get("cal_min"):
+                self._do_sync_cal_min(nv_obj)
+            if self.sync_opts.get("cal_max"):
+                self._do_sync_cal_max(nv_obj)
+            if self.sync_opts.get("clip_plane"):
+                self._do_sync_clip_plane(nv_obj)
+
+            # legacy 2d and 3d opts:
+            if self.sync_opts.get("2d"):
+                self._do_sync_2d(nv_obj)
+            if self.sync_opts.get("3d"):
+                self._do_sync_3d(nv_obj)
+
+            nv_obj._notify_scene_changed()
+
+    """
+    Custom utils
+    """
+
+    def scene_extents_min_max(self, is_slice_mm: bool = True) -> tuple:
+        """
+        Return the scene's min, max, and range extents in mm or voxel space.
+
+        Includes both volume and mesh geometry.
+
+        Parameters
+        ----------
+        is_slice_mm : bool, optional
+            If True, returns extents in mm space.
+            If False, returns extents in voxel space. Default is True.
+
+        Returns
+        -------
+        tuple
+            A tuple containing three lists:
+            - min_extents: [x, y, z] minimum coordinates
+            - max_extents: [x, y, z] maximum coordinates
+            - range: [x, y, z] range (max - min) for each dimension
+
+        Raises
+        ------
+        RuntimeError
+            If volumes exist but volume_object_3d_data is not defined.
+
+        Examples
+        --------
+        ::
+
+            min_ext, max_ext, range_ext = nv.scene_extents_min_max()
+            print(f"Min: {min_ext}, Max: {max_ext}, Range: {range_ext}")
+        """
+        mn = np.array([0.0, 0.0, 0.0])
+        mx = np.array([0.0, 0.0, 0.0])
+
+        if len(self.volumes) > 0:
+            if not self._volume_object_3d_data:
+                raise RuntimeError(
+                    "_volume_object_3d_data not defined. Canvas needs to be attached."
+                )
+
+            if is_slice_mm:
+                mn = np.array(self._volume_object_3d_data.extents_min)
+                mx = np.array(self._volume_object_3d_data.extents_max)
+            else:
+                if (
+                    self.volumes[0].extents_min_ortho
+                    and self.volumes[0].extents_max_ortho
+                ):
+                    mn = np.array(self.volumes[0].extents_min_ortho)
+                    mx = np.array(self.volumes[0].extents_max_ortho)
+
+        if len(self.meshes) > 0:
+            if len(self.volumes) < 1:
+                if self.meshes[0].extents_min and self.meshes[0].extents_max:
+                    mn = np.array(self.meshes[0].extents_min)
+                    mx = np.array(self.meshes[0].extents_max)
+
+            for mesh in self.meshes:
+                if mesh.extents_min and mesh.extents_max:
+                    mesh_min = np.array(mesh.extents_min)
+                    mesh_max = np.array(mesh.extents_max)
+                    mn = np.minimum(mn, mesh_min)
+                    mx = np.maximum(mx, mesh_max)
+
+        range_extents = mx - mn
+
+        return (mn.tolist(), mx.tolist(), range_extents.tolist())
+
+    def mm2frac(
+        self, mm: list, vol_idx: int = 0, is_force_slice_mm: bool = False
+    ) -> list:
+        """
+        Convert mm coords to frac volume coords for a volume.
+
+        Parameters
+        ----------
+        mm : list of float
+            Position in millimeters [X, Y, Z] or [X, Y, Z, W].
+        vol_idx : int, optional
+            Index of the volume to use for conversion. Default is 0.
+        is_force_slice_mm : bool, optional
+            If True, use world space coordinates. If False, use orthogonal space
+            unless `opts.is_slice_mm` is True. Default is False.
+
+        Returns
+        -------
+        list of float
+            Fractional coordinates [X, Y, Z] in the range [0, 1].
+
+        Examples
+        --------
+        ::
+
+            frac_pos = nv.mm2frac([10.0, 20.0, 30.0])
+        """
+        if len(self.volumes) < 1:
+            frac = [0.1, 0.5, 0.5]
+            mn, _, range_ext = self.scene_extents_min_max()
+
+            if len(mm) >= 3:
+                frac[0] = (mm[0] - mn[0]) / range_ext[0] if range_ext[0] != 0 else 0.5
+                frac[1] = (mm[1] - mn[1]) / range_ext[1] if range_ext[1] != 0 else 0.5
+                frac[2] = (mm[2] - mn[2]) / range_ext[2] if range_ext[2] != 0 else 0.5
+
+            for i in range(3):
+                if not math.isfinite(frac[i]):
+                    frac[i] = 0.5
+
+            if len(self.meshes) < 1 and not all(math.isfinite(f) for f in frac):
+                print("mm2frac() not finite: objects not yet loaded.")
+
+            return frac
+
+        if vol_idx < 0 or vol_idx >= len(self.volumes):
+            raise IndexError(f"Volume index {vol_idx} out of range.")
+
+        return self.volumes[vol_idx].convert_mm2frac(
+            mm, is_force_slice_mm or self.opts.is_slice_mm
+        )
+
+    def frac2mm(
+        self,
+        frac: list,
+        vol_idx: int = 0,
+        is_force_slice_mm: bool = False,
+    ) -> list:
+        """
+        Convert frac volume coords to mm space for a volume.
+
+        Parameters
+        ----------
+        frac : list of float
+            Fractional coordinates [X, Y, Z] in the range [0, 1].
+        vol_idx : int, optional
+            Index of the volume to use for conversion. Default is 0.
+        is_force_slice_mm : bool, optional
+            If True, use world space coordinates. If False, use orthogonal space
+            unless `opts.is_slice_mm` is True. Default is False.
+
+        Returns
+        -------
+        list of float
+            Position in millimeters [X, Y, Z, W] where W is always 1.
+
+        Examples
+        --------
+        ::
+
+            mm_pos = nv.frac2mm([0.5, 0.5, 0.5])
+        """
+        pos = [frac[0], frac[1], frac[2], 1.0]
+
+        if len(self.volumes) > 0:
+            if vol_idx < 0 or vol_idx >= len(self.volumes):
+                raise IndexError(f"Volume index {vol_idx} out of range.")
+
+            return self.volumes[vol_idx].convert_frac2mm(
+                frac, is_force_slice_mm or self.opts.is_slice_mm
+            )
+        else:
+            mn, mx, _ = self.scene_extents_min_max()
+
+            pos[0] = lerp(mn[0], mx[0], frac[0])
+            pos[1] = lerp(mn[1], mx[1], frac[1])
+            pos[2] = lerp(mn[2], mx[2], frac[2])
+
+        return pos
 
 
 class WidgetObserver:

@@ -380,7 +380,6 @@ class Scene(t.HasTraits):
         The upper bounds of the clipping volume.
     """
 
-    # Traits
     render_azimuth = t.Float(110.0).tag(sync=True)
     render_elevation = t.Float(10.0).tag(sync=True)
     vol_scale_multiplier = t.Float(1.0).tag(sync=True)
@@ -448,6 +447,58 @@ class Scene(t.HasTraits):
             getattr(self._parent, "_notify_scene_changed", None)
         ):
             self._parent._notify_scene_changed()
+
+
+class VolumeObject3DData(t.HasTraits):
+    """
+    Represents data from a 3D volume object, partial of niivue's NiivueObject3D.
+
+    Properties
+    ----------
+    id : int
+        Unique identifier for the object.
+    extents_min : list of float
+        Minimum extents of the object in each dimension.
+    extents_max : list of float
+        Maximum extents of the object in each dimension.
+    scale : list of float
+        Scale factors for each dimension.
+    furthest_vertex_from_origin : float or None
+        Distance to the furthest vertex from the origin.
+    field_of_view_de_oblique_mm : list of float or None
+        Field of view in de-oblique millimeters.
+    """
+
+    id = t.Int().tag(sync=False)
+    extents_min = t.List(t.Float()).tag(sync=False)
+    extents_max = t.List(t.Float()).tag(sync=False)
+    scale = t.List(t.Float()).tag(sync=False)
+    furthest_vertex_from_origin = t.Float(allow_none=True, default_value=None).tag(
+        sync=False
+    )
+    field_of_view_de_oblique_mm = t.List(
+        t.Float(), allow_none=True, default_value=None
+    ).tag(sync=False)
+
+    @t.validate(
+        "id",
+        "extents_min",
+        "extents_max",
+        "scale",
+        "furthest_vertex_from_origin",
+        "field_of_view_de_oblique_mm",
+    )
+    def _validate_no_change(self, proposal):
+        trait_name = proposal["trait"].name
+        if (
+            trait_name in self._trait_values
+            and (
+                self._trait_values[trait_name] or self._trait_values[trait_name] == 0.0
+            )
+            and self._trait_values[trait_name] != proposal["value"]
+        ):
+            raise t.TraitError(f"Cannot modify '{trait_name}' once set.")
+        return proposal["value"]
 
 
 CAMEL_TO_SNAKE_SCENE = {

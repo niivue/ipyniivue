@@ -311,6 +311,24 @@ async function create_volume(
 	if (volume.hdr !== null) {
 		vmodel.set("hdr", getNIFTIData(volume.hdr));
 	}
+	if (volume.extentsMinOrtho) {
+		vmodel.set("extents_min_ortho", volume.extentsMinOrtho);
+	}
+	if (volume.extentsMaxOrtho) {
+		vmodel.set("extents_max_ortho", volume.extentsMaxOrtho);
+	}
+	if (volume.frac2mm) {
+		vmodel.set("frac2mm", Array.from(volume.frac2mm));
+	}
+	if (volume.frac2mmOrtho) {
+		vmodel.set("frac2mm_ortho", Array.from(volume.frac2mmOrtho));
+	}
+	if (volume.dimsRAS) {
+		vmodel.set("dims_ras", volume.dimsRAS);
+	}
+	if (volume.matRAS) {
+		vmodel.set("mat_ras", Array.from(volume.matRAS));
+	}
 	vmodel.save_changes();
 	if (volume.img) {
 		const dataType = lib.getArrayType(volume.img);

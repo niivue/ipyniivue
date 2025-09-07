@@ -321,3 +321,8 @@ def find_otsu(volume, mlevel=2):
         thresholds.extend([float("inf")] * missing)
 
     return thresholds
+
+
+def lerp(x: float, y: float, a: float) -> float:
+    """Linear interpolation between x and y by amount a."""
+    return x * (1 - a) + y * a

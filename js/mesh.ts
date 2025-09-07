@@ -401,6 +401,15 @@ export async function create_mesh(
 
 	mesh.updateMesh(nv.gl);
 
+	// Send other data back to the model
+	if (mesh.extentsMin && Array.isArray(mesh.extentsMin)) {
+		mmodel.set("extents_min", mesh.extentsMin);
+	}
+	if (mesh.extentsMax && Array.isArray(mesh.extentsMax)) {
+		mmodel.set("extents_max", mesh.extentsMax);
+	}
+	mmodel.save_changes();
+
 	// Send pts and tris back to the model
 	if (mesh.pts) {
 		const dataType = lib.getArrayType(mesh.pts);
