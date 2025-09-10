@@ -8,7 +8,7 @@ IPyNiiVue.
 
 
 How JavaScript, Python Backend, and Frontend Interact
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+============
 At its core, ipyniivue is a Jupyter widget built with the anywidget framework that bridges
 a WebGL-powered JavaScript visualization (Niivue) with Python logic in Jupyter notebooks.
 Here's how the parts connect:
@@ -37,30 +37,21 @@ to update existing arrays efficiently
 - JS frontend renders and visualizes, while also sending large data back to 
   Python in a chunked manner when needed.
 
-
-
-.. mermaid::
-Basic Architecture
-^^^^^^^^^^^^^^^^^^^
+```mermaid
 flowchart TD
-    A[Python Kernel<br>(Jupyter Notebook)] --> B[Volumes / Meshes / Layers<br>(NiiVue Python API)]
-    B --> C((Traitlet Sync<br>anywidget / Tornado WS or HTTP))
-    C --> D[JavaScript Niivue Widget<br>(WebGL rendering, UI logic)]
-    D --> E[Browser Frontend UI<br>(Jupyter Output Cell)]
+    A[Python Backend<br>Jupyter Kernel<br>- NiiVue class<br>- Data & state mgmt] 
+        --> B[Python Frontend<br>ipywidgets bridge<br>- Widget mirror<br>- Notebook side]
+    B --> C((Traitlets / WebSocket / HTTP sync))
+    C --> D[JavaScript Niivue Widget<br>WebGL rendering, UI logic]
+    D --> E[Browser UI<br>Jupyter Output Cell]
     E --> D
     D --> C
 
-    %% Styles
-    style A fill:#d0e6f5,stroke:#333,stroke-width:1px
-    style B fill:#f5e6cc,stroke:#333,stroke-width:1px
-    style C fill:#e2d5f5,stroke:#333,stroke-width:1px
-    style D fill:#cce6d5,stroke:#333,stroke-width:1px
-    style E fill:#f5d0d0,stroke:#333,stroke-width:1px
-
+```
 
 
 Detailed Architecture (Backend vs Frontend)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+============
 
 **Python Backend:** The Python backend runs inside the Jupyter kernel (e.g., IPython) and contains the actual
 NiiVue Python object and logic for handling volumes, meshes, and layers. It is responsible for:
@@ -80,20 +71,15 @@ but really this part is just a mirror/sync layer living in the notebook frontend
 **JavaScript Side (true UI frontend):** The JS side contains the Niivue WebGL widget that 
 actually renders  the brain images and responds to mouse/keyboard input.
 
-.. mermaid::
+```mermaid
 flowchart TD
-    A[Python Backend<br>(Jupyter Kernel)<br>- NiiVue class<br>- Data & state mgmt] 
-        --> B[Python Frontend<br>(ipywidgets bridge)<br>- Widget mirror<br>- Notebook side]
+    A[Python Backend<br>Jupyter Kernel<br>- NiiVue class<br>- Data & state mgmt] 
+        --> B[Python Frontend<br>ipywidgets bridge<br>- Widget mirror<br>- Notebook side]
     B --> C((Traitlets / WebSocket / HTTP sync))
-    C --> D[JavaScript Niivue Widget<br>(WebGL rendering, UI logic)]
-    D --> E[Browser UI<br>(Jupyter Output Cell)]
+    C --> D[JavaScript Niivue Widget<br>WebGL rendering, UI logic]
+    D --> E[Browser UI<br>Jupyter Output Cell]
     E --> D
     D --> C
+```
 
-    %% Styles
-    style A fill:#b3d1f0,stroke:#333,stroke-width:1px
-    style B fill:#f0e0b3,stroke:#333,stroke-width:1px
-    style C fill:#e2d5f5,stroke:#333,stroke-width:1px
-    style D fill:#cce6d5,stroke:#333,stroke-width:1px
-    style E fill:#f5d0d0,stroke:#333,stroke-width:1px
 
