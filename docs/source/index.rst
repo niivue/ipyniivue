@@ -1,7 +1,7 @@
 IPyNiiVue Documentation
 =======================
 
-A Jupyter Widget for Niivue based on anywidget.
+A Jupyter Widget for Niivue based on anywidget. Yup.
 
 .. toctree::
     :maxdepth: 4
