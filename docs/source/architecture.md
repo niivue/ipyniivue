@@ -37,7 +37,7 @@ to update existing arrays efficiently
 - JS frontend renders and visualizes, while also sending large data back to 
   Python in a chunked manner when needed.
 
-```mermaid
+```{mermaid}
 flowchart TD
     A[Python Backend<br>Jupyter Kernel<br>- NiiVue class<br>- Data & state mgmt] 
         --> B[Python Frontend<br>ipywidgets bridge<br>- Widget mirror<br>- Notebook side]
@@ -71,7 +71,7 @@ but really this part is just a mirror/sync layer living in the notebook frontend
 **JavaScript Side (true UI frontend):** The JS side contains the Niivue WebGL widget that 
 actually renders  the brain images and responds to mouse/keyboard input.
 
-```mermaid
+```{mermaid}
 flowchart TD
     A[Python Backend<br>Jupyter Kernel<br>- NiiVue class<br>- Data & state mgmt] 
         --> B[Python Frontend<br>ipywidgets bridge<br>- Widget mirror<br>- Notebook side]
