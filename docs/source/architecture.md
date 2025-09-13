@@ -1,85 +1,82 @@
 Architecture
 ============
 
-Understanding the code base of IPyNiiVue is complicated by how JS interacts with Python, the intricacies 
-of how Jupyter Notebooks works, and distinctions between the Python frontend and backend. 
-The aim of this documentation is to clarify some of these interactions and the overall architecture of
-IPyNiiVue.
+IPyNiiVue is a widget that bridges WebGL-powered JavaScript visualization (Niivue) with Python in notebooks. This document contains an overview of how JavaScript interacts with Python in this library.
 
+System Overview
+---------------
 
-How JavaScript, Python Backend, and Frontend Interact
-============
-At its core, ipyniivue is a Jupyter widget built with the anywidget framework that bridges
-a WebGL-powered JavaScript visualization (Niivue) with Python logic in Jupyter notebooks.
-Here's how the parts connect:
+- **Python Side**: Users interact with the `NiiVue` class to load and manipulate neuroimaging data
+- **JavaScript Side**: Handles WebGL rendering and user interactions in the browser
+- **Communication Layer**: Traitlets synchronize state between Python and JavaScript via WebSocket (JupyterLab) or HTTP (Marimo)
 
-**Python Side:** The main interface in Python is the `NiiVue` class. Users instantiate objects of this 
-class in a notebook (e.g., `nv = NiiVue()`), then load neuroimaging data using `nv.load_volumes([...])`.
-Internally, `Volume`, `Mesh`, and `MeshLayer` objects define what gets rendered and how. Python 
-communicates with the frontend via traitlet state changes over a Tornado-powered websocket, 
-respecting anywidget conventions.
+Architecture Layers
+-------------------
 
-**JavaScript Side:** The JS code is under the `js/` directory, bundled using esbuild, and outputs into `src/ipyniivue/static`.
-It integrates the Niivue rendering engine (`niivue.Niivue`) and handles WebGL visualization,
-responding to commands like `setColormap`, `setOpacity`, `loadVolumes`, and many more.
+### 1. Python Backend (Kernel)
+Runs in the notebook kernel process and contains:
+- `NiiVue`, `Volume`, `Mesh`, and `MeshLayer` classes
+- State management through traitlets
+- Data processing and computational logic
+- Chunked data handling for large data from the frontend (to overcome Tornado's 10MB limit)
 
-**Frontend in the Browser:** Visual rendering appears inline in the Jupyter notebook. The JS
-widget receives state updates (like new volumes or property changes) via websocket or HTTP
-(in cases like Marimo). Large data (like imaging volumes) are transmitted in chunks from 
-front to back to circumnavigate Tornado’s 10 MB message limit; reconstruction happens in 
-the backend. When backend data changes, only diffs (indices + new values) get sent to the frontend
-to update existing arrays efficiently
+### 2. Widget Bridge Layer
+Provided by anywidget framework:
+- Maintains synchronized widget models between kernel and browser
+- Handles state synchronization via traitlets
+- Manages WebSocket/HTTP communication
+- Serializes/deserializes data between Python and JavaScript
 
-**In summary:**
+### 3. JavaScript Frontend (Browser)
+Runs in the browser and includes:
+- WebGL rendering via Niivue.js library
+- UI event handling (mouse, keyboard interactions)
+- Visual output in notebook cells
 
-- Python defines volumes/meshes and owns application logic.
-- Anywidget syncs state between Python and JS.
-- JS frontend renders and visualizes, while also sending large data back to 
-  Python in a chunked manner when needed.
-
-```{mermaid}
-flowchart TD
-    A[Python Backend<br>Jupyter Kernel<br>- NiiVue class<br>- Data & state mgmt] 
-        --> B[Python Frontend<br>ipywidgets bridge<br>- Widget mirror<br>- Notebook side]
-    B --> C((Traitlets / WebSocket / HTTP sync))
-    C --> D[JavaScript Niivue Widget<br>WebGL rendering, UI logic]
-    D --> E[Browser UI<br>Jupyter Output Cell]
-    E --> D
-    D --> C
-
-```
-
-
-Detailed Architecture (Backend vs Frontend)
-============
-
-**Python Backend:** The Python backend runs inside the Jupyter kernel (e.g., IPython) and contains the actual
-NiiVue Python object and logic for handling volumes, meshes, and layers. It is responsible for:
-
-- Loading neuroimaging data (.nii, .nii.gz, etc.).
-- Managing state of objects (opacity, colormap, etc.).
-- Communicating updates via traitlets to the frontend.
-
-It performs most of the computation and manage states.
-
-**Python Frontend:** The Python frontend runs inside the Jupyter notebook client (browser)
-but in Python’s interactive space. It relies on the ipywidgets framework which provides a 
-Python “widget model” that mirrors the states of the backend object. It talks to the JavaScript 
-side through traitlet synchronization. For the user, it looks like “the same Python object,” 
-but really this part is just a mirror/sync layer living in the notebook frontend.
-
-**JavaScript Side (true UI frontend):** The JS side contains the Niivue WebGL widget that 
-actually renders  the brain images and responds to mouse/keyboard input.
+Data Flow
+---------
 
 ```{mermaid}
-flowchart TD
-    A[Python Backend<br>Jupyter Kernel<br>- NiiVue class<br>- Data & state mgmt] 
-        --> B[Python Frontend<br>ipywidgets bridge<br>- Widget mirror<br>- Notebook side]
-    B --> C((Traitlets / WebSocket / HTTP sync))
-    C --> D[JavaScript Niivue Widget<br>WebGL rendering, UI logic]
-    D --> E[Browser UI<br>Jupyter Output Cell]
-    E --> D
-    D --> C
+flowchart LR
+    subgraph "Kernel"
+        A[Python Backend<br/>NiiVue class]
+    end
+    
+    subgraph "Communication Layer"
+        B[Widget Bridge<br/>Traitlets sync<br/>WebSocket/HTTP]
+    end
+    
+    subgraph "Browser"
+        C[JavaScript Frontend<br/>WebGL rendering<br/>User interactions]
+        D[Notebook Output Cell<br/>Visual display]
+    end
+    
+    A <--> B
+    B <--> C
+    C <--> D
 ```
 
+### Communication Patterns
 
+1. **State Updates**: Property changes (opacity, colormap, etc.) sync automatically via traitlets
+2. **Large Data Transfer**: Volume/mesh data transmitted in chunks to handle size limitations
+3. **Efficient Updates**: Only array differences (indices + values) sent for existing data
+4. **Event Handling**: User interactions in JS trigger Python callbacks via custom messages
+
+Some Implementation Details
+----------------------
+
+**JavaScript Bundle**: 
+- Source: `js/` directory
+- Build: esbuild bundles to `src/ipyniivue/static/widget.js`
+- Main components: `widget.ts`, `volume.ts`, `mesh.ts`, `lib.ts`
+
+**Python Components**:
+- `widget.py`: Core NiiVue widget and data models
+- `serializers.py`: Data conversion between Python and JavaScript
+- `config_options.py`: Configuration management
+- `traits.py`: Custom trait types for specialized data
+
+**Build System**:
+- `build.js`: Generates colormaps and shader names during build
+- `pyproject.toml`: Python packaging configuration
