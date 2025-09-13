@@ -87,7 +87,7 @@ jobs:
           pip install nbmake
           rm -rf ./reports
           mkdir -p ./reports
-          pytest --nbmake examples/*ipynb --cov --cov-report=json:./reports/coverage.json --cov-report=xml:./reports/coverage.xml
+          pytest --nbmake examples/*.ipynb --cov --cov-report=json:./reports/coverage.json --cov-report=xml:./reports/coverage.xml
       - name: Upload ipyniivue example notbooks coverage report
         uses: actions/upload-artifact@v4
         with:
