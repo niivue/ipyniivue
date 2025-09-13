@@ -66,7 +66,7 @@ jobs:
           pip install --upgrade pip ipython ipykernel
           ipython kernel install --name "python3" --user
           mkdir -p ./reports
-          pytest --cov=src/ipyniivue --cov-report=xml:./reports/coverage.xml --cov-report=json:./reports/coverage.json
+          pytest tests/ -v --cov=ipyniivue --cov-report=term-missing --cov-report=xml:./reports/coverage.xml
       - name: Upload ipyniivue test coverage report
         uses: actions/upload-artifact@v4
         with:
@@ -75,7 +75,7 @@ jobs:
       - name: Generate Markdown summary of code coverage
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: reports/coverage.xml
+          filename: ./reports/coverage.xml
           format: markdown
           output: both
           thresholds: "10 10"
@@ -96,7 +96,7 @@ jobs:
       - name: Generate Markdown summary of code coverage
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: reports/coverage.xml
+          filename: ./reports/coverage.xml
           format: markdown
           output: both
           thresholds: "10 10"
