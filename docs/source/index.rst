@@ -12,4 +12,5 @@ A Jupyter Widget for Niivue based on anywidget.
     options
     traits
     enums
+    architecture
     contributing
