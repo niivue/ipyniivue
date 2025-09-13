@@ -1,5 +1,5 @@
 Architecture
-=====
+============
 
 IPyNiiVue is a widget that bridges WebGL-powered JavaScript visualization (Niivue) with Python in notebooks. This document contains an overview of how JavaScript interacts with Python in this library.
 
@@ -44,29 +44,6 @@ Runs in the browser and includes:
 
 Data Flow
 ---------
-
-.. mermaid::
-
-   flowchart LR
-       subgraph "Kernel"
-           A[Python Backend<br/>NiiVue class]
-       end
-       
-       subgraph "Communication Layer"
-           B[Widget Bridge<br/>Traitlets sync<br/>WebSocket/HTTP]
-       end
-       
-       subgraph "Browser"
-           C[JavaScript Frontend<br/>WebGL rendering<br/>User interactions]
-           D[Notebook Output Cell<br/>Visual display]
-       end
-       
-       A <--> B
-       B <--> C
-       C <--> D
-
-Communication Patterns
-~~~~~~~~~~~~~~~~~~~~~~
 
 1. **State Updates**: Property changes (opacity, colormap, etc.) sync automatically via traitlets
 2. **Large Data Transfer**: Volume/mesh data transmitted in chunks to handle size limitations
