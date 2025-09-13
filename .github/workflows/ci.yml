@@ -66,7 +66,7 @@ jobs:
           pip install --upgrade pip ipython ipykernel
           ipython kernel install --name "python3" --user
           mkdir -p ./reports
-          pytest --cov --cov-report=json:./reports/coverage.json --cov-report=xml:./reports/coverage.xml
+          pytest --cov=src/ipyniivue --cov-report=xml:./reports/coverage.xml --cov-report=json:./reports/coverage.json
       - name: Upload ipyniivue test coverage report
         uses: actions/upload-artifact@v4
         with:
