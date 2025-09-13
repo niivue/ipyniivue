@@ -85,17 +85,18 @@ jobs:
       - name: Test example notebooks
         run: |
           pip install nbmake
-          mkdir -p ./reports-notebooks
-          pytest --nbmake examples/*ipynb --cov --cov-report=json:./reports-notebooks/coverage.json --cov-report=xml:./reports-notebooks/coverage.xml
-      - name: Upload ipyniivue example notebooks coverage report
+          rm -rf ./reports
+          mkdir -p ./reports
+          pytest --nbmake examples/*ipynb --cov --cov-report=json:./reports/coverage.json --cov-report=xml:./reports/coverage.xml
+      - name: Upload ipyniivue example notbooks coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage_ipyniivue_notebooks-${{ matrix.os }}-py${{ matrix.python-version }}
-          path: ./reports-notebooks/coverage.json
-      - name: Generate Markdown summary of notebook code coverage
+          path: ./reports/coverage.json
+      - name: Generate Markdown summary of code coverage
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: ./reports-notebooks/coverage.xml
+          filename: ./reports/coverage.xml
           format: markdown
           output: both
           thresholds: "10 10"
