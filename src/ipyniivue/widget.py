@@ -57,6 +57,7 @@ from .utils import (
     lerp,
     make_draw_lut,
     make_label_lut,
+    requires_canvas,
 )
 
 __all__ = ["NiiVue"]
@@ -1807,6 +1808,7 @@ class NiiVue(BaseAnyWidget):
 
         return shader_names_list
 
+    @requires_canvas
     def set_volume_render_illumination(self, gradient_amount: float):
         """Set proportion of volume rendering influenced by selected matcap.
 
@@ -1823,10 +1825,6 @@ class NiiVue(BaseAnyWidget):
 
             nv.set_volume_render_illumination(0.6)
         """
-        if not self._canvas_attached:
-            raise RuntimeError(
-                "Canvas is not attached. Render this widget to attach it to a canvas."
-            )
         if not isinstance(gradient_amount, (int, float)):
             raise TypeError("gradient_amount must be a number.")
         if not math.isnan(gradient_amount):
@@ -2130,6 +2128,7 @@ class NiiVue(BaseAnyWidget):
         """
         self.opts.is_radiological_convention = is_radiological_convention
 
+    @requires_canvas
     def load_drawing(self, path: str, is_binarize: bool = False):
         """Load a drawing.
 
@@ -2149,12 +2148,6 @@ class NiiVue(BaseAnyWidget):
         """
         if not self.volumes:
             raise ValueError("Cannot load drawing: No volumes are loaded.")
-        if not self.volumes[0].id:
-            raise ValueError(
-                "Cannot load drawing: "
-                "The primary volume has not been initialized. "
-                "Please render this NiiVue widget."
-            )
         if pathlib.Path(path).exists():
             file_bytes = pathlib.Path(path).read_bytes()
             self.send(
@@ -2260,6 +2253,7 @@ class NiiVue(BaseAnyWidget):
 
         self.volumes[vol_idx].opacity = new_opacity
 
+    @requires_canvas
     def set_modulation_image(
         self, id_target: str, id_modulation: str, modulate_alpha: int = 0
     ):
@@ -2291,11 +2285,6 @@ class NiiVue(BaseAnyWidget):
 
             nv.set_modulation_image(nv.volumes[0].id, nv.volumes[1].id)
         """
-        if not self._canvas_attached:
-            raise RuntimeError(
-                "Canvas is not attached. Render this widget to attach it to a canvas."
-            )
-
         idx_target = self.get_volume_index_by_id(id_target)
         if idx_target == -1:
             raise ValueError(f"Volume with ID '{id_target}' not found.")
@@ -2313,6 +2302,28 @@ class NiiVue(BaseAnyWidget):
             volume_target.modulation_image = None
 
         volume_target.modulate_alpha = modulate_alpha
+
+    @requires_canvas
+    def load_document(self, path: str):
+        """
+        Load a NiiVue document from a URL or file path.
+
+        Parameters
+        ----------
+        path : str
+            The URL or path of the document (.nvd file).
+        """
+        if pathlib.Path(path).exists():
+            file_bytes = pathlib.Path(path).read_bytes()
+            self.send(
+                {
+                    "type": "load_document_from_url",
+                    "data": [f"local>{path}"],
+                },
+                buffers=[file_bytes],
+            )
+        else:
+            self.send({"type": "load_document_from_url", "data": [path]})
 
     """
     Custom event callbacks

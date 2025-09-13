@@ -206,8 +206,6 @@ type SetVolumeRenderIlluminationData = [gradientAmount: number];
 
 type LoadPngAsTextureData = [pngUrl: string, textureNum: number];
 
-type SetRenderAzimuthElevationData = [azimuth: number, elevation: number];
-
 type SetInterpolationData = [isNearest: boolean];
 
 type SetDrawingEnabledData = [drawingEnabled: boolean];
@@ -219,6 +217,8 @@ type MoveCrosshairInVoxData = [x: number, y: number, z: number];
 type RemoveHazeData = [level: number, volIndex: number];
 
 type LoadDrawingFromUrlData = [url: string, isBinarize: boolean];
+
+type LoadDocumentFromUrlData = [url: string];
 
 type SaveToDiskData = [fileName: string];
 
@@ -245,7 +245,8 @@ export type CustomMessagePayload =
 	| { type: "remove_haze"; data: RemoveHazeData }
 	| { type: "draw_undo"; data: [] }
 	| { type: "close_drawing"; data: [] }
-	| { type: "load_drawing_from_url"; data: LoadDrawingFromUrlData };
+	| { type: "load_drawing_from_url"; data: LoadDrawingFromUrlData }
+	| { type: "load_document_from_url"; data: LoadDocumentFromUrlData };
 
 export type VolumeCustomMessage = {
 	type: "save_to_disk";

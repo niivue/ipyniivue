@@ -257,6 +257,30 @@ function attachModelEventHandlers(
 					}
 					break;
 				}
+				case "load_document_from_url": {
+					const [url] = data;
+					try {
+						let doc: niivue.NVDocument;
+
+						if (url.startsWith("local>") && buffers.length === 1) {
+							// Local file passed as buffer
+							const name = url.slice(6);
+							const blob = new Blob([buffers[0].buffer as ArrayBuffer]);
+							const file = new File([blob], name, {
+								type: "application/octet-stream",
+							});
+							doc = await niivue.NVDocument.loadFromFile(file);
+						} else {
+							// URL
+							doc = await niivue.NVDocument.loadFromUrl(url);
+						}
+
+						await nv.loadDocument(doc);
+					} catch (err) {
+						console.error(`loadDocument() failed to load: ${err}`);
+					}
+					break;
+				}
 			}
 		},
 	);
