@@ -8,6 +8,7 @@ A Jupyter Widget for Niivue based on anywidget.
     :caption: Contents:
 
     install
+    architecture
     api
     options
     traits

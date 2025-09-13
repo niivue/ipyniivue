@@ -25,7 +25,7 @@ classifiers = [
 homepage = "https://github.com/niivue/ipyniivue"
 
 [project.optional-dependencies]
-dev = ["watchfiles", "jupyterlab", "ruff", "pytest", "sphinx", "furo"]
+dev = ["watchfiles", "jupyterlab", "ruff", "pytest", "sphinx", "furo", "sphinxcontrib-mermaid", "myst-parser"]
 
 [pytest]
 nb_test_files = true
