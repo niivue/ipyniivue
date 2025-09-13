@@ -2236,6 +2236,84 @@ class NiiVue(BaseAnyWidget):
         """
         self.opts.mesh_thickness_on_2d = mesh_thickness_on_2d
 
+    def set_opacity(self, vol_idx: int, new_opacity: float):
+        """Set the opacity of a volume given by volume index.
+
+        Parameters
+        ----------
+        vol_idx : int
+            The volume index of the volume to change.
+        new_opacity : float
+            The opacity value. Valid values range from 0 to 1.
+
+        Raises
+        ------
+        ValueError
+            If `new_opacity` is not between 0 and 1 inclusive.
+        IndexError
+            If `vol_idx` is out of range of the `self.volumes` list.
+        """
+        if not (0 <= new_opacity <= 1):
+            raise ValueError("new_opacity must be between 0 and 1 inclusive.")
+        if not 0 <= vol_idx < len(self.volumes):
+            raise IndexError("vol_idx is out of range.")
+
+        self.volumes[vol_idx].opacity = new_opacity
+
+    def set_modulation_image(
+        self, id_target: str, id_modulation: str, modulate_alpha: int = 0
+    ):
+        """
+        Modulate the intensity of one volume based on the intensity of another.
+
+        Parameters
+        ----------
+        id_target : str
+            The ID of the volume to be modulated.
+        id_modulation : str
+            The ID of the volume that controls the modulation.
+            Pass an empty string ('') to disable modulation.
+        modulate_alpha : int, optional
+            Determines if the modulation influences alpha transparency.
+            Values greater than 1 will affect transparency. Default is 0.
+
+        Raises
+        ------
+        ValueError
+            If the target or modulation volume ID is not found.
+        RuntimeError
+            If the canvas has not been attached yet.
+            This function requires nv._gl to be valid in the frontend.
+
+        Examples
+        --------
+        ::
+
+            nv.set_modulation_image(nv.volumes[0].id, nv.volumes[1].id)
+        """
+        if not self._canvas_attached:
+            raise RuntimeError(
+                "Canvas is not attached. Render this widget to attach it to a canvas."
+            )
+
+        idx_target = self.get_volume_index_by_id(id_target)
+        if idx_target == -1:
+            raise ValueError(f"Volume with ID '{id_target}' not found.")
+
+        volume_target = self.volumes[idx_target]
+
+        if id_modulation:
+            idx_modulation = self.get_volume_index_by_id(id_modulation)
+            if idx_modulation == -1:
+                raise ValueError(
+                    f"Modulation volume with ID '{id_modulation}' not found."
+                )
+            volume_target.modulation_image = idx_modulation
+        else:
+            volume_target.modulation_image = None
+
+        volume_target.modulate_alpha = modulate_alpha
+
     """
     Custom event callbacks
     """
@@ -2373,84 +2451,6 @@ class NiiVue(BaseAnyWidget):
 
         """
         self._register_callback("clip_plane_change", callback, remove=remove)
-
-    def set_opacity(self, vol_idx: int, new_opacity: float):
-        """Set the opacity of a volume given by volume index.
-
-        Parameters
-        ----------
-        vol_idx : int
-            The volume index of the volume to change.
-        new_opacity : float
-            The opacity value. Valid values range from 0 to 1.
-
-        Raises
-        ------
-        ValueError
-            If `new_opacity` is not between 0 and 1 inclusive.
-        IndexError
-            If `vol_idx` is out of range of the `self.volumes` list.
-        """
-        if not (0 <= new_opacity <= 1):
-            raise ValueError("new_opacity must be between 0 and 1 inclusive.")
-        if not 0 <= vol_idx < len(self.volumes):
-            raise IndexError("vol_idx is out of range.")
-
-        self.volumes[vol_idx].opacity = new_opacity
-
-    def set_modulation_image(
-        self, id_target: str, id_modulation: str, modulate_alpha: int = 0
-    ):
-        """
-        Modulate the intensity of one volume based on the intensity of another.
-
-        Parameters
-        ----------
-        id_target : str
-            The ID of the volume to be modulated.
-        id_modulation : str
-            The ID of the volume that controls the modulation.
-            Pass an empty string ('') to disable modulation.
-        modulate_alpha : int, optional
-            Determines if the modulation influences alpha transparency.
-            Values greater than 1 will affect transparency. Default is 0.
-
-        Raises
-        ------
-        ValueError
-            If the target or modulation volume ID is not found.
-        RuntimeError
-            If the canvas has not been attached yet.
-            This function requires nv._gl to be valid in the frontend.
-
-        Examples
-        --------
-        ::
-
-            nv.set_modulation_image(nv.volumes[0].id, nv.volumes[1].id)
-        """
-        if not self._canvas_attached:
-            raise RuntimeError(
-                "Canvas is not attached. Render this widget to attach it to a canvas."
-            )
-
-        idx_target = self.get_volume_index_by_id(id_target)
-        if idx_target == -1:
-            raise ValueError(f"Volume with ID '{id_target}' not found.")
-
-        volume_target = self.volumes[idx_target]
-
-        if id_modulation:
-            idx_modulation = self.get_volume_index_by_id(id_modulation)
-            if idx_modulation == -1:
-                raise ValueError(
-                    f"Modulation volume with ID '{id_modulation}' not found."
-                )
-            volume_target.modulation_image = idx_modulation
-        else:
-            volume_target.modulation_image = None
-
-        volume_target.modulate_alpha = modulate_alpha
 
     # todo: make volumes be a list of Volumes and meshes be a list of Meshes
     def on_document_loaded(self, callback, remove=False):
