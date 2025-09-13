@@ -105,7 +105,7 @@ class BaseAnyWidget(anywidget.AnyWidget):
 
                 if handler.is_complete():
                     numpy_array = handler.get_numpy_array()
-                    self.set_trait(data_property, numpy_array)
+                    self._trait_values[data_property] = numpy_array
                     del self._data_handlers[data_property]
 
                 keys_to_remove.append(attr_name)
