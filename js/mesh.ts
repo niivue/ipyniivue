@@ -201,8 +201,10 @@ function setup_mesh_property_listeners(
 		buffers: DataView[],
 	) {
 		const handled = lib.handleBufferMsg(mesh, payload, buffers, () => {
-			mesh.updateMesh(nv.gl);
-			nv.updateGLVolume();
+			if (nv._gl) {
+				mesh.updateMesh(nv.gl);
+				nv.updateGLVolume();
+			}
 		});
 		if (handled) {
 			return;

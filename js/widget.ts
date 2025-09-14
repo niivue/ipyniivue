@@ -13,11 +13,40 @@ import type {
 	Model,
 	NiivueObject3D,
 	Scene,
+	TypedBufferPayload,
 	VolumeModel,
 } from "./types.ts";
 
 let nv: niivue.Niivue;
 let syncInterval: number | undefined;
+
+async function sendDrawBitmap(nv: niivue.Niivue, model: Model) {
+	const thisModelId = model.get("this_model_id");
+	if (!thisModelId) {
+		return;
+	}
+	let thisAnyModel: AnyModel;
+	try {
+		thisAnyModel = (await model.widget_manager.get_model(
+			thisModelId,
+		)) as AnyModel;
+	} catch (err) {
+		return;
+	}
+
+	if (nv.drawBitmap) {
+		const dataType = lib.getArrayType(nv.drawBitmap);
+		lib.sendChunkedData(
+			thisAnyModel,
+			"draw_bitmap",
+			nv.drawBitmap.buffer as ArrayBuffer,
+			dataType,
+		);
+	} else {
+		model.set("draw_bitmap", null);
+		model.save_changes();
+	}
+}
 
 // Attach model event handlers
 function attachModelEventHandlers(
@@ -129,7 +158,24 @@ function attachModelEventHandlers(
 	// Handle any message directions from the nv object.
 	model.on(
 		"msg:custom",
-		async (payload: CustomMessagePayload, buffers: DataView[]) => {
+		async (
+			payload: TypedBufferPayload | CustomMessagePayload,
+			buffers: DataView[],
+		) => {
+			const handled = lib.handleBufferMsg(
+				nv,
+				payload as TypedBufferPayload,
+				buffers,
+				(pyData) => {
+					if (pyData.data.attr === "drawBitmap") {
+						nv.refreshDrawing();
+					}
+				},
+			);
+			if (handled) {
+				return;
+			}
+
 			const { type, data } = payload;
 			switch (type) {
 				case "save_document": {
@@ -203,15 +249,18 @@ function attachModelEventHandlers(
 				case "set_drawing_enabled": {
 					const [drawingEnabled] = data;
 					nv.setDrawingEnabled(drawingEnabled);
+					await sendDrawBitmap(nv, model);
 					break;
 				}
 				case "draw_otsu": {
 					const [levels] = data;
 					nv.drawOtsu(levels);
+					await sendDrawBitmap(nv, model);
 					break;
 				}
 				case "draw_grow_cut": {
 					nv.drawGrowCut();
+					await sendDrawBitmap(nv, model);
 					break;
 				}
 				case "move_crosshair_in_vox": {
@@ -226,10 +275,12 @@ function attachModelEventHandlers(
 				}
 				case "draw_undo": {
 					nv.drawUndo();
+					await sendDrawBitmap(nv, model);
 					break;
 				}
 				case "close_drawing": {
 					nv.closeDrawing();
+					await sendDrawBitmap(nv, model);
 					break;
 				}
 				case "load_drawing_from_url": {
@@ -255,6 +306,9 @@ function attachModelEventHandlers(
 					} else {
 						nv.loadDrawingFromUrl(url, isBinarize);
 					}
+
+					await sendDrawBitmap(nv, model);
+
 					break;
 				}
 				case "load_document_from_url": {
@@ -279,6 +333,9 @@ function attachModelEventHandlers(
 					} catch (err) {
 						console.error(`loadDocument() failed to load: ${err}`);
 					}
+
+					await sendDrawBitmap(nv, model);
+
 					break;
 				}
 			}

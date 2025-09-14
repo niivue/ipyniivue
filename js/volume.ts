@@ -146,7 +146,11 @@ function setup_volume_property_listeners(
 			volume,
 			payload as TypedBufferPayload,
 			buffers,
-			() => nv.updateGLVolume(),
+			() => {
+				if (nv._gl) {
+					nv.updateGLVolume();
+				}
+			},
 		);
 		if (handled) {
 			return;

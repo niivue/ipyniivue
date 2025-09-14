@@ -183,6 +183,8 @@ export type Model = AnyModel<{
 	overlay_alpha_shader: number;
 
 	_volume_object_3d_data: NiivueObject3D; // only updated via frontend (1-way comm)
+
+	draw_bitmap: DataView | null;
 }>;
 
 // Custom message datas

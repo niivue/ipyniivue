@@ -69,6 +69,8 @@ class BaseAnyWidget(anywidget.AnyWidget):
     _data_handlers: typing.ClassVar[dict] = {}
     _event_handlers: typing.ClassVar[dict] = {}
 
+    _binary_trait_to_js_names: typing.ClassVar[dict] = {}
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._setup_binary_change_handlers()
@@ -80,7 +82,8 @@ class BaseAnyWidget(anywidget.AnyWidget):
 
         for attr_name, attr_value in state.items():
             if attr_name.startswith("chunk_"):
-                _, data_property, chunk_index = attr_name.split("_")
+                base, chunk_index = attr_name.rsplit("_", 1)
+                data_property = base[6:]
                 chunk_index = int(chunk_index)
                 chunk_info = attr_value
                 chunk_index_received = chunk_info["chunk_index"]
@@ -122,8 +125,12 @@ class BaseAnyWidget(anywidget.AnyWidget):
     def _get_binary_traits(self):
         return []
 
+    def _get_js_name(self, trait_name):
+        """Get the JavaScript attribute name for a trait."""
+        return self._binary_trait_to_js_names.get(trait_name, trait_name)
+
     def _handle_binary_trait_change(self, change):
-        trait_name = change["name"]
+        trait_name = self._get_js_name(change["name"])
         old_value = change["old"]
         new_value = change["new"]
         if old_value is not None:
@@ -802,6 +809,8 @@ class NiiVue(BaseAnyWidget):
 
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
 
+    _binary_trait_to_js_names: typing.ClassVar[dict] = {"draw_bitmap": "drawBitmap"}
+
     height = t.Int().tag(sync=True)
     opts = t.Instance(ConfigOptions).tag(
         sync=True, to_json=serialize_options, from_json=deserialize_options
@@ -845,6 +854,10 @@ class NiiVue(BaseAnyWidget):
 
     other_nv = t.List(t.Instance(object, allow_none=False), default_value=[]).tag(
         sync=False
+    )
+
+    draw_bitmap = t.Instance(np.ndarray, allow_none=True).tag(
+        sync=True, to_json=serialize_ndarray
     )
 
     @t.validate("other_nv")
@@ -903,6 +916,9 @@ class NiiVue(BaseAnyWidget):
         # Handle messages coming from frontend
         self._event_handlers = {}
         self.on_msg(self._handle_custom_msg)
+
+    def _get_binary_traits(self):
+        return ["draw_bitmap"]
 
     def set_state(self, state):
         """Override set_state to silence notifications for certain updates."""

@@ -47,7 +47,7 @@ export function handleBufferMsg(
 	targetObject: any,
 	payload: TypedBufferPayload,
 	buffers: DataView[],
-	callback: () => void,
+	callback: (data: TypedBufferPayload) => void,
 ): boolean {
 	const { type, data } = payload;
 
@@ -61,7 +61,7 @@ export function handleBufferMsg(
 
 			targetObject[attrName] = typedArray;
 
-			callback();
+			callback(payload);
 
 			return true;
 		}
@@ -91,7 +91,7 @@ export function handleBufferMsg(
 
 			applyDifferencesToTypedArray(existingArray, indicesArray, valuesArray);
 
-			callback();
+			callback(payload);
 
 			return true;
 		}
