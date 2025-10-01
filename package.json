@@ -12,7 +12,7 @@
 		"@niivue/niivue": "^0.62.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
+		"@biomejs/biome": "^2.2.4",
 		"esbuild": "^0.25.2",
 		"typescript": "^5.8.2"
 	}
