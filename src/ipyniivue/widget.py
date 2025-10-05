@@ -1004,6 +1004,9 @@ class NiiVue(BaseAnyWidget):
             return
 
         # handle events that require specific processing
+        if event == "document_loaded":
+            self.volumes = [i for i in self.volumes if i.id in data["volumes"]]
+            self.meshes = [i for i in self.meshes if i.id in data["meshes"]]
         if event == "azimuth_elevation_change":
             handler(data["azimuth"], data["elevation"])
         elif event == "frame_change":
