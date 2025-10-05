@@ -9,6 +9,12 @@ import type {
 
 import type { NIFTI1, NIFTI2 } from "nifti-reader-js";
 
+const pendingVolumeIds = new Set<string>();
+
+export function addPendingVolumeId(volumeId: string) {
+	pendingVolumeIds.add(volumeId);
+}
+
 function getNIFTIData(hdr: NIFTI1 | NIFTI2): Partial<NIFTI1> {
 	const data: Partial<NIFTI1> = {
 		littleEndian: hdr.littleEndian,
@@ -146,7 +152,11 @@ function setup_volume_property_listeners(
 			volume,
 			payload as TypedBufferPayload,
 			buffers,
-			() => nv.updateGLVolume(),
+			() => {
+				if (nv._gl) {
+					nv.updateGLVolume();
+				}
+			},
 		);
 		if (handled) {
 			return;
@@ -217,7 +227,8 @@ async function create_volume(
 	let volume: niivue.NVImage;
 
 	// Input data
-	const fromFrontend = vmodel.get("path").name === "<fromfrontend>";
+	const backendId = vmodel.get("id");
+	const existingIdx = nv.getVolumeIndexByID(backendId);
 
 	const path = vmodel.get("path").name ? vmodel.get("path") : null;
 	const url = vmodel.get("url");
@@ -239,7 +250,7 @@ async function create_volume(
 		pairedImgData = paired_img_path.data.buffer as ArrayBuffer;
 	}
 
-	if (fromFrontend) {
+	if (existingIdx !== -1) {
 		const idx = nv.getVolumeIndexByID(vmodel.get("id"));
 		volume = nv.volumes[idx];
 	} else if (path || data) {
@@ -267,6 +278,7 @@ async function create_volume(
 			vmodel.get("colormap_type"),
 			null,
 		);
+		volume.id = backendId;
 	} else if (url) {
 		volume = await niivue.NVImage.loadFromUrl({
 			url: url,
@@ -288,6 +300,7 @@ async function create_volume(
 		volume.cal_minNeg = vmodel.get("cal_min_neg") ?? Number.NaN;
 		volume.cal_maxNeg = vmodel.get("cal_max_neg") ?? Number.NaN;
 		volume.colormapType = vmodel.get("colormap_type");
+		volume.id = backendId;
 	} else {
 		throw new Error("Invalid source for volume");
 	}
@@ -299,7 +312,6 @@ async function create_volume(
 		volume.colormapLabel = newColormapLabel;
 	}
 
-	vmodel.set("id", volume.id);
 	vmodel.set("n_frame_4d", volume.nFrame4D ?? null);
 	vmodel.set("colormap", volume.colormap);
 	if (typeof volume.cal_min !== "undefined") {
@@ -375,7 +387,7 @@ export async function render_volumes(
 	// create backend volume map, use 'id' value if available, otherwise use temp key
 	let backendIndex = 0;
 	for (const vmodel of backend_volumes) {
-		const id = vmodel.get("id") || `__temp_id__${backendIndex}`;
+		const id = vmodel.get("id");
 		backend_volume_map.set(id, vmodel);
 		backendIndex++;
 	}
@@ -383,7 +395,7 @@ export async function render_volumes(
 	// create frontend volume map
 	let frontendIndex = 0;
 	for (const volume of frontend_volumes) {
-		const id = volume.id || `__temp_id__${frontendIndex}`;
+		const id = volume.id;
 		frontend_volume_map.set(id, volume);
 		frontendIndex++;
 	}
@@ -394,27 +406,21 @@ export async function render_volumes(
 
 	// add volumes
 	for (const [id, vmodel] of backend_volume_map.entries()) {
-		const fromFrontend = vmodel.get("path").name === "<fromfrontend>";
-		const inFrontend = frontend_volume_map.has(id);
-		const emptyId = vmodel.get("id") === "";
-
-		if (fromFrontend && !inFrontend) {
-			// Cleanup volumes from frontend that no longer exist in the frontend
-			disposer.dispose(id);
-		} else if (!inFrontend || emptyId || (fromFrontend && inFrontend)) {
-			// Add volumes that are missing or need syncing
+		if (!disposer.has(id)) {
 			const [volume, cleanup] = await create_volume(nv, vmodel);
 			disposer.register(volume, cleanup);
-			if (!fromFrontend) {
+
+			if (!frontend_volume_map.has(id)) {
 				nv.addVolume(volume);
 			}
 		}
+
+		pendingVolumeIds.delete(id);
 	}
 
 	// remove volumes
 	for (const [id, volume] of frontend_volume_map.entries()) {
-		if (!backend_volume_map.has(id)) {
-			// case: volume is in frontend but not in backend
+		if (!backend_volume_map.has(id) && !pendingVolumeIds.has(id)) {
 			// result: remove volume
 			nv.removeVolume(volume);
 			disposer.dispose(volume.id);
@@ -423,24 +429,21 @@ export async function render_volumes(
 
 	// match frontend volume order to backend order
 	const new_volumes_order: niivue.NVImage[] = [];
-	let backendOrderIndex = 0;
 	for (const vmodel of backend_volumes) {
-		const id = vmodel.get("id") || "";
+		const id = vmodel.get("id");
 		const volume = nv.volumes.find((v: niivue.NVImage) => v.id === id);
-		if (volume) {
+		if (volume && !pendingVolumeIds.has(id)) {
 			new_volumes_order.push(volume);
-		} else {
-			// handle case where volume was just added and id isn't set yet
-			const temp_id = `__temp_id__${backendOrderIndex}`;
-			const volume_temp = nv.volumes.find(
-				(v: niivue.NVImage) => v.id === temp_id,
-			);
-			if (volume_temp) {
-				new_volumes_order.push(volume_temp);
-			}
 		}
-		backendOrderIndex++;
 	}
+
+	// these will get reordered later. Only thing to consider.. is it safe to assume pending volumes are not equal to back volume?
+	for (const volume of nv.volumes) {
+		if (pendingVolumeIds.has(volume.id)) {
+			new_volumes_order.push(volume);
+		}
+	}
+
 	nv.volumes = new_volumes_order;
 	nv.updateGLVolume();
 }

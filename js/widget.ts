@@ -3,8 +3,8 @@ import * as niivue from "@niivue/niivue";
 import { esm } from "@niivue/niivue/min";
 
 import * as lib from "./lib.ts";
-import { render_meshes } from "./mesh.ts";
-import { render_volumes } from "./volume.ts";
+import { addPendingMeshId, render_meshes } from "./mesh.ts";
+import { addPendingVolumeId, render_volumes } from "./volume.ts";
 
 import type {
 	AnyModel,
@@ -13,11 +13,40 @@ import type {
 	Model,
 	NiivueObject3D,
 	Scene,
+	TypedBufferPayload,
 	VolumeModel,
 } from "./types.ts";
 
 let nv: niivue.Niivue;
 let syncInterval: number | undefined;
+
+async function sendDrawBitmap(nv: niivue.Niivue, model: Model) {
+	const thisModelId = model.get("this_model_id");
+	if (!thisModelId) {
+		return;
+	}
+	let thisAnyModel: AnyModel;
+	try {
+		thisAnyModel = (await model.widget_manager.get_model(
+			thisModelId,
+		)) as AnyModel;
+	} catch (err) {
+		return;
+	}
+
+	if (nv.drawBitmap) {
+		const dataType = lib.getArrayType(nv.drawBitmap);
+		lib.sendChunkedData(
+			thisAnyModel,
+			"draw_bitmap",
+			nv.drawBitmap.buffer as ArrayBuffer,
+			dataType,
+		);
+	} else {
+		model.set("draw_bitmap", null);
+		model.save_changes();
+	}
+}
 
 // Attach model event handlers
 function attachModelEventHandlers(
@@ -129,7 +158,24 @@ function attachModelEventHandlers(
 	// Handle any message directions from the nv object.
 	model.on(
 		"msg:custom",
-		async (payload: CustomMessagePayload, buffers: DataView[]) => {
+		async (
+			payload: TypedBufferPayload | CustomMessagePayload,
+			buffers: DataView[],
+		) => {
+			const handled = lib.handleBufferMsg(
+				nv,
+				payload as TypedBufferPayload,
+				buffers,
+				(pyData) => {
+					if (pyData.data.attr === "drawBitmap") {
+						nv.refreshDrawing();
+					}
+				},
+			);
+			if (handled) {
+				return;
+			}
+
 			const { type, data } = payload;
 			switch (type) {
 				case "save_document": {
@@ -203,15 +249,18 @@ function attachModelEventHandlers(
 				case "set_drawing_enabled": {
 					const [drawingEnabled] = data;
 					nv.setDrawingEnabled(drawingEnabled);
+					await sendDrawBitmap(nv, model);
 					break;
 				}
 				case "draw_otsu": {
 					const [levels] = data;
 					nv.drawOtsu(levels);
+					await sendDrawBitmap(nv, model);
 					break;
 				}
 				case "draw_grow_cut": {
 					nv.drawGrowCut();
+					await sendDrawBitmap(nv, model);
 					break;
 				}
 				case "move_crosshair_in_vox": {
@@ -226,10 +275,12 @@ function attachModelEventHandlers(
 				}
 				case "draw_undo": {
 					nv.drawUndo();
+					await sendDrawBitmap(nv, model);
 					break;
 				}
 				case "close_drawing": {
 					nv.closeDrawing();
+					await sendDrawBitmap(nv, model);
 					break;
 				}
 				case "load_drawing_from_url": {
@@ -255,6 +306,39 @@ function attachModelEventHandlers(
 					} else {
 						nv.loadDrawingFromUrl(url, isBinarize);
 					}
+
+					await sendDrawBitmap(nv, model);
+
+					break;
+				}
+				case "load_document_from_url": {
+					const [url] = data;
+					try {
+						let doc: niivue.NVDocument;
+
+						if (url.startsWith("local>") && buffers.length === 1) {
+							// Local file passed as buffer
+							const name = url.slice(6);
+							const blob = new Blob([buffers[0].buffer as ArrayBuffer]);
+							const file = new File([blob], name, {
+								type: "application/octet-stream",
+							});
+							doc = await niivue.NVDocument.loadFromFile(file);
+						} else {
+							// URL
+							doc = await niivue.NVDocument.loadFromUrl(url);
+						}
+
+						if (typeof nv.back === "undefined") {
+							nv.back = null;
+						}
+						await nv.loadDocument(doc);
+					} catch (err) {
+						console.error(`loadDocument() failed to load: ${err}`);
+					}
+
+					await sendDrawBitmap(nv, model);
+
 					break;
 				}
 			}
@@ -298,11 +382,10 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 			(vmodel) => vmodel?.get("id") || "",
 		);
 
-		if (!backendVolumeIds.includes(volumeID)) {
+		if (!backendVolumeIds.includes(volumeID) && !volumeID.endsWith("_py")) {
 			// Volume is new; create a new VolumeModel in the backend
 			// volume.toUint8Array().slice().buffer for data
 			const volumeData = {
-				path: "<fromfrontend>",
 				id: volume.id,
 				name: volume.name,
 				opacity: volume.opacity,
@@ -315,6 +398,8 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				colormap_label: volume.colormapLabel,
 				index: nv.getVolumeIndexByID(volume.id),
 			};
+
+			addPendingVolumeId(volume.id);
 
 			// Send a custom message to the backend to add the volume with the index
 			model.send({
@@ -342,7 +427,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 
 		const backendMeshIds = meshModels.map((mmodel) => mmodel?.get("id") || "");
 
-		if (!backendMeshIds.includes(meshID)) {
+		if (!backendMeshIds.includes(meshID) && !meshID.endsWith("_py")) {
 			// Mesh is new; create a new MeshModel in the backend
 
 			// Prepare layers data
@@ -352,7 +437,6 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 					layer.id = uuidv4();
 				}
 				return {
-					path: "<fromfrontend>",
 					name: layer.name,
 					opacity: layer.opacity,
 					colormap: layer.colormap,
@@ -366,7 +450,6 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 			});
 
 			const meshData = {
-				path: "<fromfrontend>",
 				id: mesh.id,
 				name: mesh.name,
 				rgba255: Array.from(mesh.rgba255),
@@ -375,6 +458,8 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				visible: mesh.visible,
 				index: nv.getMeshIndexByID(mesh.id),
 			};
+
+			addPendingMeshId(mesh.id);
 
 			// Send a custom message to the backend to add the mesh
 			model.send({

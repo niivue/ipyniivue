@@ -193,6 +193,7 @@ class ChunkedDataHandler:
             "uint32": np.uint32,
             "uint8": np.uint8,
             "int16": np.int16,
+            "int32": np.int32,
             "float64": np.float64,
             "uint16": np.uint16,
         }
@@ -326,3 +327,21 @@ def find_otsu(volume, mlevel=2):
 def lerp(x: float, y: float, a: float) -> float:
     """Linear interpolation between x and y by amount a."""
     return x * (1 - a) + y * a
+
+
+def requires_canvas(func):
+    """Ensure canvas is attached before method execution."""
+
+    def wrapper(self, *args, **kwargs):
+        if not self._canvas_attached:
+            operation = func.__name__
+            raise RuntimeError(
+                f"{operation} needs the canvas to be attached. "
+                "Display this widget to attach it to a canvas. "
+                "Alternatively, use on_canvas_attached() to defer execution."
+            )
+        return func(self, *args, **kwargs)
+
+    wrapper.__doc__ = func.__doc__
+    wrapper.__name__ = func.__name__
+    return wrapper

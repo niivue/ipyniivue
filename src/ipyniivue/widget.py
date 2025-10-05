@@ -12,6 +12,7 @@ import json
 import math
 import pathlib
 import typing
+import uuid
 from urllib.parse import urlparse
 
 import anywidget
@@ -57,6 +58,7 @@ from .utils import (
     lerp,
     make_draw_lut,
     make_label_lut,
+    requires_canvas,
 )
 
 __all__ = ["NiiVue"]
@@ -68,8 +70,11 @@ class BaseAnyWidget(anywidget.AnyWidget):
     _data_handlers: typing.ClassVar[dict] = {}
     _event_handlers: typing.ClassVar[dict] = {}
 
+    _binary_trait_to_js_names: typing.ClassVar[dict] = {}
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._event_handlers = {}
         self._setup_binary_change_handlers()
 
     def set_state(self, state):
@@ -79,7 +84,8 @@ class BaseAnyWidget(anywidget.AnyWidget):
 
         for attr_name, attr_value in state.items():
             if attr_name.startswith("chunk_"):
-                _, data_property, chunk_index = attr_name.split("_")
+                base, chunk_index = attr_name.rsplit("_", 1)
+                data_property = base[6:]
                 chunk_index = int(chunk_index)
                 chunk_info = attr_value
                 chunk_index_received = chunk_info["chunk_index"]
@@ -121,8 +127,12 @@ class BaseAnyWidget(anywidget.AnyWidget):
     def _get_binary_traits(self):
         return []
 
+    def _get_js_name(self, trait_name):
+        """Get the JavaScript attribute name for a trait."""
+        return self._binary_trait_to_js_names.get(trait_name, trait_name)
+
     def _handle_binary_trait_change(self, change):
-        trait_name = change["name"]
+        trait_name = self._get_js_name(change["name"])
         old_value = change["old"]
         new_value = change["new"]
         if old_value is not None:
@@ -163,15 +173,6 @@ class BaseAnyWidget(anywidget.AnyWidget):
         handler = self._event_handlers.get(f"{trait_name}_changed")
         if handler:
             handler(self)
-
-    def on_trait_changed(self, trait_name, callback, remove=False):
-        event_name = f"{trait_name}_changed"
-        if event_name not in self._event_handlers:
-            self._event_handlers[event_name] = CallbackDispatcher()
-        if remove:
-            self._event_handlers[event_name].remove(callback)
-        else:
-            self._event_handlers[event_name].register_callback(callback)
 
 
 class MeshLayer(BaseAnyWidget):
@@ -244,12 +245,16 @@ class MeshLayer(BaseAnyWidget):
         super().__init__(**filtered_kwargs)
 
         # Validate that one and only one of path, url, data is provided
-        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
-        if len(provided) != 1:
-            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
+        if not self.id:
+            provided = [
+                k for k in ("path", "url", "data") if getattr(self, k) is not None
+            ]
+            if len(provided) != 1:
+                raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
 
         # Set name if not provided
-        if not self.name and self.path != "<fromfrontend>":
+        # (here we assume that if ID is provided it's already been "loaded" somewhere)
+        if not self.name and not self.id:
             if self.path:
                 self.name = pathlib.Path(self.path).name
             elif self.url:
@@ -258,6 +263,10 @@ class MeshLayer(BaseAnyWidget):
                 raise ValueError("Must provide 'name' when 'data' is provided.")
             else:
                 raise ValueError("Cannot determine the name of the volume.")
+
+        # set id
+        if not self.id:
+            self.id = str(uuid.uuid4()) + "_py"
 
     @t.validate(
         "path",
@@ -349,12 +358,16 @@ class Mesh(BaseAnyWidget):
         super().__init__(**filtered_kwargs)
 
         # Validate that one and only one of path, url, data is provided
-        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
-        if len(provided) != 1:
-            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
+        if not self.id:
+            provided = [
+                k for k in ("path", "url", "data") if getattr(self, k) is not None
+            ]
+            if len(provided) != 1:
+                raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
 
         # Set name if not provided
-        if not self.name:
+        # (here we assume that if ID is provided it's already been "loaded" somewhere)
+        if not self.name and not self.id:
             if self.path:
                 self.name = pathlib.Path(self.path).name
             elif self.url:
@@ -363,6 +376,10 @@ class Mesh(BaseAnyWidget):
                 raise ValueError("Must provide 'name' when 'data' is provided.")
             else:
                 raise ValueError("Cannot determine the name of the volume.")
+
+        # set id
+        if not self.id:
+            self.id = str(uuid.uuid4()) + "_py"
 
         # accept either dicts or MeshLayer objs
         layers_list = []
@@ -376,7 +393,7 @@ class Mesh(BaseAnyWidget):
     def get_state(self, key=None, drop_defaults=False):
         """Exclude certain attributes from state on save."""
         state = super().get_state(key=key, drop_defaults=drop_defaults)
-        if (self.path and self.path != "<fromfrontend>") or self.url or self.data:
+        if self.path or self.url or self.data:
             if "pts" in state:
                 del state["pts"]
             if "tris" in state:
@@ -533,9 +550,12 @@ class Volume(BaseAnyWidget):
         super().__init__(**filtered_kwargs)
 
         # Validate that one and only one of path, url, data is provided
-        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
-        if len(provided) != 1:
-            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
+        if not self.id:
+            provided = [
+                k for k in ("path", "url", "data") if getattr(self, k) is not None
+            ]
+            if len(provided) != 1:
+                raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
 
         # Validate paired image data
         paired_provided = [
@@ -550,7 +570,8 @@ class Volume(BaseAnyWidget):
             )
 
         # Set name if not provided
-        if not self.name:
+        # (here we assume that if ID is provided it's already been "loaded" somewhere)
+        if not self.name and not self.id:
             if self.path:
                 self.name = pathlib.Path(self.path).name
             elif self.url:
@@ -560,13 +581,14 @@ class Volume(BaseAnyWidget):
             else:
                 raise ValueError("Cannot determine the name of the volume.")
 
-        # on-event
-        self._event_handlers = {}
+        # set id
+        if not self.id:
+            self.id = str(uuid.uuid4()) + "_py"
 
     def get_state(self, key=None, drop_defaults=False):
         """Exclude certain attributes from state on save."""
         state = super().get_state(key=key, drop_defaults=drop_defaults)
-        if (self.path and self.path != "<fromfrontend>") or self.url or self.data:
+        if self.path or self.url or self.data:
             if "img" in state:
                 del state["img"]
         return state
@@ -801,6 +823,8 @@ class NiiVue(BaseAnyWidget):
 
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
 
+    _binary_trait_to_js_names: typing.ClassVar[dict] = {"draw_bitmap": "drawBitmap"}
+
     height = t.Int().tag(sync=True)
     opts = t.Instance(ConfigOptions).tag(
         sync=True, to_json=serialize_options, from_json=deserialize_options
@@ -844,6 +868,10 @@ class NiiVue(BaseAnyWidget):
 
     other_nv = t.List(t.Instance(object, allow_none=False), default_value=[]).tag(
         sync=False
+    )
+
+    draw_bitmap = t.Instance(np.ndarray, allow_none=True).tag(
+        sync=True, to_json=serialize_ndarray
     )
 
     @t.validate("other_nv")
@@ -900,8 +928,10 @@ class NiiVue(BaseAnyWidget):
         }
 
         # Handle messages coming from frontend
-        self._event_handlers = {}
         self.on_msg(self._handle_custom_msg)
+
+    def _get_binary_traits(self):
+        return ["draw_bitmap"]
 
     def set_state(self, state):
         """Override set_state to silence notifications for certain updates."""
@@ -974,6 +1004,9 @@ class NiiVue(BaseAnyWidget):
             return
 
         # handle events that require specific processing
+        if event == "document_loaded":
+            self.volumes = [i for i in self.volumes if i.id in data["volumes"]]
+            self.meshes = [i for i in self.meshes if i.id in data["meshes"]]
         if event == "azimuth_elevation_change":
             handler(data["azimuth"], data["elevation"])
         elif event == "frame_change":
@@ -1807,6 +1840,7 @@ class NiiVue(BaseAnyWidget):
 
         return shader_names_list
 
+    @requires_canvas
     def set_volume_render_illumination(self, gradient_amount: float):
         """Set proportion of volume rendering influenced by selected matcap.
 
@@ -1823,10 +1857,6 @@ class NiiVue(BaseAnyWidget):
 
             nv.set_volume_render_illumination(0.6)
         """
-        if not self._canvas_attached:
-            raise RuntimeError(
-                "Canvas is not attached. Render this widget to attach it to a canvas."
-            )
         if not isinstance(gradient_amount, (int, float)):
             raise TypeError("gradient_amount must be a number.")
         if not math.isnan(gradient_amount):
@@ -2130,6 +2160,7 @@ class NiiVue(BaseAnyWidget):
         """
         self.opts.is_radiological_convention = is_radiological_convention
 
+    @requires_canvas
     def load_drawing(self, path: str, is_binarize: bool = False):
         """Load a drawing.
 
@@ -2149,12 +2180,6 @@ class NiiVue(BaseAnyWidget):
         """
         if not self.volumes:
             raise ValueError("Cannot load drawing: No volumes are loaded.")
-        if not self.volumes[0].id:
-            raise ValueError(
-                "Cannot load drawing: "
-                "The primary volume has not been initialized. "
-                "Please render this NiiVue widget."
-            )
         if pathlib.Path(path).exists():
             file_bytes = pathlib.Path(path).read_bytes()
             self.send(
@@ -2235,6 +2260,106 @@ class NiiVue(BaseAnyWidget):
             to show entire mesh or 0.0 to hide mesh.
         """
         self.opts.mesh_thickness_on_2d = mesh_thickness_on_2d
+
+    def set_opacity(self, vol_idx: int, new_opacity: float):
+        """Set the opacity of a volume given by volume index.
+
+        Parameters
+        ----------
+        vol_idx : int
+            The volume index of the volume to change.
+        new_opacity : float
+            The opacity value. Valid values range from 0 to 1.
+
+        Raises
+        ------
+        ValueError
+            If `new_opacity` is not between 0 and 1 inclusive.
+        IndexError
+            If `vol_idx` is out of range of the `self.volumes` list.
+        """
+        if not (0 <= new_opacity <= 1):
+            raise ValueError("new_opacity must be between 0 and 1 inclusive.")
+        if not 0 <= vol_idx < len(self.volumes):
+            raise IndexError("vol_idx is out of range.")
+
+        self.volumes[vol_idx].opacity = new_opacity
+
+    @requires_canvas
+    def set_modulation_image(
+        self, id_target: str, id_modulation: str, modulate_alpha: int = 0
+    ):
+        """
+        Modulate the intensity of one volume based on the intensity of another.
+
+        Parameters
+        ----------
+        id_target : str
+            The ID of the volume to be modulated.
+        id_modulation : str
+            The ID of the volume that controls the modulation.
+            Pass an empty string ('') to disable modulation.
+        modulate_alpha : int, optional
+            Determines if the modulation influences alpha transparency.
+            Values greater than 1 will affect transparency. Default is 0.
+
+        Raises
+        ------
+        ValueError
+            If the target or modulation volume ID is not found.
+        RuntimeError
+            If the canvas has not been attached yet.
+            This function requires nv._gl to be valid in the frontend.
+
+        Examples
+        --------
+        ::
+
+            nv.set_modulation_image(nv.volumes[0].id, nv.volumes[1].id)
+        """
+        idx_target = self.get_volume_index_by_id(id_target)
+        if idx_target == -1:
+            raise ValueError(f"Volume with ID '{id_target}' not found.")
+
+        volume_target = self.volumes[idx_target]
+
+        if id_modulation:
+            idx_modulation = self.get_volume_index_by_id(id_modulation)
+            if idx_modulation == -1:
+                raise ValueError(
+                    f"Modulation volume with ID '{id_modulation}' not found."
+                )
+            volume_target.modulation_image = idx_modulation
+        else:
+            volume_target.modulation_image = None
+
+        volume_target.modulate_alpha = modulate_alpha
+
+    @requires_canvas
+    def load_document(self, path: str):
+        """
+        Load a NiiVue document from a URL or file path.
+
+        Parameters
+        ----------
+        path : str
+            The URL or path of the document (.nvd file).
+        """
+        # should we check if path is valid before clearing these?
+        self._trait_values["volumes"] = []
+        self._trait_values["meshes"] = []
+
+        if pathlib.Path(path).exists():
+            file_bytes = pathlib.Path(path).read_bytes()
+            self.send(
+                {
+                    "type": "load_document_from_url",
+                    "data": [f"local>{path}"],
+                },
+                buffers=[file_bytes],
+            )
+        else:
+            self.send({"type": "load_document_from_url", "data": [path]})
 
     """
     Custom event callbacks
@@ -2373,84 +2498,6 @@ class NiiVue(BaseAnyWidget):
 
         """
         self._register_callback("clip_plane_change", callback, remove=remove)
-
-    def set_opacity(self, vol_idx: int, new_opacity: float):
-        """Set the opacity of a volume given by volume index.
-
-        Parameters
-        ----------
-        vol_idx : int
-            The volume index of the volume to change.
-        new_opacity : float
-            The opacity value. Valid values range from 0 to 1.
-
-        Raises
-        ------
-        ValueError
-            If `new_opacity` is not between 0 and 1 inclusive.
-        IndexError
-            If `vol_idx` is out of range of the `self.volumes` list.
-        """
-        if not (0 <= new_opacity <= 1):
-            raise ValueError("new_opacity must be between 0 and 1 inclusive.")
-        if not 0 <= vol_idx < len(self.volumes):
-            raise IndexError("vol_idx is out of range.")
-
-        self.volumes[vol_idx].opacity = new_opacity
-
-    def set_modulation_image(
-        self, id_target: str, id_modulation: str, modulate_alpha: int = 0
-    ):
-        """
-        Modulate the intensity of one volume based on the intensity of another.
-
-        Parameters
-        ----------
-        id_target : str
-            The ID of the volume to be modulated.
-        id_modulation : str
-            The ID of the volume that controls the modulation.
-            Pass an empty string ('') to disable modulation.
-        modulate_alpha : int, optional
-            Determines if the modulation influences alpha transparency.
-            Values greater than 1 will affect transparency. Default is 0.
-
-        Raises
-        ------
-        ValueError
-            If the target or modulation volume ID is not found.
-        RuntimeError
-            If the canvas has not been attached yet.
-            This function requires nv._gl to be valid in the frontend.
-
-        Examples
-        --------
-        ::
-
-            nv.set_modulation_image(nv.volumes[0].id, nv.volumes[1].id)
-        """
-        if not self._canvas_attached:
-            raise RuntimeError(
-                "Canvas is not attached. Render this widget to attach it to a canvas."
-            )
-
-        idx_target = self.get_volume_index_by_id(id_target)
-        if idx_target == -1:
-            raise ValueError(f"Volume with ID '{id_target}' not found.")
-
-        volume_target = self.volumes[idx_target]
-
-        if id_modulation:
-            idx_modulation = self.get_volume_index_by_id(id_modulation)
-            if idx_modulation == -1:
-                raise ValueError(
-                    f"Modulation volume with ID '{id_modulation}' not found."
-                )
-            volume_target.modulation_image = idx_modulation
-        else:
-            volume_target.modulation_image = None
-
-        volume_target.modulate_alpha = modulate_alpha
 
     # todo: make volumes be a list of Volumes and meshes be a list of Meshes
     def on_document_loaded(self, callback, remove=False):
