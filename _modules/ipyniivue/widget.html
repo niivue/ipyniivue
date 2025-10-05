@@ -1,13 +1,13 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="../../">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>ipyniivue.widget - IPyNiiVue 2.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -21,14 +21,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -143,14 +143,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -160,8 +156,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -169,8 +164,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -178,8 +172,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -225,8 +218,7 @@
         </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -234,8 +226,7 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
@@ -254,6 +245,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlparse</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">anywidget</span>
@@ -299,6 +291,7 @@
     <span class="n">lerp</span><span class="p">,</span>
     <span class="n">make_draw_lut</span><span class="p">,</span>
     <span class="n">make_label_lut</span><span class="p">,</span>
+    <span class="n">requires_canvas</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NiiVue&quot;</span><span class="p">]</span>
@@ -310,8 +303,11 @@
     <span class="n">_data_handlers</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">_event_handlers</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
+    <span class="n">_binary_trait_to_js_names</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_binary_change_handlers</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
@@ -321,7 +317,8 @@
 
         <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_value</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">attr_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;chunk_&quot;</span><span class="p">):</span>
-                <span class="n">_</span><span class="p">,</span> <span class="n">data_property</span><span class="p">,</span> <span class="n">chunk_index</span> <span class="o">=</span> <span class="n">attr_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+                <span class="n">base</span><span class="p">,</span> <span class="n">chunk_index</span> <span class="o">=</span> <span class="n">attr_name</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">data_property</span> <span class="o">=</span> <span class="n">base</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>
                 <span class="n">chunk_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">chunk_index</span><span class="p">)</span>
                 <span class="n">chunk_info</span> <span class="o">=</span> <span class="n">attr_value</span>
                 <span class="n">chunk_index_received</span> <span class="o">=</span> <span class="n">chunk_info</span><span class="p">[</span><span class="s2">&quot;chunk_index&quot;</span><span class="p">]</span>
@@ -363,8 +360,12 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_binary_traits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[]</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_js_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the JavaScript attribute name for a trait.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_trait_to_js_names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">trait_name</span><span class="p">,</span> <span class="n">trait_name</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_handle_binary_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change</span><span class="p">):</span>
-        <span class="n">trait_name</span> <span class="o">=</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">trait_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_js_name</span><span class="p">(</span><span class="n">change</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
         <span class="n">old_value</span> <span class="o">=</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;old&quot;</span><span class="p">]</span>
         <span class="n">new_value</span> <span class="o">=</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;new&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">old_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -405,15 +406,6 @@
         <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">trait_name</span><span class="si">}</span><span class="s2">_changed&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">handler</span><span class="p">:</span>
             <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">on_trait_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="n">event_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">trait_name</span><span class="si">}</span><span class="s2">_changed&quot;</span>
-        <span class="k">if</span> <span class="n">event_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">CallbackDispatcher</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span><span class="o">.</span><span class="n">register_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="MeshLayer">
@@ -490,12 +482,16 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">filtered_kwargs</span><span class="p">)</span>
 
         <span class="c1"># Validate that one and only one of path, url, data is provided</span>
-        <span class="n">provided</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide only one of &#39;path&#39;, &#39;url&#39;, or &#39;data&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="n">provided</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide only one of &#39;path&#39;, &#39;url&#39;, or &#39;data&#39;.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Set name if not provided</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="s2">&quot;&lt;fromfrontend&gt;&quot;</span><span class="p">:</span>
+        <span class="c1"># (here we assume that if ID is provided it&#39;s already been &quot;loaded&quot; somewhere)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
@@ -503,7 +499,11 @@
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide &#39;name&#39; when &#39;data&#39; is provided.&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot determine the name of the volume.&quot;</span><span class="p">)</span></div>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot determine the name of the volume.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># set id</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;_py&quot;</span></div>
 
 
     <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
@@ -601,12 +601,16 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">filtered_kwargs</span><span class="p">)</span>
 
         <span class="c1"># Validate that one and only one of path, url, data is provided</span>
-        <span class="n">provided</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide only one of &#39;path&#39;, &#39;url&#39;, or &#39;data&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="n">provided</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide only one of &#39;path&#39;, &#39;url&#39;, or &#39;data&#39;.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Set name if not provided</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="c1"># (here we assume that if ID is provided it&#39;s already been &quot;loaded&quot; somewhere)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
@@ -615,6 +619,10 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide &#39;name&#39; when &#39;data&#39; is provided.&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot determine the name of the volume.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># set id</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;_py&quot;</span>
 
         <span class="c1"># accept either dicts or MeshLayer objs</span>
         <span class="n">layers_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -631,7 +639,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Exclude certain attributes from state on save.&quot;&quot;&quot;</span>
         <span class="n">state</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">drop_defaults</span><span class="o">=</span><span class="n">drop_defaults</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="s2">&quot;&lt;fromfrontend&gt;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;pts&quot;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
                 <span class="k">del</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;pts&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="s2">&quot;tris&quot;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
@@ -794,9 +802,12 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">filtered_kwargs</span><span class="p">)</span>
 
         <span class="c1"># Validate that one and only one of path, url, data is provided</span>
-        <span class="n">provided</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide only one of &#39;path&#39;, &#39;url&#39;, or &#39;data&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="n">provided</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide only one of &#39;path&#39;, &#39;url&#39;, or &#39;data&#39;.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Validate paired image data</span>
         <span class="n">paired_provided</span> <span class="o">=</span> <span class="p">[</span>
@@ -811,7 +822,8 @@
             <span class="p">)</span>
 
         <span class="c1"># Set name if not provided</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="c1"># (here we assume that if ID is provided it&#39;s already been &quot;loaded&quot; somewhere)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
@@ -821,8 +833,9 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot determine the name of the volume.&quot;</span><span class="p">)</span>
 
-        <span class="c1"># on-event</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span> <span class="o">=</span> <span class="p">{}</span></div>
+        <span class="c1"># set id</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;_py&quot;</span></div>
 
 
 <div class="viewcode-block" id="Volume.get_state">
@@ -830,7 +843,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Exclude certain attributes from state on save.&quot;&quot;&quot;</span>
         <span class="n">state</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">drop_defaults</span><span class="o">=</span><span class="n">drop_defaults</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="s2">&quot;&lt;fromfrontend&gt;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;img&quot;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
                 <span class="k">del</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">state</span></div>
@@ -1084,6 +1097,8 @@
 
     <span class="n">_esm</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;static&quot;</span> <span class="o">/</span> <span class="s2">&quot;widget.js&quot;</span>
 
+    <span class="n">_binary_trait_to_js_names</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;draw_bitmap&quot;</span><span class="p">:</span> <span class="s2">&quot;drawBitmap&quot;</span><span class="p">}</span>
+
     <span class="n">height</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">()</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">opts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">ConfigOptions</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_options</span><span class="p">,</span> <span class="n">from_json</span><span class="o">=</span><span class="n">deserialize_options</span>
@@ -1127,6 +1142,10 @@
 
     <span class="n">other_nv</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
         <span class="n">sync</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="n">draw_bitmap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_ndarray</span>
     <span class="p">)</span>
 
     <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;other_nv&quot;</span><span class="p">)</span>
@@ -1185,9 +1204,11 @@
         <span class="p">}</span>
 
         <span class="c1"># Handle messages coming from frontend</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">on_msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_custom_msg</span><span class="p">)</span></div>
 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_binary_traits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;draw_bitmap&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="NiiVue.set_state">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_state">[docs]</a>
@@ -1263,6 +1284,9 @@
             <span class="k">return</span>
 
         <span class="c1"># handle events that require specific processing</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;document_loaded&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;volumes&quot;</span><span class="p">]]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;meshes&quot;</span><span class="p">]]</span>
         <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;azimuth_elevation_change&quot;</span><span class="p">:</span>
             <span class="n">handler</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;azimuth&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;elevation&quot;</span><span class="p">])</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;frame_change&quot;</span><span class="p">:</span>
@@ -2171,8 +2195,7 @@
         <span class="k">return</span> <span class="n">shader_names_list</span></div>
 
 
-<div class="viewcode-block" id="NiiVue.set_volume_render_illumination">
-<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_volume_render_illumination">[docs]</a>
+    <span class="nd">@requires_canvas</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_volume_render_illumination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gradient_amount</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set proportion of volume rendering influenced by selected matcap.</span>
 
@@ -2189,16 +2212,11 @@
 
 <span class="sd">            nv.set_volume_render_illumination(0.6)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canvas_attached</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;Canvas is not attached. Render this widget to attach it to a canvas.&quot;</span>
-            <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gradient_amount</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;gradient_amount must be a number.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">gradient_amount</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">gradient_amount</span> <span class="o">=</span> <span class="n">gradient_amount</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_volume_render_illumination&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">gradient_amount</span><span class="p">]})</span></div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_volume_render_illumination&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">gradient_amount</span><span class="p">]})</span>
 
 <div class="viewcode-block" id="NiiVue.set_high_resolution_capable">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_high_resolution_capable">[docs]</a>
@@ -2545,8 +2563,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">is_radiological_convention</span> <span class="o">=</span> <span class="n">is_radiological_convention</span></div>
 
 
-<div class="viewcode-block" id="NiiVue.load_drawing">
-<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.load_drawing">[docs]</a>
+    <span class="nd">@requires_canvas</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_drawing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_binarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load a drawing.</span>
 
@@ -2566,12 +2583,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot load drawing: No volumes are loaded.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Cannot load drawing: &quot;</span>
-                <span class="s2">&quot;The primary volume has not been initialized. &quot;</span>
-                <span class="s2">&quot;Please render this NiiVue widget.&quot;</span>
-            <span class="p">)</span>
         <span class="k">if</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="n">file_bytes</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
@@ -2582,8 +2593,7 @@
                 <span class="n">buffers</span><span class="o">=</span><span class="p">[</span><span class="n">file_bytes</span><span class="p">],</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;load_drawing_from_url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">path</span><span class="p">,</span> <span class="n">is_binarize</span><span class="p">]})</span></div>
-
+            <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;load_drawing_from_url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">path</span><span class="p">,</span> <span class="n">is_binarize</span><span class="p">]})</span>
 
 <div class="viewcode-block" id="NiiVue.set_multiplanar_pad_pixels">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_multiplanar_pad_pixels">[docs]</a>
@@ -2668,6 +2678,109 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">mesh_thickness_on_2d</span> <span class="o">=</span> <span class="n">mesh_thickness_on_2d</span></div>
 
+
+<div class="viewcode-block" id="NiiVue.set_opacity">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_opacity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_opacity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vol_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">new_opacity</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the opacity of a volume given by volume index.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        vol_idx : int</span>
+<span class="sd">            The volume index of the volume to change.</span>
+<span class="sd">        new_opacity : float</span>
+<span class="sd">            The opacity value. Valid values range from 0 to 1.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If `new_opacity` is not between 0 and 1 inclusive.</span>
+<span class="sd">        IndexError</span>
+<span class="sd">            If `vol_idx` is out of range of the `self.volumes` list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">new_opacity</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;new_opacity must be between 0 and 1 inclusive.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">vol_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;vol_idx is out of range.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">vol_idx</span><span class="p">]</span><span class="o">.</span><span class="n">opacity</span> <span class="o">=</span> <span class="n">new_opacity</span></div>
+
+
+    <span class="nd">@requires_canvas</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_modulation_image</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">id_target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">id_modulation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">modulate_alpha</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Modulate the intensity of one volume based on the intensity of another.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        id_target : str</span>
+<span class="sd">            The ID of the volume to be modulated.</span>
+<span class="sd">        id_modulation : str</span>
+<span class="sd">            The ID of the volume that controls the modulation.</span>
+<span class="sd">            Pass an empty string (&#39;&#39;) to disable modulation.</span>
+<span class="sd">        modulate_alpha : int, optional</span>
+<span class="sd">            Determines if the modulation influences alpha transparency.</span>
+<span class="sd">            Values greater than 1 will affect transparency. Default is 0.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the target or modulation volume ID is not found.</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If the canvas has not been attached yet.</span>
+<span class="sd">            This function requires nv._gl to be valid in the frontend.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_modulation_image(nv.volumes[0].id, nv.volumes[1].id)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">id_target</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx_target</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume with ID &#39;</span><span class="si">{</span><span class="n">id_target</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+
+        <span class="n">volume_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx_target</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">id_modulation</span><span class="p">:</span>
+            <span class="n">idx_modulation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">id_modulation</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">idx_modulation</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Modulation volume with ID &#39;</span><span class="si">{</span><span class="n">id_modulation</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">volume_target</span><span class="o">.</span><span class="n">modulation_image</span> <span class="o">=</span> <span class="n">idx_modulation</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">volume_target</span><span class="o">.</span><span class="n">modulation_image</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">volume_target</span><span class="o">.</span><span class="n">modulate_alpha</span> <span class="o">=</span> <span class="n">modulate_alpha</span>
+
+    <span class="nd">@requires_canvas</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_document</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a NiiVue document from a URL or file path.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            The URL or path of the document (.nvd file).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># should we check if path is valid before clearing these?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;volumes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;meshes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">file_bytes</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;load_document_from_url&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;local&gt;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
+                <span class="p">},</span>
+                <span class="n">buffers</span><span class="o">=</span><span class="p">[</span><span class="n">file_bytes</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;load_document_from_url&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">path</span><span class="p">]})</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom event callbacks</span>
@@ -2817,90 +2930,6 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;clip_plane_change&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="NiiVue.set_opacity">
-<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_opacity">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_opacity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vol_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">new_opacity</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the opacity of a volume given by volume index.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        vol_idx : int</span>
-<span class="sd">            The volume index of the volume to change.</span>
-<span class="sd">        new_opacity : float</span>
-<span class="sd">            The opacity value. Valid values range from 0 to 1.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If `new_opacity` is not between 0 and 1 inclusive.</span>
-<span class="sd">        IndexError</span>
-<span class="sd">            If `vol_idx` is out of range of the `self.volumes` list.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">new_opacity</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;new_opacity must be between 0 and 1 inclusive.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">vol_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;vol_idx is out of range.&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">vol_idx</span><span class="p">]</span><span class="o">.</span><span class="n">opacity</span> <span class="o">=</span> <span class="n">new_opacity</span></div>
-
-
-<div class="viewcode-block" id="NiiVue.set_modulation_image">
-<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_modulation_image">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_modulation_image</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">id_target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">id_modulation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">modulate_alpha</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Modulate the intensity of one volume based on the intensity of another.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        id_target : str</span>
-<span class="sd">            The ID of the volume to be modulated.</span>
-<span class="sd">        id_modulation : str</span>
-<span class="sd">            The ID of the volume that controls the modulation.</span>
-<span class="sd">            Pass an empty string (&#39;&#39;) to disable modulation.</span>
-<span class="sd">        modulate_alpha : int, optional</span>
-<span class="sd">            Determines if the modulation influences alpha transparency.</span>
-<span class="sd">            Values greater than 1 will affect transparency. Default is 0.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If the target or modulation volume ID is not found.</span>
-<span class="sd">        RuntimeError</span>
-<span class="sd">            If the canvas has not been attached yet.</span>
-<span class="sd">            This function requires nv._gl to be valid in the frontend.</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        ::</span>
-
-<span class="sd">            nv.set_modulation_image(nv.volumes[0].id, nv.volumes[1].id)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canvas_attached</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;Canvas is not attached. Render this widget to attach it to a canvas.&quot;</span>
-            <span class="p">)</span>
-
-        <span class="n">idx_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">id_target</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">idx_target</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume with ID &#39;</span><span class="si">{</span><span class="n">id_target</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
-
-        <span class="n">volume_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">idx_target</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="n">id_modulation</span><span class="p">:</span>
-            <span class="n">idx_modulation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_index_by_id</span><span class="p">(</span><span class="n">id_modulation</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">idx_modulation</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Modulation volume with ID &#39;</span><span class="si">{</span><span class="n">id_modulation</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span>
-                <span class="p">)</span>
-            <span class="n">volume_target</span><span class="o">.</span><span class="n">modulation_image</span> <span class="o">=</span> <span class="n">idx_modulation</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">volume_target</span><span class="o">.</span><span class="n">modulation_image</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="n">volume_target</span><span class="o">.</span><span class="n">modulate_alpha</span> <span class="o">=</span> <span class="n">modulate_alpha</span></div>
 
 
     <span class="c1"># todo: make volumes be a list of Volumes and meshes be a list of Meshes</span>
