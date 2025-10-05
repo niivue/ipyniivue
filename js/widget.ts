@@ -382,7 +382,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 			(vmodel) => vmodel?.get("id") || "",
 		);
 
-		if (!backendVolumeIds.includes(volumeID)) {
+		if (!backendVolumeIds.includes(volumeID) && !volumeID.endsWith("_py")) {
 			// Volume is new; create a new VolumeModel in the backend
 			// volume.toUint8Array().slice().buffer for data
 			const volumeData = {
@@ -427,7 +427,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 
 		const backendMeshIds = meshModels.map((mmodel) => mmodel?.get("id") || "");
 
-		if (!backendMeshIds.includes(meshID)) {
+		if (!backendMeshIds.includes(meshID) && !meshID.endsWith("_py")) {
 			// Mesh is new; create a new MeshModel in the backend
 
 			// Prepare layers data

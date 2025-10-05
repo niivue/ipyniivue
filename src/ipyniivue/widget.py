@@ -266,7 +266,7 @@ class MeshLayer(BaseAnyWidget):
 
         # set id
         if not self.id:
-            self.id = str(uuid.uuid4())
+            self.id = str(uuid.uuid4()) + "_py"
 
     @t.validate(
         "path",
@@ -379,7 +379,7 @@ class Mesh(BaseAnyWidget):
 
         # set id
         if not self.id:
-            self.id = str(uuid.uuid4())
+            self.id = str(uuid.uuid4()) + "_py"
 
         # accept either dicts or MeshLayer objs
         layers_list = []
@@ -583,7 +583,7 @@ class Volume(BaseAnyWidget):
 
         # set id
         if not self.id:
-            self.id = str(uuid.uuid4())
+            self.id = str(uuid.uuid4()) + "_py"
 
     def get_state(self, key=None, drop_defaults=False):
         """Exclude certain attributes from state on save."""

@@ -362,10 +362,8 @@ export async function create_mesh(
 					layerModel.get("cal_max") ?? null,
 					layerModel.get("outline_border") ?? 0,
 				);
-				layer.id = uuidv4();
+				layer.id = backendLayerId;
 				mesh.layers.push(layer);
-				layerModel.set("id", layer.id);
-				layerModel.save_changes();
 			} else if (layerUrl) {
 				const response = await fetch(layerUrl);
 				if (!response.ok) {
@@ -385,10 +383,8 @@ export async function create_mesh(
 					layerModel.get("cal_max") ?? null,
 					layerModel.get("outline_border") ?? 0,
 				);
-				layer.id = uuidv4();
+				layer.id = backendLayerId;
 				mesh.layers.push(layer);
-				layerModel.set("id", layer.id);
-				layerModel.save_changes();
 			} else {
 				throw new Error("Invalid source for mesh layer");
 			}
