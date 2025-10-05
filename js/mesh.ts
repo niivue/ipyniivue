@@ -9,6 +9,12 @@ import type {
 
 import { v4 as uuidv4 } from "@lukeed/uuid";
 
+const pendingMeshIds = new Set<string>();
+
+export function addPendingMeshId(volumeId: string) {
+	pendingMeshIds.add(volumeId);
+}
+
 /**
  * Set up event listeners to handle changes to the layer properties.
  * Returns a function to clean up the event listeners.
@@ -272,15 +278,15 @@ export async function create_mesh(
 	const layerCleanupFunctions: (() => void)[] = [];
 
 	// Input data
-	const fromFrontend = mmodel.get("path").name === "<fromfrontend>";
+	const backendId = mmodel.get("id");
+	const existingIdx = nv.getMeshIndexByID(backendId);
 
 	const path = mmodel.get("path")?.name ? mmodel.get("path") : null;
 	const url = mmodel.get("url");
 	const data = mmodel.get("data")?.byteLength ? mmodel.get("data") : null;
 
-	if (fromFrontend) {
-		const idx = nv.getMeshIndexByID(mmodel.get("id"));
-		mesh = nv.meshes[idx];
+	if (existingIdx !== -1) {
+		mesh = nv.meshes[existingIdx];
 	} else if (path || data) {
 		const dataBuffer = path?.data?.buffer || data?.buffer;
 		const name = path?.name || mmodel.get("name");
@@ -292,6 +298,7 @@ export async function create_mesh(
 			new Uint8Array(mmodel.get("rgba255")),
 			mmodel.get("visible"),
 		);
+		mesh.id = backendId;
 	} else if (url) {
 		mesh = await niivue.NVMesh.loadFromUrl({
 			url: url,
@@ -302,12 +309,12 @@ export async function create_mesh(
 			visible: mmodel.get("visible") ?? true,
 			layers: [],
 		});
+		mesh.id = backendId;
 	} else {
 		throw new Error("Invalid source for mesh");
 	}
 
 	// Save the id and name back to the model
-	mmodel.set("id", mesh.id);
 	mmodel.set("name", mesh.name);
 	mmodel.save_changes();
 
@@ -329,17 +336,15 @@ export async function create_mesh(
 				? layerModel.get("data")
 				: null;
 
-			const layerFromFrontend =
-				layerModel.get("path").name === "<fromfrontend>";
+			const backendLayerId = layerModel.get("id");
+			// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
+			const existingLayerIdx = mesh.layers.findIndex((l) => (l as any).id === backendLayerId);
 
 			// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
 			let layer: any;
 
-			if (layerFromFrontend) {
-				const layerId = layerModel.get("id");
-				// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
-				const idx = mesh.layers.findIndex((l) => (l as any).id === layerId);
-				layer = mesh.layers[idx];
+			if (existingLayerIdx !== -1) {
+				layer = mesh.layers[existingLayerIdx];
 			} else if (layerPath || layerData) {
 				const layerDataBuffer = layerPath?.data?.buffer || layerData?.buffer;
 				const layerName = layerPath?.name || layerModel.get("name");
@@ -470,7 +475,7 @@ export async function render_meshes(
 	// Create backend mesh map
 	let backendIndex = 0;
 	for (const mmodel of backend_meshes) {
-		const id = mmodel.get("id") || `__temp_id__${backendIndex}`;
+		const id = mmodel.get("id");
 		backend_mesh_map.set(id, mmodel);
 		backendIndex++;
 	}
@@ -478,7 +483,7 @@ export async function render_meshes(
 	// Create frontend mesh map
 	let frontendIndex = 0;
 	for (const mesh of frontend_meshes) {
-		const id = mesh.id || `__temp_id__${frontendIndex}`;
+		const id = mesh.id;
 		frontend_mesh_map.set(id, mesh);
 		frontendIndex++;
 	}
@@ -489,26 +494,22 @@ export async function render_meshes(
 
 	// add meshes
 	for (const [id, mmodel] of backend_mesh_map.entries()) {
-		const fromFrontend = mmodel.get("path").name === "<fromfrontend>";
-		const inFrontend = frontend_mesh_map.has(id);
-		const emptyId = mmodel.get("id") === "";
-
-		if (fromFrontend && !inFrontend) {
-			// Cleanup meshes from frontend that no longer exist in the frontend
-			disposer.dispose(id);
-		} else if (!inFrontend || emptyId || (fromFrontend && inFrontend)) {
+		if (!disposer.has(id)) {
 			// Add or sync meshes as needed
 			const [mesh, cleanup] = await create_mesh(nv, mmodel);
 			disposer.register(mesh, cleanup);
-			if (!fromFrontend) {
+
+			if (!frontend_mesh_map.has(id)) {
 				nv.addMesh(mesh);
 			}
 		}
+
+		pendingMeshIds.delete(id);
 	}
 
 	// remove meshes
 	for (const [id, mesh] of frontend_mesh_map.entries()) {
-		if (!backend_mesh_map.has(id)) {
+		if (!backend_mesh_map.has(id) && !pendingMeshIds.has(id)) {
 			// Remove mesh
 			nv.removeMesh(mesh);
 			disposer.dispose(mesh.id);
@@ -517,22 +518,22 @@ export async function render_meshes(
 
 	// match frontend mesh order to backend order
 	const new_meshes_order: niivue.NVMesh[] = [];
-	let backendOrderIndex = 0;
 	for (const mmodel of backend_meshes) {
-		const id = mmodel.get("id") || "";
+		const id = mmodel.get("id");
 		const mesh = nv.meshes.find((m: niivue.NVMesh) => m.id === id);
-		if (mesh) {
+		if (mesh && !pendingMeshIds.has(id)) {
 			new_meshes_order.push(mesh);
-		} else {
-			// handle case where mesh was just added and id isn't set yet
-			const temp_id = `__temp_id__${backendOrderIndex}`;
-			const mesh_temp = nv.meshes.find((m: niivue.NVMesh) => m.id === temp_id);
-			if (mesh_temp) {
-				new_meshes_order.push(mesh_temp);
-			}
 		}
-		backendOrderIndex++;
 	}
+
+	// Add pending meshes that haven't synced to backend yet
+	for (const mesh of nv.meshes) {
+		if (pendingMeshIds.has(mesh.id)) {
+			new_meshes_order.push(mesh);
+		}
+	}
+
 	nv.meshes = new_meshes_order;
+
 	nv.updateGLVolume();
 }

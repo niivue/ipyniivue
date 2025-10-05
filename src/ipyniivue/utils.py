@@ -193,6 +193,7 @@ class ChunkedDataHandler:
             "uint32": np.uint32,
             "uint8": np.uint8,
             "int16": np.int16,
+            "int32": np.int32,
             "float64": np.float64,
             "uint16": np.uint16,
         }

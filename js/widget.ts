@@ -3,8 +3,8 @@ import * as niivue from "@niivue/niivue";
 import { esm } from "@niivue/niivue/min";
 
 import * as lib from "./lib.ts";
-import { render_meshes } from "./mesh.ts";
-import { render_volumes } from "./volume.ts";
+import { render_meshes, addPendingMeshId } from "./mesh.ts";
+import { render_volumes, addPendingVolumeId } from "./volume.ts";
 
 import type {
 	AnyModel,
@@ -329,6 +329,9 @@ function attachModelEventHandlers(
 							doc = await niivue.NVDocument.loadFromUrl(url);
 						}
 
+						if (typeof nv.back === 'undefined') {
+							nv.back = null;
+						}
 						await nv.loadDocument(doc);
 					} catch (err) {
 						console.error(`loadDocument() failed to load: ${err}`);
@@ -383,7 +386,6 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 			// Volume is new; create a new VolumeModel in the backend
 			// volume.toUint8Array().slice().buffer for data
 			const volumeData = {
-				path: "<fromfrontend>",
 				id: volume.id,
 				name: volume.name,
 				opacity: volume.opacity,
@@ -397,10 +399,12 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				index: nv.getVolumeIndexByID(volume.id),
 			};
 
+			addPendingVolumeId(volume.id);
+
 			// Send a custom message to the backend to add the volume with the index
 			model.send({
 				event: "add_volume",
-				data: volumeData,
+				data: volumeData
 			});
 		}
 
@@ -433,7 +437,6 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 					layer.id = uuidv4();
 				}
 				return {
-					path: "<fromfrontend>",
 					name: layer.name,
 					opacity: layer.opacity,
 					colormap: layer.colormap,
@@ -447,7 +450,6 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 			});
 
 			const meshData = {
-				path: "<fromfrontend>",
 				id: mesh.id,
 				name: mesh.name,
 				rgba255: Array.from(mesh.rgba255),
@@ -457,12 +459,16 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 				index: nv.getMeshIndexByID(mesh.id),
 			};
 
+			addPendingMeshId(mesh.id);
+
 			// Send a custom message to the backend to add the mesh
 			model.send({
 				event: "add_mesh",
-				data: meshData,
+				data: meshData
 			});
 		}
+
+		
 
 		model.send({
 			event: "mesh_loaded",

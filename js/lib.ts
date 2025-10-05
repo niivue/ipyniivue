@@ -105,6 +105,7 @@ export type TypedArray =
 	| Uint32Array
 	| Uint8Array
 	| Int16Array
+	| Int32Array
 	| Float64Array
 	| Uint16Array;
 
@@ -117,6 +118,7 @@ const typeMapping: { [key: string]: TypedArrayConstructor } = {
 	uint32: Uint32Array,
 	uint8: Uint8Array,
 	int16: Int16Array,
+	int32: Int32Array,
 	float64: Float64Array,
 	uint16: Uint16Array,
 };
@@ -128,6 +130,7 @@ export function getArrayType(typedArray: TypedArray): string {
 			return typeStr;
 		}
 	}
+	console.log("getArrayType unsupportedarraytype err:", typedArray)
 	throw new Error("Unsupported array type");
 }
 
@@ -261,6 +264,10 @@ export class Disposer {
 	): void {
 		const id = obj.id || "";
 		this.#disposers.set(id, disposer);
+	}
+
+	has(id: string): boolean {
+		return this.#disposers.has(id);
 	}
 
 	dispose(id: string): void {

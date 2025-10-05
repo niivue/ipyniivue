@@ -12,6 +12,7 @@ import json
 import math
 import pathlib
 import typing
+import uuid
 from urllib.parse import urlparse
 
 import anywidget
@@ -73,6 +74,7 @@ class BaseAnyWidget(anywidget.AnyWidget):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._event_handlers = {}
         self._setup_binary_change_handlers()
 
     def set_state(self, state):
@@ -108,7 +110,7 @@ class BaseAnyWidget(anywidget.AnyWidget):
 
                 if handler.is_complete():
                     numpy_array = handler.get_numpy_array()
-                    self._trait_values[data_property] = numpy_array
+                    self.set_trait(data_property, numpy_array)
                     del self._data_handlers[data_property]
 
                 keys_to_remove.append(attr_name)
@@ -171,15 +173,6 @@ class BaseAnyWidget(anywidget.AnyWidget):
         handler = self._event_handlers.get(f"{trait_name}_changed")
         if handler:
             handler(self)
-
-    def on_trait_changed(self, trait_name, callback, remove=False):
-        event_name = f"{trait_name}_changed"
-        if event_name not in self._event_handlers:
-            self._event_handlers[event_name] = CallbackDispatcher()
-        if remove:
-            self._event_handlers[event_name].remove(callback)
-        else:
-            self._event_handlers[event_name].register_callback(callback)
 
 
 class MeshLayer(BaseAnyWidget):
@@ -252,12 +245,16 @@ class MeshLayer(BaseAnyWidget):
         super().__init__(**filtered_kwargs)
 
         # Validate that one and only one of path, url, data is provided
-        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
-        if len(provided) != 1:
-            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
+        if not self.id:
+            provided = [
+                k for k in ("path", "url", "data") if getattr(self, k) is not None
+            ]
+            if len(provided) != 1:
+                raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
 
         # Set name if not provided
-        if not self.name and self.path != "<fromfrontend>":
+        # (here we assume that if ID is provided it's already been "loaded" somewhere)
+        if not self.name and not self.id:
             if self.path:
                 self.name = pathlib.Path(self.path).name
             elif self.url:
@@ -266,6 +263,10 @@ class MeshLayer(BaseAnyWidget):
                 raise ValueError("Must provide 'name' when 'data' is provided.")
             else:
                 raise ValueError("Cannot determine the name of the volume.")
+
+        # set id
+        if not self.id:
+            self.id = str(uuid.uuid4())
 
     @t.validate(
         "path",
@@ -357,12 +358,16 @@ class Mesh(BaseAnyWidget):
         super().__init__(**filtered_kwargs)
 
         # Validate that one and only one of path, url, data is provided
-        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
-        if len(provided) != 1:
-            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
+        if not self.id:
+            provided = [
+                k for k in ("path", "url", "data") if getattr(self, k) is not None
+            ]
+            if len(provided) != 1:
+                raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
 
         # Set name if not provided
-        if not self.name:
+        # (here we assume that if ID is provided it's already been "loaded" somewhere)
+        if not self.name and not self.id:
             if self.path:
                 self.name = pathlib.Path(self.path).name
             elif self.url:
@@ -371,6 +376,10 @@ class Mesh(BaseAnyWidget):
                 raise ValueError("Must provide 'name' when 'data' is provided.")
             else:
                 raise ValueError("Cannot determine the name of the volume.")
+
+        # set id
+        if not self.id:
+            self.id = str(uuid.uuid4())
 
         # accept either dicts or MeshLayer objs
         layers_list = []
@@ -384,7 +393,7 @@ class Mesh(BaseAnyWidget):
     def get_state(self, key=None, drop_defaults=False):
         """Exclude certain attributes from state on save."""
         state = super().get_state(key=key, drop_defaults=drop_defaults)
-        if (self.path and self.path != "<fromfrontend>") or self.url or self.data:
+        if self.path or self.url or self.data:
             if "pts" in state:
                 del state["pts"]
             if "tris" in state:
@@ -541,9 +550,12 @@ class Volume(BaseAnyWidget):
         super().__init__(**filtered_kwargs)
 
         # Validate that one and only one of path, url, data is provided
-        provided = [k for k in ("path", "url", "data") if getattr(self, k) is not None]
-        if len(provided) != 1:
-            raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
+        if not self.id:
+            provided = [
+                k for k in ("path", "url", "data") if getattr(self, k) is not None
+            ]
+            if len(provided) != 1:
+                raise ValueError("Must provide only one of 'path', 'url', or 'data'.")
 
         # Validate paired image data
         paired_provided = [
@@ -558,7 +570,8 @@ class Volume(BaseAnyWidget):
             )
 
         # Set name if not provided
-        if not self.name:
+        # (here we assume that if ID is provided it's already been "loaded" somewhere)
+        if not self.name and not self.id:
             if self.path:
                 self.name = pathlib.Path(self.path).name
             elif self.url:
@@ -568,13 +581,14 @@ class Volume(BaseAnyWidget):
             else:
                 raise ValueError("Cannot determine the name of the volume.")
 
-        # on-event
-        self._event_handlers = {}
+        # set id
+        if not self.id:
+            self.id = str(uuid.uuid4())
 
     def get_state(self, key=None, drop_defaults=False):
         """Exclude certain attributes from state on save."""
         state = super().get_state(key=key, drop_defaults=drop_defaults)
-        if (self.path and self.path != "<fromfrontend>") or self.url or self.data:
+        if self.path or self.url or self.data:
             if "img" in state:
                 del state["img"]
         return state
@@ -914,7 +928,6 @@ class NiiVue(BaseAnyWidget):
         }
 
         # Handle messages coming from frontend
-        self._event_handlers = {}
         self.on_msg(self._handle_custom_msg)
 
     def _get_binary_traits(self):
@@ -2329,6 +2342,10 @@ class NiiVue(BaseAnyWidget):
         path : str
             The URL or path of the document (.nvd file).
         """
+        # should we check if path is valid before clearing these?
+        self._trait_values["volumes"] = []
+        self._trait_values["meshes"] = []
+
         if pathlib.Path(path).exists():
             file_bytes = pathlib.Path(path).read_bytes()
             self.send(
