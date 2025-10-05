@@ -409,7 +409,7 @@ export async function render_volumes(
 		if (!disposer.has(id)) {
 			const [volume, cleanup] = await create_volume(nv, vmodel);
 			disposer.register(volume, cleanup);
-			
+
 			if (!frontend_volume_map.has(id)) {
 				nv.addVolume(volume);
 			}

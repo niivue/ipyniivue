@@ -130,7 +130,7 @@ export function getArrayType(typedArray: TypedArray): string {
 			return typeStr;
 		}
 	}
-	console.log("getArrayType unsupportedarraytype err:", typedArray)
+	console.log("getArrayType unsupportedarraytype err:", typedArray);
 	throw new Error("Unsupported array type");
 }
 
