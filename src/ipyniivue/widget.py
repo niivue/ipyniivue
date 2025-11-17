@@ -966,7 +966,7 @@ class NiiVue(BaseAnyWidget):
         )
         self.send({"type": "update_gl_volume", "data": []})
 
-    def _sph2cart_deg(self, azimuth: float, elevation: float) -> typing.List[float]:
+    def _sph2cart_deg(self, azimuth: float, elevation: float) -> list[float]:
         phi = -elevation * (math.pi / 180.0)
         theta = ((azimuth - 90.0) % 360.0) * (math.pi / 180.0)
         ret = [
@@ -1643,7 +1643,7 @@ class NiiVue(BaseAnyWidget):
             nv.set_clip_plane_color((0, 1, 0, -0.7))
         """
         if not isinstance(color, (list, tuple)) or len(color) != 4:
-            raise ValueError("Color must be a list or tuple of four numeric values (RGBA).")
+            raise ValueError("Color must be have four numeric values (RGBA).")
 
         # Validate RGB (0..1) and A (-1..1)
         r, g, b, a = color
@@ -1776,20 +1776,20 @@ class NiiVue(BaseAnyWidget):
             raise TypeError("depth, azimuth, and elevation must all be numeric values.")
         v = self._sph2cart_deg(azimuth + 180, elevation)
         self.scene.clip_planes = [[v[0], v[1], v[2], depth]]
-        
+
         # self.scene.clip_planes = [[0.6427876096865393, -0.7660444431189781, -0, 0.25]]
         self.scene.clip_plane_depth_azi_elevs = [[depth, azimuth, elevation]]
         self._notify_scene_changed()
 
-    def set_clip_planes(self, depth_azi_elevs: typing.List[typing.List[float]]) -> None:
+    def set_clip_planes(self, depth_azi_elevs: list[list[float]]) -> None:
         """
         Update multiple clip planes in the 3D view.
-    
+
         Parameters
         ----------
         depth_azi_elevs : list of list of float
             A list of `[depth, azimuth, elevation]` triples, one per clip plane.
-    
+
         Raises
         ------
         TypeError
@@ -1798,32 +1798,35 @@ class NiiVue(BaseAnyWidget):
         """
         # Basic shape/type validation
         if not isinstance(depth_azi_elevs, (list, tuple)):
-            raise TypeError("depth_azi_elevs must be a list (or tuple) of [depth, azimuth, elevation] triples.")
-    
+            raise TypeError("each plane must get [depth, azimuth, elevation]")
+
         # Reset scene lists
         self.scene.clip_planes = []
         self.scene.clip_plane_depth_azi_elevs = []
-    
-        for i, dae in enumerate(depth_azi_elevs):
+
+        for dae in enumerate(depth_azi_elevs):
             # Validate each inner item
             if not isinstance(dae, (list, tuple)) or len(dae) < 3:
-                raise TypeError(f"Entry {i} must be a list/tuple of three numeric values: [depth, azimuth, elevation].")
+                raise TypeError("Each plane must have 3 numeric values.")
             depth, azimuth, elevation = dae[0], dae[1], dae[2]
-            if not all(isinstance(x, (int, float)) for x in [depth, azimuth, elevation]):
-                raise TypeError(f"Entry {i} contains non-numeric values; expected [depth, azimuth, elevation].")
-    
+            if not all(
+                isinstance(x, (int, float))
+                for x in [depth, azimuth, elevation]
+            ):
+                raise TypeError("each plane must get [depth, azimuth, elevation].")
+
             # Compute normal (note azimuth + 180 to match existing convention)
             n = self._sph2cart_deg(azimuth + 180, elevation)
-    
+
             # d uses negative sign for shader (matches the JS)
             d = -depth
-    
+
             plane = [n[0], n[1], n[2], d]
-    
+
             self.scene.clip_planes.append(plane)
             # store the original depth/azimuth/elevation triple
             self.scene.clip_plane_depth_azi_elevs.append([depth, azimuth, elevation])
-    
+
         # notify that scene changed / redraw
         self._notify_scene_changed()
 

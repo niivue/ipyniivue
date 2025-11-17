@@ -279,7 +279,6 @@ CAMEL_TO_SNAKE = {
     "selectionBoxColor": "selection_box_color",
     "clipPlaneColor": "clip_plane_color",
     "isClipPlanesCutaway": "is_clip_planes_cutaway",
-    "show3Dcrosshair": "show_3d_crosshair",
     "paqdUniforms": "paqd_uniforms",
     "rulerColor": "ruler_color",
     "colorbarMargin": "colorbar_margin",
