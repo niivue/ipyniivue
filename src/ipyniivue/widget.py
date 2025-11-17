@@ -966,6 +966,19 @@ class NiiVue(BaseAnyWidget):
         )
         self.send({"type": "update_gl_volume", "data": []})
 
+    def _sph2cart_deg(self, azimuth: float, elevation: float) -> typing.List[float]:
+        phi = -elevation * (math.pi / 180.0)
+        theta = ((azimuth - 90.0) % 360.0) * (math.pi / 180.0)
+        ret = [
+            math.cos(phi) * math.cos(theta),
+            math.cos(phi) * math.sin(theta),
+            math.sin(phi),
+        ]
+        length = math.sqrt(ret[0] ** 2 + ret[1] ** 2 + ret[2] ** 2)
+        if length > 0.0:
+            ret = [x / length for x in ret]
+        return ret
+
     def _notify_scene_changed(self):
         self.notify_change(
             {
@@ -1605,6 +1618,45 @@ class NiiVue(BaseAnyWidget):
             raise ValueError("Each color component must be a number between 0 and 1.")
 
         self.opts.selection_box_color = tuple(color)
+        print("COLOR", color)
+
+    def set_clip_plane_color(self, color: tuple):
+        """Set the clip plane color.
+
+        Parameters
+        ----------
+        color : tuple of floats
+            An RGBA array where the RGB components range from 0 to 1,
+            and the A (alpha) component can range from -1 to 1.
+            A negative alpha value means the color appears inside the volume.
+
+        Raises
+        ------
+        ValueError
+            If the color is not a tuple/list of four numeric values
+            or any component is outside the valid range.
+
+        Examples
+        --------
+        ::
+
+            nv.set_clip_plane_color((0, 1, 0, -0.7))
+        """
+        if not isinstance(color, (list, tuple)) or len(color) != 4:
+            raise ValueError("Color must be a list or tuple of four numeric values (RGBA).")
+
+        # Validate RGB (0..1) and A (-1..1)
+        r, g, b, a = color
+        if not all(isinstance(c, (int, float)) for c in color):
+            raise ValueError("Each color component must be numeric (int or float).")
+
+        if not (0.0 <= r <= 1.0 and 0.0 <= g <= 1.0 and 0.0 <= b <= 1.0):
+            raise ValueError("RGB components must each be between 0 and 1.")
+
+        if not (-1.0 <= a <= 1.0):
+            raise ValueError("Alpha component must be between -1 and 1.")
+
+        self.opts.clip_plane_color = tuple(color)
 
     def set_crosshair_color(self, color: tuple):
         """Set the crosshair and colorbar outline color.
@@ -1722,8 +1774,58 @@ class NiiVue(BaseAnyWidget):
         # Verify that all inputs are numeric types
         if not all(isinstance(x, (int, float)) for x in [depth, azimuth, elevation]):
             raise TypeError("depth, azimuth, and elevation must all be numeric values.")
+        v = self._sph2cart_deg(azimuth + 180, elevation)
+        self.scene.clip_planes = [[v[0], v[1], v[2], depth]]
+        
+        # self.scene.clip_planes = [[0.6427876096865393, -0.7660444431189781, -0, 0.25]]
+        self.scene.clip_plane_depth_azi_elevs = [[depth, azimuth, elevation]]
+        self._notify_scene_changed()
 
-        self.scene.clip_plane_depth_azi_elev = [depth, azimuth, elevation]
+    def set_clip_planes(self, depth_azi_elevs: typing.List[typing.List[float]]) -> None:
+        """
+        Update multiple clip planes in the 3D view.
+    
+        Parameters
+        ----------
+        depth_azi_elevs : list of list of float
+            A list of `[depth, azimuth, elevation]` triples, one per clip plane.
+    
+        Raises
+        ------
+        TypeError
+            If the outer container is not a list-like of list-like numeric triples,
+            or any inner element does not contain three numeric values.
+        """
+        # Basic shape/type validation
+        if not isinstance(depth_azi_elevs, (list, tuple)):
+            raise TypeError("depth_azi_elevs must be a list (or tuple) of [depth, azimuth, elevation] triples.")
+    
+        # Reset scene lists
+        self.scene.clip_planes = []
+        self.scene.clip_plane_depth_azi_elevs = []
+    
+        for i, dae in enumerate(depth_azi_elevs):
+            # Validate each inner item
+            if not isinstance(dae, (list, tuple)) or len(dae) < 3:
+                raise TypeError(f"Entry {i} must be a list/tuple of three numeric values: [depth, azimuth, elevation].")
+            depth, azimuth, elevation = dae[0], dae[1], dae[2]
+            if not all(isinstance(x, (int, float)) for x in [depth, azimuth, elevation]):
+                raise TypeError(f"Entry {i} contains non-numeric values; expected [depth, azimuth, elevation].")
+    
+            # Compute normal (note azimuth + 180 to match existing convention)
+            n = self._sph2cart_deg(azimuth + 180, elevation)
+    
+            # d uses negative sign for shader (matches the JS)
+            d = -depth
+    
+            plane = [n[0], n[1], n[2], d]
+    
+            self.scene.clip_planes.append(plane)
+            # store the original depth/azimuth/elevation triple
+            self.scene.clip_plane_depth_azi_elevs.append([depth, azimuth, elevation])
+    
+        # notify that scene changed / redraw
+        self._notify_scene_changed()
 
     def set_render_azimuth_elevation(self, azimuth: float, elevation: float):
         """Set the rotation of the 3D render view.
@@ -1945,6 +2047,24 @@ class NiiVue(BaseAnyWidget):
         """
         self.opts.is_nearest_interpolation = is_nearest
         self.send({"type": "set_interpolation", "data": [is_nearest]})
+
+    def set_cutaway(self, is_cutaway: bool):
+        """Set whether clip planes form cutaway.
+
+        Parameters
+        ----------
+        is_cutaway : bool
+            If True, cutaway.
+            If False, classic clip planes.
+
+        Examples
+        --------
+        ::
+
+            nv.set_clip_planes_cutaway(True)
+        """
+        self.opts.is_clip_planes_cutaway = is_cutaway 
+        self.send({"type": "set_cutaway", "data": [is_cutaway]})
 
     def set_pen_value(self, pen_value: float, is_filled_pen: bool):
         """Determine color and style of drawing.

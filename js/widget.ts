@@ -492,6 +492,7 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 	};
 
 	nv.onClipPlaneChange = (clipPlane: number[]) => {
+		console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
 		model.send({
 			event: "clip_plane_change",
 			data: clipPlane,
@@ -713,8 +714,8 @@ function setupSyncInterval(nv: niivue.Niivue, model: Model) {
 			renderElevation: nv.scene.renderElevation,
 			volScaleMultiplier: nv.scene.volScaleMultiplier,
 			crosshairPos: [...nv.scene.crosshairPos],
-			clipPlane: nv.scene.clipPlane,
-			clipPlaneDepthAziElev: nv.scene.clipPlaneDepthAziElev,
+			clipPlanes: nv.scene.clipPlanes,
+			clipPlaneDepthAziElevs: nv.scene.clipPlaneDepthAziElevs,
 			pan2Dxyzmm: [...nv.scene.pan2Dxyzmm],
 			gamma: nv.scene.gamma || 1.0,
 		};

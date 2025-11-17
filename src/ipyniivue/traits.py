@@ -364,20 +364,16 @@ class Scene(t.HasTraits):
         Scale multiplier for volume rendering.
     crosshair_pos : list of float
         The crosshair position as a list of 3 floats.
-    clip_plane : list of float
-        The clip plane parameters.
-    clip_plane_depth_azi_elev : list of float
-        The depth, azimuth, and elevation for the clip plane.
+    clip_planes : list of list of float
+        A list of clipping planes, where each plane is defined
+        by four floats `[x, y, z, w]` representing the plane equation.
+    clip_plane_depth_azi_elevs : list of list of float
+        A list of `[depth, azimuth, elevation]` triples,
+        one per clip plane. Each inner list contains three floats.
     pan2d_xyzmm : list of float
         The 2D pan in 3D mm as a list of 4 floats.
     gamma : float
         The gamma value for rendering.
-    clip_thick : float
-        The clip plane thickness.
-    clip_volume_low : list of float
-        The lower bounds of the clipping volume.
-    clip_volume_high : list of float
-        The upper bounds of the clipping volume.
     """
 
     render_azimuth = t.Float(110.0).tag(sync=True)
@@ -386,21 +382,20 @@ class Scene(t.HasTraits):
     crosshair_pos = t.List(
         t.Float(), default_value=[0.5, 0.5, 0.5], minlen=3, maxlen=3
     ).tag(sync=True)
-    clip_plane = t.List(t.Float(), default_value=[0.0, 0.0, 0.0, 0.0]).tag(sync=True)
-    clip_plane_depth_azi_elev = t.List(
-        t.Float(), default_value=[2.0, 0.0, 0.0], minlen=3, maxlen=3
+    # [0.0, 0.0, 0.0, 0.0]
+    clip_planes = t.List(
+        t.List(t.Float()),
+        default_value=[[0.0, 0.0, 0.0, 0.0]]
+    ).tag(sync=True)
+    # [2.0, 0.0, 0.0]
+    clip_plane_depth_azi_elevs = t.List(
+        t.List(t.Float()),
+        default_value=[[2.0, 0.0, 0.0]]
     ).tag(sync=True)
     pan2d_xyzmm = t.List(
         t.Float(), default_value=[0.0, 0.0, 0.0, 1.0], minlen=4, maxlen=4
     ).tag(sync=True)
     gamma = t.Float(1.0).tag(sync=True)
-    clip_thick = t.Float(2.0).tag(sync=True)
-    clip_volume_low = t.List(
-        t.Float(), default_value=[0.0, 0.0, 0.0], minlen=3, maxlen=3
-    ).tag(sync=True)
-    clip_volume_high = t.List(
-        t.Float(), default_value=[1.0, 1.0, 1.0], minlen=3, maxlen=3
-    ).tag(sync=True)
 
     # parent
     _parent = None
@@ -506,13 +501,10 @@ CAMEL_TO_SNAKE_SCENE = {
     "renderElevation": "render_elevation",
     "volScaleMultiplier": "vol_scale_multiplier",
     "crosshairPos": "crosshair_pos",
-    "clipPlane": "clip_plane",
-    "clipPlaneDepthAziElev": "clip_plane_depth_azi_elev",
+    "clipPlanes": "clip_planes",
+    "clipPlaneDepthAziElevs": "clip_plane_depth_azi_elevs",
     "pan2Dxyzmm": "pan2d_xyzmm",
     "gamma": "gamma",
-    "clipThick": "clip_thick",
-    "clipVolumeLow": "clip_volume_low",
-    "clipVolumeHigh": "clip_volume_high",
 }
 
 SNAKE_TO_CAMEL_SCENE = {v: k for k, v in CAMEL_TO_SNAKE_SCENE.items()}

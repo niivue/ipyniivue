@@ -69,8 +69,8 @@ export type Scene = {
 	renderElevation?: number;
 	volScaleMultiplier?: number;
 	crosshairPos?: number[];
-	clipPlane?: number[];
-	clipPlaneDepthAziElev?: number[];
+	clipPlanes?: number[][]
+	clipPlaneDepthAziElevs?: number[][]
 	pan2Dxyzmm?: number[];
 	gamma?: number;
 };

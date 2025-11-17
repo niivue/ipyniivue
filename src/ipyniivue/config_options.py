@@ -37,6 +37,7 @@ class ConfigOptions(t.HasTraits):
     font_color = t.Tuple((0.5, 0.5, 0.5, 1.0)).tag(sync=False)
     selection_box_color = t.Tuple((1.0, 1.0, 1.0, 0.5)).tag(sync=False)
     clip_plane_color = t.Tuple((0.7, 0.0, 0.7, 0.5)).tag(sync=False)
+    is_clip_planes_cutaway = t.Bool(False).tag(sync=False)
     paqd_uniforms = t.Tuple((0.3, 0.5, 0.5, 1.0)).tag(sync=False)
     clip_thick = t.Float(2.0).tag(sync=False)
     clip_volume_low = t.Tuple((0.0, 0.0, 0.0)).tag(sync=False)
@@ -159,6 +160,7 @@ class ConfigOptions(t.HasTraits):
         "font_color",
         "selection_box_color",
         "clip_plane_color",
+        "is_clip_planes_cutaway",
         "paqd_uniforms",
         "clip_thick",
         "clip_volume_low",
@@ -276,10 +278,9 @@ CAMEL_TO_SNAKE = {
     "fontColor": "font_color",
     "selectionBoxColor": "selection_box_color",
     "clipPlaneColor": "clip_plane_color",
+    "isClipPlanesCutaway": "is_clip_planes_cutaway",
+    "show3Dcrosshair": "show_3d_crosshair",
     "paqdUniforms": "paqd_uniforms",
-    "clipThick": "clip_thick",
-    "clipVolumeLow": "clip_volume_low",
-    "clipVolumeHigh": "clip_volume_high",
     "rulerColor": "ruler_color",
     "colorbarMargin": "colorbar_margin",
     "trustCalMinMax": "trust_cal_min_max",
