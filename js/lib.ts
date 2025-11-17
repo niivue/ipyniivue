@@ -331,8 +331,8 @@ export function sceneDiff(
 	if (
 		oldScene.clipPlaneDepthAziElevs &&
 		newScene.clipPlaneDepthAziElevs &&
-		JSON.stringify(oldScene.clipPlaneDepthAziElevs)
-			!== JSON.stringify(newScene.clipPlaneDepthAziElevs)
+		JSON.stringify(oldScene.clipPlaneDepthAziElevs) !==
+			JSON.stringify(newScene.clipPlaneDepthAziElevs)
 	) {
 		diff.clipPlaneDepthAziElevs = newScene.clipPlaneDepthAziElevs;
 	}
