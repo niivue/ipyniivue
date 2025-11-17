@@ -320,21 +320,21 @@ export function sceneDiff(
 		diff.crosshairPos = newScene.crosshairPos;
 	}
 	if (
-		oldScene.clipPlane &&
-		newScene.clipPlane &&
-		!numberArraysEqual(oldScene.clipPlane, newScene.clipPlane)
+		oldScene.clipPlanes &&
+		newScene.clipPlanes &&
+		!numberArraysEqual(oldScene.clipPlanes, newScene.clipPlanes)
 	) {
-		diff.clipPlane = newScene.clipPlane;
+		diff.clipPlanes = newScene.clipPlanes;
 	}
 	if (
-		oldScene.clipPlaneDepthAziElev &&
-		newScene.clipPlaneDepthAziElev &&
+		oldScene.clipPlaneDepthAziElevs &&
+		newScene.clipPlaneDepthAziElevs &&
 		!numberArraysEqual(
-			oldScene.clipPlaneDepthAziElev,
-			newScene.clipPlaneDepthAziElev,
+			oldScene.clipPlaneDepthAziElevs,
+			newScene.clipPlaneDepthAziElevs,
 		)
 	) {
-		diff.clipPlaneDepthAziElev = newScene.clipPlaneDepthAziElev;
+		diff.clipPlaneDepthAziElevs = newScene.clipPlaneDepthAziElevs;
 	}
 	if (
 		oldScene.pan2Dxyzmm &&
