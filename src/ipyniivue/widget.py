@@ -2063,7 +2063,7 @@ class NiiVue(BaseAnyWidget):
 
             nv.set_clip_planes_cutaway(True)
         """
-        self.opts.is_clip_planes_cutaway = is_cutaway 
+        self.opts.is_clip_planes_cutaway = is_cutaway
         self.send({"type": "set_cutaway", "data": [is_cutaway]})
 
     def set_pen_value(self, pen_value: float, is_filled_pen: bool):
