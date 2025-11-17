@@ -1785,6 +1785,10 @@ class NiiVue(BaseAnyWidget):
         """
         Update multiple clip planes in the 3D view.
 
+        Each clip plane is defined by a `[depth, azimuth, elevation]` triple.
+        This method converts those spherical definitions into Cartesian plane
+        equations and updates the scene accordingly.
+
         Parameters
         ----------
         depth_azi_elevs : list of list of float
@@ -1793,42 +1797,55 @@ class NiiVue(BaseAnyWidget):
         Raises
         ------
         TypeError
-            If the outer container is not a list-like of list-like numeric triples,
-            or any inner element does not contain three numeric values.
-        """
-        # Basic shape/type validation
-        if not isinstance(depth_azi_elevs, (list, tuple)):
-            raise TypeError("each plane must get [depth, azimuth, elevation]")
+            If any entry in `depth_azi_elevs` is not a list or tuple of three
+            numeric values.
 
-        # Reset scene lists
+        Notes
+        -----
+        The azimuth is rotated by 180 degrees to match the existing shader
+        convention, and the depth value is negated when forming the plane
+        equation. After updating all planes, this method notifies the scene
+        to refresh.
+        """
+        if not isinstance(depth_azi_elevs, (list, tuple)):
+            raise TypeError(
+                "depth_azi_elevs must be a list of "
+                "[depth, azimuth, elevation] triples."
+            )
+
         self.scene.clip_planes = []
         self.scene.clip_plane_depth_azi_elevs = []
 
-        for dae in enumerate(depth_azi_elevs):
-            # Validate each inner item
+        for i, dae in enumerate(depth_azi_elevs):
             if not isinstance(dae, (list, tuple)) or len(dae) < 3:
-                raise TypeError("Each plane must have 3 numeric values.")
+                raise TypeError(
+                    f"Entry {i} must be a list or tuple of "
+                    "three numeric values."
+                )
+
             depth, azimuth, elevation = dae[0], dae[1], dae[2]
+
             if not all(
                 isinstance(x, (int, float))
-                for x in [depth, azimuth, elevation]
+                for x in (depth, azimuth, elevation)
             ):
-                raise TypeError("each plane must get [depth, azimuth, elevation].")
+                raise TypeError(
+                    f"Entry {i} contains non-numeric values; "
+                    "expected [depth, azimuth, elevation]."
+                )
 
-            # Compute normal (note azimuth + 180 to match existing convention)
             n = self._sph2cart_deg(azimuth + 180, elevation)
-
-            # d uses negative sign for shader (matches the JS)
             d = -depth
-
             plane = [n[0], n[1], n[2], d]
 
             self.scene.clip_planes.append(plane)
-            # store the original depth/azimuth/elevation triple
-            self.scene.clip_plane_depth_azi_elevs.append([depth, azimuth, elevation])
+            self.scene.clip_plane_depth_azi_elevs.append(
+                [depth, azimuth, elevation]
+            )
 
-        # notify that scene changed / redraw
         self._notify_scene_changed()
+
+
 
     def set_render_azimuth_elevation(self, azimuth: float, elevation: float):
         """Set the rotation of the 3D render view.
