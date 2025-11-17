@@ -492,7 +492,6 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 	};
 
 	nv.onClipPlaneChange = (clipPlane: number[]) => {
-		console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
 		model.send({
 			event: "clip_plane_change",
 			data: clipPlane,
