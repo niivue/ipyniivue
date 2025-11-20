@@ -329,6 +329,8 @@ class Mesh(BaseAnyWidget):
     colormap_invert = t.Bool(False).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
     mesh_shader_index = t.Int(default_value=0).tag(sync=True)
+    edge_scale = t.Float(1.0).tag(sync=True)
+    node_scale = t.Float(1.0).tag(sync=True)
     fiber_radius = t.Float(0.0).tag(sync=True)
     fiber_length = t.Float(2.0).tag(sync=True)
     fiber_dither = t.Float(0.1).tag(sync=True)

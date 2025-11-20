@@ -166,6 +166,18 @@ function setup_mesh_property_listeners(
 		nv.onMeshShaderChanged(meshIndex, mesh.meshShaderIndex);
 	}
 
+	function node_scale_changed() {
+		mesh.nodeScale = mmodel.get("node_scale");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function edge_scale_changed() {
+		mesh.edgeScale = mmodel.get("edge_scale");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
 	function fiber_radius_changed() {
 		mesh.fiberRadius = mmodel.get("fiber_radius");
 		mesh.updateMesh(nv.gl);
@@ -221,6 +233,8 @@ function setup_mesh_property_listeners(
 	colormap_invert_changed();
 	colorbar_visible_changed();
 	mesh_shader_index_changed();
+	edge_scale_changed();
+	node_scale_changed();
 	fiber_radius_changed();
 	fiber_length_changed();
 	fiber_dither_changed();
@@ -234,6 +248,8 @@ function setup_mesh_property_listeners(
 	mmodel.on("change:colormap_invert", colormap_invert_changed);
 	mmodel.on("change:colorbar_visible", colorbar_visible_changed);
 	mmodel.on("change:mesh_shader_index", mesh_shader_index_changed);
+	mmodel.on("change:edge_scale", edge_scale_changed);
+	mmodel.on("change:node_scale", node_scale_changed);
 	mmodel.on("change:fiber_radius", fiber_radius_changed);
 	mmodel.on("change:fiber_length", fiber_length_changed);
 	mmodel.on("change:fiber_dither", fiber_dither_changed);
@@ -252,6 +268,8 @@ function setup_mesh_property_listeners(
 		mmodel.off("change:colormap_invert", colormap_invert_changed);
 		mmodel.off("change:colorbar_visible", colorbar_visible_changed);
 		mmodel.off("change:mesh_shader_index", mesh_shader_index_changed);
+		mmodel.off("change:edge_scale", edge_scale_changed);
+		mmodel.off("change:node_scale", node_scale_changed);
 		mmodel.off("change:fiber_radius", fiber_radius_changed);
 		mmodel.off("change:fiber_length", fiber_length_changed);
 		mmodel.off("change:fiber_dither", fiber_dither_changed);
@@ -290,14 +308,23 @@ export async function create_mesh(
 	} else if (path || data) {
 		const dataBuffer = path?.data?.buffer || data?.buffer;
 		const name = path?.name || mmodel.get("name");
-		mesh = await niivue.NVMesh.readMesh(
-			dataBuffer as ArrayBuffer,
-			name,
-			nv.gl,
-			mmodel.get("opacity"),
-			new Uint8Array(mmodel.get("rgba255")),
-			mmodel.get("visible"),
-		);
+		if (typeof name === "string" && name.toLowerCase().endsWith(".jcon")) {
+			const decoder = new TextDecoder("utf-8");
+			const jsonText = decoder.decode(dataBuffer);
+			const jsonObj = JSON.parse(jsonText);
+			mesh = nv.loadConnectomeAsMesh(jsonObj);
+			mmodel.set("node_scale", mesh.nodeScale);
+			mmodel.set("edge_scale", mesh.edgeScale);
+		} else {
+			mesh = await niivue.NVMesh.readMesh(
+				dataBuffer as ArrayBuffer,
+				name,
+				nv.gl,
+				mmodel.get("opacity"),
+				new Uint8Array(mmodel.get("rgba255")),
+				mmodel.get("visible"),
+			);
+		}
 		mesh.id = backendId;
 	} else if (url) {
 		mesh = await niivue.NVMesh.loadFromUrl({

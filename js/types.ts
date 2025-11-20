@@ -130,6 +130,8 @@ export type MeshModel = AnyModel<{
 	colormap_invert: boolean;
 	colorbar_visible: boolean;
 	mesh_shader_index: number;
+	edge_scale: number;
+	node_scale: number;
 	fiber_radius: number;
 	fiber_length: number;
 	fiber_dither: number;
