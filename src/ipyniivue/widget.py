@@ -1985,6 +1985,30 @@ class NiiVue(BaseAnyWidget):
             self.opts.gradient_amount = gradient_amount
         self.send({"type": "set_volume_render_illumination", "data": [gradient_amount]})
 
+    def update_gl_volume(self):
+        """
+        Refresh voxel data and redraw the canvas.
+
+        Examples
+        --------
+        ::
+
+            nv.update_gl_volume()
+        """
+        self.send({"type": "update_gl_volume", "data": []})
+
+    def draw_scene(self):
+        """
+        Redraw the canvas.
+
+        Examples
+        --------
+        ::
+
+            nv.draw_scene()
+        """
+        self.send({"type": "draw_scene", "data": []})
+
     def set_high_resolution_capable(
         self, force_device_pixel_ratio: typing.Union[int, bool]
     ):

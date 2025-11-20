@@ -325,7 +325,7 @@ class NIFTI1Hdr(t.HasTraits):
     slice_start = t.Int().tag(sync=False)
     slice_end = t.Int().tag(sync=False)
     slice_code = t.Int().tag(sync=False)
-    pixDims = t.List(t.Float()).tag(sync=False)  # voxel dimensions
+    pixDims = t.List(t.Float(allow_none=True)).tag(sync=False)
     vox_offset = t.Float().tag(sync=False)
     scl_slope = t.Float().tag(sync=False)
     scl_inter = t.Float().tag(sync=False)
