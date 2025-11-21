@@ -204,6 +204,10 @@ class MeshLayer(BaseAnyWidget):
         Maximum intensity value for brightness/contrast mapping.
     outline_border : int, optional
         Outline border thickness. Default is 0.
+    atlas_labels : list[str] or None, optional
+        Read-only-ish: labels for atlas colormap (populated by the frontend).
+    atlas_values : list[float] or None, optional
+        Values mapping for atlas (set from Python, applied by the frontend)
     """
 
     path = t.Union(
@@ -226,6 +230,10 @@ class MeshLayer(BaseAnyWidget):
     colormap_invert = t.Bool(False).tag(sync=True)
     frame_4d = t.Int(0).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
+    atlas_labels = t.List(t.Unicode(),
+                      default_value=None,
+                      allow_none=True).tag(sync=True)
+    atlas_values = t.List(t.Float(), default_value=None, allow_none=True).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -240,6 +248,8 @@ class MeshLayer(BaseAnyWidget):
             "cal_min",
             "cal_max",
             "outline_border",
+            "atlas_labels",
+            "atlas_values",
         }
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
@@ -1439,6 +1449,75 @@ class NiiVue(BaseAnyWidget):
 
         mesh = self.meshes[idx]
         setattr(mesh, attribute, value)
+
+    def get_mesh_layer_property(
+        self, mesh_id: str, layer_index: int, attribute: str
+    ):
+        """Return the value of a mesh layer property.
+
+        Parameters
+        ----------
+        mesh_id : str
+            Identifier of the mesh to query.
+        layer_index : int
+            Index of the layer within the mesh.
+        attribute : str
+            Name of the attribute to retrieve.
+
+        Returns
+        -------
+        Any
+            The current value of the requested attribute.
+
+        Raises
+        ------
+        ValueError
+            If the attribute is not allowed or the mesh is not found.
+        IndexError
+            If the layer index is out of range.
+
+        Notes
+        -----
+        This method provides the same result as directly accessing the
+        property via::
+
+            val = nv.meshes[0].layers[0].opacity
+
+        but adds validation safeguards. Specifically, it verifies that
+        the requested attribute is a defined and allowed trait, that the
+        mesh ID exists, and that the requested layer index is valid. Use
+        this method when you need a safe, validated query for arbitrary
+        attributes.
+
+        Examples
+        --------
+        ::
+            val = nv.get_mesh_layer_property(nv.meshes[0].id, 0, 'opacity')
+        """
+        allowed_attributes = [
+            name
+            for name, trait in MeshLayer.__dict__.items()
+            if isinstance(trait, t.TraitType)
+            and not name.startswith("_")
+            and name not in {"id", "path"}
+        ]
+
+        if attribute not in allowed_attributes:
+            raise ValueError(
+                f"Attribute '{attribute}' is not allowed. "
+                f"Allowed attributes are: {', '.join(allowed_attributes)}."
+            )
+
+        idx = self.get_mesh_index_by_id(mesh_id)
+        if idx == -1:
+            raise ValueError(f"Mesh with id '{mesh_id}' not found.")
+
+        mesh = self.meshes[idx]
+        if layer_index < 0 or layer_index >= len(mesh.layers):
+            raise IndexError(f"Layer index {layer_index} out of range.")
+
+        layer = mesh.layers[layer_index]
+        return getattr(layer, attribute)
 
     def set_mesh_layer_property(
         self, mesh_id: str, layer_index: int, attribute: str, value: typing.Any

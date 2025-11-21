@@ -445,6 +445,12 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 					cal_min: layer.cal_min,
 					cal_max: layer.cal_max,
 					outline_border: layer.outlineBorder,
+					atlas_labels: Array.isArray(layer.colormapLabel?.labels)
+						? layer.colormapLabel.labels
+						: null,
+					atlas_values: Array.isArray(layer.atlasValues)
+						? layer.atlasValues
+						: null,
 					id: layer.id,
 				};
 			});

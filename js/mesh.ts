@@ -32,6 +32,12 @@ function setup_layer_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	function atlas_values_changed() {
+		layer.atlasValues = layerModel.get("atlas_values");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
 	function colormap_changed() {
 		layer.colormap = layerModel.get("colormap");
 		mesh.updateMesh(nv.gl);
@@ -93,6 +99,7 @@ function setup_layer_property_listeners(
 	colorbar_visible_changed();
 
 	// Set up the event listeners
+	layerModel.on("change:atlas_values", atlas_values_changed);
 	layerModel.on("change:opacity", opacity_changed);
 	layerModel.on("change:colormap", colormap_changed);
 	layerModel.on("change:colormap_negative", colormap_negative_changed);
@@ -107,6 +114,7 @@ function setup_layer_property_listeners(
 
 	// Return a cleanup function
 	return () => {
+		layerModel.off("change:atlas_values", atlas_values_changed);
 		layerModel.off("change:opacity", opacity_changed);
 		layerModel.off("change:colormap", colormap_changed);
 		layerModel.off("change:colormap_negative", colormap_negative_changed);
@@ -390,6 +398,13 @@ export async function create_mesh(
 					layerModel.get("outline_border") ?? 0,
 				);
 				layer.id = backendLayerId;
+				const labels = Array.isArray(layer.colormapLabel?.labels) ? layer.colormapLabel.labels : null;
+				layerModel.set('atlas_labels', labels);
+				const values = Array.isArray(layer.atlasValues) ? layer.atlasValues : null;
+				layerModel.set('atlas_values', values);
+				layerModel.save_changes?.();
+				// console.log('colormap via get():', layerModel.get('colormap'));
+				// console.log('atlas_labels via get():', layerModel.get('atlas_labels'));
 				mesh.layers.push(layer);
 			} else if (layerUrl) {
 				const response = await fetch(layerUrl);
@@ -411,6 +426,11 @@ export async function create_mesh(
 					layerModel.get("outline_border") ?? 0,
 				);
 				layer.id = backendLayerId;
+				const labels = Array.isArray(layer.colormapLabel?.labels) ? layer.colormapLabel.labels : null;
+				layerModel.set('atlas_labels', labels);
+				const values = Array.isArray(layer.atlasValues) ? layer.atlasValues : null;
+				layerModel.set('atlas_values', values);
+				layerModel.save_changes?.();
 				mesh.layers.push(layer);
 			} else {
 				throw new Error("Invalid source for mesh layer");
