@@ -39,9 +39,6 @@ class ConfigOptions(t.HasTraits):
     clip_plane_color = t.Tuple((0.7, 0.0, 0.7, 0.5)).tag(sync=False)
     is_clip_planes_cutaway = t.Bool(False).tag(sync=False)
     paqd_uniforms = t.Tuple((0.3, 0.5, 0.5, 1.0)).tag(sync=False)
-    clip_thick = t.Float(2.0).tag(sync=False)
-    clip_volume_low = t.Tuple((0.0, 0.0, 0.0)).tag(sync=False)
-    clip_volume_high = t.Tuple((1.0, 1.0, 1.0)).tag(sync=False)
     ruler_color = t.Tuple((1.0, 0.0, 0.0, 0.8)).tag(sync=False)
     colorbar_margin = t.Float(0.05).tag(sync=False)
     trust_cal_min_max = t.Bool(True).tag(sync=False)
@@ -162,9 +159,6 @@ class ConfigOptions(t.HasTraits):
         "clip_plane_color",
         "is_clip_planes_cutaway",
         "paqd_uniforms",
-        "clip_thick",
-        "clip_volume_low",
-        "clip_volume_high",
         "ruler_color",
         "colorbar_margin",
         "trust_cal_min_max",
