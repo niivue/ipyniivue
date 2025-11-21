@@ -230,9 +230,9 @@ class MeshLayer(BaseAnyWidget):
     colormap_invert = t.Bool(False).tag(sync=True)
     frame_4d = t.Int(0).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
-    atlas_labels = t.List(t.Unicode(),
-                      default_value=None,
-                      allow_none=True).tag(sync=True)
+    atlas_labels = t.List(t.Unicode(), default_value=None, allow_none=True).tag(
+        sync=True
+    )
     atlas_values = t.List(t.Float(), default_value=None, allow_none=True).tag(sync=True)
 
     def __init__(self, **kwargs):
@@ -1450,9 +1450,7 @@ class NiiVue(BaseAnyWidget):
         mesh = self.meshes[idx]
         setattr(mesh, attribute, value)
 
-    def get_mesh_layer_property(
-        self, mesh_id: str, layer_index: int, attribute: str
-    ):
+    def get_mesh_layer_property(self, mesh_id: str, layer_index: int, attribute: str):
         """Return the value of a mesh layer property.
 
         Parameters
@@ -1890,8 +1888,7 @@ class NiiVue(BaseAnyWidget):
         """
         if not isinstance(depth_azi_elevs, (list, tuple)):
             raise TypeError(
-                "depth_azi_elevs must be a list of "
-                "[depth, azimuth, elevation] triples."
+                "depth_azi_elevs must be a list of [depth, azimuth, elevation] triples."
             )
 
         self.scene.clip_planes = []
@@ -1900,15 +1897,13 @@ class NiiVue(BaseAnyWidget):
         for i, dae in enumerate(depth_azi_elevs):
             if not isinstance(dae, (list, tuple)) or len(dae) < 3:
                 raise TypeError(
-                    f"Entry {i} must be a list or tuple of "
-                    "three numeric values."
+                    f"Entry {i} must be a list or tuple of three numeric values."
                 )
 
             depth, azimuth, elevation = dae[0], dae[1], dae[2]
 
             if not all(
-                isinstance(x, (int, float))
-                for x in (depth, azimuth, elevation)
+                isinstance(x, (int, float)) for x in (depth, azimuth, elevation)
             ):
                 raise TypeError(
                     f"Entry {i} contains non-numeric values; "
@@ -1920,13 +1915,9 @@ class NiiVue(BaseAnyWidget):
             plane = [n[0], n[1], n[2], d]
 
             self.scene.clip_planes.append(plane)
-            self.scene.clip_plane_depth_azi_elevs.append(
-                [depth, azimuth, elevation]
-            )
+            self.scene.clip_plane_depth_azi_elevs.append([depth, azimuth, elevation])
 
         self._notify_scene_changed()
-
-
 
     def set_render_azimuth_elevation(self, azimuth: float, elevation: float):
         """Set the rotation of the 3D render view.

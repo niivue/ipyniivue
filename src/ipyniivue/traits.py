@@ -383,14 +383,12 @@ class Scene(t.HasTraits):
         t.Float(), default_value=[0.5, 0.5, 0.5], minlen=3, maxlen=3
     ).tag(sync=True)
     # [0.0, 0.0, 0.0, 0.0]
-    clip_planes = t.List(
-        t.List(t.Float()),
-        default_value=[[0.0, 0.0, 0.0, 0.0]]
-    ).tag(sync=True)
+    clip_planes = t.List(t.List(t.Float()), default_value=[[0.0, 0.0, 0.0, 0.0]]).tag(
+        sync=True
+    )
     # [2.0, 0.0, 0.0]
     clip_plane_depth_azi_elevs = t.List(
-        t.List(t.Float()),
-        default_value=[[2.0, 0.0, 0.0]]
+        t.List(t.Float()), default_value=[[2.0, 0.0, 0.0]]
     ).tag(sync=True)
     pan2d_xyzmm = t.List(
         t.Float(), default_value=[0.0, 0.0, 0.0, 1.0], minlen=4, maxlen=4
