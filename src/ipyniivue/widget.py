@@ -59,6 +59,7 @@ from .utils import (
     make_draw_lut,
     make_label_lut,
     requires_canvas,
+    sph2cart_deg,
 )
 
 __all__ = ["NiiVue"]
@@ -978,19 +979,6 @@ class NiiVue(BaseAnyWidget):
         )
         self.send({"type": "update_gl_volume", "data": []})
 
-    def _sph2cart_deg(self, azimuth: float, elevation: float) -> list[float]:
-        phi = -elevation * (math.pi / 180.0)
-        theta = ((azimuth - 90.0) % 360.0) * (math.pi / 180.0)
-        ret = [
-            math.cos(phi) * math.cos(theta),
-            math.cos(phi) * math.sin(theta),
-            math.sin(phi),
-        ]
-        length = math.sqrt(ret[0] ** 2 + ret[1] ** 2 + ret[2] ** 2)
-        if length > 0.0:
-            ret = [x / length for x in ret]
-        return ret
-
     def _notify_scene_changed(self):
         self.notify_change(
             {
@@ -1697,7 +1685,6 @@ class NiiVue(BaseAnyWidget):
             raise ValueError("Each color component must be a number between 0 and 1.")
 
         self.opts.selection_box_color = tuple(color)
-        print("COLOR", color)
 
     def set_clip_plane_color(self, color: tuple):
         """Set the clip plane color.
@@ -1853,7 +1840,7 @@ class NiiVue(BaseAnyWidget):
         # Verify that all inputs are numeric types
         if not all(isinstance(x, (int, float)) for x in [depth, azimuth, elevation]):
             raise TypeError("depth, azimuth, and elevation must all be numeric values.")
-        v = self._sph2cart_deg(azimuth + 180, elevation)
+        v = sph2cart_deg(azimuth + 180, elevation)
         self.scene.clip_planes = [[v[0], v[1], v[2], depth]]
 
         # self.scene.clip_planes = [[0.6427876096865393, -0.7660444431189781, -0, 0.25]]
@@ -1910,7 +1897,7 @@ class NiiVue(BaseAnyWidget):
                     "expected [depth, azimuth, elevation]."
                 )
 
-            n = self._sph2cart_deg(azimuth + 180, elevation)
+            n = sph2cart_deg(azimuth + 180, elevation)
             d = -depth
             plane = [n[0], n[1], n[2], d]
 
