@@ -164,8 +164,8 @@ export type MeshLayerModel = AnyModel<{
 	frame_4d: number;
 	colorbar_visible: boolean;
 
-  atlas_labels?: string[] | null;
-  atlas_values?: number[] | null;
+	atlas_labels?: string[] | null;
+	atlas_values?: number[] | null;
 }>;
 
 export type Model = AnyModel<{

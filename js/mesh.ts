@@ -398,10 +398,14 @@ export async function create_mesh(
 					layerModel.get("outline_border") ?? 0,
 				);
 				layer.id = backendLayerId;
-				const labels = Array.isArray(layer.colormapLabel?.labels) ? layer.colormapLabel.labels : null;
-				layerModel.set('atlas_labels', labels);
-				const values = Array.isArray(layer.atlasValues) ? layer.atlasValues : null;
-				layerModel.set('atlas_values', values);
+				const labels = Array.isArray(layer.colormapLabel?.labels)
+					? layer.colormapLabel.labels
+					: null;
+				layerModel.set("atlas_labels", labels);
+				const values = Array.isArray(layer.atlasValues)
+					? layer.atlasValues
+					: null;
+				layerModel.set("atlas_values", values);
 				layerModel.save_changes?.();
 				// console.log('colormap via get():', layerModel.get('colormap'));
 				// console.log('atlas_labels via get():', layerModel.get('atlas_labels'));
@@ -426,10 +430,14 @@ export async function create_mesh(
 					layerModel.get("outline_border") ?? 0,
 				);
 				layer.id = backendLayerId;
-				const labels = Array.isArray(layer.colormapLabel?.labels) ? layer.colormapLabel.labels : null;
-				layerModel.set('atlas_labels', labels);
-				const values = Array.isArray(layer.atlasValues) ? layer.atlasValues : null;
-				layerModel.set('atlas_values', values);
+				const labels = Array.isArray(layer.colormapLabel?.labels)
+					? layer.colormapLabel.labels
+					: null;
+				layerModel.set("atlas_labels", labels);
+				const values = Array.isArray(layer.atlasValues)
+					? layer.atlasValues
+					: null;
+				layerModel.set("atlas_values", values);
 				layerModel.save_changes?.();
 				mesh.layers.push(layer);
 			} else {
