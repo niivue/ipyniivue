@@ -3332,9 +3332,8 @@ class NiiVue(BaseAnyWidget):
 
     def _do_sync_clip_plane(self, other_nv):
         """Synchronize clip plane settings with another NiiVue instance."""
-        other_nv.scene._trait_values["clip_plane_depth_azi_elev"] = list(
-            self.scene.clip_plane_depth_azi_elev
-        )
+        # todo: add ui_data class + property with active_clip_plane_index?
+        other_nv.set_clip_plane(self.scene.clip_plane_depth_azi_elevs[0])
 
     def sync(self):
         """Sync the scene controls from this NiiVue instance to others."""
