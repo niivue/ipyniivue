@@ -410,13 +410,10 @@ class Scene(t.HasTraits):
             "azimuth": self.render_azimuth,
             "elevation": self.render_elevation,
             "crosshair_pos": self.crosshair_pos,
-            "clip_plane": self.clip_plane,
-            "clip_plane_depth_azi_elev": self.clip_plane_depth_azi_elev,
+            "clip_planes": self.clip_planes,
+            "clip_plane_depth_azi_elevs": self.clip_plane_depth_azi_elevs,
             "vol_scale_multiplier": self.vol_scale_multiplier,
             "pan2d_xyzmm": self.pan2d_xyzmm,
-            "clip_thick": self.clip_thick,
-            "clip_volume_low": self.clip_volume_low,
-            "clip_volume_high": self.clip_volume_high,
         }
         return data
 
@@ -425,13 +422,10 @@ class Scene(t.HasTraits):
         "render_elevation",
         "vol_scale_multiplier",
         "crosshair_pos",
-        "clip_plane",
-        "clip_plane_depth_azi_elev",
+        "clip_planes",
+        "clip_plane_depth_azi_elevs",
         "pan2d_xyzmm",
         "gamma",
-        "clip_thick",
-        "clip_volume_low",
-        "clip_volume_high",
     )
 
     @t.observe(*_OBSERVED_TRAITS)
