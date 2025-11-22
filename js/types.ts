@@ -69,8 +69,8 @@ export type Scene = {
 	renderElevation?: number;
 	volScaleMultiplier?: number;
 	crosshairPos?: number[];
-	clipPlane?: number[];
-	clipPlaneDepthAziElev?: number[];
+	clipPlanes?: number[][];
+	clipPlaneDepthAziElevs?: number[][];
 	pan2Dxyzmm?: number[];
 	gamma?: number;
 };
@@ -130,6 +130,8 @@ export type MeshModel = AnyModel<{
 	colormap_invert: boolean;
 	colorbar_visible: boolean;
 	mesh_shader_index: number;
+	edge_scale: number;
+	node_scale: number;
 	fiber_radius: number;
 	fiber_length: number;
 	fiber_dither: number;
@@ -161,6 +163,9 @@ export type MeshLayerModel = AnyModel<{
 	colormap_invert: boolean;
 	frame_4d: number;
 	colorbar_visible: boolean;
+
+	atlas_labels?: string[] | null;
+	atlas_values?: number[] | null;
 }>;
 
 export type Model = AnyModel<{

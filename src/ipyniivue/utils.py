@@ -329,6 +329,35 @@ def lerp(x: float, y: float, a: float) -> float:
     return x * (1 - a) + y * a
 
 
+def sph2cart_deg(azimuth: float, elevation: float) -> list[float]:
+    """
+    Convert spherical coordinates to normalized Cartesian coordinates.
+
+    Parameters
+    ----------
+    azimuth : float
+        Horizontal rotation angle in degrees.
+    elevation : float
+        Vertical angle from horizontal plane in degrees.
+
+    Returns
+    -------
+    list[float]
+        Normalized 3D Cartesian vector [x, y, z] with unit length.
+    """
+    phi = -elevation * (math.pi / 180.0)
+    theta = ((azimuth - 90.0) % 360.0) * (math.pi / 180.0)
+    ret = [
+        math.cos(phi) * math.cos(theta),
+        math.cos(phi) * math.sin(theta),
+        math.sin(phi),
+    ]
+    length = math.sqrt(ret[0] ** 2 + ret[1] ** 2 + ret[2] ** 2)
+    if length > 0.0:
+        ret = [x / length for x in ret]
+    return ret
+
+
 def requires_canvas(func):
     """Ensure canvas is attached before method execution."""
 

@@ -445,6 +445,12 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 					cal_min: layer.cal_min,
 					cal_max: layer.cal_max,
 					outline_border: layer.outlineBorder,
+					atlas_labels: Array.isArray(layer.colormapLabel?.labels)
+						? layer.colormapLabel.labels
+						: null,
+					atlas_values: Array.isArray(layer.atlasValues)
+						? layer.atlasValues
+						: null,
 					id: layer.id,
 				};
 			});
@@ -713,8 +719,8 @@ function setupSyncInterval(nv: niivue.Niivue, model: Model) {
 			renderElevation: nv.scene.renderElevation,
 			volScaleMultiplier: nv.scene.volScaleMultiplier,
 			crosshairPos: [...nv.scene.crosshairPos],
-			clipPlane: nv.scene.clipPlane,
-			clipPlaneDepthAziElev: nv.scene.clipPlaneDepthAziElev,
+			clipPlanes: nv.scene.clipPlanes,
+			clipPlaneDepthAziElevs: nv.scene.clipPlaneDepthAziElevs,
 			pan2Dxyzmm: [...nv.scene.pan2Dxyzmm],
 			gamma: nv.scene.gamma || 1.0,
 		};

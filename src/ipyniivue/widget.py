@@ -59,6 +59,7 @@ from .utils import (
     make_draw_lut,
     make_label_lut,
     requires_canvas,
+    sph2cart_deg,
 )
 
 __all__ = ["NiiVue"]
@@ -204,6 +205,10 @@ class MeshLayer(BaseAnyWidget):
         Maximum intensity value for brightness/contrast mapping.
     outline_border : int, optional
         Outline border thickness. Default is 0.
+    atlas_labels : list[str] or None, optional
+        Read-only-ish: labels for atlas colormap (populated by the frontend).
+    atlas_values : list[float] or None, optional
+        Values mapping for atlas (set from Python, applied by the frontend)
     """
 
     path = t.Union(
@@ -220,12 +225,16 @@ class MeshLayer(BaseAnyWidget):
     use_negative_cmap = t.Bool(False).tag(sync=True)
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
-    outline_border = t.Int(0).tag(sync=True)
+    outline_border = t.Float(0).tag(sync=True)
 
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
     frame_4d = t.Int(0).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
+    atlas_labels = t.List(t.Unicode(), default_value=None, allow_none=True).tag(
+        sync=True
+    )
+    atlas_values = t.List(t.Float(), default_value=None, allow_none=True).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -240,6 +249,8 @@ class MeshLayer(BaseAnyWidget):
             "cal_min",
             "cal_max",
             "outline_border",
+            "atlas_labels",
+            "atlas_values",
         }
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
@@ -329,6 +340,8 @@ class Mesh(BaseAnyWidget):
     colormap_invert = t.Bool(False).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
     mesh_shader_index = t.Int(default_value=0).tag(sync=True)
+    edge_scale = t.Float(1.0).tag(sync=True)
+    node_scale = t.Float(1.0).tag(sync=True)
     fiber_radius = t.Float(0.0).tag(sync=True)
     fiber_length = t.Float(2.0).tag(sync=True)
     fiber_dither = t.Float(0.1).tag(sync=True)
@@ -1425,6 +1438,73 @@ class NiiVue(BaseAnyWidget):
         mesh = self.meshes[idx]
         setattr(mesh, attribute, value)
 
+    def get_mesh_layer_property(self, mesh_id: str, layer_index: int, attribute: str):
+        """Return the value of a mesh layer property.
+
+        Parameters
+        ----------
+        mesh_id : str
+            Identifier of the mesh to query.
+        layer_index : int
+            Index of the layer within the mesh.
+        attribute : str
+            Name of the attribute to retrieve.
+
+        Returns
+        -------
+        Any
+            The current value of the requested attribute.
+
+        Raises
+        ------
+        ValueError
+            If the attribute is not allowed or the mesh is not found.
+        IndexError
+            If the layer index is out of range.
+
+        Notes
+        -----
+        This method provides the same result as directly accessing the
+        property via::
+
+            val = nv.meshes[0].layers[0].opacity
+
+        but adds validation safeguards. Specifically, it verifies that
+        the requested attribute is a defined and allowed trait, that the
+        mesh ID exists, and that the requested layer index is valid. Use
+        this method when you need a safe, validated query for arbitrary
+        attributes.
+
+        Examples
+        --------
+        ::
+            val = nv.get_mesh_layer_property(nv.meshes[0].id, 0, 'opacity')
+        """
+        allowed_attributes = [
+            name
+            for name, trait in MeshLayer.__dict__.items()
+            if isinstance(trait, t.TraitType)
+            and not name.startswith("_")
+            and name not in {"id", "path"}
+        ]
+
+        if attribute not in allowed_attributes:
+            raise ValueError(
+                f"Attribute '{attribute}' is not allowed. "
+                f"Allowed attributes are: {', '.join(allowed_attributes)}."
+            )
+
+        idx = self.get_mesh_index_by_id(mesh_id)
+        if idx == -1:
+            raise ValueError(f"Mesh with id '{mesh_id}' not found.")
+
+        mesh = self.meshes[idx]
+        if layer_index < 0 or layer_index >= len(mesh.layers):
+            raise IndexError(f"Layer index {layer_index} out of range.")
+
+        layer = mesh.layers[layer_index]
+        return getattr(layer, attribute)
+
     def set_mesh_layer_property(
         self, mesh_id: str, layer_index: int, attribute: str, value: typing.Any
     ):
@@ -1606,6 +1686,44 @@ class NiiVue(BaseAnyWidget):
 
         self.opts.selection_box_color = tuple(color)
 
+    def set_clip_plane_color(self, color: tuple):
+        """Set the clip plane color.
+
+        Parameters
+        ----------
+        color : tuple of floats
+            An RGBA array where the RGB components range from 0 to 1,
+            and the A (alpha) component can range from -1 to 1.
+            A negative alpha value means the color appears inside the volume.
+
+        Raises
+        ------
+        ValueError
+            If the color is not a tuple/list of four numeric values
+            or any component is outside the valid range.
+
+        Examples
+        --------
+        ::
+
+            nv.set_clip_plane_color((0, 1, 0, -0.7))
+        """
+        if not isinstance(color, (list, tuple)) or len(color) != 4:
+            raise ValueError("Color must be have four numeric values (RGBA).")
+
+        # Validate RGB (0..1) and A (-1..1)
+        r, g, b, a = color
+        if not all(isinstance(c, (int, float)) for c in color):
+            raise ValueError("Each color component must be numeric (int or float).")
+
+        if not (0.0 <= r <= 1.0 and 0.0 <= g <= 1.0 and 0.0 <= b <= 1.0):
+            raise ValueError("RGB components must each be between 0 and 1.")
+
+        if not (-1.0 <= a <= 1.0):
+            raise ValueError("Alpha component must be between -1 and 1.")
+
+        self.opts.clip_plane_color = tuple(color)
+
     def set_crosshair_color(self, color: tuple):
         """Set the crosshair and colorbar outline color.
 
@@ -1722,8 +1840,71 @@ class NiiVue(BaseAnyWidget):
         # Verify that all inputs are numeric types
         if not all(isinstance(x, (int, float)) for x in [depth, azimuth, elevation]):
             raise TypeError("depth, azimuth, and elevation must all be numeric values.")
+        v = sph2cart_deg(azimuth + 180, elevation)
+        self.scene.clip_planes = [[v[0], v[1], v[2], depth]]
 
-        self.scene.clip_plane_depth_azi_elev = [depth, azimuth, elevation]
+        # self.scene.clip_planes = [[0.6427876096865393, -0.7660444431189781, -0, 0.25]]
+        self.scene.clip_plane_depth_azi_elevs = [[depth, azimuth, elevation]]
+        self._notify_scene_changed()
+
+    def set_clip_planes(self, depth_azi_elevs: list[list[float]]) -> None:
+        """
+        Update multiple clip planes in the 3D view.
+
+        Each clip plane is defined by a `[depth, azimuth, elevation]` triple.
+        This method converts those spherical definitions into Cartesian plane
+        equations and updates the scene accordingly.
+
+        Parameters
+        ----------
+        depth_azi_elevs : list of list of float
+            A list of `[depth, azimuth, elevation]` triples, one per clip plane.
+
+        Raises
+        ------
+        TypeError
+            If any entry in `depth_azi_elevs` is not a list or tuple of three
+            numeric values.
+
+        Notes
+        -----
+        The azimuth is rotated by 180 degrees to match the existing shader
+        convention, and the depth value is negated when forming the plane
+        equation. After updating all planes, this method notifies the scene
+        to refresh.
+        """
+        if not isinstance(depth_azi_elevs, (list, tuple)):
+            raise TypeError(
+                "depth_azi_elevs must be a list of [depth, azimuth, elevation] triples."
+            )
+
+        self.scene.clip_planes = []
+        self.scene.clip_plane_depth_azi_elevs = []
+
+        for i, dae in enumerate(depth_azi_elevs):
+            if not isinstance(dae, (list, tuple)) or len(dae) < 3:
+                raise TypeError(
+                    f"Entry {i} must be a list or tuple of three numeric values."
+                )
+
+            depth, azimuth, elevation = dae[0], dae[1], dae[2]
+
+            if not all(
+                isinstance(x, (int, float)) for x in (depth, azimuth, elevation)
+            ):
+                raise TypeError(
+                    f"Entry {i} contains non-numeric values; "
+                    "expected [depth, azimuth, elevation]."
+                )
+
+            n = sph2cart_deg(azimuth + 180, elevation)
+            d = -depth
+            plane = [n[0], n[1], n[2], d]
+
+            self.scene.clip_planes.append(plane)
+            self.scene.clip_plane_depth_azi_elevs.append([depth, azimuth, elevation])
+
+        self._notify_scene_changed()
 
     def set_render_azimuth_elevation(self, azimuth: float, elevation: float):
         """Set the rotation of the 3D render view.
@@ -1863,6 +2044,30 @@ class NiiVue(BaseAnyWidget):
             self.opts.gradient_amount = gradient_amount
         self.send({"type": "set_volume_render_illumination", "data": [gradient_amount]})
 
+    def update_gl_volume(self):
+        """
+        Refresh voxel data and redraw the canvas.
+
+        Examples
+        --------
+        ::
+
+            nv.update_gl_volume()
+        """
+        self.send({"type": "update_gl_volume", "data": []})
+
+    def draw_scene(self):
+        """
+        Redraw the canvas.
+
+        Examples
+        --------
+        ::
+
+            nv.draw_scene()
+        """
+        self.send({"type": "draw_scene", "data": []})
+
     def set_high_resolution_capable(
         self, force_device_pixel_ratio: typing.Union[int, bool]
     ):
@@ -1945,6 +2150,24 @@ class NiiVue(BaseAnyWidget):
         """
         self.opts.is_nearest_interpolation = is_nearest
         self.send({"type": "set_interpolation", "data": [is_nearest]})
+
+    def set_cutaway(self, is_cutaway: bool):
+        """Set whether clip planes form cutaway.
+
+        Parameters
+        ----------
+        is_cutaway : bool
+            If True, cutaway.
+            If False, classic clip planes.
+
+        Examples
+        --------
+        ::
+
+            nv.set_clip_planes_cutaway(True)
+        """
+        self.opts.is_clip_planes_cutaway = is_cutaway
+        self.send({"type": "set_cutaway", "data": [is_cutaway]})
 
     def set_pen_value(self, pen_value: float, is_filled_pen: bool):
         """Determine color and style of drawing.
@@ -3109,9 +3332,8 @@ class NiiVue(BaseAnyWidget):
 
     def _do_sync_clip_plane(self, other_nv):
         """Synchronize clip plane settings with another NiiVue instance."""
-        other_nv.scene._trait_values["clip_plane_depth_azi_elev"] = list(
-            self.scene.clip_plane_depth_azi_elev
-        )
+        # todo: add ui_data class + property with active_clip_plane_index?
+        other_nv.set_clip_plane(self.scene.clip_plane_depth_azi_elevs[0])
 
     def sync(self):
         """Sync the scene controls from this NiiVue instance to others."""
