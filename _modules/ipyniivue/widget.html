@@ -292,6 +292,7 @@
     <span class="n">make_draw_lut</span><span class="p">,</span>
     <span class="n">make_label_lut</span><span class="p">,</span>
     <span class="n">requires_canvas</span><span class="p">,</span>
+    <span class="n">sph2cart_deg</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NiiVue&quot;</span><span class="p">]</span>
@@ -439,6 +440,10 @@
 <span class="sd">        Maximum intensity value for brightness/contrast mapping.</span>
 <span class="sd">    outline_border : int, optional</span>
 <span class="sd">        Outline border thickness. Default is 0.</span>
+<span class="sd">    atlas_labels : list[str] or None, optional</span>
+<span class="sd">        Read-only-ish: labels for atlas colormap (populated by the frontend).</span>
+<span class="sd">    atlas_values : list[float] or None, optional</span>
+<span class="sd">        Values mapping for atlas (set from Python, applied by the frontend)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">path</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">(</span>
@@ -455,12 +460,16 @@
     <span class="n">use_negative_cmap</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">cal_min</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">cal_max</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">outline_border</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">outline_border</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># other properties that aren&#39;t in init</span>
     <span class="n">colormap_invert</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">frame_4d</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">colorbar_visible</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">atlas_labels</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">atlas_values</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MeshLayer.__init__">
 <a class="viewcode-back" href="../../api.html#ipyniivue.MeshLayer.__init__">[docs]</a>
@@ -477,6 +486,8 @@
             <span class="s2">&quot;cal_min&quot;</span><span class="p">,</span>
             <span class="s2">&quot;cal_max&quot;</span><span class="p">,</span>
             <span class="s2">&quot;outline_border&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;atlas_labels&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;atlas_values&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">filtered_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">include_keys</span><span class="p">}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">filtered_kwargs</span><span class="p">)</span>
@@ -570,6 +581,8 @@
     <span class="n">colormap_invert</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">colorbar_visible</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">mesh_shader_index</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">edge_scale</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">node_scale</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">fiber_radius</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">fiber_length</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">fiber_dither</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1741,6 +1754,76 @@
         <span class="nb">setattr</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="NiiVue.get_mesh_layer_property">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.get_mesh_layer_property">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mesh_layer_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">layer_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the value of a mesh layer property.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mesh_id : str</span>
+<span class="sd">            Identifier of the mesh to query.</span>
+<span class="sd">        layer_index : int</span>
+<span class="sd">            Index of the layer within the mesh.</span>
+<span class="sd">        attribute : str</span>
+<span class="sd">            Name of the attribute to retrieve.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Any</span>
+<span class="sd">            The current value of the requested attribute.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the attribute is not allowed or the mesh is not found.</span>
+<span class="sd">        IndexError</span>
+<span class="sd">            If the layer index is out of range.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method provides the same result as directly accessing the</span>
+<span class="sd">        property via::</span>
+
+<span class="sd">            val = nv.meshes[0].layers[0].opacity</span>
+
+<span class="sd">        but adds validation safeguards. Specifically, it verifies that</span>
+<span class="sd">        the requested attribute is a defined and allowed trait, that the</span>
+<span class="sd">        mesh ID exists, and that the requested layer index is valid. Use</span>
+<span class="sd">        this method when you need a safe, validated query for arbitrary</span>
+<span class="sd">        attributes.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+<span class="sd">            val = nv.get_mesh_layer_property(nv.meshes[0].id, 0, &#39;opacity&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">allowed_attributes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">name</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">trait</span> <span class="ow">in</span> <span class="n">MeshLayer</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trait</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitType</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">}</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_attributes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Attribute &#39;</span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s2">&#39; is not allowed. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Allowed attributes are: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_index_by_id</span><span class="p">(</span><span class="n">mesh_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh with id &#39;</span><span class="si">{</span><span class="n">mesh_id</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+
+        <span class="n">mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">layer_index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">layer_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layer index </span><span class="si">{</span><span class="n">layer_index</span><span class="si">}</span><span class="s2"> out of range.&quot;</span><span class="p">)</span>
+
+        <span class="n">layer</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">layer_index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="NiiVue.set_mesh_layer_property">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_mesh_layer_property">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_mesh_layer_property</span><span class="p">(</span>
@@ -1937,6 +2020,47 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">selection_box_color</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">color</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="NiiVue.set_clip_plane_color">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_clip_plane_color">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_clip_plane_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the clip plane color.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        color : tuple of floats</span>
+<span class="sd">            An RGBA array where the RGB components range from 0 to 1,</span>
+<span class="sd">            and the A (alpha) component can range from -1 to 1.</span>
+<span class="sd">            A negative alpha value means the color appears inside the volume.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the color is not a tuple/list of four numeric values</span>
+<span class="sd">            or any component is outside the valid range.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_clip_plane_color((0, 1, 0, -0.7))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Color must be have four numeric values (RGBA).&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Validate RGB (0..1) and A (-1..1)</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">color</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Each color component must be numeric (int or float).&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">g</span> <span class="o">&lt;=</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">b</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;RGB components must each be between 0 and 1.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">&lt;=</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Alpha component must be between -1 and 1.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">clip_plane_color</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">color</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="NiiVue.set_crosshair_color">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_crosshair_color">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_crosshair_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
@@ -2067,8 +2191,74 @@
         <span class="c1"># Verify that all inputs are numeric types</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;depth, azimuth, and elevation must all be numeric values.&quot;</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">sph2cart_deg</span><span class="p">(</span><span class="n">azimuth</span> <span class="o">+</span> <span class="mi">180</span><span class="p">,</span> <span class="n">elevation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_planes</span> <span class="o">=</span> <span class="p">[[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">depth</span><span class="p">]]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elev</span> <span class="o">=</span> <span class="p">[</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">]</span></div>
+        <span class="c1"># self.scene.clip_planes = [[0.6427876096865393, -0.7660444431189781, -0, 0.25]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elevs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notify_scene_changed</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_clip_planes">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_clip_planes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_clip_planes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth_azi_elevs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update multiple clip planes in the 3D view.</span>
+
+<span class="sd">        Each clip plane is defined by a `[depth, azimuth, elevation]` triple.</span>
+<span class="sd">        This method converts those spherical definitions into Cartesian plane</span>
+<span class="sd">        equations and updates the scene accordingly.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        depth_azi_elevs : list of list of float</span>
+<span class="sd">            A list of `[depth, azimuth, elevation]` triples, one per clip plane.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If any entry in `depth_azi_elevs` is not a list or tuple of three</span>
+<span class="sd">            numeric values.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The azimuth is rotated by 180 degrees to match the existing shader</span>
+<span class="sd">        convention, and the depth value is negated when forming the plane</span>
+<span class="sd">        equation. After updating all planes, this method notifies the scene</span>
+<span class="sd">        to refresh.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">depth_azi_elevs</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;depth_azi_elevs must be a list of [depth, azimuth, elevation] triples.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_planes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elevs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dae</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">depth_azi_elevs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dae</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dae</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Entry </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> must be a list or tuple of three numeric values.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span> <span class="o">=</span> <span class="n">dae</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dae</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dae</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Entry </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> contains non-numeric values; &quot;</span>
+                    <span class="s2">&quot;expected [depth, azimuth, elevation].&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">n</span> <span class="o">=</span> <span class="n">sph2cart_deg</span><span class="p">(</span><span class="n">azimuth</span> <span class="o">+</span> <span class="mi">180</span><span class="p">,</span> <span class="n">elevation</span><span class="p">)</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="o">-</span><span class="n">depth</span>
+            <span class="n">plane</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">d</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_planes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elevs</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notify_scene_changed</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.set_render_azimuth_elevation">
@@ -2218,6 +2408,36 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">gradient_amount</span> <span class="o">=</span> <span class="n">gradient_amount</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_volume_render_illumination&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">gradient_amount</span><span class="p">]})</span>
 
+<div class="viewcode-block" id="NiiVue.update_gl_volume">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.update_gl_volume">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_gl_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Refresh voxel data and redraw the canvas.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.update_gl_volume()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;update_gl_volume&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.draw_scene">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.draw_scene">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Redraw the canvas.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.draw_scene()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;draw_scene&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span></div>
+
+
 <div class="viewcode-block" id="NiiVue.set_high_resolution_capable">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_high_resolution_capable">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_high_resolution_capable</span><span class="p">(</span>
@@ -2311,6 +2531,27 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">is_nearest_interpolation</span> <span class="o">=</span> <span class="n">is_nearest</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_interpolation&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">is_nearest</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.set_cutaway">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.set_cutaway">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_cutaway</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_cutaway</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set whether clip planes form cutaway.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        is_cutaway : bool</span>
+<span class="sd">            If True, cutaway.</span>
+<span class="sd">            If False, classic clip planes.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            nv.set_clip_planes_cutaway(True)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">is_clip_planes_cutaway</span> <span class="o">=</span> <span class="n">is_cutaway</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set_cutaway&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">is_cutaway</span><span class="p">]})</span></div>
 
 
 <div class="viewcode-block" id="NiiVue.set_pen_value">
@@ -3581,9 +3822,8 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_do_sync_clip_plane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize clip plane settings with another NiiVue instance.&quot;&quot;&quot;</span>
-        <span class="n">other_nv</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;clip_plane_depth_azi_elev&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elev</span>
-        <span class="p">)</span>
+        <span class="c1"># todo: add ui_data class + property with active_clip_plane_index?</span>
+        <span class="n">other_nv</span><span class="o">.</span><span class="n">set_clip_plane</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elevs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
 <div class="viewcode-block" id="NiiVue.sync">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.sync">[docs]</a>
