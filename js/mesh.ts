@@ -292,6 +292,31 @@ function setup_mesh_property_listeners(
 	};
 }
 
+function layerKludge065(layer: any) {
+	// specific to NiiVue 0.65: fix for https://github.com/niivue/niivue/issues/1455
+	// see mesh.mosaic.ipynb
+	if (!layer.colormapLabel?.lut) {
+		return;
+	}
+	if (layer.colormapLabel.lut.length % 4 !== 0) {
+		console.error("Error: lut length must be divisible by 4");
+		return;
+	}
+	let isAllAlphaZero = true;
+	for (let i = 3; i < layer.colormapLabel.lut.length; i += 4) {
+		if (layer.colormapLabel.lut[i] !== 0) {
+			isAllAlphaZero = false;
+			break;
+		}
+	}
+	if (!isAllAlphaZero) {
+		return;
+	}
+	for (let i = 3; i < layer.colormapLabel.lut.length; i += 4) {
+		layer.colormapLabel.lut[i] = 255;
+	}
+}
+
 /**
  * Create a new NVMesh and attach the necessary event listeners
  * Returns the NVMesh and a cleanup function that removes the event listeners.
@@ -397,6 +422,7 @@ export async function create_mesh(
 					layerModel.get("cal_max") ?? null,
 					layerModel.get("outline_border") ?? 0,
 				);
+				layerKludge065(layer);
 				layer.id = backendLayerId;
 				const labels = Array.isArray(layer.colormapLabel?.labels)
 					? layer.colormapLabel.labels
@@ -429,6 +455,7 @@ export async function create_mesh(
 					layerModel.get("cal_max") ?? null,
 					layerModel.get("outline_border") ?? 0,
 				);
+				layerKludge065(layer);
 				layer.id = backendLayerId;
 				const labels = Array.isArray(layer.colormapLabel?.labels)
 					? layer.colormapLabel.labels
