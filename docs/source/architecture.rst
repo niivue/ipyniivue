@@ -219,7 +219,7 @@ Flow B: Frontend-Initiated Creation
      - ``js/widget.ts``
    * - 4
      - **Bridge**
-     - Message travels over WebSocket to Kernel.
+     - Message travels over Bridge to Kernel.
      - N/A
    * - 5
      - **Python**
@@ -227,8 +227,16 @@ Flow B: Frontend-Initiated Creation
      - ``src/ipyniivue/widget.py``
    * - 6
      - **Python**
-     - A new ``Volume`` instance is created using the ID provided by the frontend and appended to ``self.volumes``.
+     - A new ``Volume`` instance is created using the ID provided by the frontend and appended to ``self.volumes``. This triggers a traitlet update.
      - ``src/ipyniivue/widget.py``
+   * - 7
+     - **JS**
+     - ``model.on("change:volumes")`` triggers ``render_volumes`` due to the Python state update.
+     - ``js/widget.ts``
+   * - 8
+     - **JS**
+     - ``render_volumes`` detects the ID. Since the ID now exists in the ``frontend_volume_map``, ``nv.addVolume`` is skipped. ``pendingVolumeIds`` is cleared.
+     - ``js/volume.ts``
 
 6. Event & Message Routing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
