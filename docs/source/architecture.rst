@@ -26,7 +26,7 @@ Runs in the notebook kernel process and contains:
 2. Communication Layer
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Provided by the ``anywidget`` framework:
+Provided by the `anywidget <https://github.com/manzt/anywidget>`_ framework:
 
 * Maintains synchronized widget models between kernel and browser.
 * Handles state synchronization via traitlets.
@@ -38,14 +38,14 @@ Provided by the ``anywidget`` framework:
 
 Runs in the browser and includes:
 
-* WebGL rendering via the ``niivue.js`` library.
+* WebGL rendering via the `NiiVue <https://github.com/niivue/niivue>`_ library.
 * UI event handling (mouse, keyboard interactions).
 * Visual output in notebook cells.
 
 High-Level Data Flow
 --------------------
 
-.. code-block:: mermaid
+.. mermaid::
 
    flowchart LR
        subgraph "Kernel"
@@ -135,10 +135,14 @@ The Render Loop
 
 When the ``volumes`` or ``meshes`` list changes in Python, the frontend executes ``render_volumes`` or ``render_meshes``.
 
-**Logic Flow (`js/volume.ts` & `js/mesh.ts`):**
+**Logic Flow:**
+
+(``js/volume.ts`` & ``js/mesh.ts``)
 
 1. **Gather Models:** The frontend resolves the list of Model IDs provided by Python into actual ``AnyModel`` objects.
+
 2. **Generate Maps:** Two maps are created: ``backend_map`` (ID → Model) and ``frontend_map`` (ID → NVObject).
+
 3. **Update:**
     * **Create:** If an ID exists in the Backend but not the Frontend → Call ``create_volume``.
     * **Dispose:** If an ID exists in the Frontend but not the Backend → Call ``nv.removeVolume`` and trigger ``disposer.dispose(id)``.
@@ -234,7 +238,9 @@ Standard attributes sync via Traitlets. Specific actions use custom messages.
 Custom Message Protocol (``msg:custom``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Python: `_handle_custom_msg`**
+**Python:**
+
+uses ``_handle_custom_msg``
 
 .. code-block:: python
 
@@ -247,7 +253,9 @@ Custom Message Protocol (``msg:custom``)
        # Waits for traits (img, hdr) to be fully synced before firing callback
        handler(volume)
 
-**JS: `model.on("msg:custom")`**
+**JS:**
+
+uses ``model.on("msg:custom")``
 
 Some example use-cases:
 
