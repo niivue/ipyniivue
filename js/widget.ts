@@ -809,16 +809,16 @@ export default {
 			const canvas = document.createElement("canvas");
 			container.appendChild(canvas);
 
-		// Disable JupyterLab’s right-click menu for this canvas
-		canvas.addEventListener(
-			"contextmenu",
-			(ev) => {
-				ev.preventDefault();
-				ev.stopPropagation();
-				return false;
-			},
-			true
-		);
+			// Disable JupyterLab’s right-click menu for this canvas
+			canvas.addEventListener(
+				"contextmenu",
+				(ev) => {
+					ev.preventDefault();
+					ev.stopPropagation();
+					return false;
+				},
+				true,
+			);
 
 			// Handle height changes
 			model.off("change:height");

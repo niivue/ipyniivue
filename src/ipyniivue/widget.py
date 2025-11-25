@@ -2133,6 +2133,23 @@ class NiiVue(BaseAnyWidget):
         """
         self.opts.atlas_outline = outline
 
+    def set_atlas_active_index(self, idx: int):
+        """Set atlas region that is highlighted.
+
+        Parameters
+        ----------
+        idx : integer
+            The index of the atlas region to be high lighted.
+            A value of `0` disables the high lighting.
+
+        Examples
+        --------
+        ::
+
+            nv.set_atlas_active_index(2)
+        """
+        self.opts.atlas_active_index = idx
+
     def set_interpolation(self, is_nearest: bool):
         """Select between nearest neighbor and linear interpolation for images.
 
