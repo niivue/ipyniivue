@@ -1,7 +1,7 @@
 Architecture
 ============
 
-IPyNiiVue is a widget that bridges WebGL-powered JavaScript visualization (Niivue) with Python in notebooks. This document details the internal structure, frontend-backend synchronization patterns, and communication protocols of IPyNiiVue.
+IpyNiiVue is a Jupyter Widget for Niivue based on anywidget. This document details the internal structure, frontend-backend synchronization patterns, and communication protocols in IPyNiiVue.
 
 System Overview
 ---------------
