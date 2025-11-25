@@ -647,15 +647,38 @@
 <li class="toctree-l2"><a class="reference internal" href="architecture.html#system-overview">System Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="architecture.html#architecture-layers">Architecture Layers</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="architecture.html#python-backend-kernel">1. Python Backend (Kernel)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="architecture.html#widget-bridge-layer">2. Widget Bridge Layer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#communication-layer">2. Communication Layer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="architecture.html#javascript-frontend-browser">3. JavaScript Frontend (Browser)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="architecture.html#data-flow">Data Flow</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="architecture.html#communication-patterns">Communication Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#high-level-data-flow">High-Level Data Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#implementation-details">Implementation Details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#class-hierarchy">1. Class Hierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#baseanywidget">2. BaseAnyWidget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#binary-data-transfer-protocol">3. Binary Data Transfer Protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#frontend-backend-sync">4. Frontend/Backend Sync</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="architecture.html#the-render-loop">The Render Loop</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="architecture.html#some-implementation-details">Some Implementation Details</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#communication-flows">5. Communication Flows</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="architecture.html#flow-a-backend-initiated-creation">Flow A: Backend-Initiated Creation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="architecture.html#flow-b-frontend-initiated-creation">Flow B: Frontend-Initiated Creation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#event-message-routing">6. Event &amp; Message Routing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="architecture.html#custom-message-protocol-msg-custom">Custom Message Protocol (<code class="docutils literal notranslate"><span class="pre">msg:custom</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="architecture.html#nested-state-synchronization">Nested State Synchronization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#appendix-file-organization">Appendix: File Organization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#python-components-src-ipyniivue">Python Components (src/ipyniivue/)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#javascript-bundle-js">JavaScript Bundle (js/)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#scripts-scripts">Scripts (scripts/)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#documentation-tests">Documentation &amp; Tests</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
