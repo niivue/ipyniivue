@@ -1,7 +1,7 @@
 Architecture
 ============
 
-IpyNiiVue is a Jupyter Widget for Niivue based on anywidget. This document details the internal structure, frontend-backend synchronization patterns, and communication protocols in IPyNiiVue.
+This document details the internal structure, frontend-backend synchronization patterns, and communication protocols in IPyNiiVue.
 
 System Overview
 ---------------
