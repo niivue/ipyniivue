@@ -174,6 +174,24 @@ function setup_mesh_property_listeners(
 		nv.onMeshShaderChanged(meshIndex, mesh.meshShaderIndex);
 	}
 
+	function legend_line_thickness_changed() {
+		mesh.legendLineThickness = mmodel.get("legend_line_thickness");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function edge_min_changed() {
+		mesh.edgeMin = mmodel.get("edge_min");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function edge_max_changed() {
+		mesh.edgeMin = mmodel.get("edge_min");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
 	function node_scale_changed() {
 		mesh.nodeScale = mmodel.get("node_scale");
 		mesh.updateMesh(nv.gl);
@@ -243,6 +261,9 @@ function setup_mesh_property_listeners(
 	mesh_shader_index_changed();
 	edge_scale_changed();
 	node_scale_changed();
+	legend_line_thickness_changed();
+	edge_min_changed();
+	edge_max_changed();
 	fiber_radius_changed();
 	fiber_length_changed();
 	fiber_dither_changed();
@@ -256,6 +277,9 @@ function setup_mesh_property_listeners(
 	mmodel.on("change:colormap_invert", colormap_invert_changed);
 	mmodel.on("change:colorbar_visible", colorbar_visible_changed);
 	mmodel.on("change:mesh_shader_index", mesh_shader_index_changed);
+	mmodel.on("change:legend_line_thickness", legend_line_thickness_changed);
+	mmodel.on("change:edge_min", edge_min_changed);
+	mmodel.on("change:edge_max", edge_max_changed);
 	mmodel.on("change:edge_scale", edge_scale_changed);
 	mmodel.on("change:node_scale", node_scale_changed);
 	mmodel.on("change:fiber_radius", fiber_radius_changed);
@@ -276,6 +300,9 @@ function setup_mesh_property_listeners(
 		mmodel.off("change:colormap_invert", colormap_invert_changed);
 		mmodel.off("change:colorbar_visible", colorbar_visible_changed);
 		mmodel.off("change:mesh_shader_index", mesh_shader_index_changed);
+		mmodel.off("change:legend_line_thickness", legend_line_thickness_changed);
+		mmodel.off("change:edge_min", edge_min_changed);
+		mmodel.off("change:edge_max", edge_max_changed);
 		mmodel.off("change:edge_scale", edge_scale_changed);
 		mmodel.off("change:node_scale", node_scale_changed);
 		mmodel.off("change:fiber_radius", fiber_radius_changed);
@@ -321,6 +348,9 @@ export async function create_mesh(
 			const jsonText = decoder.decode(dataBuffer);
 			const jsonObj = JSON.parse(jsonText);
 			mesh = nv.loadConnectomeAsMesh(jsonObj);
+			mmodel.set("legend_line_thickness", mesh.legendLineThickness);
+			mmodel.set("edge_min", mesh.edgeMin);
+			mmodel.set("edge_max", mesh.edgeMax);
 			mmodel.set("node_scale", mesh.nodeScale);
 			mmodel.set("edge_scale", mesh.edgeScale);
 		} else {
