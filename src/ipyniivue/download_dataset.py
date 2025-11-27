@@ -46,7 +46,8 @@ def download_dataset(api_url=None, dest_folder=None, force_download=False, files
     if api_url is None:
         api_url = BASE_API_URL
     if dest_folder is None:
-        dest_folder = Path(DATA_FOLDER)
+        dest_folder = DATA_FOLDER
+    dest_folder = Path(dest_folder)
 
     dest_folder.mkdir(parents=True, exist_ok=True)
 
