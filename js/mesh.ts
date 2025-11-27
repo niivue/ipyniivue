@@ -348,11 +348,6 @@ export async function create_mesh(
 			const jsonText = decoder.decode(dataBuffer);
 			const jsonObj = JSON.parse(jsonText);
 			mesh = nv.loadConnectomeAsMesh(jsonObj);
-			mmodel.set("legend_line_thickness", mesh.legendLineThickness);
-			mmodel.set("edge_min", mesh.edgeMin);
-			mmodel.set("edge_max", mesh.edgeMax);
-			mmodel.set("node_scale", mesh.nodeScale);
-			mmodel.set("edge_scale", mesh.edgeScale);
 		} else {
 			mesh = await niivue.NVMesh.readMesh(
 				dataBuffer as ArrayBuffer,
@@ -378,6 +373,13 @@ export async function create_mesh(
 	} else {
 		throw new Error("Invalid source for mesh");
 	}
+	// set optional connectome properties if specified:
+	(mesh.legendLineThickness ?? false) &&
+		mmodel.set("legend_line_thickness", mesh.legendLineThickness);
+	(mesh.edgeMin ?? false) && mmodel.set("edge_min", mesh.edgeMin);
+	(mesh.edgeMax ?? false) && mmodel.set("edge_max", mesh.edgeMax);
+	(mesh.nodeScale ?? false) && mmodel.set("node_scale", mesh.nodeScale);
+	(mesh.edgeScale ?? false) && mmodel.set("edge_scale", mesh.edgeScale);
 
 	// Save the id and name back to the model
 	mmodel.set("name", mesh.name);
