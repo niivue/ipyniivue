@@ -26,7 +26,7 @@ def download_dataset(api_url=None, dest_folder=None, force_download=False, files
     ----------
     api_url : str, optional
         The API URL to fetch the dataset from. Defaults to the base URL.
-    dest_folder : Path, optional
+    dest_folder : Path | str, optional
         The destination folder to save the downloaded files. Defaults to the
         images directory in ipyniivue.
     force_download : bool, optional
@@ -46,7 +46,7 @@ def download_dataset(api_url=None, dest_folder=None, force_download=False, files
     if api_url is None:
         api_url = BASE_API_URL
     if dest_folder is None:
-        dest_folder = DATA_FOLDER
+        dest_folder = Path(DATA_FOLDER)
 
     dest_folder.mkdir(parents=True, exist_ok=True)
 
