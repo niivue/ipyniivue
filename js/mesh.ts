@@ -292,7 +292,6 @@ function setup_mesh_property_listeners(
 	};
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: This is a temporary fix and NVMeshLayer isn't exported from niivue
 function layerKludge065(layer: any) {
 	// specific to NiiVue 0.65: fix for https://github.com/niivue/niivue/issues/1455
 	// see mesh.mosaic.ipynb
