@@ -19,7 +19,7 @@ jobs:
       # ref: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
       contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
