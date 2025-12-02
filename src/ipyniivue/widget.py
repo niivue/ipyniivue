@@ -340,6 +340,9 @@ class Mesh(BaseAnyWidget):
     colormap_invert = t.Bool(False).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
     mesh_shader_index = t.Int(default_value=0).tag(sync=True)
+    legend_line_thickness = t.Float(0.0).tag(sync=True)
+    edge_min = t.Float(2.0).tag(sync=True)
+    edge_max = t.Float(6.0).tag(sync=True)
     edge_scale = t.Float(1.0).tag(sync=True)
     node_scale = t.Float(1.0).tag(sync=True)
     fiber_radius = t.Float(0.0).tag(sync=True)
@@ -2132,6 +2135,23 @@ class NiiVue(BaseAnyWidget):
             nv.set_atlas_outline(2.0)
         """
         self.opts.atlas_outline = outline
+
+    def set_atlas_active_index(self, idx: int):
+        """Set atlas region that is highlighted.
+
+        Parameters
+        ----------
+        idx : integer
+            The index of the atlas region to be high lighted.
+            A value of `0` disables the high lighting.
+
+        Examples
+        --------
+        ::
+
+            nv.set_atlas_active_index(2)
+        """
+        self.opts.atlas_active_index = idx
 
     def set_interpolation(self, is_nearest: bool):
         """Select between nearest neighbor and linear interpolation for images.

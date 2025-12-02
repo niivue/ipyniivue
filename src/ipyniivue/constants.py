@@ -168,6 +168,7 @@ _SNAKE_TO_CAMEL_OVERRIDES = {
     "limit_frames_4d": "limitFrames4D",
     "click_to_segment_is_2d": "clickToSegmentIs2D",
     "is_v1_slice_shader": "isV1SliceShader",
+    "is_force_mouse_click_to_voxel_centers": "isForceMouseClickToVoxelCenters",
     "mesh_xray": "meshXRay",
     "click_to_segment_max_distance_mm": "clickToSegmentMaxDistanceMM",
     "is_2d_slice_shader": "is2DSliceShader",

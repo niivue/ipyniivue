@@ -81,10 +81,10 @@ class ConfigOptions(t.HasTraits):
     sagittal_nose_left = t.Bool(False).tag(sync=False)
     is_slice_mm = t.Bool(False).tag(sync=False)
     is_v1_slice_shader = t.Bool(False).tag(sync=False)
+    is_force_mouse_click_to_voxel_centers = t.Bool(False).tag(sync=False)
     force_device_pixel_ratio = t.Float(0.0).tag(sync=False)
     log_level = t.Unicode("info").tag(sync=False)
     loading_text = t.Unicode("loading ...").tag(sync=False)
-    is_force_mouse_click_to_voxel_centers = t.Bool(False).tag(sync=False)
     drag_and_drop_enabled = t.Bool(True).tag(sync=False)
     drawing_enabled = t.Bool(False).tag(sync=False)
     pen_value = t.Float(1.0).tag(sync=False)
@@ -195,10 +195,10 @@ class ConfigOptions(t.HasTraits):
         "sagittal_nose_left",
         "is_slice_mm",
         "is_v1_slice_shader",
+        "is_force_mouse_click_to_voxel_centers",
         "force_device_pixel_ratio",
         "log_level",
         "loading_text",
-        "is_force_mouse_click_to_voxel_centers",
         "drag_and_drop_enabled",
         "drawing_enabled",
         "pen_value",
@@ -310,10 +310,10 @@ CAMEL_TO_SNAKE = {
     "sagittalNoseLeft": "sagittal_nose_left",
     "isSliceMM": "is_slice_mm",
     "isV1SliceShader": "is_v1_slice_shader",
+    "isForceMouseClickToVoxelCenters": "is_force_mouse_click_to_voxel_centers",
     "forceDevicePixelRatio": "force_device_pixel_ratio",
     "logLevel": "log_level",
     "loadingText": "loading_text",
-    "isForceMouseClickToVoxelCenters": "is_force_mouse_click_to_voxel_centers",
     "dragAndDropEnabled": "drag_and_drop_enabled",
     "drawingEnabled": "drawing_enabled",
     "penValue": "pen_value",
