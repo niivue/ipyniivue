@@ -2048,6 +2048,10 @@ class NiiVue(BaseAnyWidget):
 
         self.update_gl_volume()
 
+    def refresh_colormaps(self):
+        """Rebuild and upload all colormap textures for volumes and meshes."""
+        self.send({"type": "refresh_colormaps", "data": []})
+
     @requires_canvas
     def set_volume_render_illumination(self, gradient_amount: float):
         """Set proportion of volume rendering influenced by selected matcap.

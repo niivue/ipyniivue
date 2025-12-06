@@ -357,6 +357,10 @@ function attachModelEventHandlers(
 
 					break;
 				}
+				case "refresh_colormaps": {
+					nv.refreshColormaps();
+					break;
+				}
 			}
 		},
 	);

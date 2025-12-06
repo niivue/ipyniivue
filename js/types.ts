@@ -258,7 +258,8 @@ export type CustomMessagePayload =
 	| { type: "close_drawing"; data: [] }
 	| { type: "load_jcon"; data: [] }
 	| { type: "load_drawing_from_url"; data: LoadDrawingFromUrlData }
-	| { type: "load_document_from_url"; data: LoadDocumentFromUrlData };
+	| { type: "load_document_from_url"; data: LoadDocumentFromUrlData }
+	| { type: "refresh_colormaps"; data: [] };
 
 export type VolumeCustomMessage = {
 	type: "save_to_disk";
