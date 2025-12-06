@@ -735,8 +735,10 @@ function setupSyncInterval(nv: niivue.Niivue, model: Model) {
 			renderElevation: nv.scene.renderElevation,
 			volScaleMultiplier: nv.scene.volScaleMultiplier,
 			crosshairPos: [...nv.scene.crosshairPos],
-			clipPlanes: nv.scene.clipPlanes,
-			clipPlaneDepthAziElevs: nv.scene.clipPlaneDepthAziElevs,
+			clipPlanes: nv.scene.clipPlanes.map((innerArr) => [...innerArr]),
+			clipPlaneDepthAziElevs: nv.scene.clipPlaneDepthAziElevs.map(
+				(innerArr) => [...innerArr],
+			),
 			pan2Dxyzmm: [...nv.scene.pan2Dxyzmm],
 			gamma: nv.scene.gamma || 1.0,
 		};

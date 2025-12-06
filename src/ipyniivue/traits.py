@@ -368,8 +368,7 @@ class Scene(t.HasTraits):
         A list of clipping planes, where each plane is defined
         by four floats `[x, y, z, w]` representing the plane equation.
     clip_plane_depth_azi_elevs : list of list of float
-        A list of `[depth, azimuth, elevation]` triples,
-        one per clip plane. Each inner list contains three floats.
+        A list of lists of `[depth, azimuth, elevation]`.
     pan2d_xyzmm : list of float
         The 2D pan in 3D mm as a list of 4 floats.
     gamma : float
