@@ -92,10 +92,17 @@ function setup_layer_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	function colormap_type_changed() {
+		layer.colormapType = layerModel.get("colormap_type");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
 	// set values not set by kwargs
 	colormap_invert_changed();
 	frame_4d_changed();
 	colorbar_visible_changed();
+	colormap_type_changed();
 
 	// Set up the event listeners
 	layerModel.on("change:atlas_values", atlas_values_changed);
@@ -110,6 +117,7 @@ function setup_layer_property_listeners(
 	layerModel.on("change:colormap_invert", colormap_invert_changed);
 	layerModel.on("change:frame_4d", frame_4d_changed);
 	layerModel.on("change:colorbar_visible", colorbar_visible_changed);
+	layerModel.on("change:colormap_type", colormap_type_changed);
 
 	// Return a cleanup function
 	return () => {
@@ -125,6 +133,7 @@ function setup_layer_property_listeners(
 		layerModel.off("change:colormap_invert", colormap_invert_changed);
 		layerModel.off("change:frame_4d", frame_4d_changed);
 		layerModel.off("change:colorbar_visible", colorbar_visible_changed);
+		layerModel.off("change:colormap_type", colormap_type_changed);
 	};
 }
 

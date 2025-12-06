@@ -197,6 +197,8 @@ class MeshLayer(BaseAnyWidget):
     colormap_negative : str, optional
         Colormap for negative values if `use_negative_cmap` is True.
         Default is 'winter'.
+    colormap_type : :class:`ColormapType`, optional
+        Colormap type used for the volume. Default is ``ColormapType.MIN_TO_MAX``.
     use_negative_cmap : bool, optional
         Use negative colormap for negative values. Default is False.
     cal_min : float or None, optional
@@ -222,6 +224,9 @@ class MeshLayer(BaseAnyWidget):
     opacity = t.Float(0.5).tag(sync=True)
     colormap = t.Unicode("warm").tag(sync=True)
     colormap_negative = t.Unicode("winter").tag(sync=True)
+    colormap_type = t.UseEnum(ColormapType, default_value=ColormapType.MIN_TO_MAX).tag(
+        sync=True, to_json=serialize_enum
+    )
     use_negative_cmap = t.Bool(False).tag(sync=True)
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)

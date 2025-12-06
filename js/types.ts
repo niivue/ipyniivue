@@ -166,6 +166,7 @@ export type MeshLayerModel = AnyModel<{
 	colormap_invert: boolean;
 	frame_4d: number;
 	colorbar_visible: boolean;
+	colormap_type: number;
 
 	atlas_labels?: string[] | null;
 	atlas_values?: number[] | null;
