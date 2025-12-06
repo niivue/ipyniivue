@@ -43,6 +43,7 @@ class ConfigOptions(t.HasTraits):
     colorbar_margin = t.Float(0.05).tag(sync=False)
     trust_cal_min_max = t.Bool(True).tag(sync=False)
     clip_plane_hot_key = t.Unicode("KeyC").tag(sync=False)
+    cycle_clip_plane_hot_key = t.Unicode("KeyP").tag(sync=False)
     view_mode_hot_key = t.Unicode("KeyV").tag(sync=False)
     double_touch_timeout = t.Int(500).tag(sync=False)
     long_touch_timeout = t.Int(1000).tag(sync=False)
@@ -81,10 +82,10 @@ class ConfigOptions(t.HasTraits):
     sagittal_nose_left = t.Bool(False).tag(sync=False)
     is_slice_mm = t.Bool(False).tag(sync=False)
     is_v1_slice_shader = t.Bool(False).tag(sync=False)
-    is_force_mouse_click_to_voxel_centers = t.Bool(False).tag(sync=False)
     force_device_pixel_ratio = t.Float(0.0).tag(sync=False)
     log_level = t.Unicode("info").tag(sync=False)
     loading_text = t.Unicode("loading ...").tag(sync=False)
+    is_force_mouse_click_to_voxel_centers = t.Bool(False).tag(sync=False)
     drag_and_drop_enabled = t.Bool(True).tag(sync=False)
     drawing_enabled = t.Bool(False).tag(sync=False)
     pen_value = t.Float(1.0).tag(sync=False)
@@ -135,6 +136,9 @@ class ConfigOptions(t.HasTraits):
     gradient_amount = t.Float(0.0).tag(sync=False)
     invert_scroll_direction = t.Bool(False).tag(sync=False)
     is_2d_slice_shader = t.Bool(False).tag(sync=False)
+    bounds = t.Any(None).tag(sync=False)
+    show_bounds_border = t.Bool(False).tag(sync=False)
+    bounds_border_color = t.Tuple((1.0, 1.0, 1.0, 1.0)).tag(sync=False)
 
     def __init__(self, parent=None, **kwargs):
         super().__init__(**kwargs)
@@ -163,6 +167,7 @@ class ConfigOptions(t.HasTraits):
         "colorbar_margin",
         "trust_cal_min_max",
         "clip_plane_hot_key",
+        "cycle_clip_plane_hot_key",
         "view_mode_hot_key",
         "double_touch_timeout",
         "long_touch_timeout",
@@ -195,10 +200,10 @@ class ConfigOptions(t.HasTraits):
         "sagittal_nose_left",
         "is_slice_mm",
         "is_v1_slice_shader",
-        "is_force_mouse_click_to_voxel_centers",
         "force_device_pixel_ratio",
         "log_level",
         "loading_text",
+        "is_force_mouse_click_to_voxel_centers",
         "drag_and_drop_enabled",
         "drawing_enabled",
         "pen_value",
@@ -245,6 +250,9 @@ class ConfigOptions(t.HasTraits):
         "gradient_amount",
         "invert_scroll_direction",
         "is_2d_slice_shader",
+        "bounds",
+        "show_bounds_border",
+        "bounds_border_color",
     )
 
     @t.observe(*_OBSERVED_TRAITS)
@@ -278,6 +286,7 @@ CAMEL_TO_SNAKE = {
     "colorbarMargin": "colorbar_margin",
     "trustCalMinMax": "trust_cal_min_max",
     "clipPlaneHotKey": "clip_plane_hot_key",
+    "cycleClipPlaneHotKey": "cycle_clip_plane_hot_key",
     "viewModeHotKey": "view_mode_hot_key",
     "doubleTouchTimeout": "double_touch_timeout",
     "longTouchTimeout": "long_touch_timeout",
@@ -310,10 +319,10 @@ CAMEL_TO_SNAKE = {
     "sagittalNoseLeft": "sagittal_nose_left",
     "isSliceMM": "is_slice_mm",
     "isV1SliceShader": "is_v1_slice_shader",
-    "isForceMouseClickToVoxelCenters": "is_force_mouse_click_to_voxel_centers",
     "forceDevicePixelRatio": "force_device_pixel_ratio",
     "logLevel": "log_level",
     "loadingText": "loading_text",
+    "isForceMouseClickToVoxelCenters": "is_force_mouse_click_to_voxel_centers",
     "dragAndDropEnabled": "drag_and_drop_enabled",
     "drawingEnabled": "drawing_enabled",
     "penValue": "pen_value",
@@ -360,6 +369,9 @@ CAMEL_TO_SNAKE = {
     "gradientAmount": "gradient_amount",
     "invertScrollDirection": "invert_scroll_direction",
     "is2DSliceShader": "is_2d_slice_shader",
+    "bounds": "bounds",
+    "showBoundsBorder": "show_bounds_border",
+    "boundsBorderColor": "bounds_border_color",
 }
 
 SNAKE_TO_CAMEL = {v: k for k, v in CAMEL_TO_SNAKE.items()}
