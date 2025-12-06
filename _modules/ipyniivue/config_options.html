@@ -278,6 +278,7 @@
     <span class="n">colorbar_margin</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">trust_cal_min_max</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">clip_plane_hot_key</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;KeyC&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">cycle_clip_plane_hot_key</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;KeyP&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">view_mode_hot_key</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;KeyV&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">double_touch_timeout</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">long_touch_timeout</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -316,10 +317,10 @@
     <span class="n">sagittal_nose_left</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">is_slice_mm</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">is_v1_slice_shader</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">is_force_mouse_click_to_voxel_centers</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">force_device_pixel_ratio</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">log_level</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">loading_text</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;loading ...&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">is_force_mouse_click_to_voxel_centers</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">drag_and_drop_enabled</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">drawing_enabled</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">pen_value</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -370,6 +371,9 @@
     <span class="n">gradient_amount</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">invert_scroll_direction</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">is_2d_slice_shader</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">bounds</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">show_bounds_border</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">bounds_border_color</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Tuple</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ConfigOptions.__init__">
 <a class="viewcode-back" href="../../options.html#ipyniivue.config_options.ConfigOptions.__init__">[docs]</a>
@@ -401,6 +405,7 @@
         <span class="s2">&quot;colorbar_margin&quot;</span><span class="p">,</span>
         <span class="s2">&quot;trust_cal_min_max&quot;</span><span class="p">,</span>
         <span class="s2">&quot;clip_plane_hot_key&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cycle_clip_plane_hot_key&quot;</span><span class="p">,</span>
         <span class="s2">&quot;view_mode_hot_key&quot;</span><span class="p">,</span>
         <span class="s2">&quot;double_touch_timeout&quot;</span><span class="p">,</span>
         <span class="s2">&quot;long_touch_timeout&quot;</span><span class="p">,</span>
@@ -433,10 +438,10 @@
         <span class="s2">&quot;sagittal_nose_left&quot;</span><span class="p">,</span>
         <span class="s2">&quot;is_slice_mm&quot;</span><span class="p">,</span>
         <span class="s2">&quot;is_v1_slice_shader&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;is_force_mouse_click_to_voxel_centers&quot;</span><span class="p">,</span>
         <span class="s2">&quot;force_device_pixel_ratio&quot;</span><span class="p">,</span>
         <span class="s2">&quot;log_level&quot;</span><span class="p">,</span>
         <span class="s2">&quot;loading_text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;is_force_mouse_click_to_voxel_centers&quot;</span><span class="p">,</span>
         <span class="s2">&quot;drag_and_drop_enabled&quot;</span><span class="p">,</span>
         <span class="s2">&quot;drawing_enabled&quot;</span><span class="p">,</span>
         <span class="s2">&quot;pen_value&quot;</span><span class="p">,</span>
@@ -483,6 +488,9 @@
         <span class="s2">&quot;gradient_amount&quot;</span><span class="p">,</span>
         <span class="s2">&quot;invert_scroll_direction&quot;</span><span class="p">,</span>
         <span class="s2">&quot;is_2d_slice_shader&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bounds&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;show_bounds_border&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bounds_border_color&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="nd">@t</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="o">*</span><span class="n">_OBSERVED_TRAITS</span><span class="p">)</span>
@@ -517,6 +525,7 @@
     <span class="s2">&quot;colorbarMargin&quot;</span><span class="p">:</span> <span class="s2">&quot;colorbar_margin&quot;</span><span class="p">,</span>
     <span class="s2">&quot;trustCalMinMax&quot;</span><span class="p">:</span> <span class="s2">&quot;trust_cal_min_max&quot;</span><span class="p">,</span>
     <span class="s2">&quot;clipPlaneHotKey&quot;</span><span class="p">:</span> <span class="s2">&quot;clip_plane_hot_key&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;cycleClipPlaneHotKey&quot;</span><span class="p">:</span> <span class="s2">&quot;cycle_clip_plane_hot_key&quot;</span><span class="p">,</span>
     <span class="s2">&quot;viewModeHotKey&quot;</span><span class="p">:</span> <span class="s2">&quot;view_mode_hot_key&quot;</span><span class="p">,</span>
     <span class="s2">&quot;doubleTouchTimeout&quot;</span><span class="p">:</span> <span class="s2">&quot;double_touch_timeout&quot;</span><span class="p">,</span>
     <span class="s2">&quot;longTouchTimeout&quot;</span><span class="p">:</span> <span class="s2">&quot;long_touch_timeout&quot;</span><span class="p">,</span>
@@ -549,10 +558,10 @@
     <span class="s2">&quot;sagittalNoseLeft&quot;</span><span class="p">:</span> <span class="s2">&quot;sagittal_nose_left&quot;</span><span class="p">,</span>
     <span class="s2">&quot;isSliceMM&quot;</span><span class="p">:</span> <span class="s2">&quot;is_slice_mm&quot;</span><span class="p">,</span>
     <span class="s2">&quot;isV1SliceShader&quot;</span><span class="p">:</span> <span class="s2">&quot;is_v1_slice_shader&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;isForceMouseClickToVoxelCenters&quot;</span><span class="p">:</span> <span class="s2">&quot;is_force_mouse_click_to_voxel_centers&quot;</span><span class="p">,</span>
     <span class="s2">&quot;forceDevicePixelRatio&quot;</span><span class="p">:</span> <span class="s2">&quot;force_device_pixel_ratio&quot;</span><span class="p">,</span>
     <span class="s2">&quot;logLevel&quot;</span><span class="p">:</span> <span class="s2">&quot;log_level&quot;</span><span class="p">,</span>
     <span class="s2">&quot;loadingText&quot;</span><span class="p">:</span> <span class="s2">&quot;loading_text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isForceMouseClickToVoxelCenters&quot;</span><span class="p">:</span> <span class="s2">&quot;is_force_mouse_click_to_voxel_centers&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dragAndDropEnabled&quot;</span><span class="p">:</span> <span class="s2">&quot;drag_and_drop_enabled&quot;</span><span class="p">,</span>
     <span class="s2">&quot;drawingEnabled&quot;</span><span class="p">:</span> <span class="s2">&quot;drawing_enabled&quot;</span><span class="p">,</span>
     <span class="s2">&quot;penValue&quot;</span><span class="p">:</span> <span class="s2">&quot;pen_value&quot;</span><span class="p">,</span>
@@ -599,6 +608,9 @@
     <span class="s2">&quot;gradientAmount&quot;</span><span class="p">:</span> <span class="s2">&quot;gradient_amount&quot;</span><span class="p">,</span>
     <span class="s2">&quot;invertScrollDirection&quot;</span><span class="p">:</span> <span class="s2">&quot;invert_scroll_direction&quot;</span><span class="p">,</span>
     <span class="s2">&quot;is2DSliceShader&quot;</span><span class="p">:</span> <span class="s2">&quot;is_2d_slice_shader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="s2">&quot;bounds&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;showBoundsBorder&quot;</span><span class="p">:</span> <span class="s2">&quot;show_bounds_border&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;boundsBorderColor&quot;</span><span class="p">:</span> <span class="s2">&quot;bounds_border_color&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">SNAKE_TO_CAMEL</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">CAMEL_TO_SNAKE</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
