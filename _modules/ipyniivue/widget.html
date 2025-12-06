@@ -680,7 +680,14 @@
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="n">trait_name</span><span class="p">]</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot modify &#39;</span><span class="si">{</span><span class="n">trait_name</span><span class="si">}</span><span class="s2">&#39; once set.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Mesh.reverse_faces">
+<a class="viewcode-back" href="../../api.html#ipyniivue.Mesh.reverse_faces">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reverse_faces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reverse the winding order of the mesh faces.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;reverse_faces&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span></div>
+</div>
 
 
 
@@ -1277,10 +1284,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_register_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">event_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">CallbackDispatcher</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span><span class="o">.</span><span class="n">register_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span><span class="o">.</span><span class="n">register_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_handle_custom_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">buffers</span><span class="p">):</span>
         <span class="n">event</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -2386,6 +2391,26 @@
             <span class="k">return</span> <span class="n">fallback_shader_names</span>
 
         <span class="k">return</span> <span class="n">shader_names_list</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.reverse_faces">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.reverse_faces">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reverse_faces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reverse the triangle winding of a mesh (swap front and back faces).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mesh_id : str</span>
+<span class="sd">            The ID of the mesh to reverse.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_index_by_id</span><span class="p">(</span><span class="n">mesh_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">reverse_faces</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh with id &#39;</span><span class="si">{</span><span class="n">mesh_id</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_gl_volume</span><span class="p">()</span></div>
 
 
     <span class="nd">@requires_canvas</span>
@@ -3846,7 +3871,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_do_sync_clip_plane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nv</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize clip plane settings with another NiiVue instance.&quot;&quot;&quot;</span>
         <span class="c1"># todo: add ui_data class + property with active_clip_plane_index?</span>
-        <span class="n">other_nv</span><span class="o">.</span><span class="n">set_clip_plane</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elevs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elevs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">other_nv</span><span class="o">.</span><span class="n">set_clip_plane</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elevs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
 <div class="viewcode-block" id="NiiVue.sync">
 <a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.sync">[docs]</a>
