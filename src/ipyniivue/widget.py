@@ -13,6 +13,7 @@ import math
 import pathlib
 import typing
 import uuid
+import warnings
 from urllib.parse import urlparse
 
 import anywidget
@@ -257,6 +258,15 @@ class MeshLayer(BaseAnyWidget):
             "atlas_labels",
             "atlas_values",
         }
+
+        unknown_keys = set(kwargs.keys()) - include_keys
+        if unknown_keys:
+            warnings.warn(
+                f"Ignored unsupported kwargs in {self.__class__.__name__}: "
+                f"{list(unknown_keys)}",
+                stacklevel=2,
+            )
+
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
 
@@ -375,6 +385,15 @@ class Mesh(BaseAnyWidget):
             "visible",
         }
         layers_data = kwargs.pop("layers", [])
+
+        unknown_keys = set(kwargs.keys()) - include_keys
+        if unknown_keys:
+            warnings.warn(
+                f"Ignored unsupported kwargs in {self.__class__.__name__}: "
+                f"{list(unknown_keys)}",
+                stacklevel=2,
+            )
+
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
 
@@ -571,6 +590,15 @@ class Volume(BaseAnyWidget):
             "colormap_label",
             "colormap_type",
         }
+
+        unknown_keys = set(kwargs.keys()) - include_keys
+        if unknown_keys:
+            warnings.warn(
+                f"Ignored unsupported kwargs in {self.__class__.__name__}: "
+                f"{list(unknown_keys)}",
+                stacklevel=2,
+            )
+
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
 
