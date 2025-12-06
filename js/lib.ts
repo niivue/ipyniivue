@@ -291,6 +291,19 @@ function numberArraysEqual(a: number[], b: number[]): boolean {
 	return a.every((val, idx) => val === b[idx]);
 }
 
+function numberArraysEqual2D(
+	a: number[][] | undefined,
+	b: number[][] | undefined,
+): boolean {
+	if (a === b) return true;
+	if (!a || !b) return false; // One is defined, the other isn't
+	if (a.length !== b.length) return false;
+	for (let i = 0; i < a.length; i++) {
+		if (!numberArraysEqual(a[i], b[i])) return false;
+	}
+	return true;
+}
+
 export function sceneDiff(
 	oldScene: Scene | null,
 	newScene: Scene,
@@ -320,19 +333,15 @@ export function sceneDiff(
 		diff.crosshairPos = newScene.crosshairPos;
 	}
 
-	if (
-		oldScene.clipPlanes &&
-		newScene.clipPlanes &&
-		JSON.stringify(oldScene.clipPlanes) !== JSON.stringify(newScene.clipPlanes)
-	) {
+	if (!numberArraysEqual2D(oldScene.clipPlanes, newScene.clipPlanes)) {
 		diff.clipPlanes = newScene.clipPlanes;
 	}
 
 	if (
-		oldScene.clipPlaneDepthAziElevs &&
-		newScene.clipPlaneDepthAziElevs &&
-		JSON.stringify(oldScene.clipPlaneDepthAziElevs) !==
-			JSON.stringify(newScene.clipPlaneDepthAziElevs)
+		!numberArraysEqual2D(
+			oldScene.clipPlaneDepthAziElevs,
+			newScene.clipPlaneDepthAziElevs,
+		)
 	) {
 		diff.clipPlaneDepthAziElevs = newScene.clipPlaneDepthAziElevs;
 	}

@@ -264,6 +264,8 @@ export type VolumeCustomMessage = {
 	data: SaveToDiskData;
 };
 
+export type MeshCustomMessage = { type: "reverse_faces"; data: [] };
+
 export type TypedBufferPayload =
 	| {
 			type: "buffer_change";
