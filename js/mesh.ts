@@ -1,13 +1,12 @@
 import * as niivue from "@niivue/niivue";
 import * as lib from "./lib.ts";
 import type {
+	MeshCustomMessage,
 	MeshLayerModel,
 	MeshModel,
 	Model,
 	TypedBufferPayload,
 } from "./types.ts";
-
-import { v4 as uuidv4 } from "@lukeed/uuid";
 
 const pendingMeshIds = new Set<string>();
 
@@ -241,17 +240,30 @@ function setup_mesh_property_listeners(
 
 	// custom msgs
 	function customMessageHandler(
-		payload: TypedBufferPayload,
+		payload: TypedBufferPayload | MeshCustomMessage,
 		buffers: DataView[],
 	) {
-		const handled = lib.handleBufferMsg(mesh, payload, buffers, () => {
-			if (nv._gl) {
-				mesh.updateMesh(nv.gl);
-				nv.updateGLVolume();
-			}
-		});
+		const handled = lib.handleBufferMsg(
+			mesh,
+			payload as TypedBufferPayload,
+			buffers,
+			() => {
+				if (nv._gl) {
+					mesh.updateMesh(nv.gl);
+					nv.updateGLVolume();
+				}
+			},
+		);
 		if (handled) {
 			return;
+		}
+
+		const { type, data } = payload;
+		switch (type) {
+			case "reverse_faces": {
+				mesh.reverseFaces(nv.gl);
+				break;
+			}
 		}
 	}
 

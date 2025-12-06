@@ -435,6 +435,10 @@ class Mesh(BaseAnyWidget):
             raise t.TraitError(f"Cannot modify '{trait_name}' once set.")
         return proposal["value"]
 
+    def reverse_faces(self):
+        """Reverse the winding order of the mesh faces."""
+        self.send({"type": "reverse_faces", "data": []})
+
 
 class Volume(BaseAnyWidget):
     """
@@ -997,10 +1001,8 @@ class NiiVue(BaseAnyWidget):
     def _register_callback(self, event_name, callback, remove=False):
         if event_name not in self._event_handlers:
             self._event_handlers[event_name] = CallbackDispatcher()
-        if remove:
-            self._event_handlers[event_name].remove(callback)
-        else:
-            self._event_handlers[event_name].register_callback(callback)
+
+        self._event_handlers[event_name].register_callback(callback, remove=remove)
 
     def _handle_custom_msg(self, content, buffers):
         event = content.get("event", "")
@@ -2023,6 +2025,23 @@ class NiiVue(BaseAnyWidget):
             return fallback_shader_names
 
         return shader_names_list
+
+    def reverse_faces(self, mesh_id: str):
+        """
+        Reverse the triangle winding of a mesh (swap front and back faces).
+
+        Parameters
+        ----------
+        mesh_id : str
+            The ID of the mesh to reverse.
+        """
+        idx = self.get_mesh_index_by_id(mesh_id)
+        if idx != -1:
+            self.meshes[idx].reverse_faces()
+        else:
+            raise ValueError(f"Mesh with id '{mesh_id}' not found.")
+
+        self.update_gl_volume()
 
     @requires_canvas
     def set_volume_render_illumination(self, gradient_amount: float):
