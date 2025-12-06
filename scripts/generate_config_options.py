@@ -164,6 +164,7 @@ if __name__ == "__main__":
         "colorbarMargin": 0.05,
         "trustCalMinMax": True,
         "clipPlaneHotKey": "KeyC",
+        "cycleClipPlaneHotKey": "KeyP",
         "viewModeHotKey": "KeyV",
         "doubleTouchTimeout": 500,
         "longTouchTimeout": 1000,
@@ -196,10 +197,10 @@ if __name__ == "__main__":
         "sagittalNoseLeft": False,
         "isSliceMM": False,
         "isV1SliceShader": False,
-        "isForceMouseClickToVoxelCenters": False,
         "forceDevicePixelRatio": 0.0,
         "logLevel": "info",
         "loadingText": "loading ...",
+        "isForceMouseClickToVoxelCenters": False,
         "dragAndDropEnabled": True,
         "drawingEnabled": False,
         "penValue": 1.0,
@@ -246,6 +247,9 @@ if __name__ == "__main__":
         "gradientAmount": 0.0,
         "invertScrollDirection": False,
         "is2DSliceShader": False,
+        "bounds": None,
+        "showBoundsBorder": False,
+        "boundsBorderColor": (1.0, 1.0, 1.0, 1.0),
     }
     code = generate_config_options(DEFAULT_OPTIONS)
     loc = pathlib.Path(__file__).parent / "../src/ipyniivue/config_options.py"
