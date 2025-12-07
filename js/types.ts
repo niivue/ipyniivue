@@ -166,6 +166,8 @@ export type MeshLayerModel = AnyModel<{
 	colormap_invert: boolean;
 	frame_4d: number;
 	colorbar_visible: boolean;
+	colormap_type: number;
+	is_additive_blend: boolean;
 
 	atlas_labels?: string[] | null;
 	atlas_values?: number[] | null;
@@ -257,7 +259,8 @@ export type CustomMessagePayload =
 	| { type: "close_drawing"; data: [] }
 	| { type: "load_jcon"; data: [] }
 	| { type: "load_drawing_from_url"; data: LoadDrawingFromUrlData }
-	| { type: "load_document_from_url"; data: LoadDocumentFromUrlData };
+	| { type: "load_document_from_url"; data: LoadDocumentFromUrlData }
+	| { type: "refresh_colormaps"; data: [] };
 
 export type VolumeCustomMessage = {
 	type: "save_to_disk";

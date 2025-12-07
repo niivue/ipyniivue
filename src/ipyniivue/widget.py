@@ -13,6 +13,7 @@ import math
 import pathlib
 import typing
 import uuid
+import warnings
 from urllib.parse import urlparse
 
 import anywidget
@@ -197,6 +198,8 @@ class MeshLayer(BaseAnyWidget):
     colormap_negative : str, optional
         Colormap for negative values if `use_negative_cmap` is True.
         Default is 'winter'.
+    colormap_type : :class:`ColormapType`, optional
+        Colormap type used for the volume. Default is ``ColormapType.MIN_TO_MAX``.
     use_negative_cmap : bool, optional
         Use negative colormap for negative values. Default is False.
     cal_min : float or None, optional
@@ -226,15 +229,19 @@ class MeshLayer(BaseAnyWidget):
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     outline_border = t.Float(0).tag(sync=True)
+    atlas_labels = t.List(t.Unicode(), default_value=None, allow_none=True).tag(
+        sync=True
+    )
+    atlas_values = t.List(t.Float(), default_value=None, allow_none=True).tag(sync=True)
 
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
     frame_4d = t.Int(0).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
-    atlas_labels = t.List(t.Unicode(), default_value=None, allow_none=True).tag(
-        sync=True
+    colormap_type = t.UseEnum(ColormapType, default_value=ColormapType.MIN_TO_MAX).tag(
+        sync=True, to_json=serialize_enum
     )
-    atlas_values = t.List(t.Float(), default_value=None, allow_none=True).tag(sync=True)
+    is_additive_blend = t.Bool(False).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
@@ -252,6 +259,15 @@ class MeshLayer(BaseAnyWidget):
             "atlas_labels",
             "atlas_values",
         }
+
+        unknown_keys = set(kwargs.keys()) - include_keys
+        if unknown_keys:
+            warnings.warn(
+                f"Ignored unsupported kwargs in {self.__class__.__name__}: "
+                f"{list(unknown_keys)}",
+                stacklevel=2,
+            )
+
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
 
@@ -370,6 +386,15 @@ class Mesh(BaseAnyWidget):
             "visible",
         }
         layers_data = kwargs.pop("layers", [])
+
+        unknown_keys = set(kwargs.keys()) - include_keys
+        if unknown_keys:
+            warnings.warn(
+                f"Ignored unsupported kwargs in {self.__class__.__name__}: "
+                f"{list(unknown_keys)}",
+                stacklevel=2,
+            )
+
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
 
@@ -566,6 +591,15 @@ class Volume(BaseAnyWidget):
             "colormap_label",
             "colormap_type",
         }
+
+        unknown_keys = set(kwargs.keys()) - include_keys
+        if unknown_keys:
+            warnings.warn(
+                f"Ignored unsupported kwargs in {self.__class__.__name__}: "
+                f"{list(unknown_keys)}",
+                stacklevel=2,
+            )
+
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in include_keys}
         super().__init__(**filtered_kwargs)
 
@@ -2042,6 +2076,10 @@ class NiiVue(BaseAnyWidget):
             raise ValueError(f"Mesh with id '{mesh_id}' not found.")
 
         self.update_gl_volume()
+
+    def refresh_colormaps(self):
+        """Rebuild and upload all colormap textures for volumes and meshes."""
+        self.send({"type": "refresh_colormaps", "data": []})
 
     @requires_canvas
     def set_volume_render_illumination(self, gradient_amount: float):

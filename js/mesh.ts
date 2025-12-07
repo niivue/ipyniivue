@@ -92,10 +92,24 @@ function setup_layer_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	function colormap_type_changed() {
+		layer.colormapType = layerModel.get("colormap_type");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
+	function is_additive_blend_changed() {
+		layer.isAdditiveBlend = layerModel.get("is_additive_blend");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
 	// set values not set by kwargs
 	colormap_invert_changed();
 	frame_4d_changed();
 	colorbar_visible_changed();
+	colormap_type_changed();
+	is_additive_blend_changed();
 
 	// Set up the event listeners
 	layerModel.on("change:atlas_values", atlas_values_changed);
@@ -110,6 +124,8 @@ function setup_layer_property_listeners(
 	layerModel.on("change:colormap_invert", colormap_invert_changed);
 	layerModel.on("change:frame_4d", frame_4d_changed);
 	layerModel.on("change:colorbar_visible", colorbar_visible_changed);
+	layerModel.on("change:colormap_type", colormap_type_changed);
+	layerModel.on("change:is_additive_blend", is_additive_blend_changed);
 
 	// Return a cleanup function
 	return () => {
@@ -125,7 +141,130 @@ function setup_layer_property_listeners(
 		layerModel.off("change:colormap_invert", colormap_invert_changed);
 		layerModel.off("change:frame_4d", frame_4d_changed);
 		layerModel.off("change:colorbar_visible", colorbar_visible_changed);
+		layerModel.off("change:colormap_type", colormap_type_changed);
+		layerModel.off("change:is_additive_blend", is_additive_blend_changed);
 	};
+}
+
+/**
+ * Process meshmodel layers.
+ */
+async function process_meshmodel_layers(
+	mmodel: MeshModel,
+	mesh: niivue.NVMesh,
+	nv: niivue.Niivue,
+) {
+	const layerCleanupFunctions: (() => void)[] = [];
+
+	const layerIDs = mmodel.get("layers");
+
+	if (layerIDs.length > 0) {
+		// Use gather_models to fetch the MeshLayerModel instances
+		const layerModels: MeshLayerModel[] =
+			await lib.gather_models<MeshLayerModel>(mmodel, layerIDs);
+
+		// Process layers
+		for (const layerModel of layerModels) {
+			const layerPath = layerModel.get("path")?.name
+				? layerModel.get("path")
+				: null;
+			const layerUrl = layerModel.get("url");
+			const layerData = layerModel.get("data")?.byteLength
+				? layerModel.get("data")
+				: null;
+
+			const backendLayerId = layerModel.get("id");
+			const existingLayerIdx = mesh.layers.findIndex(
+				// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
+				(l) => (l as any).id === backendLayerId,
+			);
+
+			// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
+			let layer: any;
+
+			if (existingLayerIdx !== -1) {
+				layer = mesh.layers[existingLayerIdx];
+			} else if (layerPath || layerData) {
+				const layerDataBuffer = layerPath?.data?.buffer || layerData?.buffer;
+				const layerName = layerPath?.name || layerModel.get("name");
+				layer = await niivue.NVMeshLoaders.readLayer(
+					layerName || "",
+					layerDataBuffer as ArrayBuffer,
+					mesh,
+					layerModel.get("opacity") ?? 0.5,
+					layerModel.get("colormap") ?? "warm",
+					layerModel.get("colormap_negative") ?? "winter",
+					layerModel.get("use_negative_cmap") ?? false,
+					layerModel.get("cal_min") ?? null,
+					layerModel.get("cal_max") ?? null,
+					layerModel.get("outline_border") ?? 0,
+				);
+				layer.id = backendLayerId;
+				const labels = Array.isArray(layer.colormapLabel?.labels)
+					? layer.colormapLabel.labels
+					: null;
+				layerModel.set("atlas_labels", labels);
+				const values = Array.isArray(layer.atlasValues)
+					? layer.atlasValues
+					: null;
+				layerModel.set("atlas_values", values);
+				layerModel.save_changes?.();
+				// console.log('colormap via get():', layerModel.get('colormap'));
+				// console.log('atlas_labels via get():', layerModel.get('atlas_labels'));
+				mesh.layers.push(layer);
+			} else if (layerUrl) {
+				const response = await fetch(layerUrl);
+				if (!response.ok) {
+					throw Error(response.statusText);
+				}
+				const layerDataBuffer = await response.arrayBuffer();
+				const layerName = layerModel.get("name");
+				layer = await niivue.NVMeshLoaders.readLayer(
+					layerName,
+					layerDataBuffer as ArrayBuffer,
+					mesh,
+					layerModel.get("opacity") ?? 0.5,
+					layerModel.get("colormap") ?? "warm",
+					layerModel.get("colormap_negative") ?? "winter",
+					layerModel.get("use_negative_cmap") ?? false,
+					layerModel.get("cal_min") ?? null,
+					layerModel.get("cal_max") ?? null,
+					layerModel.get("outline_border") ?? 0,
+				);
+				layer.id = backendLayerId;
+				const labels = Array.isArray(layer.colormapLabel?.labels)
+					? layer.colormapLabel.labels
+					: null;
+				layerModel.set("atlas_labels", labels);
+				const values = Array.isArray(layer.atlasValues)
+					? layer.atlasValues
+					: null;
+				layerModel.set("atlas_values", values);
+				layerModel.save_changes?.();
+				mesh.layers.push(layer);
+			} else {
+				throw new Error("Invalid source for mesh layer");
+			}
+
+			if (!layer) {
+				continue;
+			}
+
+			// Set up event listeners
+			const cleanup_layer_listeners = setup_layer_property_listeners(
+				layer,
+				layerModel,
+				mesh,
+				nv,
+			);
+			layerCleanupFunctions.push(cleanup_layer_listeners);
+		}
+	} else {
+		// clear layers
+		mesh.layers = [];
+	}
+
+	return layerCleanupFunctions;
 }
 
 /**
@@ -238,6 +377,12 @@ function setup_mesh_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	function layers_changed() {
+		process_meshmodel_layers(mmodel, mesh, nv);
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
 	// custom msgs
 	function customMessageHandler(
 		payload: TypedBufferPayload | MeshCustomMessage,
@@ -301,6 +446,8 @@ function setup_mesh_property_listeners(
 	mmodel.on("change:fiber_decimation_stride", fiber_decimation_stride_changed);
 	mmodel.on("change:colormap", colormap_changed);
 
+	mmodel.on("change:layers", layers_changed);
+
 	mmodel.on("msg:custom", customMessageHandler);
 
 	// Return a function to remove the event listeners
@@ -327,6 +474,8 @@ function setup_mesh_property_listeners(
 		);
 		mmodel.off("change:colormap", colormap_changed);
 
+		mmodel.off("change:layers", layers_changed);
+
 		mmodel.off("msg:custom", customMessageHandler);
 	};
 }
@@ -340,7 +489,6 @@ export async function create_mesh(
 	mmodel: MeshModel,
 ): Promise<[niivue.NVMesh, () => void]> {
 	let mesh: niivue.NVMesh;
-	const layerCleanupFunctions: (() => void)[] = [];
 
 	// Input data
 	const backendId = mmodel.get("id");
@@ -398,110 +546,11 @@ export async function create_mesh(
 	mmodel.save_changes();
 
 	// Gather MeshLayer models
-	const layerIDs = mmodel.get("layers");
-
-	if (layerIDs.length > 0) {
-		// Use gather_models to fetch the MeshLayerModel instances
-		const layerModels: MeshLayerModel[] =
-			await lib.gather_models<MeshLayerModel>(mmodel, layerIDs);
-
-		// Process layers
-		for (const layerModel of layerModels) {
-			const layerPath = layerModel.get("path")?.name
-				? layerModel.get("path")
-				: null;
-			const layerUrl = layerModel.get("url");
-			const layerData = layerModel.get("data")?.byteLength
-				? layerModel.get("data")
-				: null;
-
-			const backendLayerId = layerModel.get("id");
-			const existingLayerIdx = mesh.layers.findIndex(
-				// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
-				(l) => (l as any).id === backendLayerId,
-			);
-
-			// biome-ignore lint/suspicious/noExplicitAny: NVMeshLayer isn't exported from niivue
-			let layer: any;
-
-			if (existingLayerIdx !== -1) {
-				layer = mesh.layers[existingLayerIdx];
-			} else if (layerPath || layerData) {
-				const layerDataBuffer = layerPath?.data?.buffer || layerData?.buffer;
-				const layerName = layerPath?.name || layerModel.get("name");
-				layer = await niivue.NVMeshLoaders.readLayer(
-					layerName || "",
-					layerDataBuffer as ArrayBuffer,
-					mesh,
-					layerModel.get("opacity") ?? 0.5,
-					layerModel.get("colormap") ?? "warm",
-					layerModel.get("colormap_negative") ?? "winter",
-					layerModel.get("use_negative_cmap") ?? false,
-					layerModel.get("cal_min") ?? null,
-					layerModel.get("cal_max") ?? null,
-					layerModel.get("outline_border") ?? 0,
-				);
-				layer.id = backendLayerId;
-				const labels = Array.isArray(layer.colormapLabel?.labels)
-					? layer.colormapLabel.labels
-					: null;
-				layerModel.set("atlas_labels", labels);
-				const values = Array.isArray(layer.atlasValues)
-					? layer.atlasValues
-					: null;
-				layerModel.set("atlas_values", values);
-				layerModel.save_changes?.();
-				// console.log('colormap via get():', layerModel.get('colormap'));
-				// console.log('atlas_labels via get():', layerModel.get('atlas_labels'));
-				mesh.layers.push(layer);
-			} else if (layerUrl) {
-				const response = await fetch(layerUrl);
-				if (!response.ok) {
-					throw Error(response.statusText);
-				}
-				const layerDataBuffer = await response.arrayBuffer();
-				const layerName = layerModel.get("name");
-				layer = await niivue.NVMeshLoaders.readLayer(
-					layerName,
-					layerDataBuffer as ArrayBuffer,
-					mesh,
-					layerModel.get("opacity") ?? 0.5,
-					layerModel.get("colormap") ?? "warm",
-					layerModel.get("colormap_negative") ?? "winter",
-					layerModel.get("use_negative_cmap") ?? false,
-					layerModel.get("cal_min") ?? null,
-					layerModel.get("cal_max") ?? null,
-					layerModel.get("outline_border") ?? 0,
-				);
-				layer.id = backendLayerId;
-				const labels = Array.isArray(layer.colormapLabel?.labels)
-					? layer.colormapLabel.labels
-					: null;
-				layerModel.set("atlas_labels", labels);
-				const values = Array.isArray(layer.atlasValues)
-					? layer.atlasValues
-					: null;
-				layerModel.set("atlas_values", values);
-				layerModel.save_changes?.();
-				mesh.layers.push(layer);
-			} else {
-				throw new Error("Invalid source for mesh layer");
-			}
-
-			if (!layer) {
-				continue;
-			}
-
-			// Set up event listeners
-			const cleanup_layer_listeners = setup_layer_property_listeners(
-				layer,
-				layerModel,
-				mesh,
-				nv,
-			);
-			layerCleanupFunctions.push(cleanup_layer_listeners);
-		}
-	}
+	const layerCleanupFunctions = await process_meshmodel_layers(
+		mmodel,
+		mesh,
+		nv,
+	);
 
 	mesh.updateMesh(nv.gl);
 
