@@ -1584,6 +1584,12 @@ Most users will not need to use this directly.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ipyniivue.NiiVue.refresh_colormaps">
+<span class="sig-name descname"><span class="pre">refresh_colormaps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.refresh_colormaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.refresh_colormaps" title="Link to this definition">¶</a></dt>
+<dd><p>Rebuild and upload all colormap textures for volumes and meshes.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ipyniivue.NiiVue.remove_haze">
 <span class="sig-name descname"><span class="pre">remove_haze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vol_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipyniivue/widget.html#NiiVue.remove_haze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ipyniivue.NiiVue.remove_haze" title="Link to this definition">¶</a></dt>
 <dd><p>Remove dark voxels in air.</p>
@@ -3176,7 +3182,7 @@ See <a class="reference internal" href="#ipyniivue.MeshLayer" title="ipyniivue.M
 <p>Represents a layer within a Mesh model.</p>
 <section id="id185">
 <h2>Parameters<a class="headerlink" href="#id185" title="Link to this heading">¶</a></h2>
-<dl class="simple">
+<dl>
 <dt>path<span class="classifier">str or pathlib.Path, optional</span></dt><dd><p>Path to the volume data file. Cannot be modified once set.</p>
 </dd>
 <dt>url<span class="classifier">str, optional</span></dt><dd><p>URL to the volume data.</p>
@@ -3191,6 +3197,8 @@ See <a class="reference internal" href="#ipyniivue.MeshLayer" title="ipyniivue.M
 </dd>
 <dt>colormap_negative<span class="classifier">str, optional</span></dt><dd><p>Colormap for negative values if <cite>use_negative_cmap</cite> is True.
 Default is ‘winter’.</p>
+</dd>
+<dt>colormap_type<span class="classifier"><a class="reference internal" href="enums.html#ipyniivue.ColormapType" title="ipyniivue.ColormapType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColormapType</span></code></a>, optional</span></dt><dd><p>Colormap type used for the volume. Default is <code class="docutils literal notranslate"><span class="pre">ColormapType.MIN_TO_MAX</span></code>.</p>
 </dd>
 <dt>use_negative_cmap<span class="classifier">bool, optional</span></dt><dd><p>Use negative colormap for negative values. Default is False.</p>
 </dd>
@@ -3260,6 +3268,37 @@ Default is ‘winter’.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.MeshLayer.colormap_type">
+<span class="sig-name descname"><span class="pre">colormap_type</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.colormap_type" title="Link to this definition">¶</a></dt>
+<dd><p>Use a Enum class as model for the data type description.
+Note that if no default-value is provided, the first enum-value is used
+as default-value.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- SINCE: Python 3.4 (or install backport: pip install enum34)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">traitlets</span><span class="w"> </span><span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">UseEnum</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Color</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># -- IMPLICIT: default_value</span>
+    <span class="n">blue</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyEntity</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">UseEnum</span><span class="p">(</span><span class="n">Color</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">blue</span><span class="p">)</span>
+
+
+<span class="n">entity</span> <span class="o">=</span> <span class="n">MyEntity</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">red</span><span class="p">)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>  <span class="c1"># USE: Enum-value (preferred)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>  <span class="c1"># USE: name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;Color.green&quot;</span>  <span class="c1"># USE: scoped-name (as string)</span>
+<span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># USE: number (as int)</span>
+<span class="k">assert</span> <span class="n">entity</span><span class="o">.</span><span class="n">color</span> <span class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span class="n">green</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ipyniivue.MeshLayer.data">
 <span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.data" title="Link to this definition">¶</a></dt>
 <dd><p>A trait for byte strings.</p>
@@ -3275,6 +3314,12 @@ Default is ‘winter’.</p>
 <dt class="sig sig-object py" id="ipyniivue.MeshLayer.id">
 <span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.id" title="Link to this definition">¶</a></dt>
 <dd><p>A trait for unicode strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ipyniivue.MeshLayer.is_additive_blend">
+<span class="sig-name descname"><span class="pre">is_additive_blend</span></span><a class="headerlink" href="#ipyniivue.MeshLayer.is_additive_blend" title="Link to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -3428,6 +3473,7 @@ Default is ‘winter’.</p>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.other_nv"><code class="docutils literal notranslate"><span class="pre">NiiVue.other_nv</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.overlay_alpha_shader"><code class="docutils literal notranslate"><span class="pre">NiiVue.overlay_alpha_shader</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.overlay_outline_width"><code class="docutils literal notranslate"><span class="pre">NiiVue.overlay_outline_width</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.NiiVue.refresh_colormaps"><code class="docutils literal notranslate"><span class="pre">NiiVue.refresh_colormaps()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.remove_haze"><code class="docutils literal notranslate"><span class="pre">NiiVue.remove_haze()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.reverse_faces"><code class="docutils literal notranslate"><span class="pre">NiiVue.reverse_faces()</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.NiiVue.save_document"><code class="docutils literal notranslate"><span class="pre">NiiVue.save_document()</span></code></a></li>
@@ -3559,9 +3605,11 @@ Default is ‘winter’.</p>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.colormap"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.colormap_invert"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap_invert</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.colormap_negative"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap_negative</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.MeshLayer.colormap_type"><code class="docutils literal notranslate"><span class="pre">MeshLayer.colormap_type</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.data"><code class="docutils literal notranslate"><span class="pre">MeshLayer.data</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.frame_4d"><code class="docutils literal notranslate"><span class="pre">MeshLayer.frame_4d</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.id"><code class="docutils literal notranslate"><span class="pre">MeshLayer.id</span></code></a></li>
+<li><a class="reference internal" href="#ipyniivue.MeshLayer.is_additive_blend"><code class="docutils literal notranslate"><span class="pre">MeshLayer.is_additive_blend</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.name"><code class="docutils literal notranslate"><span class="pre">MeshLayer.name</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.opacity"><code class="docutils literal notranslate"><span class="pre">MeshLayer.opacity</span></code></a></li>
 <li><a class="reference internal" href="#ipyniivue.MeshLayer.outline_border"><code class="docutils literal notranslate"><span class="pre">MeshLayer.outline_border</span></code></a></li>
