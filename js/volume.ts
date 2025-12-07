@@ -404,18 +404,37 @@ export async function render_volumes(
 	console.log("backend_volumes:", backend_volumes, backend_volumes.length);
 	console.log("frontend_volumes:", frontend_volumes, frontend_volumes.length);
 
+	// Collect promises for creating volumes in parallel
+	const creationPromises: Promise<{
+		id: string;
+		volume: niivue.NVImage;
+		cleanup: () => void;
+	}>[] = [];
+
 	// add volumes
 	for (const [id, vmodel] of backend_volume_map.entries()) {
 		if (!disposer.has(id)) {
-			const [volume, cleanup] = await create_volume(nv, vmodel);
-			disposer.register(volume, cleanup);
-
-			if (!frontend_volume_map.has(id)) {
-				nv.addVolume(volume);
-			}
+			// Create the volume promise and attach the id for later registration
+			const p = create_volume(nv, vmodel).then(([volume, cleanup]) => ({
+				id,
+				volume,
+				cleanup,
+			}));
+			creationPromises.push(p);
 		}
 
 		pendingVolumeIds.delete(id);
+	}
+
+	const results = await Promise.all(creationPromises);
+
+	// Register and add created volumes
+	for (const { id, volume, cleanup } of results) {
+		disposer.register(volume, cleanup);
+
+		if (!frontend_volume_map.has(id)) {
+			nv.addVolume(volume);
+		}
 	}
 
 	// remove volumes
