@@ -362,6 +362,7 @@ class Mesh(BaseAnyWidget):
     edge_scale = t.Float(1.0).tag(sync=True)
     node_scale = t.Float(1.0).tag(sync=True)
     fiber_radius = t.Float(0.0).tag(sync=True)
+    fiber_occlusion = t.Float(0.0).tag(sync=True)
     fiber_length = t.Float(2.0).tag(sync=True)
     fiber_dither = t.Float(0.1).tag(sync=True)
     fiber_color = t.Unicode("Global").tag(sync=True)
