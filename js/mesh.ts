@@ -98,11 +98,18 @@ function setup_layer_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	function is_additive_blend_changed() {
+		layer.isAdditiveBlend = layerModel.get("is_additive_blend");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
 	// set values not set by kwargs
 	colormap_invert_changed();
 	frame_4d_changed();
 	colorbar_visible_changed();
 	colormap_type_changed();
+	is_additive_blend_changed();
 
 	// Set up the event listeners
 	layerModel.on("change:atlas_values", atlas_values_changed);
@@ -118,6 +125,7 @@ function setup_layer_property_listeners(
 	layerModel.on("change:frame_4d", frame_4d_changed);
 	layerModel.on("change:colorbar_visible", colorbar_visible_changed);
 	layerModel.on("change:colormap_type", colormap_type_changed);
+	layerModel.on("change:is_additive_blend", is_additive_blend_changed);
 
 	// Return a cleanup function
 	return () => {
@@ -134,6 +142,7 @@ function setup_layer_property_listeners(
 		layerModel.off("change:frame_4d", frame_4d_changed);
 		layerModel.off("change:colorbar_visible", colorbar_visible_changed);
 		layerModel.off("change:colormap_type", colormap_type_changed);
+		layerModel.off("change:is_additive_blend", is_additive_blend_changed);
 	};
 }
 

@@ -225,22 +225,23 @@ class MeshLayer(BaseAnyWidget):
     opacity = t.Float(0.5).tag(sync=True)
     colormap = t.Unicode("warm").tag(sync=True)
     colormap_negative = t.Unicode("winter").tag(sync=True)
-    colormap_type = t.UseEnum(ColormapType, default_value=ColormapType.MIN_TO_MAX).tag(
-        sync=True, to_json=serialize_enum
-    )
     use_negative_cmap = t.Bool(False).tag(sync=True)
     cal_min = t.Float(None, allow_none=True).tag(sync=True)
     cal_max = t.Float(None, allow_none=True).tag(sync=True)
     outline_border = t.Float(0).tag(sync=True)
+    atlas_labels = t.List(t.Unicode(), default_value=None, allow_none=True).tag(
+        sync=True
+    )
+    atlas_values = t.List(t.Float(), default_value=None, allow_none=True).tag(sync=True)
 
     # other properties that aren't in init
     colormap_invert = t.Bool(False).tag(sync=True)
     frame_4d = t.Int(0).tag(sync=True)
     colorbar_visible = t.Bool(True).tag(sync=True)
-    atlas_labels = t.List(t.Unicode(), default_value=None, allow_none=True).tag(
-        sync=True
+    colormap_type = t.UseEnum(ColormapType, default_value=ColormapType.MIN_TO_MAX).tag(
+        sync=True, to_json=serialize_enum
     )
-    atlas_values = t.List(t.Float(), default_value=None, allow_none=True).tag(sync=True)
+    is_additive_blend = t.Bool(False).tag(sync=True)
 
     def __init__(self, **kwargs):
         include_keys = {
