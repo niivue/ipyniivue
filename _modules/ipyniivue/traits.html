@@ -486,9 +486,35 @@
 
 
 
+<span class="c1"># ==============================================================================</span>
+<span class="c1"># NIFTI1Hdr logic and formatting code was ported</span>
+<span class="c1"># from https://github.com/rii-mango/NIFTI-Reader-JS.</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2015 RII-UTHSCSA</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in</span>
+<span class="c1"># all copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN</span>
+<span class="c1"># THE SOFTWARE.</span>
+<span class="c1"># ==============================================================================</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">NIFTI1Hdr</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a NIFTI1 header.</span>
+
+<span class="sd">    Note: Logic and formatting was ported from NIFTI-Reader-JS.</span>
 
 <span class="sd">    Properties</span>
 <span class="sd">    ----------</span>
@@ -599,6 +625,206 @@
     <span class="n">affine</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">()))</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">magic</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Unicode</span><span class="p">()</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">extensionFlag</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Datatype codes</span>
+    <span class="n">TYPE_NONE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">TYPE_BINARY</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">TYPE_UINT8</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">TYPE_INT16</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">TYPE_INT32</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">TYPE_FLOAT32</span> <span class="o">=</span> <span class="mi">16</span>
+    <span class="n">TYPE_COMPLEX64</span> <span class="o">=</span> <span class="mi">32</span>
+    <span class="n">TYPE_FLOAT64</span> <span class="o">=</span> <span class="mi">64</span>
+    <span class="n">TYPE_RGB24</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">TYPE_INT8</span> <span class="o">=</span> <span class="mi">256</span>
+    <span class="n">TYPE_UINT16</span> <span class="o">=</span> <span class="mi">512</span>
+    <span class="n">TYPE_UINT32</span> <span class="o">=</span> <span class="mi">768</span>
+    <span class="n">TYPE_INT64</span> <span class="o">=</span> <span class="mi">1024</span>
+    <span class="n">TYPE_UINT64</span> <span class="o">=</span> <span class="mi">1280</span>
+    <span class="n">TYPE_FLOAT128</span> <span class="o">=</span> <span class="mi">1536</span>
+    <span class="n">TYPE_COMPLEX128</span> <span class="o">=</span> <span class="mi">1792</span>
+    <span class="n">TYPE_COMPLEX256</span> <span class="o">=</span> <span class="mi">2048</span>
+
+    <span class="c1"># Unit codes</span>
+    <span class="n">SPATIAL_UNITS_MASK</span> <span class="o">=</span> <span class="mh">0x07</span>
+    <span class="n">TEMPORAL_UNITS_MASK</span> <span class="o">=</span> <span class="mh">0x38</span>
+    <span class="n">UNITS_UNKNOWN</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">UNITS_METER</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">UNITS_MM</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">UNITS_MICRON</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">UNITS_SEC</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">UNITS_MSEC</span> <span class="o">=</span> <span class="mi">16</span>
+    <span class="n">UNITS_USEC</span> <span class="o">=</span> <span class="mi">24</span>
+    <span class="n">UNITS_HZ</span> <span class="o">=</span> <span class="mi">32</span>
+    <span class="n">UNITS_PPM</span> <span class="o">=</span> <span class="mi">40</span>
+    <span class="n">UNITS_RADS</span> <span class="o">=</span> <span class="mi">48</span>
+
+    <span class="c1"># Transform codes</span>
+    <span class="n">XFORM_UNKNOWN</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">XFORM_SCANNER_ANAT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">XFORM_ALIGNED_ANAT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">XFORM_TALAIRACH</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">XFORM_MNI_152</span> <span class="o">=</span> <span class="mi">4</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_format_number</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">short_format</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format a number to specific precision, similar to JS toPrecision.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+        <span class="n">precision</span> <span class="o">=</span> <span class="mi">5</span> <span class="k">if</span> <span class="n">short_format</span> <span class="k">else</span> <span class="mi">7</span>
+        <span class="n">formatted</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">precision</span><span class="si">}</span><span class="s2">g</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">formatted</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_datatype_code_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a human-readable string for datatype codes.&quot;&quot;&quot;</span>
+        <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_UINT8</span><span class="p">:</span> <span class="s2">&quot;1-Byte Unsigned Integer&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_INT16</span><span class="p">:</span> <span class="s2">&quot;2-Byte Signed Integer&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_INT32</span><span class="p">:</span> <span class="s2">&quot;4-Byte Signed Integer&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_FLOAT32</span><span class="p">:</span> <span class="s2">&quot;4-Byte Float&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_FLOAT64</span><span class="p">:</span> <span class="s2">&quot;8-Byte Float&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_RGB24</span><span class="p">:</span> <span class="s2">&quot;RGB&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_INT8</span><span class="p">:</span> <span class="s2">&quot;1-Byte Signed Integer&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_UINT16</span><span class="p">:</span> <span class="s2">&quot;2-Byte Unsigned Integer&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_UINT32</span><span class="p">:</span> <span class="s2">&quot;4-Byte Unsigned Integer&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_INT64</span><span class="p">:</span> <span class="s2">&quot;8-Byte Signed Integer&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_UINT64</span><span class="p">:</span> <span class="s2">&quot;8-Byte Unsigned Integer&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_units_code_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a human-readable string for unit codes.&quot;&quot;&quot;</span>
+        <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UNITS_METER</span><span class="p">:</span> <span class="s2">&quot;Meters&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UNITS_MM</span><span class="p">:</span> <span class="s2">&quot;Millimeters&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UNITS_MICRON</span><span class="p">:</span> <span class="s2">&quot;Microns&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UNITS_SEC</span><span class="p">:</span> <span class="s2">&quot;Seconds&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UNITS_MSEC</span><span class="p">:</span> <span class="s2">&quot;Milliseconds&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UNITS_USEC</span><span class="p">:</span> <span class="s2">&quot;Microseconds&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UNITS_HZ</span><span class="p">:</span> <span class="s2">&quot;Hz&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UNITS_PPM</span><span class="p">:</span> <span class="s2">&quot;PPM&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UNITS_RADS</span><span class="p">:</span> <span class="s2">&quot;Rads&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_transform_code_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a human-readable string for transform codes.&quot;&quot;&quot;</span>
+        <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">XFORM_SCANNER_ANAT</span><span class="p">:</span> <span class="s2">&quot;Scanner&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">XFORM_ALIGNED_ANAT</span><span class="p">:</span> <span class="s2">&quot;Aligned&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">XFORM_TALAIRACH</span><span class="p">:</span> <span class="s2">&quot;Talairach&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">XFORM_MNI_152</span><span class="p">:</span> <span class="s2">&quot;MNI&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_formatted_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a formatted string of header fields.&quot;&quot;&quot;</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Dim Info = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dim_info</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dims</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">8</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="p">))</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Image Dimensions (1-8): </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Intent Parameters (1-3): </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">intent_p1</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">intent_p2</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">intent_p3</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Intent Code = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">intent_code</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">type_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_datatype_code_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datatypeCode</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Datatype = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">datatypeCode</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Bits Per Voxel = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">numBitsPerVoxel</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Slice Start = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_start</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">pd</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pixDims</span> <span class="ow">or</span> <span class="p">[])</span> <span class="o">+</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">8</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Voxel Dimensions (1-8): </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Image Offset = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">vox_offset</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Data Scale:  Slope = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scl_slope</span><span class="p">)</span><span class="si">}</span><span class="s2">  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Intercept = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scl_inter</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Slice End = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_end</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Slice Code = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_code</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">spatial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_units_code_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SPATIAL_UNITS_MASK</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzt_units</span><span class="p">)</span>
+        <span class="n">temporal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_units_code_string</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TEMPORAL_UNITS_MASK</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzt_units</span>
+        <span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Units Code = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">xyzt_units</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">spatial</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">temporal</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Display Range:  Max = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cal_max</span><span class="p">)</span><span class="si">}</span><span class="s2">  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Min = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cal_min</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Slice Duration = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_duration</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Time Axis Shift = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">toffset</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;Description: &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;Auxiliary File: &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aux_file</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+        <span class="n">q_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_transform_code_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qform_code</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Q-Form Code = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qform_code</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">q_str</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">s_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_transform_code_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sform_code</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;S-Form Code = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sform_code</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">s_str</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Quaternion Parameters:  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;b = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quatern_b</span><span class="p">)</span><span class="si">}</span><span class="s2">  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;c = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quatern_c</span><span class="p">)</span><span class="si">}</span><span class="s2">  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;d = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quatern_d</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Quaternion Offsets:  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;x = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoffset_x</span><span class="si">}</span><span class="s2">  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;y = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoffset_y</span><span class="si">}</span><span class="s2">  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;z = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoffset_z</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">af</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">affine</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">affine</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">affine</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span>
+            <span class="k">else</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;S-Form Parameters X: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;S-Form Parameters Y: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;S-Form Parameters Z: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_number</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;Intent Name: &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">intent_name</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+        <span class="k">return</span> <span class="n">string</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the formatted string representation of the header.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_formatted_string</span><span class="p">()</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Scene</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">):</span>
