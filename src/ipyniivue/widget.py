@@ -2586,6 +2586,17 @@ class NiiVue(BaseAnyWidget):
 
         self.volumes[vol_idx].opacity = new_opacity
 
+    def set_hero_image(self, fraction: float):
+        """
+        Determine proportion of screen devoted to rendering in multiplanar view.
+
+        Parameters
+        ----------
+        fraction : float
+            Proportion of screen devoted to primary (hero) image (0 to disable).
+        """
+        self.opts.hero_image_fraction = fraction
+
     @requires_canvas
     def set_modulation_image(
         self, id_target: str, id_modulation: str, modulate_alpha: int = 0
