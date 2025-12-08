@@ -235,9 +235,35 @@ class Graph(t.HasTraits):
             self._parent._notify_graph_changed()
 
 
+# ==============================================================================
+# NIFTI1Hdr logic and formatting code was ported
+# from https://github.com/rii-mango/NIFTI-Reader-JS.
+#
+# Copyright (c) 2015 RII-UTHSCSA
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+# ==============================================================================
 class NIFTI1Hdr(t.HasTraits):
     """
     Represents a NIFTI1 header.
+
+    Note: Logic and formatting was ported from NIFTI-Reader-JS.
 
     Properties
     ----------
@@ -348,6 +374,206 @@ class NIFTI1Hdr(t.HasTraits):
     affine = t.List(t.List(t.Float())).tag(sync=False)
     magic = t.Unicode().tag(sync=False)
     extensionFlag = t.List(t.Int()).tag(sync=False)
+
+    # Datatype codes
+    TYPE_NONE = 0
+    TYPE_BINARY = 1
+    TYPE_UINT8 = 2
+    TYPE_INT16 = 4
+    TYPE_INT32 = 8
+    TYPE_FLOAT32 = 16
+    TYPE_COMPLEX64 = 32
+    TYPE_FLOAT64 = 64
+    TYPE_RGB24 = 128
+    TYPE_INT8 = 256
+    TYPE_UINT16 = 512
+    TYPE_UINT32 = 768
+    TYPE_INT64 = 1024
+    TYPE_UINT64 = 1280
+    TYPE_FLOAT128 = 1536
+    TYPE_COMPLEX128 = 1792
+    TYPE_COMPLEX256 = 2048
+
+    # Unit codes
+    SPATIAL_UNITS_MASK = 0x07
+    TEMPORAL_UNITS_MASK = 0x38
+    UNITS_UNKNOWN = 0
+    UNITS_METER = 1
+    UNITS_MM = 2
+    UNITS_MICRON = 3
+    UNITS_SEC = 8
+    UNITS_MSEC = 16
+    UNITS_USEC = 24
+    UNITS_HZ = 32
+    UNITS_PPM = 40
+    UNITS_RADS = 48
+
+    # Transform codes
+    XFORM_UNKNOWN = 0
+    XFORM_SCANNER_ANAT = 1
+    XFORM_ALIGNED_ANAT = 2
+    XFORM_TALAIRACH = 3
+    XFORM_MNI_152 = 4
+
+    @staticmethod
+    def _format_number(num, short_format=False):
+        """Format a number to specific precision, similar to JS toPrecision."""
+        if num is None:
+            return 0.0
+        val = float(num)
+        precision = 5 if short_format else 7
+        formatted = f"{val:.{precision}g}"
+        return float(formatted)
+
+    def _get_datatype_code_string(self, code):
+        """Return a human-readable string for datatype codes."""
+        mapping = {
+            self.TYPE_UINT8: "1-Byte Unsigned Integer",
+            self.TYPE_INT16: "2-Byte Signed Integer",
+            self.TYPE_INT32: "4-Byte Signed Integer",
+            self.TYPE_FLOAT32: "4-Byte Float",
+            self.TYPE_FLOAT64: "8-Byte Float",
+            self.TYPE_RGB24: "RGB",
+            self.TYPE_INT8: "1-Byte Signed Integer",
+            self.TYPE_UINT16: "2-Byte Unsigned Integer",
+            self.TYPE_UINT32: "4-Byte Unsigned Integer",
+            self.TYPE_INT64: "8-Byte Signed Integer",
+            self.TYPE_UINT64: "8-Byte Unsigned Integer",
+        }
+        return mapping.get(code, "Unknown")
+
+    def _get_units_code_string(self, code):
+        """Return a human-readable string for unit codes."""
+        mapping = {
+            self.UNITS_METER: "Meters",
+            self.UNITS_MM: "Millimeters",
+            self.UNITS_MICRON: "Microns",
+            self.UNITS_SEC: "Seconds",
+            self.UNITS_MSEC: "Milliseconds",
+            self.UNITS_USEC: "Microseconds",
+            self.UNITS_HZ: "Hz",
+            self.UNITS_PPM: "PPM",
+            self.UNITS_RADS: "Rads",
+        }
+        return mapping.get(code, "Unknown")
+
+    def _get_transform_code_string(self, code):
+        """Return a human-readable string for transform codes."""
+        mapping = {
+            self.XFORM_SCANNER_ANAT: "Scanner",
+            self.XFORM_ALIGNED_ANAT: "Aligned",
+            self.XFORM_TALAIRACH: "Talairach",
+            self.XFORM_MNI_152: "MNI",
+        }
+        return mapping.get(code, "Unknown")
+
+    def to_formatted_string(self):
+        """Return a formatted string of header fields."""
+        string = ""
+
+        string += f"Dim Info = {self.dim_info}\n"
+
+        d = self.dims + [0] * (8 - len(self.dims))
+        string += (
+            f"Image Dimensions (1-8): {d[0]}, {d[1]}, {d[2]}, {d[3]}, "
+            f"{d[4]}, {d[5]}, {d[6]}, {d[7]}\n"
+        )
+
+        string += (
+            f"Intent Parameters (1-3): {self.intent_p1}, "
+            f"{self.intent_p2}, {self.intent_p3}\n"
+        )
+        string += f"Intent Code = {self.intent_code}\n"
+
+        type_str = self._get_datatype_code_string(self.datatypeCode)
+        string += f"Datatype = {self.datatypeCode} ({type_str})\n"
+
+        string += f"Bits Per Voxel = {self.numBitsPerVoxel}\n"
+        string += f"Slice Start = {self.slice_start}\n"
+
+        pd = (self.pixDims or []) + [0.0] * 8
+        string += (
+            f"Voxel Dimensions (1-8): {self._format_number(pd[0])}, "
+            f"{self._format_number(pd[1])}, {self._format_number(pd[2])}, "
+            f"{self._format_number(pd[3])}, {self._format_number(pd[4])}, "
+            f"{self._format_number(pd[5])}, {self._format_number(pd[6])}, "
+            f"{self._format_number(pd[7])}\n"
+        )
+
+        string += f"Image Offset = {self.vox_offset}\n"
+        string += (
+            f"Data Scale:  Slope = {self._format_number(self.scl_slope)}  "
+            f"Intercept = {self._format_number(self.scl_inter)}\n"
+        )
+        string += f"Slice End = {self.slice_end}\n"
+        string += f"Slice Code = {self.slice_code}\n"
+
+        spatial = self._get_units_code_string(self.SPATIAL_UNITS_MASK & self.xyzt_units)
+        temporal = self._get_units_code_string(
+            self.TEMPORAL_UNITS_MASK & self.xyzt_units
+        )
+        string += f"Units Code = {self.xyzt_units} ({spatial}, {temporal})\n"
+
+        string += (
+            f"Display Range:  Max = {self._format_number(self.cal_max)}  "
+            f"Min = {self._format_number(self.cal_min)}\n"
+        )
+        string += f"Slice Duration = {self.slice_duration}\n"
+        string += f"Time Axis Shift = {self.toffset}\n"
+        string += f'Description: "{self.description}"\n'
+        string += f'Auxiliary File: "{self.aux_file}"\n'
+
+        q_str = self._get_transform_code_string(self.qform_code)
+        string += f"Q-Form Code = {self.qform_code} ({q_str})\n"
+
+        s_str = self._get_transform_code_string(self.sform_code)
+        string += f"S-Form Code = {self.sform_code} ({s_str})\n"
+
+        string += (
+            f"Quaternion Parameters:  "
+            f"b = {self._format_number(self.quatern_b)}  "
+            f"c = {self._format_number(self.quatern_c)}  "
+            f"d = {self._format_number(self.quatern_d)}\n"
+        )
+
+        string += (
+            f"Quaternion Offsets:  "
+            f"x = {self.qoffset_x}  "
+            f"y = {self.qoffset_y}  "
+            f"z = {self.qoffset_z}\n"
+        )
+
+        af = (
+            self.affine
+            if self.affine and len(self.affine) >= 3
+            else [[0] * 4, [0] * 4, [0] * 4]
+        )
+
+        string += (
+            f"S-Form Parameters X: {self._format_number(af[0][0])}, "
+            f"{self._format_number(af[0][1])}, {self._format_number(af[0][2])}, "
+            f"{self._format_number(af[0][3])}\n"
+        )
+
+        string += (
+            f"S-Form Parameters Y: {self._format_number(af[1][0])}, "
+            f"{self._format_number(af[1][1])}, {self._format_number(af[1][2])}, "
+            f"{self._format_number(af[1][3])}\n"
+        )
+
+        string += (
+            f"S-Form Parameters Z: {self._format_number(af[2][0])}, "
+            f"{self._format_number(af[2][1])}, {self._format_number(af[2][2])}, "
+            f"{self._format_number(af[2][3])}\n"
+        )
+
+        string += f'Intent Name: "{self.intent_name}"\n'
+
+        return string
+
+    def __str__(self):
+        """Return the formatted string representation of the header."""
+        return self.to_formatted_string()
 
 
 class Scene(t.HasTraits):
