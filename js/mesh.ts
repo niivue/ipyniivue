@@ -348,6 +348,12 @@ function setup_mesh_property_listeners(
 		nv.updateGLVolume();
 	}
 
+	function fiber_occlusion_changed() {
+		mesh.fiberOcclusion = mmodel.get("fiber_occlusion");
+		mesh.updateMesh(nv.gl);
+		nv.updateGLVolume();
+	}
+
 	function fiber_length_changed() {
 		mesh.fiberLength = mmodel.get("fiber_length");
 		mesh.updateMesh(nv.gl);
@@ -422,6 +428,7 @@ function setup_mesh_property_listeners(
 	edge_min_changed();
 	edge_max_changed();
 	fiber_radius_changed();
+	fiber_occlusion_changed();
 	fiber_length_changed();
 	fiber_dither_changed();
 	fiber_color_changed();
@@ -440,6 +447,7 @@ function setup_mesh_property_listeners(
 	mmodel.on("change:edge_scale", edge_scale_changed);
 	mmodel.on("change:node_scale", node_scale_changed);
 	mmodel.on("change:fiber_radius", fiber_radius_changed);
+	mmodel.on("change:fiber_occlusion", fiber_occlusion_changed);
 	mmodel.on("change:fiber_length", fiber_length_changed);
 	mmodel.on("change:fiber_dither", fiber_dither_changed);
 	mmodel.on("change:fiber_color", fiber_color_changed);
@@ -465,6 +473,7 @@ function setup_mesh_property_listeners(
 		mmodel.off("change:edge_scale", edge_scale_changed);
 		mmodel.off("change:node_scale", node_scale_changed);
 		mmodel.off("change:fiber_radius", fiber_radius_changed);
+		mmodel.off("change:fiber_occlusion", fiber_occlusion_changed);
 		mmodel.off("change:fiber_length", fiber_length_changed);
 		mmodel.off("change:fiber_dither", fiber_dither_changed);
 		mmodel.off("change:fiber_color", fiber_color_changed);

@@ -541,12 +541,12 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 		model.send({
 			event: "drag_release",
 			data: {
-				frac_start: params.fracStart,
-				frac_end: params.fracEnd,
-				vox_start: params.voxStart,
-				vox_end: params.voxEnd,
-				mm_start: params.mmStart,
-				mm_end: params.mmEnd,
+				frac_start: [...params.fracStart],
+				frac_end: [...params.fracEnd],
+				vox_start: [...params.voxStart],
+				vox_end: [...params.voxEnd],
+				mm_start: [...params.mmStart],
+				mm_end: [...params.mmEnd],
 				mm_length: params.mmLength,
 				tile_idx: params.tileIdx,
 				ax_cor_sag: params.axCorSag,
@@ -579,11 +579,11 @@ function attachNiivueEventHandlers(nv: niivue.Niivue, model: Model) {
 			event: "location_change",
 			data: {
 				ax_cor_sag: location.axCorSag,
-				frac: location.frac,
-				mm: location.mm,
+				frac: [...location.frac],
+				mm: [...location.mm],
 				string: location.string || "",
 				values: location.values,
-				vox: location.vox,
+				vox: [...location.vox],
 				xy: location.xy,
 			},
 		});

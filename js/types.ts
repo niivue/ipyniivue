@@ -136,6 +136,7 @@ export type MeshModel = AnyModel<{
 	edge_scale: number;
 	node_scale: number;
 	fiber_radius: number;
+	fiber_occlusion: number;
 	fiber_length: number;
 	fiber_dither: number;
 	fiber_color: string;

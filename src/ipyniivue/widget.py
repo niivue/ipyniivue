@@ -362,6 +362,7 @@ class Mesh(BaseAnyWidget):
     edge_scale = t.Float(1.0).tag(sync=True)
     node_scale = t.Float(1.0).tag(sync=True)
     fiber_radius = t.Float(0.0).tag(sync=True)
+    fiber_occlusion = t.Float(0.0).tag(sync=True)
     fiber_length = t.Float(2.0).tag(sync=True)
     fiber_dither = t.Float(0.1).tag(sync=True)
     fiber_color = t.Unicode("Global").tag(sync=True)
@@ -2584,6 +2585,17 @@ class NiiVue(BaseAnyWidget):
             raise IndexError("vol_idx is out of range.")
 
         self.volumes[vol_idx].opacity = new_opacity
+
+    def set_hero_image(self, fraction: float):
+        """
+        Determine proportion of screen devoted to rendering in multiplanar view.
+
+        Parameters
+        ----------
+        fraction : float
+            Proportion of screen devoted to primary (hero) image (0 to disable).
+        """
+        self.opts.hero_image_fraction = fraction
 
     @requires_canvas
     def set_modulation_image(
