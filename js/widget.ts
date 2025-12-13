@@ -14,13 +14,14 @@ import type {
 	NiivueObject3D,
 	Scene,
 	TypedBufferPayload,
+	UIData,
 	VolumeModel,
 } from "./types.ts";
 
 import type { Connectome as NiivueConnectome } from "@niivue/niivue";
 
 let nv: niivue.Niivue;
-let syncInterval: number | undefined;
+let updateInterval: number | undefined;
 
 async function sendDrawBitmap(nv: niivue.Niivue, model: Model) {
 	const thisModelId = model.get("this_model_id");
@@ -121,6 +122,15 @@ function attachModelEventHandlers(
 		}
 	}
 
+	function ui_data_changed() {
+		const uiData = model.get("ui_data");
+		if (!uiData) return;
+		for (const [key, value] of Object.entries(uiData)) {
+			// biome-ignore lint/suspicious/noExplicitAny: Update scene vals, only clear out old vals when needed
+			(nv.uiData as any)[key] = value;
+		}
+	}
+
 	function overlay_outline_width_changed() {
 		nv.overlayOutlineWidth = model.get("overlay_outline_width");
 		if (nv._gl) {
@@ -144,6 +154,7 @@ function attachModelEventHandlers(
 	model.on("change:draw_fill_overwrites", draw_fill_overwrites_changed);
 	model.on("change:graph", graph_changed);
 	model.on("change:scene", scene_changed);
+	model.on("change:ui_data", ui_data_changed);
 	model.on("change:overlay_outline_width", overlay_outline_width_changed);
 	model.on("change:overlay_alpha_shader", overlay_alpha_shader_changed);
 
@@ -154,6 +165,7 @@ function attachModelEventHandlers(
 	draw_fill_overwrites_changed();
 	graph_changed();
 	scene_changed();
+	ui_data_changed();
 	overlay_outline_width_changed();
 	overlay_alpha_shader_changed();
 
@@ -709,51 +721,94 @@ function attachCanvasEventHandlers(nv: niivue.Niivue, model: Model) {
 	}
 }
 
-function setupSyncInterval(nv: niivue.Niivue, model: Model) {
-	if (syncInterval !== undefined) {
-		clearInterval(syncInterval);
-		syncInterval = undefined;
+function setupUpdateInterval(nv: niivue.Niivue, model: Model) {
+	if (updateInterval !== undefined) {
+		clearInterval(updateInterval);
+		updateInterval = undefined;
 	}
 
+	let lastSentUidata: UIData | null = model.get("ui_data");
 	let lastSentScene: Scene | null = model.get("scene");
 	let shouldSendScene = false;
-	const sendSceneUpdate = async () => {
-		if (!shouldSendScene) {
-			return;
-		}
-		const thisModelId = model.get("this_model_id");
-		if (!thisModelId) {
-			return;
-		}
-		let thisAnyModel: AnyModel;
-		try {
-			thisAnyModel = (await model.widget_manager.get_model(
-				thisModelId,
-			)) as AnyModel;
-		} catch (err) {
+	const sendUpdate = async () => {
+		const thisAnyModel = await lib.getAnyModel(model);
+		if (!thisAnyModel) {
 			return;
 		}
 
-		const currentScene: Scene = {
-			renderAzimuth: nv.scene.renderAzimuth,
-			renderElevation: nv.scene.renderElevation,
-			volScaleMultiplier: nv.scene.volScaleMultiplier,
-			crosshairPos: [...nv.scene.crosshairPos],
-			clipPlanes: nv.scene.clipPlanes.map((innerArr) => [...innerArr]),
-			clipPlaneDepthAziElevs: nv.scene.clipPlaneDepthAziElevs.map(
-				(innerArr) => [...innerArr],
-			),
-			pan2Dxyzmm: [...nv.scene.pan2Dxyzmm],
-			gamma: nv.scene.gamma || 1.0,
+		const updates: {
+			ui_data?: Partial<UIData>;
+			scene?: Partial<Scene>;
+		} = {};
+
+		const currentUidata: UIData = {
+			mousedown: nv.uiData.mousedown,
+			touchdown: nv.uiData.touchdown,
+			mouseButtonLeftDown: nv.uiData.mouseButtonLeftDown,
+			mouseButtonCenterDown: nv.uiData.mouseButtonCenterDown,
+			mouseButtonRightDown: nv.uiData.mouseButtonRightDown,
+			mouseDepthPicker: nv.uiData.mouseDepthPicker,
+			clickedTile: nv.uiData.clickedTile,
+			pan2DxyzmmAtMouseDown: [...nv.uiData.pan2DxyzmmAtMouseDown],
+			prevX: nv.uiData.prevX,
+			prevY: nv.uiData.prevY,
+			currX: nv.uiData.currX,
+			currY: nv.uiData.currY,
+			currentTouchTime: nv.uiData.currentTouchTime,
+			lastTouchTime: nv.uiData.lastTouchTime,
+			doubleTouch: nv.uiData.doubleTouch,
+			isDragging: nv.uiData.isDragging,
+			dragStart: [...nv.uiData.dragStart],
+			dragEnd: [...nv.uiData.dragEnd],
+			dragClipPlaneStartDepthAziElev: [
+				...nv.uiData.dragClipPlaneStartDepthAziElev,
+			],
+			lastTwoTouchDistance: nv.uiData.lastTwoTouchDistance,
+			multiTouchGesture: nv.uiData.multiTouchGesture,
+			dpr: nv.uiData.dpr,
+			max2D: nv.uiData.max2D,
+			max3D: nv.uiData.max3D,
+			windowX: nv.uiData.windowX,
+			windowY: nv.uiData.windowY,
+			activeDragMode: nv.uiData.activeDragMode,
+			activeDragButton: nv.uiData.activeDragButton,
+			angleFirstLine: [...nv.uiData.angleFirstLine],
+			angleState: nv.uiData.angleState,
+			activeClipPlaneIndex: nv.uiData.activeClipPlaneIndex,
 		};
-		const sceneDelta = lib.sceneDiff(lastSentScene, currentScene);
-		if (Object.keys(sceneDelta).length > 0) {
-			lib.forceSendState(thisAnyModel, { scene: sceneDelta });
-			lastSentScene = currentScene;
+
+		const uiDataDelta = lib.uiDataDiff(lastSentUidata, currentUidata);
+		if (Object.keys(uiDataDelta).length > 0) {
+			updates.ui_data = uiDataDelta;
+			lastSentUidata = currentUidata;
+		}
+
+		if (shouldSendScene) {
+			const currentScene: Scene = {
+				renderAzimuth: nv.scene.renderAzimuth,
+				renderElevation: nv.scene.renderElevation,
+				volScaleMultiplier: nv.scene.volScaleMultiplier,
+				crosshairPos: [...nv.scene.crosshairPos],
+				clipPlanes: nv.scene.clipPlanes.map((innerArr) => [...innerArr]),
+				clipPlaneDepthAziElevs: nv.scene.clipPlaneDepthAziElevs.map(
+					(innerArr) => [...innerArr],
+				),
+				pan2Dxyzmm: [...nv.scene.pan2Dxyzmm],
+				gamma: nv.scene.gamma || 1.0,
+			};
+			const sceneDelta = lib.sceneDiff(lastSentScene, currentScene);
+			if (Object.keys(sceneDelta).length > 0) {
+				updates.scene = sceneDelta;
+				lastSentScene = currentScene;
+			}
+		}
+
+		if (Object.keys(updates).length > 0) {
+			lib.forceSendState(thisAnyModel, updates);
 		}
 	};
 
-	syncInterval = setInterval(sendSceneUpdate, 30);
+	updateInterval = setInterval(sendUpdate, 30);
 
 	const originalSync = nv.sync;
 	nv.sync = new Proxy(originalSync, {
@@ -808,7 +863,7 @@ export default {
 			model.off("change:overlay_outline_width");
 			model.off("change:overlay_alpha_shader");
 
-			clearInterval(syncInterval);
+			clearInterval(updateInterval);
 		};
 	},
 	async render({ model, el }: { model: Model; el: HTMLElement }) {
@@ -861,7 +916,7 @@ export default {
 
 			attachCanvasEventHandlers(nv, model);
 
-			setupSyncInterval(nv, model);
+			setupUpdateInterval(nv, model);
 		} else {
 			console.log("moving render around");
 

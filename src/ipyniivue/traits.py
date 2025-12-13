@@ -2,6 +2,8 @@
 
 import traitlets as t
 
+from .constants import DragMode
+
 
 class ColorMap(t.HasTraits):
     """
@@ -261,7 +263,7 @@ class Graph(t.HasTraits):
 # ==============================================================================
 class NIFTI1Hdr(t.HasTraits):
     """
-    Represents a NIFTI1 header.
+    Represents a read-only NIFTI1 header.
 
     Note: Logic and formatting was ported from NIFTI-Reader-JS.
 
@@ -663,7 +665,7 @@ class Scene(t.HasTraits):
 
 class VolumeObject3DData(t.HasTraits):
     """
-    Represents data from a 3D volume object, partial of niivue's NiivueObject3D.
+    Represents read-only data from Niivue's NiivueObject3D.
 
     Properties
     ----------
@@ -713,6 +715,167 @@ class VolumeObject3DData(t.HasTraits):
         return proposal["value"]
 
 
+class UIData(t.HasTraits):
+    """
+    Represents UIData data from Niivue.
+
+    Parameters
+    ----------
+    mousedown : bool
+        True if the mouse button is currently pressed.
+    touchdown : bool
+        True if a touch event is currently active.
+    mouse_button_left_down : bool
+        True if the left mouse button is pressed.
+    mouse_button_center_down : bool
+        True if the center mouse button is pressed.
+    mouse_button_right_down : bool
+        True if the right mouse button is pressed.
+    mouse_depth_picker : bool
+        True if the mouse is currently used for depth picking.
+    clicked_tile : int
+        The index of the tile (slice view) that was clicked.
+    pan_2dxyzmm_at_mouse_down : list of float
+        The [x, y, z, mm] pan coordinates at the moment the mouse was pressed.
+    prev_x : float
+        The previous X coordinate of the mouse/touch.
+    prev_y : float
+        The previous Y coordinate of the mouse/touch.
+    curr_x : float
+        The current X coordinate of the mouse/touch.
+    curr_y : float
+        The current Y coordinate of the mouse/touch.
+    current_touch_time : float
+        Timestamp of the current touch event.
+    last_touch_time : float
+        Timestamp of the last touch event.
+    double_touch : bool
+        True if a double-touch/click gesture is detected.
+    is_dragging : bool
+        True if a drag operation is currently in progress.
+    drag_start : list of float
+        [x, y] coordinates where the drag started.
+    drag_end : list of float
+        [x, y] coordinates where the drag ended.
+    drag_clip_plane_start_depth_azi_elev : list of float
+        [depth, azimuth, elevation] of the clip plane at drag start.
+    last_two_touch_distance : float
+        Distance between two fingers during the last multi-touch event.
+    multi_touch_gesture : bool
+        True if a multi-touch gesture is occurring.
+    dpr : float
+        Device Pixel Ratio. Default is 1.0.
+    max_2d : float or None, optional
+        Maximum 2D dimension limit.
+    max_3d : float or None, optional
+        Maximum 3D dimension limit.
+    window_x : float
+        X coordinate relative to the window.
+    window_y : float
+        Y coordinate relative to the window.
+    active_drag_mode : DragMode or None, optional
+        The current drag mode.
+    active_drag_button : int or None, optional
+        The mouse button index active during the drag.
+    angle_first_line : list of float
+        Coordinates defining the first line of an angle measurement.
+    angle_state : str
+        Current state of angle measurement.
+    active_clip_plane_index : int
+        Index of the currently active clipping plane.
+    """
+
+    mousedown = t.Bool(False).tag(sync=True)
+    touchdown = t.Bool(False).tag(sync=True)
+    mouse_button_left_down = t.Bool(False).tag(sync=True)
+    mouse_button_center_down = t.Bool(False).tag(sync=True)
+    mouse_button_right_down = t.Bool(False).tag(sync=True)
+    mouse_depth_picker = t.Bool(False).tag(sync=True)
+    clicked_tile = t.Int(-1).tag(sync=True)
+    pan_2dxyzmm_at_mouse_down = t.List(t.Float(), default_value=[0, 0, 0, 1]).tag(
+        sync=True
+    )
+    prev_x = t.Float(0).tag(sync=True)
+    prev_y = t.Float(0).tag(sync=True)
+    curr_x = t.Float(0).tag(sync=True)
+    curr_y = t.Float(0).tag(sync=True)
+    current_touch_time = t.Float(0).tag(sync=True)
+    last_touch_time = t.Float(0).tag(sync=True)
+    double_touch = t.Bool(False).tag(sync=True)
+    is_dragging = t.Bool(False).tag(sync=True)
+    drag_start = t.List(t.Float(), default_value=[0.0, 0.0]).tag(sync=True)
+    drag_end = t.List(t.Float(), default_value=[0.0, 0.0]).tag(sync=True)
+    drag_clip_plane_start_depth_azi_elev = t.List(
+        t.Float(), default_value=[0, 0, 0]
+    ).tag(sync=True)
+    last_two_touch_distance = t.Float(0).tag(sync=True)
+    multi_touch_gesture = t.Bool(False).tag(sync=True)
+    dpr = t.Float(1.0).tag(sync=True)
+    max_2d = t.Float(None, allow_none=True).tag(sync=True)
+    max_3d = t.Float(None, allow_none=True).tag(sync=True)
+    window_x = t.Float(0).tag(sync=True)
+    window_y = t.Float(0).tag(sync=True)
+    active_drag_mode = t.UseEnum(DragMode, allow_none=True, default_value=None).tag(
+        sync=True
+    )
+    active_drag_button = t.Int(None, allow_none=True).tag(sync=True)
+    angle_first_line = t.List(t.Float(), default_value=[0.0, 0.0, 0.0, 0.0]).tag(
+        sync=True
+    )
+    angle_state = t.Enum(
+        ["none", "drawing_first_line", "drawing_second_line", "complete"],
+        default_value="none",
+    ).tag(sync=True)
+    active_clip_plane_index = t.Int(0).tag(sync=True)
+
+    _parent = None
+
+    def __init__(self, *args, parent=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._parent = parent
+
+    _OBSERVED_TRAITS = (
+        "mousedown",
+        "touchdown",
+        "mouse_button_left_down",
+        "mouse_button_center_down",
+        "mouse_button_right_down",
+        "mouse_depth_picker",
+        "clicked_tile",
+        "pan_2dxyzmm_at_mouse_down",
+        "prev_x",
+        "prev_y",
+        "curr_x",
+        "curr_y",
+        "current_touch_time",
+        "last_touch_time",
+        "double_touch",
+        "is_dragging",
+        "drag_start",
+        "drag_end",
+        "drag_clip_plane_start_depth_azi_elev",
+        "last_two_touch_distance",
+        "multi_touch_gesture",
+        "dpr",
+        "max_2d",
+        "max_3d",
+        "window_x",
+        "window_y",
+        "active_drag_mode",
+        "active_drag_button",
+        "angle_first_line",
+        "angle_state",
+        "active_clip_plane_index",
+    )
+
+    @t.observe(*_OBSERVED_TRAITS)
+    def _propagate_parent_change(self, change):
+        if self._parent and callable(
+            getattr(self._parent, "_notify_ui_data_changed", None)
+        ):
+            self._parent._notify_ui_data_changed()
+
+
 CAMEL_TO_SNAKE_SCENE = {
     "renderAzimuth": "render_azimuth",
     "renderElevation": "render_elevation",
@@ -746,3 +909,39 @@ CAMEL_TO_SNAKE_GRAPH = {
 }
 
 SNAKE_TO_CAMEL_GRAPH = {v: k for k, v in CAMEL_TO_SNAKE_GRAPH.items()}
+
+CAMEL_TO_SNAKE_UIDATA = {
+    "mousedown": "mousedown",
+    "touchdown": "touchdown",
+    "mouseButtonLeftDown": "mouse_button_left_down",
+    "mouseButtonCenterDown": "mouse_button_center_down",
+    "mouseButtonRightDown": "mouse_button_right_down",
+    "mouseDepthPicker": "mouse_depth_picker",
+    "clickedTile": "clicked_tile",
+    "pan2DxyzmmAtMouseDown": "pan_2dxyzmm_at_mouse_down",
+    "prevX": "prev_x",
+    "prevY": "prev_y",
+    "currX": "curr_x",
+    "currY": "curr_y",
+    "currentTouchTime": "current_touch_time",
+    "lastTouchTime": "last_touch_time",
+    "doubleTouch": "double_touch",
+    "isDragging": "is_dragging",
+    "dragStart": "drag_start",
+    "dragEnd": "drag_end",
+    "dragClipPlaneStartDepthAziElev": "drag_clip_plane_start_depth_azi_elev",
+    "lastTwoTouchDistance": "last_two_touch_distance",
+    "multiTouchGesture": "multi_touch_gesture",
+    "dpr": "dpr",
+    "max2D": "max_2d",
+    "max3D": "max_3d",
+    "windowX": "window_x",
+    "windowY": "window_y",
+    "activeDragMode": "active_drag_mode",
+    "activeDragButton": "active_drag_button",
+    "angleFirstLine": "angle_first_line",
+    "angleState": "angle_state",
+    "activeClipPlaneIndex": "active_clip_plane_index",
+}
+
+SNAKE_TO_CAMEL_UIDATA = {v: k for k, v in CAMEL_TO_SNAKE_UIDATA.items()}

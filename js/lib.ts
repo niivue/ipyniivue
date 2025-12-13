@@ -1,5 +1,11 @@
 import type { NVConfigOptions } from "@niivue/niivue";
-import type { AnyModel, Scene, TypedBufferPayload } from "./types.ts";
+import type {
+	AnyModel,
+	Model,
+	Scene,
+	TypedBufferPayload,
+	UIData,
+} from "./types.ts";
 
 function delay(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -304,6 +310,21 @@ function numberArraysEqual2D(
 	return true;
 }
 
+export async function getAnyModel(model: Model): Promise<AnyModel | undefined> {
+	const thisModelId = model.get("this_model_id");
+	if (!thisModelId) {
+		return;
+	}
+	let thisAnyModel: AnyModel;
+	try {
+		thisAnyModel = (await model.widget_manager.get_model(
+			thisModelId,
+		)) as AnyModel;
+	} catch (err) {
+		return;
+	}
+}
+
 export function sceneDiff(
 	oldScene: Scene | null,
 	newScene: Scene,
@@ -352,6 +373,90 @@ export function sceneDiff(
 		!numberArraysEqual(oldScene.pan2Dxyzmm, newScene.pan2Dxyzmm)
 	) {
 		diff.pan2Dxyzmm = newScene.pan2Dxyzmm;
+	}
+
+	return diff;
+}
+
+export function uiDataDiff(
+	oldData: UIData | null,
+	newData: UIData,
+): Partial<UIData> {
+	if (!oldData) return newData;
+
+	const diff: Partial<UIData> = {};
+
+	// Primitives
+	if (oldData.mousedown !== newData.mousedown)
+		diff.mousedown = newData.mousedown;
+	if (oldData.touchdown !== newData.touchdown)
+		diff.touchdown = newData.touchdown;
+	if (oldData.mouseButtonLeftDown !== newData.mouseButtonLeftDown)
+		diff.mouseButtonLeftDown = newData.mouseButtonLeftDown;
+	if (oldData.mouseButtonCenterDown !== newData.mouseButtonCenterDown)
+		diff.mouseButtonCenterDown = newData.mouseButtonCenterDown;
+	if (oldData.mouseButtonRightDown !== newData.mouseButtonRightDown)
+		diff.mouseButtonRightDown = newData.mouseButtonRightDown;
+	if (oldData.mouseDepthPicker !== newData.mouseDepthPicker)
+		diff.mouseDepthPicker = newData.mouseDepthPicker;
+	if (oldData.clickedTile !== newData.clickedTile)
+		diff.clickedTile = newData.clickedTile;
+	if (oldData.prevX !== newData.prevX) diff.prevX = newData.prevX;
+	if (oldData.prevY !== newData.prevY) diff.prevY = newData.prevY;
+	if (oldData.currX !== newData.currX) diff.currX = newData.currX;
+	if (oldData.currY !== newData.currY) diff.currY = newData.currY;
+	if (oldData.currentTouchTime !== newData.currentTouchTime)
+		diff.currentTouchTime = newData.currentTouchTime;
+	if (oldData.lastTouchTime !== newData.lastTouchTime)
+		diff.lastTouchTime = newData.lastTouchTime;
+	if (oldData.doubleTouch !== newData.doubleTouch)
+		diff.doubleTouch = newData.doubleTouch;
+	if (oldData.isDragging !== newData.isDragging)
+		diff.isDragging = newData.isDragging;
+	if (oldData.lastTwoTouchDistance !== newData.lastTwoTouchDistance)
+		diff.lastTwoTouchDistance = newData.lastTwoTouchDistance;
+	if (oldData.multiTouchGesture !== newData.multiTouchGesture)
+		diff.multiTouchGesture = newData.multiTouchGesture;
+	if (oldData.dpr !== newData.dpr) diff.dpr = newData.dpr;
+	if (oldData.max2D !== newData.max2D) diff.max2D = newData.max2D;
+	if (oldData.max3D !== newData.max3D) diff.max3D = newData.max3D;
+	if (oldData.windowX !== newData.windowX) diff.windowX = newData.windowX;
+	if (oldData.windowY !== newData.windowY) diff.windowY = newData.windowY;
+	if (oldData.activeDragMode !== newData.activeDragMode)
+		diff.activeDragMode = newData.activeDragMode;
+	if (oldData.activeDragButton !== newData.activeDragButton)
+		diff.activeDragButton = newData.activeDragButton;
+	if (oldData.angleState !== newData.angleState)
+		diff.angleState = newData.angleState;
+	if (oldData.activeClipPlaneIndex !== newData.activeClipPlaneIndex)
+		diff.activeClipPlaneIndex = newData.activeClipPlaneIndex;
+
+	// Arrays
+	if (
+		!numberArraysEqual(
+			oldData.pan2DxyzmmAtMouseDown,
+			newData.pan2DxyzmmAtMouseDown,
+		)
+	) {
+		diff.pan2DxyzmmAtMouseDown = newData.pan2DxyzmmAtMouseDown;
+	}
+	if (!numberArraysEqual(oldData.dragStart, newData.dragStart)) {
+		diff.dragStart = newData.dragStart;
+	}
+	if (!numberArraysEqual(oldData.dragEnd, newData.dragEnd)) {
+		diff.dragEnd = newData.dragEnd;
+	}
+	if (
+		!numberArraysEqual(
+			oldData.dragClipPlaneStartDepthAziElev,
+			newData.dragClipPlaneStartDepthAziElev,
+		)
+	) {
+		diff.dragClipPlaneStartDepthAziElev =
+			newData.dragClipPlaneStartDepthAziElev;
+	}
+	if (!numberArraysEqual(oldData.angleFirstLine, newData.angleFirstLine)) {
+		diff.angleFirstLine = newData.angleFirstLine;
 	}
 
 	return diff;
