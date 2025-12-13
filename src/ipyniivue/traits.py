@@ -765,17 +765,17 @@ class UIData(t.HasTraits):
         True if a multi-touch gesture is occurring.
     dpr : float
         Device Pixel Ratio. Default is 1.0.
-    max_2d : float or None, optional
+    max_2d : float or None
         Maximum 2D dimension limit.
-    max_3d : float or None, optional
+    max_3d : float or None
         Maximum 3D dimension limit.
     window_x : float
         X coordinate relative to the window.
     window_y : float
         Y coordinate relative to the window.
-    active_drag_mode : DragMode or None, optional
+    active_drag_mode : DragMode or None
         The current drag mode.
-    active_drag_button : int or None, optional
+    active_drag_button : int or None
         The mouse button index active during the drag.
     angle_first_line : list of float
         Coordinates defining the first line of an angle measurement.
