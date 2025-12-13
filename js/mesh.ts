@@ -159,12 +159,11 @@ async function process_meshmodel_layers(
 	const layerIDs = mmodel.get("layers");
 
 	if (layerIDs.length > 0) {
-		// Use gather_models to fetch the MeshLayerModel instances
 		const layerModels: MeshLayerModel[] =
 			await lib.gather_models<MeshLayerModel>(mmodel, layerIDs);
 
-		// Process layers
-		for (const layerModel of layerModels) {
+		// Process layers in parallel
+		const layerPromises = layerModels.map(async (layerModel) => {
 			const layerPath = layerModel.get("path")?.name
 				? layerModel.get("path")
 				: null;
@@ -211,7 +210,6 @@ async function process_meshmodel_layers(
 				layerModel.save_changes?.();
 				// console.log('colormap via get():', layerModel.get('colormap'));
 				// console.log('atlas_labels via get():', layerModel.get('atlas_labels'));
-				mesh.layers.push(layer);
 			} else if (layerUrl) {
 				const response = await fetch(layerUrl);
 				if (!response.ok) {
@@ -241,13 +239,27 @@ async function process_meshmodel_layers(
 					: null;
 				layerModel.set("atlas_values", values);
 				layerModel.save_changes?.();
-				mesh.layers.push(layer);
 			} else {
 				throw new Error("Invalid source for mesh layer");
 			}
 
-			if (!layer) {
-				continue;
+			// Return the processed layer info so we can add it to the mesh sequentially later
+			if (layer) {
+				return { layer, layerModel, existingLayerIdx };
+			}
+			return null;
+		});
+
+		// Wait for all layers to be processed
+		const results = await Promise.all(layerPromises);
+
+		for (const result of results) {
+			if (!result) continue;
+			const { layer, layerModel, existingLayerIdx } = result;
+
+			// If it wasn't already in the mesh, push it now
+			if (existingLayerIdx === -1) {
+				mesh.layers.push(layer);
 			}
 
 			// Set up event listeners
@@ -647,19 +659,38 @@ export async function render_meshes(
 	console.log("backend_meshes:", backend_meshes, backend_meshes.length);
 	console.log("frontend_meshes:", frontend_meshes, frontend_meshes.length);
 
+	// Collect promises for creating meshes in parallel
+	const creationPromises: Promise<{
+		id: string;
+		mesh: niivue.NVMesh;
+		cleanup: () => void;
+	}>[] = [];
+
 	// add meshes
 	for (const [id, mmodel] of backend_mesh_map.entries()) {
 		if (!disposer.has(id)) {
-			// Add or sync meshes as needed
-			const [mesh, cleanup] = await create_mesh(nv, mmodel);
-			disposer.register(mesh, cleanup);
-
-			if (!frontend_mesh_map.has(id)) {
-				nv.addMesh(mesh);
-			}
+			// Create the mesh promise and attach the id
+			const p = create_mesh(nv, mmodel).then(([mesh, cleanup]) => ({
+				id,
+				mesh,
+				cleanup,
+			}));
+			creationPromises.push(p);
 		}
 
 		pendingMeshIds.delete(id);
+	}
+
+	// Wait for all mesh creation promises to resolve
+	const results = await Promise.all(creationPromises);
+
+	// Register and add created meshes
+	for (const { id, mesh, cleanup } of results) {
+		disposer.register(mesh, cleanup);
+
+		if (!frontend_mesh_map.has(id)) {
+			nv.addMesh(mesh);
+		}
 	}
 
 	// remove meshes

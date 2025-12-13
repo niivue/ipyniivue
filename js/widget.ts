@@ -854,8 +854,10 @@ export default {
 			model.save_changes();
 
 			// Load initial volumes and meshes
-			await render_volumes(nv, model, disposer);
-			await render_meshes(nv, model, disposer);
+			await Promise.all([
+				render_volumes(nv, model, disposer),
+				render_meshes(nv, model, disposer),
+			]);
 
 			attachCanvasEventHandlers(nv, model);
 
