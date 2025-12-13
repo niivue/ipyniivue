@@ -15,12 +15,15 @@ from .config_options import (
 from .traits import (
     CAMEL_TO_SNAKE_GRAPH,
     CAMEL_TO_SNAKE_SCENE,
+    CAMEL_TO_SNAKE_UIDATA,
     LUT,
     SNAKE_TO_CAMEL_GRAPH,
     SNAKE_TO_CAMEL_SCENE,
+    SNAKE_TO_CAMEL_UIDATA,
     Graph,
     NIFTI1Hdr,
     Scene,
+    UIData,
     VolumeObject3DData,
 )
 from .utils import is_negative_zero
@@ -296,6 +299,10 @@ def serialize_scene(instance: Scene, widget: object):
         The Scene instance to serialize.
     widget : object
         The NiiVue widget the instance is a part of.
+
+    Returns
+    -------
+    dict
     """
     data = {}
     if instance:
@@ -344,6 +351,34 @@ def serialize_to_none(instance: object, widget: object):
     None
     """
     return None
+
+
+def serialize_uidata(instance: UIData, widget: object):
+    """
+    Serialize the UIData instance, handling conversion to camelCase as needed.
+
+    Parameters
+    ----------
+    instance : UIData
+        The UIData instance to serialize.
+    widget : object
+        The NiiVue widget the instance is a part of.
+
+    Returns
+    -------
+    dict
+        The serialized ui_data.
+    """
+    data = {}
+    if instance:
+        for name in instance.trait_names():
+            value = getattr(instance, name)
+            if value is not None:
+                if isinstance(value, enum.Enum):
+                    value = value.value
+                camel_name = SNAKE_TO_CAMEL_UIDATA.get(name, name)
+                data[camel_name] = value
+    return data
 
 
 def deserialize_volume_object_3d_data(instance: dict, widget: object):
@@ -414,3 +449,25 @@ def parse_scene(serialized_scene: dict):
             deserialized_value = value
             scene_args[snake_name] = deserialized_value
     return scene_args
+
+
+def parse_uidata(serialized_uidata: dict):
+    """
+    Convert camelCase back to snake_case.
+
+    Parameters
+    ----------
+    serialized_uidata : dict
+        The serialized ui_data dictionary from the frontend.
+
+    Returns
+    -------
+    dict
+        The parsed ui_data data.
+    """
+    uidata_args = {}
+    for camel_name, value in serialized_uidata.items():
+        snake_name = CAMEL_TO_SNAKE_UIDATA.get(camel_name, camel_name)
+        if snake_name in UIData.class_traits():
+            uidata_args[snake_name] = value
+    return uidata_args

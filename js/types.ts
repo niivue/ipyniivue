@@ -75,6 +75,40 @@ export type Scene = {
 	gamma?: number;
 };
 
+export type UIData = {
+	mousedown: boolean;
+	touchdown: boolean;
+	mouseButtonLeftDown: boolean;
+	mouseButtonCenterDown: boolean;
+	mouseButtonRightDown: boolean;
+	mouseDepthPicker: boolean;
+	clickedTile: number;
+	pan2DxyzmmAtMouseDown: number[];
+	prevX: number;
+	prevY: number;
+	currX: number;
+	currY: number;
+	currentTouchTime: number;
+	lastTouchTime: number;
+	doubleTouch: boolean;
+	isDragging: boolean;
+	dragStart: number[];
+	dragEnd: number[];
+	dragClipPlaneStartDepthAziElev: number[];
+	lastTwoTouchDistance: number;
+	multiTouchGesture: boolean;
+	dpr?: number;
+	max2D?: number;
+	max3D?: number;
+	windowX: number;
+	windowY: number;
+	activeDragMode: number | null;
+	activeDragButton: number | null;
+	angleFirstLine: number[];
+	angleState: string;
+	activeClipPlaneIndex: number;
+};
+
 export type VolumeModel = AnyModel<{
 	path: FileInput;
 	url: string;
@@ -190,6 +224,7 @@ export type Model = AnyModel<{
 	draw_fill_overwrites: boolean;
 	graph: Graph;
 	scene: Scene;
+	ui_data: UIData;
 	overlay_outline_width: number;
 	overlay_alpha_shader: number;
 
