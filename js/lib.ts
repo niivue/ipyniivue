@@ -320,6 +320,7 @@ export async function getAnyModel(model: Model): Promise<AnyModel | undefined> {
 		thisAnyModel = (await model.widget_manager.get_model(
 			thisModelId,
 		)) as AnyModel;
+		return thisAnyModel;
 	} catch (err) {
 		return;
 	}
