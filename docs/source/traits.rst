@@ -25,6 +25,8 @@ Traits
    :no-members:
    :exclude-members: __init__
 
+   .. autoattribute:: scene_data
+
 .. autoclass:: VolumeObject3DData
    :no-members:
    :exclude-members: __init__

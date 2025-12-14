@@ -9,7 +9,7 @@ class ColorMap(t.HasTraits):
     """
     Represents a ColorMap.
 
-    Parameters
+    Properties
     ----------
     R : list of float
         The red channel values.
@@ -76,7 +76,7 @@ class LUT(t.HasTraits):
     """
     Represents a Lookup Table (LUT / Colormap Label).
 
-    Parameters
+    Properties
     ----------
     lut : list of int
         A flat list representing the RGBA values of the lookup table.
@@ -112,7 +112,7 @@ class Graph(t.HasTraits):
     """
     Represents a Graph in NiiVue.
 
-    Parameters
+    Properties
     ----------
     ltwh : list of float, optional
         List of four floats representing left, top, width, height.
@@ -569,7 +569,7 @@ class Scene(t.HasTraits):
     """
     Represents the scene configuration for NiiVue.
 
-    Parameters
+    Properties
     ----------
     render_azimuth : float
         The azimuth angle in degrees around the object.
@@ -706,7 +706,7 @@ class UIData(t.HasTraits):
     """
     Represents a read-only UIData object from Niivue.
 
-    Parameters
+    Properties
     ----------
     mousedown : bool
         True if the mouse button is currently pressed.
