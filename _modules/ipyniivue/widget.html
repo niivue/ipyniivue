@@ -1292,7 +1292,7 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_notify_opts_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_notify_opts_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">notify_change</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;opts&quot;</span><span class="p">,</span>
@@ -1303,6 +1303,11 @@
             <span class="p">}</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;update_gl_volume&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span>
+
+        <span class="k">if</span> <span class="n">change</span><span class="p">:</span>
+            <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;opts_change&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">handler</span><span class="p">:</span>
+                <span class="n">handler</span><span class="p">(</span><span class="n">change</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;new&quot;</span><span class="p">],</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;old&quot;</span><span class="p">])</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_notify_graph_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">notify_change</span><span class="p">(</span>
@@ -3846,6 +3851,34 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;hover_idx_change&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.on_opts_change">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.on_opts_change">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_opts_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback for when any configuration option changes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A function that takes three arguments:</span>
+<span class="sd">            - **property_name** (str): The name of the option that changed (snake_case).</span>
+<span class="sd">            - **new_value** (any): The new value of the option.</span>
+<span class="sd">            - **old_value** (any): The previous value of the option.</span>
+<span class="sd">        remove : bool, optional</span>
+<span class="sd">            If ``True``, remove the callback. Defaults to ``False``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            def my_callback(prop, new_val, old_val):</span>
+<span class="sd">                print(f&quot;Option &#39;{prop}&#39; changed from {old_val} to {new_val}&quot;)</span>
+
+<span class="sd">            nv.on_opts_change(my_callback)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span><span class="s2">&quot;opts_change&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
 
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
