@@ -30,10 +30,6 @@ class ColorMap(t.HasTraits):
     labels : list of str or None, optional
         Labels associated with each color entry in the colormap.
         Default is None.
-    parent : object, optional
-        The parent object that contains this `ColorMap`.
-        Used for propagating changes to the parent widget.
-        Default is None.
     """
 
     R = t.List(t.Float()).tag(sync=True)
@@ -92,10 +88,6 @@ class LUT(t.HasTraits):
         Default is None.
     labels : list of str or None, optional
         Labels associated with each color entry in the LUT.
-        Default is None.
-    parent : object, optional
-        The parent object that contains this `LUT`.
-        Used for propagating changes to the parent widget.
         Default is None.
     """
 
@@ -161,11 +153,6 @@ class Graph(t.HasTraits):
         Index of the selected column.
     line_rgb : list of list of float, optional
         List of RGB colors for the lines, each inner list must have exactly 3 floats.
-
-    parent : object, optional
-        The parent object that contains this `Graph`.
-        Used for propagating changes to the parent widget.
-        Default is None.
     """
 
     # Required fields
