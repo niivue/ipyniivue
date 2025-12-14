@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
-        <title>ipyniivue.widget - IPyNiiVue 2.1.0 documentation</title>
+        <title>ipyniivue.widget - IPyNiiVue 2.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">IPyNiiVue 2.1.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">IPyNiiVue 2.4.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">IPyNiiVue 2.1.0 documentation</span>
+  <span class="sidebar-brand-text">IPyNiiVue 2.4.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -269,6 +269,7 @@
     <span class="n">deserialize_options</span><span class="p">,</span>
     <span class="n">deserialize_volume_object_3d_data</span><span class="p">,</span>
     <span class="n">parse_scene</span><span class="p">,</span>
+    <span class="n">parse_uidata</span><span class="p">,</span>
     <span class="n">serialize_colormap_label</span><span class="p">,</span>
     <span class="n">serialize_enum</span><span class="p">,</span>
     <span class="n">serialize_file</span><span class="p">,</span>
@@ -278,6 +279,7 @@
     <span class="n">serialize_options</span><span class="p">,</span>
     <span class="n">serialize_scene</span><span class="p">,</span>
     <span class="n">serialize_to_none</span><span class="p">,</span>
+    <span class="n">serialize_uidata</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.traits</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">LUT</span><span class="p">,</span>
@@ -285,6 +287,7 @@
     <span class="n">Graph</span><span class="p">,</span>
     <span class="n">NIFTI1Hdr</span><span class="p">,</span>
     <span class="n">Scene</span><span class="p">,</span>
+    <span class="n">UIData</span><span class="p">,</span>
     <span class="n">VolumeObject3DData</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -1195,6 +1198,10 @@
         <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_scene</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">ui_data</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Instance</span><span class="p">(</span><span class="n">UIData</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">to_json</span><span class="o">=</span><span class="n">serialize_uidata</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">overlay_outline_width</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 0 for none</span>
     <span class="n">overlay_alpha_shader</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 1 for opaque</span>
 
@@ -1248,6 +1255,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_cluts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_initial_colormaps</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scene</span> <span class="o">=</span> <span class="n">Scene</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui_data</span> <span class="o">=</span> <span class="n">UIData</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">other_nv</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sync_opts</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;3d&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
@@ -1276,6 +1284,10 @@
             <span class="n">parsed</span> <span class="o">=</span> <span class="n">parse_scene</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;scene&quot;</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sync</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;ui_data&quot;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+            <span class="n">parsed</span> <span class="o">=</span> <span class="n">parse_uidata</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;ui_data&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui_data</span><span class="o">.</span><span class="n">_trait_values</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;scene&quot;</span> <span class="ow">in</span> <span class="n">state</span> <span class="ow">or</span> <span class="s2">&quot;ui_data&quot;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
 
@@ -1315,6 +1327,17 @@
             <span class="p">}</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;draw_scene&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_notify_ui_data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify_change</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;ui_data&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;old&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui_data</span><span class="p">,</span>
+                <span class="s2">&quot;new&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui_data</span><span class="p">,</span>
+                <span class="s2">&quot;owner&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_register_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">event_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_handlers</span><span class="p">:</span>
@@ -2235,10 +2258,12 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;depth, azimuth, and elevation must all be numeric values.&quot;</span><span class="p">)</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">sph2cart_deg</span><span class="p">(</span><span class="n">azimuth</span> <span class="o">+</span> <span class="mi">180</span><span class="p">,</span> <span class="n">elevation</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_planes</span> <span class="o">=</span> <span class="p">[[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">depth</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;clip_planes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">depth</span><span class="p">]]</span>
 
         <span class="c1"># self.scene.clip_planes = [[0.6427876096865393, -0.7660444431189781, -0, 0.25]]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elevs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;clip_plane_depth_azi_elevs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">]</span>
+        <span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_notify_scene_changed</span><span class="p">()</span></div>
 
 
@@ -2275,8 +2300,8 @@
                 <span class="s2">&quot;depth_azi_elevs must be a list of [depth, azimuth, elevation] triples.&quot;</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_planes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elevs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;clip_planes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;clip_plane_depth_azi_elevs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dae</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">depth_azi_elevs</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dae</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dae</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
@@ -2298,8 +2323,10 @@
             <span class="n">d</span> <span class="o">=</span> <span class="o">-</span><span class="n">depth</span>
             <span class="n">plane</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">d</span><span class="p">]</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_planes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">clip_plane_depth_azi_elevs</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;clip_planes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="s2">&quot;clip_plane_depth_azi_elevs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">depth</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">elevation</span><span class="p">]</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_notify_scene_changed</span><span class="p">()</span></div>
 
@@ -4193,7 +4220,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=20623aea"></script>
+</div><script src="../../_static/documentation_options.js?v=b1e24531"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

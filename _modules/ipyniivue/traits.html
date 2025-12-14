@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
-        <title>ipyniivue.traits - IPyNiiVue 2.1.0 documentation</title>
+        <title>ipyniivue.traits - IPyNiiVue 2.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">IPyNiiVue 2.1.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">IPyNiiVue 2.4.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">IPyNiiVue 2.1.0 documentation</span>
+  <span class="sidebar-brand-text">IPyNiiVue 2.4.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -235,6 +235,8 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">traitlets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">DragMode</span>
+
 
 <div class="viewcode-block" id="ColorMap">
 <a class="viewcode-back" href="../../traits.html#ipyniivue.ColorMap">[docs]</a>
@@ -242,7 +244,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a ColorMap.</span>
 
-<span class="sd">    Parameters</span>
+<span class="sd">    Properties</span>
 <span class="sd">    ----------</span>
 <span class="sd">    R : list of float</span>
 <span class="sd">        The red channel values.</span>
@@ -263,10 +265,6 @@
 <span class="sd">    labels : list of str or None, optional</span>
 <span class="sd">        Labels associated with each color entry in the colormap.</span>
 <span class="sd">        Default is None.</span>
-<span class="sd">    parent : object, optional</span>
-<span class="sd">        The parent object that contains this `ColorMap`.</span>
-<span class="sd">        Used for propagating changes to the parent widget.</span>
-<span class="sd">        Default is None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">R</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -280,12 +278,9 @@
 
     <span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="ColorMap.__init__">
-<a class="viewcode-back" href="../../traits.html#ipyniivue.ColorMap.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span></div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
 
     <span class="nd">@t</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_color_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
@@ -319,7 +314,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a Lookup Table (LUT / Colormap Label).</span>
 
-<span class="sd">    Parameters</span>
+<span class="sd">    Properties</span>
 <span class="sd">    ----------</span>
 <span class="sd">    lut : list of int</span>
 <span class="sd">        A flat list representing the RGBA values of the lookup table.</span>
@@ -332,10 +327,6 @@
 <span class="sd">    labels : list of str or None, optional</span>
 <span class="sd">        Labels associated with each color entry in the LUT.</span>
 <span class="sd">        Default is None.</span>
-<span class="sd">    parent : object, optional</span>
-<span class="sd">        The parent object that contains this `LUT`.</span>
-<span class="sd">        Used for propagating changes to the parent widget.</span>
-<span class="sd">        Default is None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">lut</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">())</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -345,12 +336,9 @@
 
     <span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="LUT.__init__">
-<a class="viewcode-back" href="../../traits.html#ipyniivue.LUT.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span></div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
 
     <span class="nd">@t</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="s2">&quot;lut&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_propagate_parent_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change</span><span class="p">):</span>
@@ -365,7 +353,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a Graph in NiiVue.</span>
 
-<span class="sd">    Parameters</span>
+<span class="sd">    Properties</span>
 <span class="sd">    ----------</span>
 <span class="sd">    ltwh : list of float, optional</span>
 <span class="sd">        List of four floats representing left, top, width, height.</span>
@@ -406,11 +394,6 @@
 <span class="sd">        Index of the selected column.</span>
 <span class="sd">    line_rgb : list of list of float, optional</span>
 <span class="sd">        List of RGB colors for the lines, each inner list must have exactly 3 floats.</span>
-
-<span class="sd">    parent : object, optional</span>
-<span class="sd">        The parent object that contains this `Graph`.</span>
-<span class="sd">        Used for propagating changes to the parent widget.</span>
-<span class="sd">        Default is None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Required fields</span>
@@ -451,12 +434,9 @@
 
     <span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="Graph.__init__">
-<a class="viewcode-back" href="../../traits.html#ipyniivue.Graph.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span></div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
 
     <span class="n">_OBSERVED_TRAITS</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;ltwh&quot;</span><span class="p">,</span>
@@ -510,9 +490,11 @@
 <span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN</span>
 <span class="c1"># THE SOFTWARE.</span>
 <span class="c1"># ==============================================================================</span>
+<div class="viewcode-block" id="NIFTI1Hdr">
+<a class="viewcode-back" href="../../traits.html#ipyniivue.NIFTI1Hdr">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NIFTI1Hdr</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents a NIFTI1 header.</span>
+<span class="sd">    Represents a read-only NIFTI1 header.</span>
 
 <span class="sd">    Note: Logic and formatting was ported from NIFTI-Reader-JS.</span>
 
@@ -718,6 +700,8 @@
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 
+<div class="viewcode-block" id="NIFTI1Hdr.to_formatted_string">
+<a class="viewcode-back" href="../../traits.html#ipyniivue.NIFTI1Hdr.to_formatted_string">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_formatted_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a formatted string of header fields.&quot;&quot;&quot;</span>
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -820,18 +804,22 @@
 
         <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;Intent Name: &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">intent_name</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
-        <span class="k">return</span> <span class="n">string</span>
+        <span class="k">return</span> <span class="n">string</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the formatted string representation of the header.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_formatted_string</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_formatted_string</span><span class="p">()</span></div>
 
 
+
+<div class="viewcode-block" id="Scene">
+<a class="viewcode-back" href="../../traits.html#ipyniivue.Scene">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Scene</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents the scene configuration for NiiVue.</span>
 
-<span class="sd">    Parameters</span>
+<span class="sd">    Properties</span>
 <span class="sd">    ----------</span>
 <span class="sd">    render_azimuth : float</span>
 <span class="sd">        The azimuth angle in degrees around the object.</span>
@@ -843,9 +831,9 @@
 <span class="sd">        The crosshair position as a list of 3 floats.</span>
 <span class="sd">    clip_planes : list of list of float</span>
 <span class="sd">        A list of clipping planes, where each plane is defined</span>
-<span class="sd">        by four floats `[x, y, z, w]` representing the plane equation.</span>
+<span class="sd">        by four floats ``[x, y, z, w]`` representing the plane equation.</span>
 <span class="sd">    clip_plane_depth_azi_elevs : list of list of float</span>
-<span class="sd">        A list of lists of `[depth, azimuth, elevation]`.</span>
+<span class="sd">        A list of lists of ``[depth, azimuth, elevation]``.</span>
 <span class="sd">    pan2d_xyzmm : list of float</span>
 <span class="sd">        The 2D pan in 3D mm as a list of 4 floats.</span>
 <span class="sd">    gamma : float</span>
@@ -909,12 +897,15 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span>
             <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">,</span> <span class="s2">&quot;_notify_scene_changed&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">_notify_scene_changed</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">_notify_scene_changed</span><span class="p">()</span></div>
 
 
+
+<div class="viewcode-block" id="VolumeObject3DData">
+<a class="viewcode-back" href="../../traits.html#ipyniivue.VolumeObject3DData">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VolumeObject3DData</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents data from a 3D volume object, partial of niivue&#39;s NiivueObject3D.</span>
+<span class="sd">    Represents read-only data from Niivue&#39;s NiivueObject3D.</span>
 
 <span class="sd">    Properties</span>
 <span class="sd">    ----------</span>
@@ -961,7 +952,130 @@
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_values</span><span class="p">[</span><span class="n">trait_name</span><span class="p">]</span> <span class="o">!=</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="n">t</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot modify &#39;</span><span class="si">{</span><span class="n">trait_name</span><span class="si">}</span><span class="s2">&#39; once set.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">proposal</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="UIData">
+<a class="viewcode-back" href="../../traits.html#ipyniivue.UIData">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UIData</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a read-only UIData object from Niivue.</span>
+
+<span class="sd">    Properties</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mousedown : bool</span>
+<span class="sd">        True if the mouse button is currently pressed.</span>
+<span class="sd">    touchdown : bool</span>
+<span class="sd">        True if a touch event is currently active.</span>
+<span class="sd">    mouse_button_left_down : bool</span>
+<span class="sd">        True if the left mouse button is pressed.</span>
+<span class="sd">    mouse_button_center_down : bool</span>
+<span class="sd">        True if the center mouse button is pressed.</span>
+<span class="sd">    mouse_button_right_down : bool</span>
+<span class="sd">        True if the right mouse button is pressed.</span>
+<span class="sd">    mouse_depth_picker : bool</span>
+<span class="sd">        True if the mouse is currently used for depth picking.</span>
+<span class="sd">    clicked_tile : int</span>
+<span class="sd">        The index of the tile (slice view) that was clicked.</span>
+<span class="sd">    pan2d_xyzmm_at_mouse_down : list of float</span>
+<span class="sd">        The [x, y, z, mm] pan coordinates at the moment the mouse was pressed.</span>
+<span class="sd">    prev_x : float</span>
+<span class="sd">        The previous X coordinate of the mouse/touch.</span>
+<span class="sd">    prev_y : float</span>
+<span class="sd">        The previous Y coordinate of the mouse/touch.</span>
+<span class="sd">    curr_x : float</span>
+<span class="sd">        The current X coordinate of the mouse/touch.</span>
+<span class="sd">    curr_y : float</span>
+<span class="sd">        The current Y coordinate of the mouse/touch.</span>
+<span class="sd">    current_touch_time : float</span>
+<span class="sd">        Timestamp of the current touch event.</span>
+<span class="sd">    last_touch_time : float</span>
+<span class="sd">        Timestamp of the last touch event.</span>
+<span class="sd">    double_touch : bool</span>
+<span class="sd">        True if a double-touch/click gesture is detected.</span>
+<span class="sd">    is_dragging : bool</span>
+<span class="sd">        True if a drag operation is currently in progress.</span>
+<span class="sd">    drag_start : list of float</span>
+<span class="sd">        [x, y] coordinates where the drag started.</span>
+<span class="sd">    drag_end : list of float</span>
+<span class="sd">        [x, y] coordinates where the drag ended.</span>
+<span class="sd">    drag_clip_plane_start_depth_azi_elev : list of float</span>
+<span class="sd">        [depth, azimuth, elevation] of the clip plane at drag start.</span>
+<span class="sd">    last_two_touch_distance : float</span>
+<span class="sd">        Distance between two fingers during the last multi-touch event.</span>
+<span class="sd">    multi_touch_gesture : bool</span>
+<span class="sd">        True if a multi-touch gesture is occurring.</span>
+<span class="sd">    dpr : float</span>
+<span class="sd">        Device Pixel Ratio. Default is 1.0.</span>
+<span class="sd">    max_2d : float or None</span>
+<span class="sd">        Maximum 2D dimension limit.</span>
+<span class="sd">    max_3d : float or None</span>
+<span class="sd">        Maximum 3D dimension limit.</span>
+<span class="sd">    window_x : float</span>
+<span class="sd">        X coordinate relative to the window.</span>
+<span class="sd">    window_y : float</span>
+<span class="sd">        Y coordinate relative to the window.</span>
+<span class="sd">    active_drag_mode : DragMode or None</span>
+<span class="sd">        The current drag mode.</span>
+<span class="sd">    active_drag_button : int or None</span>
+<span class="sd">        The mouse button index active during the drag.</span>
+<span class="sd">    angle_first_line : list of float</span>
+<span class="sd">        Coordinates defining the first line of an angle measurement.</span>
+<span class="sd">    angle_state : str</span>
+<span class="sd">        Current state of angle measurement.</span>
+<span class="sd">    active_clip_plane_index : int</span>
+<span class="sd">        Index of the currently active clipping plane.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">mousedown</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">touchdown</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">mouse_button_left_down</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">mouse_button_center_down</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">mouse_button_right_down</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">mouse_depth_picker</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">clicked_tile</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">pan2d_xyzmm_at_mouse_down</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">prev_x</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">prev_y</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">curr_x</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">curr_y</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">current_touch_time</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">last_touch_time</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">double_touch</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">is_dragging</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">drag_start</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">drag_end</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
+        <span class="n">sync</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">drag_clip_plane_start_depth_azi_elev</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">last_two_touch_distance</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">multi_touch_gesture</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">dpr</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">max_2d</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">max_3d</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">window_x</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">window_y</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">active_drag_mode</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">UseEnum</span><span class="p">(</span>
+        <span class="n">DragMode</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">active_drag_button</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">angle_first_line</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="n">default_value</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">angle_state</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Enum</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;drawing_first_line&quot;</span><span class="p">,</span> <span class="s2">&quot;drawing_second_line&quot;</span><span class="p">,</span> <span class="s2">&quot;complete&quot;</span><span class="p">],</span>
+        <span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+        <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">active_clip_plane_index</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
 
 
 <span class="n">CAMEL_TO_SNAKE_SCENE</span> <span class="o">=</span> <span class="p">{</span>
@@ -997,6 +1111,42 @@
 <span class="p">}</span>
 
 <span class="n">SNAKE_TO_CAMEL_GRAPH</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">CAMEL_TO_SNAKE_GRAPH</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+<span class="n">CAMEL_TO_SNAKE_UIDATA</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;mousedown&quot;</span><span class="p">:</span> <span class="s2">&quot;mousedown&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;touchdown&quot;</span><span class="p">:</span> <span class="s2">&quot;touchdown&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mouseButtonLeftDown&quot;</span><span class="p">:</span> <span class="s2">&quot;mouse_button_left_down&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mouseButtonCenterDown&quot;</span><span class="p">:</span> <span class="s2">&quot;mouse_button_center_down&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mouseButtonRightDown&quot;</span><span class="p">:</span> <span class="s2">&quot;mouse_button_right_down&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mouseDepthPicker&quot;</span><span class="p">:</span> <span class="s2">&quot;mouse_depth_picker&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;clickedTile&quot;</span><span class="p">:</span> <span class="s2">&quot;clicked_tile&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pan2DxyzmmAtMouseDown&quot;</span><span class="p">:</span> <span class="s2">&quot;pan2d_xyzmm_at_mouse_down&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;prevX&quot;</span><span class="p">:</span> <span class="s2">&quot;prev_x&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;prevY&quot;</span><span class="p">:</span> <span class="s2">&quot;prev_y&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;currX&quot;</span><span class="p">:</span> <span class="s2">&quot;curr_x&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;currY&quot;</span><span class="p">:</span> <span class="s2">&quot;curr_y&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;currentTouchTime&quot;</span><span class="p">:</span> <span class="s2">&quot;current_touch_time&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;lastTouchTime&quot;</span><span class="p">:</span> <span class="s2">&quot;last_touch_time&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;doubleTouch&quot;</span><span class="p">:</span> <span class="s2">&quot;double_touch&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isDragging&quot;</span><span class="p">:</span> <span class="s2">&quot;is_dragging&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dragStart&quot;</span><span class="p">:</span> <span class="s2">&quot;drag_start&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dragEnd&quot;</span><span class="p">:</span> <span class="s2">&quot;drag_end&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dragClipPlaneStartDepthAziElev&quot;</span><span class="p">:</span> <span class="s2">&quot;drag_clip_plane_start_depth_azi_elev&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;lastTwoTouchDistance&quot;</span><span class="p">:</span> <span class="s2">&quot;last_two_touch_distance&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;multiTouchGesture&quot;</span><span class="p">:</span> <span class="s2">&quot;multi_touch_gesture&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dpr&quot;</span><span class="p">:</span> <span class="s2">&quot;dpr&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;max2D&quot;</span><span class="p">:</span> <span class="s2">&quot;max_2d&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;max3D&quot;</span><span class="p">:</span> <span class="s2">&quot;max_3d&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;windowX&quot;</span><span class="p">:</span> <span class="s2">&quot;window_x&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;windowY&quot;</span><span class="p">:</span> <span class="s2">&quot;window_y&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;activeDragMode&quot;</span><span class="p">:</span> <span class="s2">&quot;active_drag_mode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;activeDragButton&quot;</span><span class="p">:</span> <span class="s2">&quot;active_drag_button&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;angleFirstLine&quot;</span><span class="p">:</span> <span class="s2">&quot;angle_first_line&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;angleState&quot;</span><span class="p">:</span> <span class="s2">&quot;angle_state&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;activeClipPlaneIndex&quot;</span><span class="p">:</span> <span class="s2">&quot;active_clip_plane_index&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">SNAKE_TO_CAMEL_UIDATA</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">CAMEL_TO_SNAKE_UIDATA</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 </pre></div>
         </article>
       </div>
@@ -1029,7 +1179,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=20623aea"></script>
+</div><script src="../../_static/documentation_options.js?v=b1e24531"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
