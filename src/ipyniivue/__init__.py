@@ -15,6 +15,10 @@ from .traits import (  # noqa: F401
     LUT,
     ColorMap,
     Graph,
+    NIFTI1Hdr,
+    Scene,
+    UIData,
+    VolumeObject3DData,
 )
 from .widget import (  # noqa: F401
     Mesh,

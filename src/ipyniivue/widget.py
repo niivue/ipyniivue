@@ -36,6 +36,7 @@ from .serializers import (
     deserialize_options,
     deserialize_volume_object_3d_data,
     parse_scene,
+    parse_uidata,
     serialize_colormap_label,
     serialize_enum,
     serialize_file,
@@ -45,6 +46,7 @@ from .serializers import (
     serialize_options,
     serialize_scene,
     serialize_to_none,
+    serialize_uidata,
 )
 from .traits import (
     LUT,
@@ -52,6 +54,7 @@ from .traits import (
     Graph,
     NIFTI1Hdr,
     Scene,
+    UIData,
     VolumeObject3DData,
 )
 from .utils import (
@@ -918,6 +921,10 @@ class NiiVue(BaseAnyWidget):
         sync=True,
         to_json=serialize_scene,
     )
+    ui_data = t.Instance(UIData, allow_none=True).tag(
+        sync=True,
+        to_json=serialize_uidata,
+    )
     overlay_outline_width = t.Float(0.0).tag(sync=True)  # 0 for none
     overlay_alpha_shader = t.Float(1.0).tag(sync=True)  # 1 for opaque
 
@@ -969,6 +976,7 @@ class NiiVue(BaseAnyWidget):
         self._cluts = self._get_initial_colormaps()
         self.graph = Graph(parent=self)
         self.scene = Scene(parent=self)
+        self.ui_data = UIData()
         self.other_nv = []
         self.sync_opts = {
             "3d": False,
@@ -994,6 +1002,10 @@ class NiiVue(BaseAnyWidget):
             parsed = parse_scene(state["scene"])
             self.scene._trait_values.update(parsed)
             self.sync()
+        if "ui_data" in state:
+            parsed = parse_uidata(state["ui_data"])
+            self.ui_data._trait_values.update(parsed)
+        if "scene" in state or "ui_data" in state:
             return
         return super().set_state(state)
 
@@ -1032,6 +1044,17 @@ class NiiVue(BaseAnyWidget):
             }
         )
         self.send({"type": "draw_scene", "data": []})
+
+    def _notify_ui_data_changed(self):
+        self.notify_change(
+            {
+                "name": "ui_data",
+                "old": self.ui_data,
+                "new": self.ui_data,
+                "owner": self,
+                "type": "change",
+            }
+        )
 
     def _register_callback(self, event_name, callback, remove=False):
         if event_name not in self._event_handlers:
@@ -1881,10 +1904,12 @@ class NiiVue(BaseAnyWidget):
         if not all(isinstance(x, (int, float)) for x in [depth, azimuth, elevation]):
             raise TypeError("depth, azimuth, and elevation must all be numeric values.")
         v = sph2cart_deg(azimuth + 180, elevation)
-        self.scene.clip_planes = [[v[0], v[1], v[2], depth]]
+        self.scene._trait_values["clip_planes"] = [[v[0], v[1], v[2], depth]]
 
         # self.scene.clip_planes = [[0.6427876096865393, -0.7660444431189781, -0, 0.25]]
-        self.scene.clip_plane_depth_azi_elevs = [[depth, azimuth, elevation]]
+        self.scene._trait_values["clip_plane_depth_azi_elevs"] = [
+            [depth, azimuth, elevation]
+        ]
         self._notify_scene_changed()
 
     def set_clip_planes(self, depth_azi_elevs: list[list[float]]) -> None:
@@ -1918,8 +1943,8 @@ class NiiVue(BaseAnyWidget):
                 "depth_azi_elevs must be a list of [depth, azimuth, elevation] triples."
             )
 
-        self.scene.clip_planes = []
-        self.scene.clip_plane_depth_azi_elevs = []
+        self.scene._trait_values["clip_planes"] = []
+        self.scene._trait_values["clip_plane_depth_azi_elevs"] = []
 
         for i, dae in enumerate(depth_azi_elevs):
             if not isinstance(dae, (list, tuple)) or len(dae) < 3:
@@ -1941,8 +1966,10 @@ class NiiVue(BaseAnyWidget):
             d = -depth
             plane = [n[0], n[1], n[2], d]
 
-            self.scene.clip_planes.append(plane)
-            self.scene.clip_plane_depth_azi_elevs.append([depth, azimuth, elevation])
+            self.scene._trait_values["clip_planes"].append(plane)
+            self.scene._trait_values["clip_plane_depth_azi_elevs"].append(
+                [depth, azimuth, elevation]
+            )
 
         self._notify_scene_changed()
 
