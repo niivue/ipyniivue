@@ -1009,7 +1009,7 @@ class NiiVue(BaseAnyWidget):
             return
         return super().set_state(state)
 
-    def _notify_opts_changed(self):
+    def _notify_opts_changed(self, change=None):
         self.notify_change(
             {
                 "name": "opts",
@@ -1020,6 +1020,11 @@ class NiiVue(BaseAnyWidget):
             }
         )
         self.send({"type": "update_gl_volume", "data": []})
+
+        if change:
+            handler = self._event_handlers.get("opts_change")
+            if handler:
+                handler(change["name"], change["new"], change["old"])
 
     def _notify_graph_changed(self):
         self.notify_change(
@@ -3345,6 +3350,31 @@ class NiiVue(BaseAnyWidget):
 
         """
         self._register_callback("hover_idx_change", callback, remove=remove)
+
+    def on_opts_change(self, callback, remove=False):
+        """
+        Register a callback for when any configuration option changes.
+
+        Parameters
+        ----------
+        callback : callable
+            A function that takes three arguments:
+            - **property_name** (str): The name of the option that changed (snake_case).
+            - **new_value** (any): The new value of the option.
+            - **old_value** (any): The previous value of the option.
+        remove : bool, optional
+            If ``True``, remove the callback. Defaults to ``False``.
+
+        Examples
+        --------
+        ::
+
+            def my_callback(prop, new_val, old_val):
+                print(f"Option '{prop}' changed from {old_val} to {new_val}")
+
+            nv.on_opts_change(my_callback)
+        """
+        self._register_callback("opts_change", callback, remove=remove)
 
     """
     Sync

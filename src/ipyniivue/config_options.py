@@ -260,7 +260,7 @@ class ConfigOptions(t.HasTraits):
         if self._parent and callable(
             getattr(self._parent, "_notify_opts_changed", None)
         ):
-            self._parent._notify_opts_changed()
+            self._parent._notify_opts_changed(change)
 
 
 CAMEL_TO_SNAKE = {
