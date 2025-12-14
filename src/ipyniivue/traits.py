@@ -735,7 +735,7 @@ class UIData(t.HasTraits):
         True if the mouse is currently used for depth picking.
     clicked_tile : int
         The index of the tile (slice view) that was clicked.
-    pan_2dxyzmm_at_mouse_down : list of float
+    pan2d_xyzmm_at_mouse_down : list of float
         The [x, y, z, mm] pan coordinates at the moment the mouse was pressed.
     prev_x : float
         The previous X coordinate of the mouse/touch.
@@ -792,7 +792,7 @@ class UIData(t.HasTraits):
     mouse_button_right_down = t.Bool(False).tag(sync=True)
     mouse_depth_picker = t.Bool(False).tag(sync=True)
     clicked_tile = t.Int(-1).tag(sync=True)
-    pan_2dxyzmm_at_mouse_down = t.List(t.Float(), default_value=[0, 0, 0, 1]).tag(
+    pan2d_xyzmm_at_mouse_down = t.List(t.Float(), default_value=[0, 0, 0, 1]).tag(
         sync=True
     )
     prev_x = t.Float(0).tag(sync=True)
@@ -842,7 +842,7 @@ class UIData(t.HasTraits):
         "mouse_button_right_down",
         "mouse_depth_picker",
         "clicked_tile",
-        "pan_2dxyzmm_at_mouse_down",
+        "pan2d_xyzmm_at_mouse_down",
         "prev_x",
         "prev_y",
         "curr_x",
@@ -918,7 +918,7 @@ CAMEL_TO_SNAKE_UIDATA = {
     "mouseButtonRightDown": "mouse_button_right_down",
     "mouseDepthPicker": "mouse_depth_picker",
     "clickedTile": "clicked_tile",
-    "pan2DxyzmmAtMouseDown": "pan_2dxyzmm_at_mouse_down",
+    "pan2DxyzmmAtMouseDown": "pan2d_xyzmm_at_mouse_down",
     "prevX": "prev_x",
     "prevY": "prev_y",
     "currX": "curr_x",
