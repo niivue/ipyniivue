@@ -976,7 +976,7 @@ class NiiVue(BaseAnyWidget):
         self._cluts = self._get_initial_colormaps()
         self.graph = Graph(parent=self)
         self.scene = Scene(parent=self)
-        self.ui_data = UIData(parent=self)
+        self.ui_data = UIData()
         self.other_nv = []
         self.sync_opts = {
             "3d": False,
