@@ -106,7 +106,7 @@ jobs:
           rm -rf ./reports
           mkdir -p ./reports
           pytest -n auto --nbmake examples/*ipynb --cov=src --cov-report=json:./reports/coverage.json --cov-report=xml:./reports/coverage.xml
-      - name: Upload ipyniivue example notbooks coverage report
+      - name: Upload ipyniivue example notebooks coverage report
         uses: actions/upload-artifact@v5
         with:
           name: coverage_ipyniivue_notebooks-${{ matrix.os }}-py${{ matrix.python-version }}
