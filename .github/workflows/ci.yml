@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - workflow-examples-cache
+      - main
   pull_request:
     branches:
       - main
@@ -29,6 +29,7 @@ jobs:
           codespell codespell src/**/*.py
 
   DownloadAssets:
+    name: Download Assets
     runs-on: ubuntu-latest
     steps:
       - name: Download Images & Matcaps
