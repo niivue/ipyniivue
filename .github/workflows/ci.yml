@@ -28,7 +28,34 @@ jobs:
           pip install codespell
           codespell codespell src/**/*.py
 
+  DownloadAssets:
+    name: Download Assets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Images & Matcaps
+        shell: bash
+        run: |
+          mkdir -p examples/images
+          mkdir -p examples/matcaps
+          
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/niivue/niivue.git temp_nv_assets
+          cd temp_nv_assets
+          
+          git sparse-checkout set packages/niivue/demos/images packages/niivue/demos/matcaps
+          
+          mv packages/niivue/demos/images/* ../examples/images/
+          mv packages/niivue/demos/matcaps/* ../examples/matcaps/
+          
+          cd ..
+          rm -rf temp_nv_assets
+      - uses: actions/upload-artifact@v5
+        with:
+          name: niivue-assets
+          path: examples/
+          retention-days: 1
+
   Test:
+    needs: DownloadAssets
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -41,6 +68,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+
+      - name: Download Images & Matcaps
+        uses: actions/download-artifact@v5
+        with:
+          name: niivue-assets
+          path: .
+
       # requires npm because JS needs to be built
       - uses: actions/setup-node@v6
         with:
@@ -88,7 +122,7 @@ jobs:
           rm -rf ./reports
           mkdir -p ./reports
           pytest --nbmake examples/*ipynb --cov=src --cov-report=json:./reports/coverage.json --cov-report=xml:./reports/coverage.xml
-      - name: Upload ipyniivue example notbooks coverage report
+      - name: Upload ipyniivue example notebooks coverage report
         uses: actions/upload-artifact@v5
         with:
           name: coverage_ipyniivue_notebooks-${{ matrix.os }}-py${{ matrix.python-version }}
@@ -103,16 +137,7 @@ jobs:
       - name: Add test results to job summary
         run: |
           cat ./code-coverage-results.md >> $GITHUB_STEP_SUMMARY
-      #     coverage run -m pytest  --nb-test-files
-      # nbt-test-files check for changes in the output of the notebook.
-      # This does not work for our purpose since we wipe the output
-      # before committing changes to facilitate integration with git.
-      # - name: Upload coverage to codecov (Only do this for the ubuntu-latest job)
-      #   if: matrix.os == 'ubuntu-latest'
-      #   uses: codecov/codecov-action@v5
-      #   with:
-      #     token: ${{secrets.CODECOV_TOKEN}}
-      #
+
   LintJavaScript:
     name: JavaScript / Lint
     runs-on: macos-14
