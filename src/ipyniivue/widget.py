@@ -2185,6 +2185,36 @@ class NiiVue(BaseAnyWidget):
         self.send({"type": "resize_listener", "data": []})
         self.send({"type": "draw_scene", "data": []})
 
+
+    def load_from_array_buffer(self, data: bytes, name: str):
+        """Send an ArrayBuffer (as bytes) to the front-end and have NiiVue load it.
+
+        Parameters
+        ----------
+        data : bytes
+            Raw binary content to load (for example JSON bytes, NIfTI bytes, etc.)
+        name : str
+            Filename to present to the front-end (e.g. "connect.json").
+
+        Example
+        -------
+        ::
+
+            import json
+            json_obj = {
+                "name": "simpleConnectome",
+                "nodes": {...},
+                ...
+            }
+            json_bytes = json.dumps(json_obj).encode("utf-8")
+            nv.load_from_array_buffer(json_bytes, "connect.json")
+        """
+        # encode bytes as base64 (short, consistent with existing pattern)
+        b64 = base64.b64encode(data).decode("utf-8")
+        # send [base64_string, filename]
+        self.send({"type": "load_array_buffer", "data": [b64, name]})
+
+
     def _load_png_as_texture(self, png_url: str, texture_num: int):
         self.send({"type": "load_png_as_texture", "data": [png_url, texture_num]})
 

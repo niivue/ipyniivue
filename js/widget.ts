@@ -250,6 +250,26 @@ function attachModelEventHandlers(
 					}
 					break;
 				}
+				case "load_array_buffer": {
+					const [base64Str, name] = data as [string, string];
+					try {
+						// atob -> binary string -> build Uint8Array
+						const binaryString = atob(base64Str);
+						const len = binaryString.length;
+						const bytes = new Uint8Array(len);
+						for (let i = 0; i < len; i++) {
+							bytes[i] = binaryString.charCodeAt(i);
+						}
+						// call the existing NiiVue API
+						// make sure to catch errors from the Promise
+						nv.loadFromArrayBuffer(bytes.buffer, name).catch((err: unknown) => {
+							console.error("nv.loadFromArrayBuffer failed:", err);
+						});
+					} catch (err) {
+						console.error("Failed to decode base64 array buffer message:", err);
+					}
+					break;
+				}
 				case "load_png_as_texture": {
 					const [pngUrl, textureNum] = data;
 					nv.loadPngAsTexture(pngUrl, textureNum);

@@ -252,6 +252,8 @@ type SetGammaData = [gamma: number];
 
 type SetVolumeRenderIlluminationData = [gradientAmount: number];
 
+type LoadArrayData = [base64: string, fileName: string];
+
 type LoadPngAsTextureData = [pngUrl: string, textureNum: number];
 
 type SetInterpolationData = [isNearest: boolean];
@@ -284,6 +286,7 @@ export type CustomMessagePayload =
 			type: "set_volume_render_illumination";
 			data: SetVolumeRenderIlluminationData;
 	  }
+	| { type: "load_array_buffer"; data: LoadArrayData }
 	| { type: "load_png_as_texture"; data: LoadPngAsTextureData }
 	| { type: "set_interpolation"; data: SetInterpolationData }
 	| { type: "set_drawing_enabled"; data: SetDrawingEnabledData }
