@@ -335,6 +335,9 @@ async function create_volume(
 	if (volume.frac2mmOrtho) {
 		vmodel.set("frac2mm_ortho", Array.from(volume.frac2mmOrtho));
 	}
+	if (volume.dims) {
+		vmodel.set("dims", volume.dims);
+	}
 	if (volume.dimsRAS) {
 		vmodel.set("dims_ras", volume.dimsRAS);
 	}

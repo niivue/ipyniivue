@@ -559,7 +559,7 @@ class Volume(BaseAnyWidget):
     img = t.Instance(np.ndarray, allow_none=True).tag(
         sync=True, to_json=serialize_ndarray
     )
-    dims = t.Tuple(allow_none=True).tag(sync=True)
+    dims = t.List(t.Float()).tag(sync=True)
     extents_min_ortho = t.List(t.Float()).tag(sync=True)
     extents_max_ortho = t.List(t.Float()).tag(sync=True)
     frac2mm = t.Instance(np.ndarray, allow_none=True).tag(
@@ -869,6 +869,68 @@ class Volume(BaseAnyWidget):
             frac[2] = (result[2] + 0.5) / d[3]
 
         return frac
+
+    def convert_vox2frac(self, vox: list) -> list:
+        """
+        Convert voxel coordinates to fractional volume coordinates.
+
+        Parameters
+        ----------
+        vox : list of float
+            Voxel coordinates [x, y, z].
+
+        Returns
+        -------
+        list of float
+            Fractional coordinates [x, y, z] in the range [0, 1].
+
+        Raises
+        ------
+        RuntimeError
+            If the volume dimensions are not available.
+        """
+        if not self.dims_ras:
+            raise RuntimeError(
+                "Volume dimensions not available. Ensure the volume is fully loaded."
+            )
+
+        frac = [
+            (vox[0] + 0.5) / self.dims_ras[1],
+            (vox[1] + 0.5) / self.dims_ras[2],
+            (vox[2] + 0.5) / self.dims_ras[3],
+        ]
+        return frac
+
+    def convert_frac2vox(self, frac: list) -> list:
+        """
+        Convert fractional volume coordinates to voxel coordinates.
+
+        Parameters
+        ----------
+        frac : list of float
+            Fractional coordinates [x, y, z] in the range [0, 1].
+
+        Returns
+        -------
+        list of int
+            Voxel coordinates [x, y, z].
+
+        Raises
+        ------
+        RuntimeError
+            If the volume dimensions are not available.
+        """
+        if not self.dims_ras:
+            raise RuntimeError(
+                "Volume dimensions not available. Ensure the volume is fully loaded."
+            )
+
+        vox = [
+            round(frac[0] * self.dims_ras[1] - 0.5),
+            round(frac[1] * self.dims_ras[2] - 0.5),
+            round(frac[2] * self.dims_ras[3] - 0.5),
+        ]
+        return vox
 
 
 class NiiVue(BaseAnyWidget):
@@ -3684,6 +3746,58 @@ class NiiVue(BaseAnyWidget):
             pos[2] = lerp(mn[2], mx[2], frac[2])
 
         return pos
+
+    def vox2frac(self, vox: list, vol_idx: int = 0) -> list:
+        """
+        Convert voxel coordinates to fractional volume coordinates.
+
+        Parameters
+        ----------
+        vox : list of float
+            Voxel coordinates [x, y, z].
+        vol_idx : int, optional
+            The index of the volume to use. Default is 0.
+
+        Returns
+        -------
+        list of float
+            Fractional coordinates [x, y, z].
+
+        Raises
+        ------
+        IndexError
+            If vol_idx is out of range.
+        """
+        if vol_idx < 0 or vol_idx >= len(self.volumes):
+            raise IndexError(f"Volume index {vol_idx} out of range.")
+
+        return self.volumes[vol_idx].convert_vox2frac(vox)
+
+    def frac2vox(self, frac: list, vol_idx: int = 0) -> list:
+        """
+        Convert fractional volume coordinates to voxel coordinates.
+
+        Parameters
+        ----------
+        frac : list of float
+            Fractional coordinates [x, y, z].
+        vol_idx : int, optional
+            The index of the volume to use. Default is 0.
+
+        Returns
+        -------
+        list of int
+            Voxel coordinates [x, y, z].
+
+        Raises
+        ------
+        IndexError
+            If vol_idx is out of range.
+        """
+        if vol_idx < 0 or vol_idx >= len(self.volumes):
+            raise IndexError(f"Volume index {vol_idx} out of range.")
+
+        return self.volumes[vol_idx].convert_frac2vox(frac)
 
 
 class WidgetObserver:
