@@ -2185,7 +2185,6 @@ class NiiVue(BaseAnyWidget):
         self.send({"type": "resize_listener", "data": []})
         self.send({"type": "draw_scene", "data": []})
 
-
     def load_from_array_buffer(self, data: bytes, name: str):
         """Send an ArrayBuffer (as bytes) to the front-end and have NiiVue load it.
 
@@ -2213,7 +2212,6 @@ class NiiVue(BaseAnyWidget):
         b64 = base64.b64encode(data).decode("utf-8")
         # send [base64_string, filename]
         self.send({"type": "load_array_buffer", "data": [b64, name]})
-
 
     def _load_png_as_texture(self, png_url: str, texture_num: int):
         self.send({"type": "load_png_as_texture", "data": [png_url, texture_num]})
