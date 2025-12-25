@@ -296,7 +296,6 @@ export type CustomMessagePayload =
 	| { type: "remove_haze"; data: RemoveHazeData }
 	| { type: "draw_undo"; data: [] }
 	| { type: "close_drawing"; data: [] }
-	| { type: "load_jcon"; data: [] }
 	| { type: "load_drawing_from_url"; data: LoadDrawingFromUrlData }
 	| { type: "load_document_from_url"; data: LoadDocumentFromUrlData }
 	| { type: "refresh_colormaps"; data: [] };

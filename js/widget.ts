@@ -251,23 +251,8 @@ function attachModelEventHandlers(
 					break;
 				}
 				case "load_array_buffer": {
-					const [base64Str, name] = data as [string, string];
-					try {
-						// atob -> binary string -> build Uint8Array
-						const binaryString = atob(base64Str);
-						const len = binaryString.length;
-						const bytes = new Uint8Array(len);
-						for (let i = 0; i < len; i++) {
-							bytes[i] = binaryString.charCodeAt(i);
-						}
-						// call the existing NiiVue API
-						// make sure to catch errors from the Promise
-						nv.loadFromArrayBuffer(bytes.buffer, name).catch((err: unknown) => {
-							console.error("nv.loadFromArrayBuffer failed:", err);
-						});
-					} catch (err) {
-						console.error("Failed to decode base64 array buffer message:", err);
-					}
+					const [name] = data;
+					await nv.loadFromArrayBuffer(buffers[0].buffer as ArrayBuffer, name);
 					break;
 				}
 				case "load_png_as_texture": {
@@ -343,20 +328,6 @@ function attachModelEventHandlers(
 
 					await sendDrawBitmap(nv, model);
 
-					break;
-				}
-				case "load_jcon": {
-					const buf = buffers[0].buffer;
-					// Turn bytes into text
-					const text = new TextDecoder("utf-8").decode(buf);
-					let parsed: unknown;
-					try {
-						parsed = JSON.parse(text);
-					} catch (e) {
-						console.error("Invalid JSON", e);
-						break;
-					}
-					nv.loadConnectome(parsed as NiivueConnectome);
 					break;
 				}
 				case "load_document_from_url": {
