@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
         <title>ipyniivue.widget - IPyNiiVue 2.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -2633,6 +2633,36 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">force_device_pixel_ratio</span> <span class="o">=</span> <span class="n">force_device_pixel_ratio</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resize_listener&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;draw_scene&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]})</span></div>
+
+
+<div class="viewcode-block" id="NiiVue.load_from_array_buffer">
+<a class="viewcode-back" href="../../api.html#ipyniivue.NiiVue.load_from_array_buffer">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_from_array_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send bytes to the frontend and have NiiVue load it.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : bytes</span>
+<span class="sd">            Raw binary content to load (for example JSON bytes, NIfTI bytes, etc.)</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Filename to present to the front-end (e.g. &quot;connect.json&quot;).</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            import json</span>
+<span class="sd">            json_obj = {</span>
+<span class="sd">                &quot;name&quot;: &quot;simpleConnectome&quot;,</span>
+<span class="sd">                &quot;nodes&quot;: {...},</span>
+<span class="sd">                ...</span>
+<span class="sd">            }</span>
+<span class="sd">            json_bytes = json.dumps(json_obj).encode(&quot;utf-8&quot;)</span>
+<span class="sd">            nv.load_from_array_buffer(json_bytes, &quot;connect.json&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Data needs to be bytes.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;load_array_buffer&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">name</span><span class="p">]},</span> <span class="n">buffers</span><span class="o">=</span><span class="p">[</span><span class="n">data</span><span class="p">])</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_png_as_texture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">png_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">texture_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
