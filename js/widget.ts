@@ -250,6 +250,11 @@ function attachModelEventHandlers(
 					}
 					break;
 				}
+				case "load_array_buffer": {
+					const [name] = data;
+					await nv.loadFromArrayBuffer(buffers[0].buffer as ArrayBuffer, name);
+					break;
+				}
 				case "load_png_as_texture": {
 					const [pngUrl, textureNum] = data;
 					nv.loadPngAsTexture(pngUrl, textureNum);
@@ -323,20 +328,6 @@ function attachModelEventHandlers(
 
 					await sendDrawBitmap(nv, model);
 
-					break;
-				}
-				case "load_jcon": {
-					const buf = buffers[0].buffer;
-					// Turn bytes into text
-					const text = new TextDecoder("utf-8").decode(buf);
-					let parsed: unknown;
-					try {
-						parsed = JSON.parse(text);
-					} catch (e) {
-						console.error("Invalid JSON", e);
-						break;
-					}
-					nv.loadConnectome(parsed as NiivueConnectome);
 					break;
 				}
 				case "load_document_from_url": {

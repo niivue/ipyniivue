@@ -252,6 +252,8 @@ type SetGammaData = [gamma: number];
 
 type SetVolumeRenderIlluminationData = [gradientAmount: number];
 
+type LoadArrayData = [base64: string, fileName: string];
+
 type LoadPngAsTextureData = [pngUrl: string, textureNum: number];
 
 type SetInterpolationData = [isNearest: boolean];
@@ -284,6 +286,7 @@ export type CustomMessagePayload =
 			type: "set_volume_render_illumination";
 			data: SetVolumeRenderIlluminationData;
 	  }
+	| { type: "load_array_buffer"; data: LoadArrayData }
 	| { type: "load_png_as_texture"; data: LoadPngAsTextureData }
 	| { type: "set_interpolation"; data: SetInterpolationData }
 	| { type: "set_drawing_enabled"; data: SetDrawingEnabledData }
@@ -293,7 +296,6 @@ export type CustomMessagePayload =
 	| { type: "remove_haze"; data: RemoveHazeData }
 	| { type: "draw_undo"; data: [] }
 	| { type: "close_drawing"; data: [] }
-	| { type: "load_jcon"; data: [] }
 	| { type: "load_drawing_from_url"; data: LoadDrawingFromUrlData }
 	| { type: "load_document_from_url"; data: LoadDocumentFromUrlData }
 	| { type: "refresh_colormaps"; data: [] };

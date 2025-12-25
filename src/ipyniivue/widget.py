@@ -2247,6 +2247,33 @@ class NiiVue(BaseAnyWidget):
         self.send({"type": "resize_listener", "data": []})
         self.send({"type": "draw_scene", "data": []})
 
+    def load_from_array_buffer(self, data: bytes, name: str):
+        """Send bytes to the frontend and have NiiVue load it.
+
+        Parameters
+        ----------
+        data : bytes
+            Raw binary content to load (for example JSON bytes, NIfTI bytes, etc.)
+        name : str
+            Filename to present to the front-end (e.g. "connect.json").
+
+        Example
+        -------
+        ::
+
+            import json
+            json_obj = {
+                "name": "simpleConnectome",
+                "nodes": {...},
+                ...
+            }
+            json_bytes = json.dumps(json_obj).encode("utf-8")
+            nv.load_from_array_buffer(json_bytes, "connect.json")
+        """
+        if not isinstance(data, bytes):
+            raise ValueError("Data needs to be bytes.")
+        self.send({"type": "load_array_buffer", "data": [name]}, buffers=[data])
+
     def _load_png_as_texture(self, png_url: str, texture_num: int):
         self.send({"type": "load_png_as_texture", "data": [png_url, texture_num]})
 
