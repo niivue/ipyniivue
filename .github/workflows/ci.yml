@@ -48,7 +48,7 @@ jobs:
           
           cd ..
           rm -rf temp_nv_assets
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: niivue-assets
           path: examples/
@@ -102,7 +102,7 @@ jobs:
           mkdir -p ./reports
           pytest --cov --cov-report=json:./reports/coverage.json --cov-report=xml:./reports/coverage.xml
       - name: Upload ipyniivue test coverage report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: coverage_ipyniivue-${{ matrix.os }}-py${{ matrix.python-version }}
           path: ./reports/coverage.json
@@ -123,7 +123,7 @@ jobs:
           mkdir -p ./reports
           pytest --nbmake examples/*ipynb --cov=src --cov-report=json:./reports/coverage.json --cov-report=xml:./reports/coverage.xml
       - name: Upload ipyniivue example notebooks coverage report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: coverage_ipyniivue_notebooks-${{ matrix.os }}-py${{ matrix.python-version }}
           path: ./reports/coverage.json
