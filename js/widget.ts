@@ -718,7 +718,6 @@ function setupUpdateInterval(nv: niivue.Niivue, model: Model) {
 		updateInterval = null;
 	}
 
-
 	let lastSentUidata: UIData | null = model.get("ui_data");
 	let lastSentScene: Scene | null = model.get("scene");
 	let shouldSendScene = false;
@@ -854,8 +853,9 @@ export default {
 			model.off("change:scene");
 			model.off("change:overlay_outline_width");
 			model.off("change:overlay_alpha_shader");
-
-			clearInterval(updateInterval!);
+			if (updateInterval) {
+				clearInterval(updateInterval);
+			}
 		};
 	},
 	async render({ model, el }: { model: Model; el: HTMLElement }) {

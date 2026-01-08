@@ -9,7 +9,7 @@
 		"gallery": "cross-env NOTEBOOKS_DIR=examples OUT_DIR=docs/gallery node scripts/generate-gallery.cjs",
 		"notebooks:clean": "${PYTHON:-python3} ./scripts/clean-notebooks.py ./examples",
 		"test:e2e:prepare": "node scripts/prepare-e2e.cjs",
-    	"test:e2e": "npm run test:e2e:prepare && playwright test",
+		"test:e2e": "npm run test:e2e:prepare && playwright test",
 		"test:e2e:clean": "node scripts/clean-generated-html.cjs"
 	},
 	"dependencies": {
