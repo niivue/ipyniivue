@@ -48,6 +48,118 @@ See the [Documentation](https://niivue.github.io/ipyniivue) for usage.
 
 ipyniivue uses the recommended [`hatchling`](https://packaging.python.org/en/latest/flow/#using-hatch) build system, which is convenient to use via the [`hatch` CLI](https://hatch.pypa.io/latest/). We recommend installing `hatch` globally (e.g., via `pipx`) and running the various commands defined within `pyproject.toml`. `hatch` will take care of creating and synchronizing a virtual environment with all dependencies defined in `pyproject.toml`.
 
+### Getting Started
+
+These steps set up a **local development environment** for `ipyniivue` with live JavaScript rebuilding via `anywidget`.
+
+#### Prerequisites
+- Python 3.10+
+- Node.js (LTS recommended)
+- `hatch` installed (e.g. via `pipx install hatch`)
+- Ensure **`ipyniivue` is *not* already installed** in your Python environment
+
+---
+
+#### Step-by-step setup
+
+##### 0. Verify your Python environment
+Make sure `hatch` is available and `ipyniivue` is not installed:
+
+```bash
+hatch --version
+pip show ipyniivue || echo "ipyniivue not installed (good)"
+```
+
+---
+
+##### 1. Clone the repository
+```bash
+git clone https://github.com/niivue/ipyniivue.git
+```
+
+---
+
+##### 2. Enter the repository
+```bash
+cd ipyniivue
+```
+
+---
+
+##### 3. Install JavaScript dependencies
+From the repository root:
+
+```bash
+npm install
+```
+
+---
+
+##### 4. Start a Hatch shell (Python environment)
+```bash
+hatch shell
+```
+
+This activates the project’s Python development environment.
+
+---
+
+##### 5. Start the JavaScript dev server
+In the same terminal:
+
+```bash
+cd js
+npm run dev
+```
+
+This runs the JavaScript build in **watch mode**, rebuilding the widget automatically when files change.
+
+> Leave this terminal running.
+
+---
+
+##### 6. Open a new terminal tab
+Open a **second terminal tab/window**, again from the `ipyniivue` repository root.
+
+---
+
+##### 7. Start another Hatch shell
+```bash
+hatch shell
+```
+
+---
+
+##### 8. Install `ipyniivue` in editable mode
+```bash
+pip install -e .
+```
+
+This ensures Python picks up the locally built widget assets.
+
+---
+
+##### 9. Launch JupyterLab
+```bash
+jupyter lab
+```
+
+You can now open an example notebook and develop `ipyniivue` with live JavaScript updates.
+
+---
+
+#### Development tips
+- For best results with live updates, set:
+  ```bash
+  export ANYWIDGET_HMR=1
+  ```
+  before launching JupyterLab.
+- If the widget does not appear or fails to load, ensure:
+  - `npm run dev` is still running
+  - `pip install -e .` was run **after** starting the JS build
+- If you switch branches or pull updates that change JS files, restart `npm run dev`.
+
+
 ### Command Cheat Sheet
 
 Run these commands from the root of the project:
