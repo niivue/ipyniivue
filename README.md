@@ -249,3 +249,157 @@ Releases are automated using GitHub Actions via the [`release.yml`](.github/work
 - We generate a changelog for GitHub releases with [`antfu/changelogithub`](https://github.com/antfu/changelogithub).
 - Each changelog entry is grouped and rendered based on conventional commits.
 - It's recommended to follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) specification.
+
+## Generating the Notebook Gallery
+
+ipyniivue includes tooling to generate a **static HTML gallery** from example notebooks.
+
+Each notebook is:
+
+1. Executed in isolation
+2. Converted to static HTML
+3. Snapshotted using the final rendered canvas
+4. Added to a gallery page with thumbnails that link to the generated HTML
+
+All generated artifacts live in a **test-only output directory** and are **never committed**.
+
+### Gallery output location
+
+```
+tests-out/
+  html/          # generated static HTML per notebook
+  gallery/
+    thumbnails/  # canvas thumbnails
+    index.html   # gallery page
+```
+
+The entire `tests-out/` directory is gitignored and safe to delete at any time.
+
+---
+
+### Generate the gallery
+
+```bash
+npm run gallery
+```
+
+This will:
+- Execute notebooks found in `examples/`
+- Generate static HTML into `tests-out/html/`
+- Create thumbnails from the final rendered canvas
+- Generate `tests-out/gallery/index.html`
+
+You can open the gallery locally:
+
+```bash
+open tests-out/gallery/index.html
+```
+
+---
+
+### Clean generated gallery artifacts
+
+To remove all generated HTML, thumbnails, and executed notebooks:
+
+```bash
+npm run clean:generated-html
+```
+
+To preview what would be removed:
+
+```bash
+npm run clean:generated-html:dry
+```
+
+---
+
+## End-to-End (E2E) Testing with Playwright
+
+ipyniivue uses **Playwright** to run end-to-end tests against **pre-executed static HTML**, rather than interacting with live Jupyter notebooks.
+
+This approach provides:
+- Deterministic results
+- No UI flakiness
+- No dependency on JupyterLab state
+- True visual regression testing for WebGL output
+
+---
+
+### E2E testing workflow
+
+The E2E pipeline consists of two steps:
+
+1. **Prepare static HTML**
+2. **Run Playwright tests**
+
+```bash
+npm run test:e2e
+```
+
+This runs:
+
+```
+scripts/prepare-e2e.cjs   # executes notebooks → static HTML in tests-out/
+playwright test           # loads static HTML and runs assertions
+```
+
+---
+
+### What is tested?
+
+For each notebook:
+
+- The static HTML loads successfully
+- A `<canvas>` element is rendered
+- A WebGL context is available
+- The rendered canvas matches a **saved visual snapshot**
+
+Snapshots are stored under:
+
+```
+e2e-tests/__screenshots__/
+```
+
+These snapshot images **should be committed**, as they define the visual baseline.
+
+---
+
+### Updating visual snapshots
+
+When a visualization changes intentionally:
+
+```bash
+npx playwright test --update-snapshots
+```
+
+This regenerates the baseline screenshots.
+
+---
+
+### Generated test artifacts
+
+All generated HTML and intermediate files are written to:
+
+```
+tests-out/
+```
+
+This directory is:
+- Automatically reused between runs
+- Cleaned via `npm run clean:generated-html`
+- Ignored by git
+
+---
+
+### Why static HTML testing?
+
+We intentionally avoid driving the JupyterLab UI in tests.
+
+Static HTML testing provides:
+- Stable WebGL output
+- Faster CI
+- Clear visual diffs
+- No notebook state pollution
+- No source-control churn
+
+This is the recommended approach for testing interactive notebook-based visualization libraries.

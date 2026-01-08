@@ -14,7 +14,7 @@
 
 const { spawnSync } = require('child_process');
 const { resolve, basename, join } = require('path');
-const { existsSync, mkdirSync, readdirSync } = require('fs');
+const { existsSync, mkdirSync, readdirSync, statSync } = require('fs');
 
 const NOTEBOOKS_DIR = process.env.NOTEBOOKS_DIR || 'examples';
 const OUT_DIR = process.env.OUT_DIR || 'tests-out/html';
@@ -72,7 +72,26 @@ function runExecNotebook(notebookPath, outDir, options = {}) {
 
     for (const nbRel of notebooks) {
       const nbName = basename(nbRel);
-      console.log(`\n[e2e] executing ${nbRel} -> expect ${join(OUT_DIR, basename(nbRel, '.ipynb') + '.html')}`);
+      const expectedHtmlName = basename(nbRel, '.ipynb') + '.html';
+      const expectedHtmlPath = join(outAbs, expectedHtmlName);
+
+      console.log(`\n[e2e] processing ${nbRel} -> expect ${expectedHtmlPath}`);
+
+      // Short-circuit: if expected HTML already exists and looks non-empty, skip execution
+      try {
+        if (existsSync(expectedHtmlPath)) {
+          const s = statSync(expectedHtmlPath);
+          if (s.size > 0) {
+            console.log(`[e2e] ✔ skipping ${nbName} — existing HTML found at ${expectedHtmlPath}`);
+            summary.succeeded.push({ notebook: nbRel, html: expectedHtmlPath });
+            continue; // next notebook
+          } else {
+            console.log(`[e2e] found ${expectedHtmlPath} but file is empty; will re-generate`);
+          }
+        }
+      } catch (err) {
+        console.warn(`[e2e] warning checking existing HTML for ${nbName}:`, err && err.message ? err.message : String(err));
+      }
 
       // First attempt: normal
       const res = runExecNotebook(nbRel, OUT_DIR, { python: PYTHON, timeoutMs: TIMEOUT });
