@@ -5,7 +5,11 @@
 		"build": "node build.js",
 		"lint": "biome ci .",
 		"fix": "biome check --fix .",
-		"typecheck": "tsc"
+		"typecheck": "tsc",
+		"gallery": "cross-env NOTEBOOKS_DIR=examples OUT_DIR=docs/gallery node scripts/generate-gallery.cjs",
+		"notebooks:clean": "${PYTHON:-python3} ./scripts/clean-notebooks.py ./examples",
+		"test:e2e:prepare": "node scripts/prepare-e2e.cjs",
+    	"test:e2e": "npm run test:e2e:prepare && playwright test"
 	},
 	"dependencies": {
 		"@anywidget/types": "^0.2.0",
@@ -13,6 +17,9 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
+		"@playwright/test": "^1.57.0",
+		"@types/node": "^25.0.3",
+		"cross-env": "^10.1.0",
 		"esbuild": "^0.27.0",
 		"typescript": "^5.8.2"
 	}

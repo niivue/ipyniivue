@@ -104,7 +104,16 @@ This activates the project’s Python development environment.
 
 ---
 
-##### 5. Start the JavaScript dev server
+##### 5. Install Python dependencies (editable mode)
+```bash
+pip install -e ".[dev]"
+```
+
+This activates the project’s Python development environment.
+
+---
+
+##### 6. Start the JavaScript dev server
 In the same terminal:
 
 ```bash
@@ -118,19 +127,19 @@ This runs the JavaScript build in **watch mode**, rebuilding the widget automati
 
 ---
 
-##### 6. Open a new terminal tab
+##### 7. Open a new terminal tab
 Open a **second terminal tab/window**, again from the `ipyniivue` repository root.
 
 ---
 
-##### 7. Start another Hatch shell
+##### 8. Start another Hatch shell
 ```bash
 hatch shell
 ```
 
 ---
 
-##### 8. Install `ipyniivue` in editable mode
+##### 9. Install `ipyniivue` in editable mode
 ```bash
 pip install -e .
 ```
@@ -139,7 +148,7 @@ This ensures Python picks up the locally built widget assets.
 
 ---
 
-##### 9. Launch JupyterLab
+##### 10. Launch JupyterLab
 ```bash
 jupyter lab
 ```

@@ -9,3 +9,4 @@ dependencies:
     - anywidget
     - nibabel
     - ipylab
+    - nb-clean
