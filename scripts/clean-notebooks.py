@@ -1,6 +1,7 @@
+import argparse
 import os
 import subprocess
-import argparse
+
 
 def clean_notebooks(root_dir):
     """
@@ -17,7 +18,11 @@ def clean_notebooks(root_dir):
                 full_path = os.path.join(dirpath, filename)
                 print(f"Cleaning notebook: {full_path}")
                 subprocess.run([
-                    'nb-clean', 'clean', full_path, '--remove-empty-cells', '--remove-all-notebook-metadata'
+                    'nb-clean',
+                    'clean',
+                    full_path,
+                    '--remove-empty-cells',
+                    '--remove-all-notebook-metadata'
                 ], check=True)
 
 def main():
