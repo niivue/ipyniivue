@@ -16,3 +16,6 @@ launch.json
 
 # OS Specific
 .DS_Store
+
+# Tests
+tests-out

@@ -21,7 +21,7 @@ import type {
 import type { Connectome as NiivueConnectome } from "@niivue/niivue";
 
 let nv: niivue.Niivue;
-let updateInterval: number | undefined;
+let updateInterval: ReturnType<typeof setInterval> | null = null;
 
 async function sendDrawBitmap(nv: niivue.Niivue, model: Model) {
 	const thisModelId = model.get("this_model_id");
@@ -713,9 +713,9 @@ function attachCanvasEventHandlers(nv: niivue.Niivue, model: Model) {
 }
 
 function setupUpdateInterval(nv: niivue.Niivue, model: Model) {
-	if (updateInterval !== undefined) {
+	if (updateInterval !== null) {
 		clearInterval(updateInterval);
-		updateInterval = undefined;
+		updateInterval = null;
 	}
 
 	let lastSentUidata: UIData | null = model.get("ui_data");
@@ -853,8 +853,9 @@ export default {
 			model.off("change:scene");
 			model.off("change:overlay_outline_width");
 			model.off("change:overlay_alpha_shader");
-
-			clearInterval(updateInterval);
+			if (updateInterval) {
+				clearInterval(updateInterval);
+			}
 		};
 	},
 	async render({ model, el }: { model: Model; el: HTMLElement }) {
