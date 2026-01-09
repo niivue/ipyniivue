@@ -4,45 +4,23 @@
 [![License](https://img.shields.io/github/license/niivue/ipyniivue)](https://opensource.org/license/bsd-2-clause)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/niivue/ipyniivue/main?urlpath=lab%2Ftree%2Fexamples)
 
-**A Jupyter Widget for [Niivue](https://github.com/niivue/niivue) based on [anywidget](https://github.com/manzt/anywidget).**
+This is a Jupyter Widget for [Niivue](https://github.com/niivue/niivue) based on [anywidget](https://github.com/manzt/anywidget). It is designed to visualize neuroimaging volumes, meshes, streamlines and connectomes and their corresponding statistical maps. This repository is designed for advanced developers to build and extend ipyniivue. The minimal installation end users is `pip install ipyniivue`. Most users will likely find the [example jupyter notebooks](https://github.com/niivue/jupyter-notebooks) the ideal introduction to the capability.
 
----
+ipyniivue is a Jupyter widget for the  [Niivue](https://github.com/niivue/niivue). It enables interactive visualization of neuroimaging data directly in Jupyter environments, including volumetric images, surface meshes, streamlines, connectomes, and their associated statistical maps.
 
+This repository is intended solely for advanced developers who want to build and extend ipyniivue. For others, the [example Jupyter notebooks](https://github.com/niivue/jupyter-notebooks) provides a simple installation.
 
 ## Installation
 
-Install ipyniivue using `pip`:
+For most users, the best introduction to ipyniivue’s capabilities is the collection of [example Jupyter notebooks](https://github.com/niivue/jupyter-notebooks). However, the minimal installation is simply:
 
 ```sh
 pip install ipyniivue
 ```
 
----
-
-## Usage
-
-In a Jupyter environment:
-
-```python
-from ipyniivue import NiiVue
-
-nv = NiiVue()
-nv.load_volumes([{"path": "images/mni152.nii.gz"}])
-nv
-```
-
-This will render an interactive Niivue widget within your notebook.
-
-**See the [basic demo](./examples/basic_multiplanar.ipynb) to learn more.**
-
----
-
 ## Documentation
 
 See the [Documentation](https://niivue.github.io/ipyniivue) for usage.
-
-
----
 
 ## Development
 
@@ -58,8 +36,6 @@ These steps set up a **local development environment** for `ipyniivue` with live
 - `hatch` installed (e.g. via `pipx install hatch`)
 - Ensure **`ipyniivue` is *not* already installed** in your Python environment
 
----
-
 #### Step-by-step setup
 
 ##### 0. Verify your Python environment
@@ -70,21 +46,15 @@ hatch --version
 pip show ipyniivue || echo "ipyniivue not installed (good)"
 ```
 
----
-
 ##### 1. Clone the repository
 ```bash
 git clone https://github.com/niivue/ipyniivue.git
 ```
 
----
-
 ##### 2. Enter the repository
 ```bash
 cd ipyniivue
 ```
-
----
 
 ##### 3. Install JavaScript dependencies
 From the repository root:
@@ -93,8 +63,6 @@ From the repository root:
 npm install
 ```
 
----
-
 ##### 4. Start a Hatch shell (Python environment)
 ```bash
 hatch shell
@@ -102,16 +70,12 @@ hatch shell
 
 This activates the project’s Python development environment.
 
----
-
 ##### 5. Install Python dependencies (editable mode)
 ```bash
 pip install -e ".[dev]"
 ```
 
 This activates the project’s Python development environment.
-
----
 
 ##### 6. Start the JavaScript dev server
 In the same terminal:
@@ -125,19 +89,13 @@ This runs the JavaScript build in **watch mode**, rebuilding the widget automati
 
 > Leave this terminal running.
 
----
-
 ##### 7. Open a new terminal tab
 Open a **second terminal tab/window**, again from the `ipyniivue` repository root.
-
----
 
 ##### 8. Start another Hatch shell
 ```bash
 hatch shell
 ```
-
----
 
 ##### 9. Install `ipyniivue` in editable mode
 ```bash
@@ -146,7 +104,6 @@ pip install -e .
 
 This ensures Python picks up the locally built widget assets.
 
----
 
 ##### 10. Launch JupyterLab
 ```bash
@@ -154,8 +111,6 @@ jupyter lab
 ```
 
 You can now open an example notebook and develop `ipyniivue` with live JavaScript updates.
-
----
 
 #### Development tips
 - For best results with live updates, set:
@@ -221,8 +176,6 @@ Once the development server is running, you can start JupyterLab or Visual Studi
 > export ANYWIDGET_HMR=1
 > ```
 
----
-
 ## Release Process
 
 Releases are automated using GitHub Actions via the [`release.yml`](.github/workflows/release.yml) workflow.
@@ -275,8 +228,6 @@ tests-out/
 
 The entire `tests-out/` directory is gitignored and safe to delete at any time.
 
----
-
 ### Generate the gallery
 
 ```bash
@@ -295,8 +246,6 @@ You can open the gallery locally:
 open tests-out/gallery/index.html
 ```
 
----
-
 ### Clean generated gallery artifacts
 
 To remove all generated HTML, thumbnails, and executed notebooks:
@@ -311,8 +260,6 @@ To preview what would be removed:
 npm run clean:generated-html:dry
 ```
 
----
-
 ## End-to-End (E2E) Testing with Playwright
 
 ipyniivue uses **Playwright** to run end-to-end tests against **pre-executed static HTML**, rather than interacting with live Jupyter notebooks.
@@ -322,8 +269,6 @@ This approach provides:
 - No UI flakiness
 - No dependency on JupyterLab state
 - True visual regression testing for WebGL output
-
----
 
 ### E2E testing workflow
 
@@ -343,8 +288,6 @@ scripts/prepare-e2e.cjs   # executes notebooks → static HTML in tests-out/
 playwright test           # loads static HTML and runs assertions
 ```
 
----
-
 ### What is tested?
 
 For each notebook:
@@ -362,8 +305,6 @@ e2e-tests/__screenshots__/
 
 These snapshot images **should be committed**, as they define the visual baseline.
 
----
-
 ### Updating visual snapshots
 
 When a visualization changes intentionally:
@@ -373,8 +314,6 @@ npx playwright test --update-snapshots
 ```
 
 This regenerates the baseline screenshots.
-
----
 
 ### Generated test artifacts
 
@@ -388,8 +327,6 @@ This directory is:
 - Automatically reused between runs
 - Cleaned via `npm run clean:generated-html`
 - Ignored by git
-
----
 
 ### Why static HTML testing?
 
