@@ -5,7 +5,9 @@
   <title>Notebook Gallery</title>
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding: 24px; }
-    h1 { margin-bottom: 12px; }
+    .header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; flex-wrap:wrap; }
+    h1 { margin: 0; font-size: 1.5rem; }
+    .timestamp { font-size: 0.85rem; color: #666; margin-left: 8px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
     .card { border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); overflow: hidden; background: #fff; text-align: center; padding: 8px; }
     .card img { display: block; width: 100%; height: 160px; object-fit: cover; background: #eee; }
@@ -15,70 +17,35 @@
   </style>
 </head>
 <body>
-  <h1>Notebook Gallery</h1>
-  <p>Generated: 2026-01-13T10:07:57.476Z</p>
+  <div class="header">
+    <h1>Notebook Gallery</h1>
+    <time class="timestamp" datetime="2026-01-13T21:05:31.566Z">
+      Generated: 1/13/2026
+    </time>
+  </div>
+
   <div class="grid">
     
       <div class="card">
-        <a href="add_from_frontend.html" title="add_from_frontend.ipynb">
-          <img src="thumbnails/add_from_frontend.png" alt="add_from_frontend.ipynb thumbnail"/>
-          <div class="caption">add_from_frontend.ipynb</div>
+        <a href="basic.html" title="basic.ipynb">
+          <img src="thumbnails/basic.png" alt="basic.ipynb thumbnail"/>
+          <div class="caption">basic.ipynb</div>
         </a>
       </div>
     
 
       <div class="card">
-        <a href="additive.mesh.html" title="additive.mesh.ipynb">
-          <img src="thumbnails/additive.mesh.png" alt="additive.mesh.ipynb thumbnail"/>
-          <div class="caption">additive.mesh.ipynb</div>
+        <a href="basic.mesh.html" title="basic.mesh.ipynb">
+          <img src="thumbnails/basic.mesh.png" alt="basic.mesh.ipynb thumbnail"/>
+          <div class="caption">basic.mesh.ipynb</div>
         </a>
       </div>
     
 
       <div class="card">
-        <a href="additive.mesh.negative.html" title="additive.mesh.negative.ipynb">
-          <img src="thumbnails/additive.mesh.negative.png" alt="additive.mesh.negative.ipynb thumbnail"/>
-          <div class="caption">additive.mesh.negative.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="additive_voxels.html" title="additive_voxels.ipynb">
-          <img src="thumbnails/additive_voxels.png" alt="additive_voxels.ipynb thumbnail"/>
-          <div class="caption">additive_voxels.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="afni.html" title="afni.ipynb">
-          <img src="thumbnails/afni.png" alt="afni.ipynb thumbnail"/>
-          <div class="caption">afni.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="alphathreshold.html" title="alphathreshold.ipynb">
-          <img src="thumbnails/alphathreshold.png" alt="alphathreshold.ipynb thumbnail"/>
-          <div class="caption">alphathreshold.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="atlas.html" title="atlas.ipynb">
-          <img src="thumbnails/atlas.png" alt="atlas.ipynb thumbnail"/>
-          <div class="caption">atlas.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="atlas.sparse.html" title="atlas.sparse.ipynb">
-          <img src="thumbnails/atlas.sparse.png" alt="atlas.sparse.ipynb thumbnail"/>
-          <div class="caption">atlas.sparse.ipynb</div>
+        <a href="basic.mesh.stat.html" title="basic.mesh.stat.ipynb">
+          <img src="thumbnails/basic.mesh.stat.png" alt="basic.mesh.stat.ipynb thumbnail"/>
+          <div class="caption">basic.mesh.stat.ipynb</div>
         </a>
       </div>
     
@@ -92,25 +59,41 @@
     
 
       <div class="card">
-        <a href="basic_multiplanar.html" title="basic_multiplanar.ipynb">
-          <img src="thumbnails/basic_multiplanar.png" alt="basic_multiplanar.ipynb thumbnail"/>
-          <div class="caption">basic_multiplanar.ipynb</div>
+        <a href="basic.vox.mesh.html" title="basic.vox.mesh.ipynb">
+          <img src="thumbnails/basic.vox.mesh.png" alt="basic.vox.mesh.ipynb thumbnail"/>
+          <div class="caption">basic.vox.mesh.ipynb</div>
         </a>
       </div>
     
 
       <div class="card">
-        <a href="brainvoyager.html" title="brainvoyager.ipynb">
-          <img src="thumbnails/brainvoyager.png" alt="brainvoyager.ipynb thumbnail"/>
-          <div class="caption">brainvoyager.ipynb</div>
+        <a href="basic.vox.stat.html" title="basic.vox.stat.ipynb">
+          <img src="thumbnails/basic.vox.stat.png" alt="basic.vox.stat.ipynb thumbnail"/>
+          <div class="caption">basic.vox.stat.ipynb</div>
         </a>
       </div>
     
 
       <div class="card">
-        <a href="cifti.4D.html" title="cifti.4D.ipynb">
-          <img src="thumbnails/cifti.4D.png" alt="cifti.4D.ipynb thumbnail"/>
-          <div class="caption">cifti.4D.ipynb</div>
+        <a href="basic.vox.tract.html" title="basic.vox.tract.ipynb">
+          <img src="thumbnails/basic.vox.tract.png" alt="basic.vox.tract.ipynb thumbnail"/>
+          <div class="caption">basic.vox.tract.ipynb</div>
+        </a>
+      </div>
+    
+
+      <div class="card">
+        <a href="canvas.height.html" title="canvas.height.ipynb">
+          <img src="thumbnails/canvas.height.png" alt="canvas.height.ipynb thumbnail"/>
+          <div class="caption">canvas.height.ipynb</div>
+        </a>
+      </div>
+    
+
+      <div class="card">
+        <a href="canvas.size.html" title="canvas.size.ipynb">
+          <img src="thumbnails/canvas.size.png" alt="canvas.size.ipynb thumbnail"/>
+          <div class="caption">canvas.size.ipynb</div>
         </a>
       </div>
     
@@ -119,30 +102,6 @@
         <a href="clipplanes.html" title="clipplanes.ipynb">
           <img src="thumbnails/clipplanes.png" alt="clipplanes.ipynb thumbnail"/>
           <div class="caption">clipplanes.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="colormaps.html" title="colormaps.ipynb">
-          <img src="thumbnails/colormaps.png" alt="colormaps.ipynb thumbnail"/>
-          <div class="caption">colormaps.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="colormaps.mesh.html" title="colormaps.mesh.ipynb">
-          <img src="thumbnails/colormaps.mesh.png" alt="colormaps.mesh.ipynb thumbnail"/>
-          <div class="caption">colormaps.mesh.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="complex.html" title="complex.ipynb">
-          <img src="thumbnails/complex.png" alt="complex.ipynb thumbnail"/>
-          <div class="caption">complex.ipynb</div>
         </a>
       </div>
     
@@ -172,22 +131,6 @@
     
 
       <div class="card">
-        <a href="document.load.html" title="document.load.ipynb">
-          <img src="thumbnails/document.load.png" alt="document.load.ipynb thumbnail"/>
-          <div class="caption">document.load.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="dragcallback.html" title="dragcallback.ipynb">
-          <img src="thumbnails/dragcallback.png" alt="dragcallback.ipynb thumbnail"/>
-          <div class="caption">dragcallback.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
         <a href="draw.ui.html" title="draw.ui.ipynb">
           <img src="thumbnails/draw.ui.png" alt="draw.ui.ipynb thumbnail"/>
           <div class="caption">draw.ui.ipynb</div>
@@ -204,49 +147,9 @@
     
 
       <div class="card">
-        <a href="dsistudio.html" title="dsistudio.ipynb">
-          <img src="thumbnails/dsistudio.png" alt="dsistudio.ipynb thumbnail"/>
-          <div class="caption">dsistudio.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="example_4d.html" title="example_4d.ipynb">
-          <img src="thumbnails/example_4d.png" alt="example_4d.ipynb thumbnail"/>
-          <div class="caption">example_4d.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
         <a href="freesurfer.html" title="freesurfer.ipynb">
           <img src="thumbnails/freesurfer.png" alt="freesurfer.ipynb thumbnail"/>
           <div class="caption">freesurfer.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="layout.html" title="layout.ipynb">
-          <img src="thumbnails/layout.png" alt="layout.ipynb thumbnail"/>
-          <div class="caption">layout.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="mask.html" title="mask.ipynb">
-          <img src="thumbnails/mask.png" alt="mask.ipynb thumbnail"/>
-          <div class="caption">mask.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="mesh.4d.html" title="mesh.4d.ipynb">
-          <img src="thumbnails/mesh.4d.png" alt="mesh.4d.ipynb thumbnail"/>
-          <div class="caption">mesh.4d.ipynb</div>
         </a>
       </div>
     
@@ -260,25 +163,25 @@
     
 
       <div class="card">
-        <a href="mesh.create.html" title="mesh.create.ipynb">
-          <img src="thumbnails/mesh.create.png" alt="mesh.create.ipynb thumbnail"/>
-          <div class="caption">mesh.create.ipynb</div>
+        <a href="mesh.colormaps.html" title="mesh.colormaps.ipynb">
+          <img src="thumbnails/mesh.colormaps.png" alt="mesh.colormaps.ipynb thumbnail"/>
+          <div class="caption">mesh.colormaps.ipynb</div>
         </a>
       </div>
     
 
       <div class="card">
-        <a href="mesh.curv.html" title="mesh.curv.ipynb">
-          <img src="thumbnails/mesh.curv.png" alt="mesh.curv.ipynb thumbnail"/>
-          <div class="caption">mesh.curv.ipynb</div>
+        <a href="mesh.formats.html" title="mesh.formats.ipynb">
+          <img src="thumbnails/mesh.formats.png" alt="mesh.formats.ipynb thumbnail"/>
+          <div class="caption">mesh.formats.ipynb</div>
         </a>
       </div>
     
 
       <div class="card">
-        <a href="mesh.loader.html" title="mesh.loader.ipynb">
-          <img src="thumbnails/mesh.loader.png" alt="mesh.loader.ipynb thumbnail"/>
-          <div class="caption">mesh.loader.ipynb</div>
+        <a href="mesh.layers.html" title="mesh.layers.ipynb">
+          <img src="thumbnails/mesh.layers.png" alt="mesh.layers.ipynb thumbnail"/>
+          <div class="caption">mesh.layers.ipynb</div>
         </a>
       </div>
     
@@ -300,41 +203,17 @@
     
 
       <div class="card">
-        <a href="mesh.stats.html" title="mesh.stats.ipynb">
-          <img src="thumbnails/mesh.stats.png" alt="mesh.stats.ipynb thumbnail"/>
-          <div class="caption">mesh.stats.ipynb</div>
+        <a href="mesh.timeseries.html" title="mesh.timeseries.ipynb">
+          <img src="thumbnails/mesh.timeseries.png" alt="mesh.timeseries.ipynb thumbnail"/>
+          <div class="caption">mesh.timeseries.ipynb</div>
         </a>
       </div>
     
 
       <div class="card">
-        <a href="mesh_and_volume.html" title="mesh_and_volume.ipynb">
-          <img src="thumbnails/mesh_and_volume.png" alt="mesh_and_volume.ipynb thumbnail"/>
-          <div class="caption">mesh_and_volume.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="mesh_layers.html" title="mesh_layers.ipynb">
-          <img src="thumbnails/mesh_layers.png" alt="mesh_layers.ipynb thumbnail"/>
-          <div class="caption">mesh_layers.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="meshes.html" title="meshes.ipynb">
-          <img src="thumbnails/meshes.png" alt="meshes.ipynb thumbnail"/>
-          <div class="caption">meshes.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="modulate.html" title="modulate.ipynb">
-          <img src="thumbnails/modulate.png" alt="modulate.ipynb thumbnail"/>
-          <div class="caption">modulate.ipynb</div>
+        <a href="mesh.tradeoffs.html" title="mesh.tradeoffs.ipynb">
+          <img src="thumbnails/mesh.tradeoffs.png" alt="mesh.tradeoffs.ipynb thumbnail"/>
+          <div class="caption">mesh.tradeoffs.ipynb</div>
         </a>
       </div>
     
@@ -351,6 +230,14 @@
         <a href="mosaic.html" title="mosaic.ipynb">
           <img src="thumbnails/mosaic.png" alt="mosaic.ipynb thumbnail"/>
           <div class="caption">mosaic.ipynb</div>
+        </a>
+      </div>
+    
+
+      <div class="card">
+        <a href="mosaic.timeseries.html" title="mosaic.timeseries.ipynb">
+          <img src="thumbnails/mosaic.timeseries.png" alt="mosaic.timeseries.ipynb thumbnail"/>
+          <div class="caption">mosaic.timeseries.ipynb</div>
         </a>
       </div>
     
@@ -396,6 +283,14 @@
     
 
       <div class="card">
+        <a href="shaders.mesh.html" title="shaders.mesh.ipynb">
+          <img src="thumbnails/shaders.mesh.png" alt="shaders.mesh.ipynb thumbnail"/>
+          <div class="caption">shaders.mesh.ipynb</div>
+        </a>
+      </div>
+    
+
+      <div class="card">
         <a href="shear.html" title="shear.ipynb">
           <img src="thumbnails/shear.png" alt="shear.ipynb thumbnail"/>
           <div class="caption">shear.ipynb</div>
@@ -404,9 +299,9 @@
     
 
       <div class="card">
-        <a href="shiny.volumes.html" title="shiny.volumes.ipynb">
-          <img src="thumbnails/shiny.volumes.png" alt="shiny.volumes.ipynb thumbnail"/>
-          <div class="caption">shiny.volumes.ipynb</div>
+        <a href="stats.alphathreshold.html" title="stats.alphathreshold.ipynb">
+          <img src="thumbnails/stats.alphathreshold.png" alt="stats.alphathreshold.ipynb thumbnail"/>
+          <div class="caption">stats.alphathreshold.ipynb</div>
         </a>
       </div>
     
@@ -420,30 +315,6 @@
     
 
       <div class="card">
-        <a href="sync.mesh.html" title="sync.mesh.ipynb">
-          <img src="thumbnails/sync.mesh.png" alt="sync.mesh.ipynb thumbnail"/>
-          <div class="caption">sync.mesh.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="test_images.html" title="test_images.ipynb">
-          <img src="thumbnails/test_images.png" alt="test_images.ipynb thumbnail"/>
-          <div class="caption">test_images.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="tracts.dsi.html" title="tracts.dsi.ipynb">
-          <img src="thumbnails/tracts.dsi.png" alt="tracts.dsi.ipynb thumbnail"/>
-          <div class="caption">tracts.dsi.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
         <a href="tracts.html" title="tracts.ipynb">
           <img src="thumbnails/tracts.png" alt="tracts.ipynb thumbnail"/>
           <div class="caption">tracts.ipynb</div>
@@ -452,17 +323,9 @@
     
 
       <div class="card">
-        <a href="tracts2.html" title="tracts2.ipynb">
-          <img src="thumbnails/tracts2.png" alt="tracts2.ipynb thumbnail"/>
-          <div class="caption">tracts2.ipynb</div>
-        </a>
-      </div>
-    
-
-      <div class="card">
-        <a href="ui.html" title="ui.ipynb">
-          <img src="thumbnails/ui.png" alt="ui.ipynb thumbnail"/>
-          <div class="caption">ui.ipynb</div>
+        <a href="vox.atlas.html" title="vox.atlas.ipynb">
+          <img src="thumbnails/vox.atlas.png" alt="vox.atlas.ipynb thumbnail"/>
+          <div class="caption">vox.atlas.ipynb</div>
         </a>
       </div>
     
@@ -476,9 +339,49 @@
     
 
       <div class="card">
+        <a href="vox.colormaps.html" title="vox.colormaps.ipynb">
+          <img src="thumbnails/vox.colormaps.png" alt="vox.colormaps.ipynb thumbnail"/>
+          <div class="caption">vox.colormaps.ipynb</div>
+        </a>
+      </div>
+    
+
+      <div class="card">
+        <a href="vox.complex.html" title="vox.complex.ipynb">
+          <img src="thumbnails/vox.complex.png" alt="vox.complex.ipynb thumbnail"/>
+          <div class="caption">vox.complex.ipynb</div>
+        </a>
+      </div>
+    
+
+      <div class="card">
         <a href="vox.dti.html" title="vox.dti.ipynb">
           <img src="thumbnails/vox.dti.png" alt="vox.dti.ipynb thumbnail"/>
           <div class="caption">vox.dti.ipynb</div>
+        </a>
+      </div>
+    
+
+      <div class="card">
+        <a href="vox.formats.html" title="vox.formats.ipynb">
+          <img src="thumbnails/vox.formats.png" alt="vox.formats.ipynb thumbnail"/>
+          <div class="caption">vox.formats.ipynb</div>
+        </a>
+      </div>
+    
+
+      <div class="card">
+        <a href="vox.mask.html" title="vox.mask.ipynb">
+          <img src="thumbnails/vox.mask.png" alt="vox.mask.ipynb thumbnail"/>
+          <div class="caption">vox.mask.ipynb</div>
+        </a>
+      </div>
+    
+
+      <div class="card">
+        <a href="vox.timeseries.html" title="vox.timeseries.ipynb">
+          <img src="thumbnails/vox.timeseries.png" alt="vox.timeseries.ipynb thumbnail"/>
+          <div class="caption">vox.timeseries.ipynb</div>
         </a>
       </div>
     
