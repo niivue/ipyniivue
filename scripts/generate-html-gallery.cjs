@@ -269,7 +269,9 @@ async function processNotebook(nbFilename) {
   <title>Notebook Gallery</title>
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding: 24px; }
-    h1 { margin-bottom: 12px; }
+    .header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; flex-wrap:wrap; }
+    h1 { margin: 0; font-size: 1.5rem; }
+    .timestamp { font-size: 0.85rem; color: #666; margin-left: 8px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
     .card { border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); overflow: hidden; background: #fff; text-align: center; padding: 8px; }
     .card img { display: block; width: 100%; height: 160px; object-fit: cover; background: #eee; }
@@ -279,12 +281,17 @@ async function processNotebook(nbFilename) {
   </style>
 </head>
 <body>
-  <h1>Notebook Gallery</h1>
-  <p>Generated: ${new Date().toISOString()}</p>
+  <div class="header">
+    <h1>Notebook Gallery</h1>
+    <time class="timestamp" datetime="${new Date().toISOString()}">
+      Generated: ${new Date().toLocaleDateString()}
+    </time>
+  </div>
+
   <div class="grid">
     ${items
-			.map(
-				(it) => `
+      .map(
+        (it) => `
       <div class="card">
         <a href="${it.linkRel}" title="${it.name}">
           <img src="${it.thumbRel}" alt="${it.name} thumbnail"/>
@@ -292,12 +299,13 @@ async function processNotebook(nbFilename) {
         </a>
       </div>
     `,
-			)
-			.join("\n")}
+      )
+      .join("\n")}
   </div>
 </body>
 </html>
 `;
+
 
 	const galleryPath = path.join(OUT_DIR, "index.html");
 	fs.writeFileSync(galleryPath, galleryHtml, "utf8");
