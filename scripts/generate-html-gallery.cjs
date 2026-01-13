@@ -76,42 +76,41 @@ function tryFindHtmlForNotebook(nbPath) {
 }
 
 function generateExecutedHtml(nbPath, htmlOutPath) {
-  // Use nbconvert to execute and export html. This may be slow for many notebooks.
-  // Use spawnSync + arg array to avoid shell word-splitting when PYTHON path contains spaces.
-  const pythonExec = process.env.PYTHON || "python3";
-  const outputName = path.basename(htmlOutPath); // e.g. worldspace2.html
-  const outputDir = path.dirname(htmlOutPath);
+	// Use nbconvert to execute and export html. This may be slow for many notebooks.
+	// Use spawnSync + arg array to avoid shell word-splitting when PYTHON path contains spaces.
+	const pythonExec = process.env.PYTHON || "python3";
+	const outputName = path.basename(htmlOutPath); // e.g. worldspace2.html
+	const outputDir = path.dirname(htmlOutPath);
 
-  const args = [
-    "-m",
-    "nbconvert",
-    "--to",
-    "html",
-    "--execute",
-    nbPath,
-    "--output",
-    outputName,
-    "--output-dir",
-    outputDir,
-    "--ExecutePreprocessor.timeout=120",
-  ];
+	const args = [
+		"-m",
+		"nbconvert",
+		"--to",
+		"html",
+		"--execute",
+		nbPath,
+		"--output",
+		outputName,
+		"--output-dir",
+		outputDir,
+		"--ExecutePreprocessor.timeout=120",
+	];
 
-  console.log("[nbconvert] running:", pythonExec, args.join(" "));
-  const res = spawnSync(pythonExec, args, {
-    stdio: "inherit",
-    env: { ...process.env },
-    shell: false, // important: do not run through a shell
-  });
+	console.log("[nbconvert] running:", pythonExec, args.join(" "));
+	const res = spawnSync(pythonExec, args, {
+		stdio: "inherit",
+		env: { ...process.env },
+		shell: false, // important: do not run through a shell
+	});
 
-  if (res.error) {
-    // e.g. ENOENT if pythonExec doesn't exist
-    throw res.error;
-  }
-  if (res.status !== 0) {
-    throw new Error(`nbconvert failed with exit code ${res.status}`);
-  }
+	if (res.error) {
+		// e.g. ENOENT if pythonExec doesn't exist
+		throw res.error;
+	}
+	if (res.status !== 0) {
+		throw new Error(`nbconvert failed with exit code ${res.status}`);
+	}
 }
-
 
 async function processNotebook(nbFilename) {
 	const nbPath = path.join(NOTEBOOKS_DIR, nbFilename);
@@ -155,7 +154,7 @@ async function processNotebook(nbFilename) {
 	}
 
 	// attempt to locate an HTML corresponding to this notebook (may be null)
-	let foundHtmlPath = tryFindHtmlForNotebook(nbPath);
+	const foundHtmlPath = tryFindHtmlForNotebook(nbPath);
 
 	if (lastImageBase64) {
 		// write PNG

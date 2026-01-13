@@ -12,7 +12,9 @@
 		"notebooks:clean": "${PYTHON:-python3} ./scripts/clean-notebooks.py ./examples",
 		"test:e2e:prepare": "node scripts/prepare-e2e.cjs",
 		"test:e2e": "npm run test:e2e:prepare && playwright test",
-		"test:e2e:clean": "node scripts/clean-generated-html.cjs"
+		"test:e2e:clean": "node scripts/clean-generated-html.cjs",
+		"check": "biome check .",
+		"check:fix": "biome check . --write"
 	},
 	"dependencies": {
 		"@anywidget/types": "^0.2.0",

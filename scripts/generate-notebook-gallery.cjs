@@ -171,7 +171,9 @@ async function processNotebook(nbFilename) {
 			console.warn("[warn] no <canvas> found in HTML:", htmlPath);
 			return { name: nbFilename, ok: true, thumbnail: null };
 		}
-		console.log(`[thumb] canvas screenshot -> ${path.relative(process.cwd(), thumbPath)}`);
+		console.log(
+			`[thumb] canvas screenshot -> ${path.relative(process.cwd(), thumbPath)}`,
+		);
 		return {
 			name: nbFilename,
 			thumbnail: path.relative(OUT_DIR, thumbPath).split(path.sep).join("/"),
@@ -208,8 +210,8 @@ function makeIndexHtmlForNotebooks(items) {
   <p>Browse raw notebooks (click to download/open).</p>
   <div class="grid">
     ${items
-		.map(
-			(it) => `
+			.map(
+				(it) => `
       <div class="card">
         <a href="${it.linkRel}" title="${it.name}">
           ${it.thumbRel ? `<img src="${it.thumbRel}" alt="${it.name} thumbnail"/>` : `<div class="placeholder">No thumbnail</div>`}
@@ -217,8 +219,8 @@ function makeIndexHtmlForNotebooks(items) {
         </a>
       </div>
     `,
-		)
-		.join("\n")}
+			)
+			.join("\n")}
   </div>
 </body>
 </html>`;
@@ -249,14 +251,26 @@ function makeIndexHtmlForNotebooks(items) {
 	const items = results.map((r) => {
 		const nbAbs = path.join(NOTEBOOKS_DIR, r.name);
 		// link relative to the NOTEBOOKS_DIR (index.html will be placed in NOTEBOOKS_DIR)
-		const linkRel = path.relative(NOTEBOOKS_DIR, nbAbs).split(path.sep).join("/") || r.name;
-		const thumbRel = r.thumbnail ? path.relative(NOTEBOOKS_DIR, path.join(OUT_DIR, r.thumbnail)).split(path.sep).join("/") : null;
+		const linkRel =
+			path.relative(NOTEBOOKS_DIR, nbAbs).split(path.sep).join("/") || r.name;
+		const thumbRel = r.thumbnail
+			? path
+					.relative(NOTEBOOKS_DIR, path.join(OUT_DIR, r.thumbnail))
+					.split(path.sep)
+					.join("/")
+			: null;
 		return { name: r.name, linkRel, thumbRel };
 	});
 
 	// write index.html under NOTEBOOKS_DIR (so /examples/index.html links to /examples/<notebook>.ipynb)
 	const notebooksIndexPath = path.join(NOTEBOOKS_DIR, "index.html");
-	fs.writeFileSync(notebooksIndexPath, makeIndexHtmlForNotebooks(items), "utf8");
+	fs.writeFileSync(
+		notebooksIndexPath,
+		makeIndexHtmlForNotebooks(items),
+		"utf8",
+	);
 	console.log("\n[done] notebooks index written to", notebooksIndexPath);
-	console.log(`[summary] ${items.length} entries listed, thumbnails in ${path.relative(process.cwd(), THUMBS_DIR)}`);
+	console.log(
+		`[summary] ${items.length} entries listed, thumbnails in ${path.relative(process.cwd(), THUMBS_DIR)}`,
+	);
 })();
