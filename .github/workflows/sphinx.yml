@@ -47,6 +47,9 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
+      - name: Sync gallery notebooks
+        run: npm run gallery:sync-notebooks
+        
       # Cache Playwright browsers to speed subsequent runs
       - name: Cache Playwright browsers
         uses: actions/cache@v4
