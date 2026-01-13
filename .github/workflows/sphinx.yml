@@ -5,9 +5,13 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -19,18 +23,97 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Install system deps helpful for nbconvert
+      - name: Install system deps (pandoc)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
+
       - name: Install Hatch
         run: |
           python -m pip install --upgrade pip
           pip install hatch
 
-      - name: Set up Hatch environment and install dependencies
+      - name: Set up Hatch environment and install Python deps
         run: |
           hatch env create
 
-      - name: Build documentation with Hatch
+      # Provide node so we can run npm in CI
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'   # pick node LTS you use locally
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      # Generate the gallery HTML using the Hatch python that contains nbconvert.
+      - name: Generate gallery HTML (uses Hatch python)
+        run: |
+          # Resolve the python executable from the Hatch env and export it so scripts use it
+          export HATCH_PYTHON="$(hatch run python -c 'import sys;print(sys.executable)')"
+          echo "Using Hatch python: $HATCH_PYTHON"
+          # Ensure npm script sees the PYTHON env var (your package.json script reads process.env.PYTHON)
+          PYTHON="$HATCH_PYTHON" npm run gallery:html
+
+      - name: Build documentation with Hatch (Sphinx)
         run: |
           hatch run docs
+
+      # Merge the generated gallery into the built html site.
+      - name: Copy gallery into built documentation
+        run: |
+          set -e
+          SRC="docs/gallery"                # where our gallery generator wrote files
+          DEST="docs/build/html/gallery"
+
+          if [ ! -d "$SRC" ]; then
+            echo "Gallery directory not found — skipping."
+            exit 0
+          fi
+
+          mkdir -p "$DEST"
+          # Do not overwrite Sphinx's gallery/index.html (iframe page) — preserve Sphinx-generated index if present
+          rsync -av --delete --exclude 'index.html' "$SRC"/ "$DEST"/
+
+          # Move any stray generated html that accidentally landed at docs/build/html root into the gallery folder
+          for f in "$SRC"/*.html; do
+            [ -e "$f" ] || continue
+            bn=$(basename "$f")
+            if [ -f "docs/build/html/$bn" ] && [ ! -f "$DEST/$bn" ]; then
+              mv -v "docs/build/html/$bn" "$DEST/$bn"
+            fi
+          done
+
+      - name: Ensure Gallery link exists on index.html
+        run: |
+          set -e
+          INDEX="docs/build/html/index.html"
+
+          if [ ! -f "$INDEX" ]; then
+            echo "No index.html found — skipping link injection."
+            exit 0
+          fi
+
+          if grep -q 'href="gallery/' "$INDEX"; then
+            echo "Gallery link already present."
+            exit 0
+          fi
+
+          echo "Injecting Gallery link into index.html"
+
+          awk '
+            BEGIN { inserted = 0 }
+            {
+              print
+              if (!inserted && $0 ~ /<body[^>]*>/) {
+                print "<p style=\"margin: 1em 0;\"><a href=\"gallery/\">📷 Notebook Gallery</a></p>"
+                inserted = 1
+              }
+            }
+          ' "$INDEX" > "${INDEX}.tmp"
+
+          mv "${INDEX}.tmp" "$INDEX"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

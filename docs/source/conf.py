@@ -43,3 +43,6 @@ autoclass_content = "class"
 
 html_theme = "furo"
 # html_static_path = ["_static"]
+
+# ensure Sphinx copies the generated docs/gallery/ folder into the built site
+html_extra_path = ["gallery"]
