@@ -290,8 +290,8 @@ async function processNotebook(nbFilename) {
 
   <div class="grid">
     ${items
-      .map(
-        (it) => `
+			.map(
+				(it) => `
       <div class="card">
         <a href="${it.linkRel}" title="${it.name}">
           <img src="${it.thumbRel}" alt="${it.name} thumbnail"/>
@@ -299,13 +299,12 @@ async function processNotebook(nbFilename) {
         </a>
       </div>
     `,
-      )
-      .join("\n")}
+			)
+			.join("\n")}
   </div>
 </body>
 </html>
 `;
-
 
 	const galleryPath = path.join(OUT_DIR, "index.html");
 	fs.writeFileSync(galleryPath, galleryHtml, "utf8");
