@@ -14,3 +14,5 @@ A Jupyter Widget for Niivue based on anywidget.
     enums
     architecture
     contributing
+    gallery
+    
