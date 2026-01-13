@@ -19,3 +19,6 @@ launch.json
 
 # Tests
 tests-out
+
+# Generated gallery
+docs/source/gallery/
