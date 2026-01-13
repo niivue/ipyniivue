@@ -47,6 +47,21 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
+      # Cache Playwright browsers to speed subsequent runs
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            playwright-browsers-${{ runner.os }}-
+
+      # Ensure Playwright downloads browser executables (must run after npm ci)
+      - name: Install Playwright browsers
+        run: |
+          # install system deps + browsers on ubuntu; --with-deps tries to install native deps too
+          npx playwright install --with-deps
+
       # Generate the gallery HTML using the Hatch python that contains nbconvert.
       - name: Generate gallery HTML (uses Hatch python)
         run: |
