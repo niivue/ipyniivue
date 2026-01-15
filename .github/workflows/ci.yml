@@ -148,11 +148,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug workspace (confirm lockfile present)
+        run: |
+          echo "PWD: $(pwd)"
+          ls -la
+          find . -maxdepth 3 -type f -name "package-lock.json" -o -name "package.json" -print || true
+
       - name: Use Node.js 20
         uses: actions/setup-node@v6
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v6
@@ -164,45 +169,16 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install --upgrade hatch
 
-      - name: Install system deps (Playwright)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0 libx11-xcb1 libxcomposite1 libasound2 || true
-
       - name: Install npm deps
-        working-directory: packages/ipyniivue
         run: npm ci || npm install --no-audit --no-fund
-        
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-
-      - name: (Optional) create hatch env
-        run: |
-          hatch env create || true
 
       - name: Run e2e (npm script)
         env:
           CI: true
         run: npm run test:e2e
-        # If your package.json with scripts is in a subfolder, add:
-        # working-directory: packages/ipyniivue
-
-      - name: Upload Playwright artifacts on failure
-        if: failure()
-        uses: actions/upload-artifact@v6
-        with:
-          name: playwright-report-${{ matrix.os || 'linux' }}-${{ github.run_id }}
-          path: |
-            playwright-report
-            test-results
-            reports
-            .playwright
-            # adjust paths to your artifact locations
-
-      - name: Cleanup generated html (optional)
-        if: always()
-        run: |
-          npm run test:e2e:clean || true
   LintJavaScript:
     name: JavaScript / Lint
     runs-on: macos-14
