@@ -102,37 +102,6 @@ jobs:
               mv -v "docs/build/html/$bn" "$DEST/$bn"
             fi
           done
-
-      - name: Ensure Gallery link exists on index.html
-        run: |
-          set -e
-          INDEX="docs/build/html/index.html"
-
-          if [ ! -f "$INDEX" ]; then
-            echo "No index.html found — skipping link injection."
-            exit 0
-          fi
-
-          if grep -q 'href="gallery/' "$INDEX"; then
-            echo "Gallery link already present."
-            exit 0
-          fi
-
-          echo "Injecting Gallery link into index.html"
-
-          awk '
-            BEGIN { inserted = 0 }
-            {
-              print
-              if (!inserted && $0 ~ /<body[^>]*>/) {
-                print "<p style=\"margin: 1em 0;\"><a href=\"gallery/\">📷 Notebook Gallery</a></p>"
-                inserted = 1
-              }
-            }
-          ' "$INDEX" > "${INDEX}.tmp"
-
-          mv "${INDEX}.tmp" "$INDEX"
-
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
