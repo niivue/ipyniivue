@@ -1,0 +1,36 @@
+name: Update E2E Snapshots (Linux)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-snapshots:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Update snapshots (chromium-linux)
+        run: |
+          npx playwright test e2e-tests/ipyniivue.spec.ts \
+            --project=chromium \
+            --update-snapshots
+
+      - name: Upload updated snapshots
+        uses: actions/upload-artifact@v6
+        with:
+          name: chromium-linux-snapshots
+          path: e2e-tests/__screenshots__/
