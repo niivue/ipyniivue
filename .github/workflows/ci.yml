@@ -170,12 +170,8 @@ jobs:
           sudo apt-get install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0 libx11-xcb1 libxcomposite1 libasound2 || true
 
       - name: Install npm deps
-        run: |
-          npm ci || npm install --no-audit --no-fund
-        # If tests/scripts live in a workspace, you can instead:
-        # working-directory: packages/ipyniivue
-        # run: npm ci
-
+        run: npm install --no-audit --no-fund
+        
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
