@@ -7,7 +7,7 @@ If it does not load, open it directly using the link.
 .. raw:: html
 
    <p>
-     <a href="gallery/index.html" target="_blank" rel="noopener">
+     <a href="gallery/index.html" target="_blank" onclick="window.open(this.href); return false;">
        Open Notebook Gallery in a new tab
      </a>
    </p>

@@ -17,10 +17,13 @@
   </style>
 </head>
 <body>
+  <div>
+    <a id="home-link" href="#" style="display:none;">← Home</a>
+  </div>
   <div class="header">
     <h1>Notebook Gallery</h1>
-    <time class="timestamp" datetime="2026-01-13T21:05:31.566Z">
-      Generated: 1/13/2026
+    <time class="timestamp" datetime="2026-01-15T19:54:57.457Z">
+      Generated: 1/15/2026
     </time>
   </div>
 
@@ -419,4 +422,72 @@
     
   </div>
 </body>
+<script>
+(function () {
+  console.log('Gallery home link script running');
+  const GH_PAGES_ROOT = '/ipyniivue/'; // production repo root
+
+  // Return true if any explicit "external" or "localdebug" flag is present
+  function hasExplicitFlag() {
+    try {
+      const p = new URLSearchParams(location.search);
+      if (p.get('external') === '1' || p.get('external') === '' ) return true;
+      if (p.get('localdebug') === '1') return true;
+    } catch (e) {}
+    return false;
+  }
+
+  function openedExternally() {
+    // explicit flags override everything
+    if (hasExplicitFlag()) return true;
+
+    // typical opener/referrer checks
+    try {
+      if (window.opener) return true;
+    } catch (e) {} // security may throw on cross-origin access
+
+    if (document.referrer && !document.referrer.includes(location.origin)) return true;
+
+    return false;
+  }
+
+  // Computes a href that works for production (GH Pages), server, or file://
+  function computeHomeHref() {
+    // If file://, return ../index.html as absolute file:// URL
+    if (location.protocol === 'file:') {
+      return new URL('../index.html', location.href).href;
+    }
+
+    // If we're on github pages for the niivue repo, prefer the repo root
+    if (location.hostname === 'niivue.github.io' || location.hostname.endsWith('.github.io')) {
+      return GH_PAGES_ROOT;
+    }
+
+    // Default: use a relative path back to site root index
+    return new URL('../index.html', location.href).pathname;
+  }
+
+  const showHome = openedExternally();
+  if (showHome) {
+    const home = document.getElementById('home-link');
+    if (home) {
+      home.href = computeHomeHref();
+
+      // If opener exists and is same-origin, clicking Home will close the tab instead of navigating.
+      try {
+        if (window.opener && window.opener.location && window.opener.location.origin === location.origin) {
+          home.addEventListener('click', function (e) {
+            e.preventDefault();
+            window.close();
+          });
+        }
+      } catch (e) {
+        // cross-origin access will throw; ignore and keep normal navigation
+      }
+
+      home.style.display = 'inline';
+    }
+  }
+})();
+</script>
 </html>
