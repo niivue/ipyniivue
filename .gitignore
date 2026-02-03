@@ -19,7 +19,11 @@ launch.json
 
 # Tests
 tests-out
-test-results
+test-results/
+*.last-run.json
+.last-run.json
+.playwright/
+playwright-report/
 
 # Generated gallery
 docs/source/gallery/
