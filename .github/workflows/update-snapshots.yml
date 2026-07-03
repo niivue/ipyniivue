@@ -30,7 +30,7 @@ jobs:
             --update-snapshots
 
       - name: Upload updated snapshots
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: chromium-linux-snapshots
           path: e2e-tests/__screenshots__/
