@@ -13,7 +13,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 20
 
@@ -30,7 +30,7 @@ jobs:
             --update-snapshots
 
       - name: Upload updated snapshots
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: chromium-linux-snapshots
           path: e2e-tests/__screenshots__/
