@@ -285,7 +285,7 @@ async function processNotebook(nbFilename) {
 </head>
 <body>
   <div>
-    <a id="home-link" href="#" style="display:none;">← Home</a>
+    <a id="home-link" href="#" style="display:none; float:right;">← Home</a>
   </div>
   <div class="header">
     <h1>Notebook Gallery</h1>
