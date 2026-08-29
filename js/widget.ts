@@ -20,9 +20,6 @@ import type {
 
 import type { Connectome as NiivueConnectome } from "@niivue/niivue";
 
-let nv: niivue.Niivue;
-let updateInterval: ReturnType<typeof setInterval> | null = null;
-
 async function sendDrawBitmap(nv: niivue.Niivue, model: Model) {
 	const thisModelId = model.get("this_model_id");
 	if (!thisModelId) {
@@ -712,10 +709,13 @@ function attachCanvasEventHandlers(nv: niivue.Niivue, model: Model) {
 	}
 }
 
-function setupUpdateInterval(nv: niivue.Niivue, model: Model) {
-	if (updateInterval !== null) {
-		clearInterval(updateInterval);
-		updateInterval = null;
+function setupUpdateInterval(
+	nv: niivue.Niivue,
+	model: Model,
+	previousUpdateInterval: ReturnType<typeof setInterval> | null,
+): ReturnType<typeof setInterval> {
+	if (previousUpdateInterval !== null) {
+		clearInterval(previousUpdateInterval);
 	}
 
 	let lastSentUidata: UIData | null = model.get("ui_data");
@@ -799,7 +799,7 @@ function setupUpdateInterval(nv: niivue.Niivue, model: Model) {
 		}
 	};
 
-	updateInterval = setInterval(sendUpdate, 30);
+	const updateInterval = setInterval(sendUpdate, 30);
 
 	const originalSync = nv.sync;
 	nv.sync = new Proxy(originalSync, {
@@ -816,121 +816,162 @@ function setupUpdateInterval(nv: niivue.Niivue, model: Model) {
 			shouldSendScene = true;
 		},
 	});
+
+	return updateInterval;
 }
 
-export default {
-	async initialize({ model }: { model: Model }) {
-		const disposer = new lib.Disposer();
+// The default export is a factory so that anywidget invokes it once per
+// widget model. Each model therefore gets its own Niivue instance and update
+// interval; module-scoped state would be shared by every model on the page
+// because ES modules are cached per URL.
+export default () => {
+	let nv: niivue.Niivue | undefined;
+	let updateInterval: ReturnType<typeof setInterval> | null = null;
+	// Listeners on the volume and mesh child models are registered from both
+	// initialize and render, and must outlive a detached view, so the disposer
+	// is owned by the model rather than by one render. Only model destruction
+	// disposes it. Sharing one disposer also keeps `render_volumes` /
+	// `render_meshes` from registering a second set of listeners for a child
+	// model they have already seen.
+	const disposer = new lib.Disposer();
+	// Bumped on model destruction so a render awaiting its volumes and meshes
+	// can tell that the instance it started with is gone.
+	let generation = 0;
 
-		if (!nv) {
-			console.log("Creating new Niivue instance");
-			const serializedOpts = model.get("opts") ?? {};
-			const opts = lib.deserializeOptions(serializedOpts);
-			nv = new niivue.Niivue(opts);
-		}
-
-		// Attach model event handlers
-		attachModelEventHandlers(nv, model, disposer);
-
-		// Attach niivue event handlers
-		attachNiivueEventHandlers(nv, model);
-
-		// Logic for cleaning up the event listeners and the nv object
-		return () => {
-			disposer.disposeAll();
-
-			model.off("change:volumes");
-			model.off("change:meshes");
-			model.off("change:opts");
-			model.off("change:height");
-			model.off("msg:custom");
-
-			model.off("change:background_masks_overlays");
-			model.off("change:draw_lut");
-			model.off("change:draw_opacity");
-			model.off("change:draw_fill_overwrites");
-			model.off("change:graph");
-			model.off("change:scene");
-			model.off("change:overlay_outline_width");
-			model.off("change:overlay_alpha_shader");
-			if (updateInterval) {
-				clearInterval(updateInterval);
+	return {
+		async initialize({ model }: { model: Model }) {
+			if (!nv) {
+				console.log("Creating new Niivue instance");
+				const serializedOpts = model.get("opts") ?? {};
+				const opts = lib.deserializeOptions(serializedOpts);
+				nv = new niivue.Niivue(opts);
 			}
-		};
-	},
-	async render({ model, el }: { model: Model; el: HTMLElement }) {
-		if (!nv) {
-			console.error("Niivue instance not found for model", model);
-			return;
-		}
 
-		const disposer = new lib.Disposer();
+			// Attach model event handlers
+			attachModelEventHandlers(nv, model, disposer);
 
-		if (!nv.canvas?.parentNode) {
-			console.log("drawing first render");
+			// Attach niivue event handlers
+			attachNiivueEventHandlers(nv, model);
 
-			// Create a container div and set its height
-			const container = document.createElement("div");
-			container.style.height = `${model.get("height")}px`;
-			el.appendChild(container);
+			// Logic for cleaning up the event listeners and the nv object
+			return () => {
+				generation += 1;
+				disposer.disposeAll();
 
-			// Create a new canvas and attach it to the container
-			const canvas = document.createElement("canvas");
-			container.appendChild(canvas);
+				model.off("change:volumes");
+				model.off("change:meshes");
+				model.off("change:opts");
+				model.off("change:height");
+				model.off("msg:custom");
 
-			// Disable JupyterLab’s right-click menu for this canvas
-			canvas.addEventListener(
-				"contextmenu",
-				(ev) => {
-					ev.preventDefault();
-					ev.stopPropagation();
-					return false;
-				},
-				true,
-			);
+				model.off("change:background_masks_overlays");
+				model.off("change:draw_lut");
+				model.off("change:draw_opacity");
+				model.off("change:draw_fill_overwrites");
+				model.off("change:graph");
+				model.off("change:scene");
+				model.off("change:overlay_outline_width");
+				model.off("change:overlay_alpha_shader");
+				if (updateInterval !== null) {
+					clearInterval(updateInterval);
+					updateInterval = null;
+				}
 
-			// Handle height changes
-			model.off("change:height");
-			model.on("change:height", () => {
+				// Release the Niivue instance and its WebGL context; browsers
+				// cap the number of live WebGL contexts, so a destroyed model
+				// must not keep one alive.
+				if (nv) {
+					nv.cleanup();
+					nv._gl?.getExtension("WEBGL_lose_context")?.loseContext();
+					nv = undefined;
+				}
+			};
+		},
+		async render({ model, el }: { model: Model; el: HTMLElement }) {
+			if (!nv) {
+				console.error("Niivue instance not found for model", model);
+				return;
+			}
+
+			const thisGeneration = generation;
+
+			if (!nv.canvas?.parentNode) {
+				console.log("drawing first render");
+
+				// Create a container div and set its height
+				const container = document.createElement("div");
 				container.style.height = `${model.get("height")}px`;
-			});
+				el.appendChild(container);
 
-			// Attach nv to canvas
-			nv.attachToCanvas(canvas, nv.opts.isAntiAlias);
-			model.set("_canvas_attached", true);
-			model.save_changes();
+				// Create a new canvas and attach it to the container
+				const canvas = document.createElement("canvas");
+				container.appendChild(canvas);
 
-			// Load initial volumes and meshes
-			await Promise.all([
-				render_volumes(nv, model, disposer),
-				render_meshes(nv, model, disposer),
-			]);
+				// Disable JupyterLab’s right-click menu for this canvas
+				canvas.addEventListener(
+					"contextmenu",
+					(ev) => {
+						ev.preventDefault();
+						ev.stopPropagation();
+						return false;
+					},
+					true,
+				);
 
-			attachCanvasEventHandlers(nv, model);
+				// Handle height changes
+				model.off("change:height");
+				model.on("change:height", () => {
+					container.style.height = `${model.get("height")}px`;
+				});
 
-			setupUpdateInterval(nv, model);
-		} else {
-			console.log("moving render around");
+				// Attach nv to canvas
+				nv.attachToCanvas(canvas, nv.opts.isAntiAlias);
+				model.set("_canvas_attached", true);
+				model.save_changes();
 
-			// Ensure the canvas is attached to the container
-			if (nv.canvas.parentNode?.parentNode) {
-				nv.canvas.parentNode.parentNode.removeChild(nv.canvas.parentNode);
+				// Load initial volumes and meshes
+				await Promise.all([
+					render_volumes(nv, model, disposer),
+					render_meshes(nv, model, disposer),
+				]);
+
+				// The model may have been destroyed while its volumes and
+				// meshes loaded; the instance is torn down and its WebGL
+				// context released, so drop this canvas and stop here. The
+				// aborted load registers its child-model listeners after the
+				// destruction cleanup has already run, so dispose them here.
+				if (!nv || generation !== thisGeneration) {
+					disposer.disposeAll();
+					container.remove();
+					return;
+				}
+
+				attachCanvasEventHandlers(nv, model);
+
+				updateInterval = setupUpdateInterval(nv, model, updateInterval);
+			} else {
+				console.log("moving render around");
+
+				// Ensure the canvas is attached to the container
+				if (nv.canvas.parentNode?.parentNode) {
+					nv.canvas.parentNode.parentNode.removeChild(nv.canvas.parentNode);
+				}
+
+				// Attach
+				el.appendChild(nv.canvas.parentNode);
 			}
 
-			// Attach
-			el.appendChild(nv.canvas.parentNode);
-		}
+			// Drawing setup
+			nv.setDrawingEnabled(nv.opts.drawingEnabled);
 
-		// Drawing setup
-		nv.setDrawingEnabled(nv.opts.drawingEnabled);
+			// Return cleanup function, runs when page reloaded or cell run again
+			return () => {
+				// only want to run disposer when nv widget is removed, not when it is re-displayed
 
-		// Return cleanup function, runs when page reloaded or cell run again
-		return () => {
-			// only want to run disposer when nv widget is removed, not when it is re-displayed
-
-			if (nv.canvas?.parentNode?.parentNode) {
-				nv.canvas.parentNode.parentNode.removeChild(nv.canvas.parentNode);
-			}
-		};
-	},
+				if (nv?.canvas?.parentNode?.parentNode) {
+					nv.canvas.parentNode.parentNode.removeChild(nv.canvas.parentNode);
+				}
+			};
+		},
+	};
 };
