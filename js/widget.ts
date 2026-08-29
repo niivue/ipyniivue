@@ -709,24 +709,46 @@ function attachCanvasEventHandlers(nv: niivue.Niivue, model: Model) {
 	}
 }
 
-function setupUpdateInterval(
+/** Interval between update ticks while the update loop is active. */
+const UPDATE_INTERVAL_MS = 30;
+/**
+ * Consecutive ticks with nothing to send (and no pointer held down) after
+ * which the update loop stops itself.
+ */
+const IDLE_TICKS_BEFORE_STOP = 5;
+
+type UpdateLoop = {
+	/** Stop the loop; it re-arms on the next focus, pointerdown, or draw. */
+	stop: () => void;
+	/** Stop the loop and remove its canvas listeners for good. */
+	dispose: () => void;
+};
+
+/**
+ * Mirror `ui_data` and (while the canvas is focused) `scene` changes to the
+ * Python model.
+ *
+ * The loop is not a permanent timer: it starts when the canvas gains focus,
+ * receives a pointerdown, or draws while focused, ticks every
+ * `UPDATE_INTERVAL_MS` while there is something to send, and stops itself
+ * after `IDLE_TICKS_BEFORE_STOP` idle ticks or when the canvas loses focus.
+ * An idle viewer therefore owns no timer and does no work.
+ */
+function setupUpdateLoop(
 	nv: niivue.Niivue,
 	model: Model,
-	previousUpdateInterval: ReturnType<typeof setInterval> | null,
-): ReturnType<typeof setInterval> {
-	if (previousUpdateInterval !== null) {
-		clearInterval(previousUpdateInterval);
-	}
-
+	canvas: HTMLCanvasElement,
+): UpdateLoop {
 	let lastSentUidata: UIData | null = model.get("ui_data");
 	let lastSentScene: Scene | null = model.get("scene");
 	let shouldSendScene = false;
-	const sendUpdate = async () => {
-		const thisAnyModel = await lib.getAnyModel(model);
-		if (!thisAnyModel) {
-			return;
-		}
+	let anyModel: AnyModel | undefined;
+	let timer: ReturnType<typeof setInterval> | null = null;
+	let idleTicks = 0;
+	let pointerDown = false;
+	let disposed = false;
 
+	const collectUpdates = () => {
 		const updates: {
 			ui_data?: Partial<UIData>;
 			scene?: Partial<Scene>;
@@ -794,13 +816,85 @@ function setupUpdateInterval(
 			}
 		}
 
-		if (Object.keys(updates).length > 0) {
-			lib.forceSendState(thisAnyModel, updates);
+		return Object.keys(updates).length > 0 ? updates : null;
+	};
+
+	// Send any pending delta; resolves to whether something was sent.
+	const sendUpdate = async (): Promise<boolean> => {
+		if (anyModel === undefined) {
+			anyModel = await lib.getAnyModel(model);
+			if (anyModel === undefined || disposed) {
+				return false;
+			}
+		}
+		const updates = collectUpdates();
+		if (updates === null) {
+			return false;
+		}
+		lib.forceSendState(anyModel, updates);
+		return true;
+	};
+
+	const stop = () => {
+		if (timer !== null) {
+			clearInterval(timer);
+			timer = null;
+		}
+		idleTicks = 0;
+	};
+
+	const tick = async () => {
+		const sent = await sendUpdate();
+		if (timer === null) {
+			return;
+		}
+		if (sent || pointerDown) {
+			idleTicks = 0;
+			return;
+		}
+		idleTicks += 1;
+		if (idleTicks >= IDLE_TICKS_BEFORE_STOP) {
+			stop();
 		}
 	};
 
-	const updateInterval = setInterval(sendUpdate, 30);
+	const start = () => {
+		if (disposed || timer !== null) {
+			return;
+		}
+		idleTicks = 0;
+		timer = setInterval(tick, UPDATE_INTERVAL_MS);
+	};
 
+	const onPointerUp = () => {
+		pointerDown = false;
+		window.removeEventListener("pointerup", onPointerUp);
+		window.removeEventListener("pointercancel", onPointerUp);
+	};
+	const onPointerDown = () => {
+		if (!pointerDown) {
+			pointerDown = true;
+			window.addEventListener("pointerup", onPointerUp);
+			window.addEventListener("pointercancel", onPointerUp);
+		}
+		start();
+	};
+	const onFocus = () => {
+		start();
+	};
+	const onBlur = () => {
+		// Flush whatever changed since the last tick, then go quiet.
+		void sendUpdate();
+		stop();
+	};
+
+	canvas.addEventListener("focus", onFocus);
+	canvas.addEventListener("blur", onBlur);
+	canvas.addEventListener("pointerdown", onPointerDown);
+
+	// Every draw calls nv.sync(); a draw while the canvas is focused is a
+	// scene change worth mirroring, so it (re)arms the loop rather than
+	// sending synchronously, which keeps sends throttled uniformly.
 	const originalSync = nv.sync;
 	nv.sync = new Proxy(originalSync, {
 		apply: (target, thisArg, argumentsList) => {
@@ -814,19 +908,31 @@ function setupUpdateInterval(
 				return;
 			}
 			shouldSendScene = true;
+			start();
 		},
 	});
 
-	return updateInterval;
+	return {
+		stop,
+		dispose: () => {
+			disposed = true;
+			stop();
+			onPointerUp();
+			canvas.removeEventListener("focus", onFocus);
+			canvas.removeEventListener("blur", onBlur);
+			canvas.removeEventListener("pointerdown", onPointerDown);
+			nv.sync = originalSync;
+		},
+	};
 }
 
 // The default export is a factory so that anywidget invokes it once per
 // widget model. Each model therefore gets its own Niivue instance and update
-// interval; module-scoped state would be shared by every model on the page
+// loop; module-scoped state would be shared by every model on the page
 // because ES modules are cached per URL.
 export default () => {
 	let nv: niivue.Niivue | undefined;
-	let updateInterval: ReturnType<typeof setInterval> | null = null;
+	let updateLoop: UpdateLoop | null = null;
 	// Listeners on the volume and mesh child models are registered from both
 	// initialize and render, and must outlive a detached view, so the disposer
 	// is owned by the model rather than by one render. Only model destruction
@@ -872,9 +978,9 @@ export default () => {
 				model.off("change:scene");
 				model.off("change:overlay_outline_width");
 				model.off("change:overlay_alpha_shader");
-				if (updateInterval !== null) {
-					clearInterval(updateInterval);
-					updateInterval = null;
+				if (updateLoop !== null) {
+					updateLoop.dispose();
+					updateLoop = null;
 				}
 
 				// Release the Niivue instance and its WebGL context; browsers
@@ -948,7 +1054,8 @@ export default () => {
 
 				attachCanvasEventHandlers(nv, model);
 
-				updateInterval = setupUpdateInterval(nv, model, updateInterval);
+				updateLoop?.dispose();
+				updateLoop = setupUpdateLoop(nv, model, canvas);
 			} else {
 				console.log("moving render around");
 
@@ -968,6 +1075,9 @@ export default () => {
 			return () => {
 				// only want to run disposer when nv widget is removed, not when it is re-displayed
 
+				// A detached view cannot be interacted with; stop the loop until
+				// a later render re-attaches the canvas and re-arms it.
+				updateLoop?.stop();
 				if (nv?.canvas?.parentNode?.parentNode) {
 					nv.canvas.parentNode.parentNode.removeChild(nv.canvas.parentNode);
 				}
