@@ -26,7 +26,7 @@
 		"@playwright/test": "^1.57.0",
 		"@types/node": "^25.0.3",
 		"cross-env": "^10.1.0",
-		"esbuild": "^0.27.0",
+		"esbuild": "^0.28.2",
 		"typescript": "^7.0.2"
 	}
 }
